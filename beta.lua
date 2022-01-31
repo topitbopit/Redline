@@ -2355,6 +2355,8 @@ local m_render = ui:CreateMenu('Render') do
     r_crosshair:SetTooltip('Crosshair configuration')
     r_esp:SetTooltip('Configurable ESP')
     r_freecam:SetTooltip('Standard freecam')
+	  r_fullbright:SetTooltip('Fullbright with different presets for different games')
+
 end
 local m_misc = ui:CreateMenu('Misc') do 
     local m_among      = m_misc:AddMod('Amongus') -- turns into amongus
@@ -2363,8 +2365,9 @@ local m_misc = ui:CreateMenu('Misc') do
     local m_tweaks     = m_misc:AddMod('Game tweaks') -- Lets you force enable stuff
     
     
-    
-    
+    m_among:SetTooltip('Turns you into an among us character')
+	  m_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+    m_flashback:SetTooltip('
     
 end
 local m_ui = ui:CreateMenu('UI') do 
