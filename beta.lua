@@ -2345,7 +2345,6 @@ local m_render = ui:CreateMenu('Render') do
     local r_esp         = m_render:AddMod('ESP') -- Player esp, part esp
     local r_freecam     = m_render:AddMod('Freecam') -- Freecam w/ smooth flight and hard flight
     local r_fullbright  = m_render:AddMod('Fullbright') -- Fullbright w/ different modes
-    local r_hud         = m_render:AddMod('HUD') -- Redline hud configuration
     local r_nametag     = m_render:AddMod('Nametags') -- Better nametags
     
     
@@ -2356,7 +2355,7 @@ local m_render = ui:CreateMenu('Render') do
     r_esp:SetTooltip('Configurable ESP')
     r_freecam:SetTooltip('Standard freecam')
 	  r_fullbright:SetTooltip('Fullbright with different presets for different games')
-
+    r_nametag:SetTooltip('Better nametags')
 end
 local m_misc = ui:CreateMenu('Misc') do 
     local m_among      = m_misc:AddMod('Amongus') -- turns into amongus
@@ -2366,14 +2365,19 @@ local m_misc = ui:CreateMenu('Misc') do
     
     
     m_among:SetTooltip('Turns you into an among us character')
-	  m_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
-    m_flashback:SetTooltip('
+    m_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+    m_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
+    m_tweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
     
 end
 local m_ui = ui:CreateMenu('UI') do 
-    m_ui:AddMod('Command bar')
-    m_ui:AddMod('HUD')
-    m_ui:AddMod('Jeff') -- Jeff
+    local m_cmd = m_ui:AddMod('Command bar')
+    local m_hud = m_ui:AddMod('HUD')
+    local m_jeff = m_ui:AddMod('Jeff') -- Jeff
+    
+    m_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
+    m_hud:SetTooltip('Redline UI configuration')
+    m_jeff:SetTooltip('I forgot what this does')
 end
 local m_server = ui:CreateMenu('Server') do 
     local s_rejoin = m_server:AddMod('Rejoin', 'Button')
@@ -2390,11 +2394,14 @@ local m_server = ui:CreateMenu('Server') do
     end)
     
     s_rejoin:SetTooltip('Rejoins you into the current server. <b>Don\'t swap too many times, or you\'ll get error 268</b>')
-    s_shop:SetTooltip('Server hops. <b> Don\'t hop too many times, or you\'ll get error 268</b>')
+    s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
 end
 local m_integrations = ui:CreateMenu('Integrations') do 
-    m_integrations:AddMod('Alt manager') -- Roblox Alt Manager stuff, requires Roblox Alt Manager (3rd party program)
-    m_integrations:AddMod('Discord RPC') -- Discord RPC stuff
+    local m_alt = m_integrations:AddMod('Alt manager') -- Roblox Alt Manager stuff, requires Roblox Alt Manager (3rd party program)
+    local m_rpc = m_integrations:AddMod('Discord RPC') -- Discord RPC stuff
+	
+    m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
+    m_rpc:SetTooltip('Discord Rich Presence integration. Show your friends how you\'re doing funky stuff')
 end
 local m_search = ui:CreateMenu('Search') do 
     local _ = m_search:AddMod('Enter module name', 'Textbox')
