@@ -2140,7 +2140,7 @@ cons['chr'] = l_plr.CharacterAdded:Connect(function(c)
 end)
 
 -- Every single player 
-local p_players_all = {}
+local p_players = {}
 -- Every player minus friends and local player 
 local p_players_nolfr = {}
 
@@ -2163,17 +2163,17 @@ local function addplr(p)
 end 
 local function remplr(p) 
     -- Player left, find the player object in each table
-    for i = 1, #p_players_all do 
-        local plr = p_players_all[i]
+    for i = 1, #p_players do 
+        local plr = p_players[i]
         -- Check for matching player objects
         if (plr.plr == p) then
             local cons = plr.cons
             -- Disable connections
             for i = 1, #cons do cons[i]:Disconnect() end
             -- Clear table and stuff
-            p_players_all[i] = nil
+            p_players[i] = nil
             -- Remove it from the player list
-            rem(p_players_all, i)
+            rem(p_players, i)
             break
         end
     end
@@ -2377,6 +2377,7 @@ local m_player = ui:CreateMenu('Player') do
                 end)
                 return 
             end
+	    
             if (p == 'Walk around') then
                 spawn(function() 
                     local base = l_humrp.Position
@@ -2410,13 +2411,36 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Antifling
     do 
-        local p_antifling_mode = p_antifling:AddDropdown('Anti-fling type', true)
+        local mode = p_antifling:AddDropdown('Method', true)
         do 
-            p_antifling_mode:AddOption('Anchor'):Select():SetTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
-            p_antifling_mode:AddOption('Anchor (moveable)'):SetTooltip('Same as anchor but lets you move. Your characters position may not update until you unanchor')
-            p_antifling_mode:AddOption('Noclip'):SetTooltip('Activates noclip. Prevents you from being flung, but you will move around slightly')
-            p_antifling_mode:AddOption('Teleport'):SetTooltip('Teleports you away from them. Very funny to use but you can still be flung')
+            mode:AddOption('Anchor'):Select():SetTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
+            mode:AddOption('Anchor (moveable)'):SetTooltip('Same as anchor but lets you move. Your characters position may not update until you unanchor')
+            mode:AddOption('Noclip'):SetTooltip('Activates noclip. However, it\'s only good at stopping weak flings, and you will still be slightly pushed around')
+            mode:AddOption('Teleport'):SetTooltip('Teleports you away from them. Very funny to use but you\'ll likely be flung')
         end
+	
+	local pcon
+	p_antifling:Connect("Enabled", function() 
+            local m = mode:GetSelection()
+	    if (m == 'Anchor') then
+		pcon = serv_rs.Heartbeat:Connect(function() 
+		    for i = 1, #				
+		end)
+	    end
+	end)
+	p_antlfling:Connect("Disabled", function() 
+	    if (pcon) then pcon:Disconnect() pcon = nil end		
+	end)
+	
+	
+	mode:Connect("SelectionChanged", function()
+	    if (p_antifling:IsEnabled()) then
+	        p_antifling:Disable()
+	        p_antifling:Enable()
+	    end
+	end)
+	
+	mode:SetTooltip('The method Antifling uses.')
     end
     -- Antiwarp
     do end
