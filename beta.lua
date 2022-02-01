@@ -21,6 +21,17 @@
 ★☆
 ]]--
 
+if (_G.RLLoaded) then
+    if (printconsole) then 
+        printconsole("Already loaded Redline", 255, 64, 64)
+        printconsole("Destroy the current script by pressing [End].\nIf you don't have an end key too bad", 192, 192, 192)
+        return
+    else
+        warn("Already loaded Redline")
+        return
+    end
+end
+
 -- { The funny } --
 pcall(function()
     -- Some shitter exploits error on this
@@ -71,8 +82,10 @@ local rgb,hsv,c3n = Color3.fromRGB, Color3.fromHSV, Color3.new
 local dim2off, dim2sca, dim2 = UDim2.fromOffset, UDim2.fromScale, UDim2.new
 -- Instances
 local inst = Instance.new
--- Vector3s
+-- Vectors
 local vec3, vec2 = Vector3.new, Vector2.new
+-- CFrames
+local cfn = CFrame.new
 -- Task
 local wait, delay, spawn = task.wait, task.delay, task.spawn
 -- Math
@@ -319,7 +332,7 @@ local ui = {} do
         w_Tooltip.TextColor3 = colors['text1']
         w_Tooltip.TextXAlignment = 'Left'
         w_Tooltip.TextYAlignment = 'Top'
-        w_Tooltip.TextSize = 21
+        w_Tooltip.TextSize = 17
         w_Tooltip.Text = ""
         w_Tooltip.TextWrapped = true
         w_Tooltip.Position = dim2off(-1, 18)
@@ -340,15 +353,13 @@ local ui = {} do
         __.Parent = w_Tooltip
         
         w_Tooltip:GetPropertyChangedSignal("Text"):Connect(function() 
-            w_Tooltip.TextSize = 19
             w_Tooltip.Size = dim2off(175,25)
             local n = dim2off(0,5)
             for i = 1, 25 do 
-                if (w_Tooltip.TextFits) then break end
                 w_Tooltip.Size += n
+                if (w_Tooltip.TextFits) then break end
             end
             
-            w_Tooltip.TextSize = 17
         end)
     end
     
@@ -456,6 +467,7 @@ local ui = {} do
                 else
                     ModListDisable(self.Name)
                 end
+                return self 
             end
             base_class.module_toggle_enable = function(self) 
                 self.OToggled = true
@@ -466,6 +478,7 @@ local ui = {} do
                 twn(self.Effect, {Size = s1}, true)
                 
                 ModListEnable(self.Name)
+                return self 
             end
             base_class.module_toggle_disable = function(self) 
                 self.OToggled = false
@@ -476,6 +489,7 @@ local ui = {} do
                 twn(self.Effect, {Size = s2}, true)
                 
                 ModListDisable(self.Name)
+                return self
             end
             base_class.module_getstate_self = function(self) return self.OToggled end
             base_class.module_getstate_menu = function(self) return self.MToggled end
@@ -508,6 +522,7 @@ local ui = {} do
                 
                 self.Toggled = t
                 twn(self.Icon, {BackgroundTransparency = t and 0 or 1})
+                return self
             end 
             base_class.setting_toggle_getstate = function(self) 
                 return self.Toggled
@@ -528,8 +543,8 @@ local ui = {} do
                         label.Text = "Hotkey: "..io.KeyCode.Name
                         
                         -- As scuffed as this is, it works
-                        -- To prevent the module being bound from immediately toggling, a 0.03s delay is done
-                        delay(0.03, function()
+                        -- To prevent the module being bound from immediately toggling, a short delay is made
+                        delay(0.01, function()
                             local n = self.Parent.Name
                             for i = 1, #ui_Hotkeys do 
                                 if ui_Hotkeys[i][3] == n then
@@ -561,6 +576,40 @@ local ui = {} do
             base_class.setting_modhotkey_gethotkey = function(self) 
                 return self.Hotkey
             end
+            
+            base_class.setting_hotkey_sethotkey = function(self) 
+                local label = self.Label
+                label.Text = "Press any key..."
+                
+                wait(0.01);
+                local c;
+                c = serv_uis.InputBegan:Connect(function(io,gpe)
+                    local kc = io.KeyCode
+                    local kcv = kc.Value
+                    if (kcv ~= 0) then
+                        
+                        self.Hotkey = kc
+                        label.Text = self.Name..": "..kc.Name
+                        
+                        pcall(self.Flags.HotkeySet, kc, kcv)
+                    else
+                        self.Hotkey = nil    
+                        label.Text = self.Name..": N/A"
+                    end
+                    c:Disconnect()
+                end)
+            end
+            
+            base_class.setting_hotkey_sethotkeyexplicit = function(self, kc) 
+                self.Hotkey = kc
+                self.Label.Text = self.Name..": "..kc.Name
+                return self
+            end
+            
+            base_class.setting_hotkey_gethotkey = function(self)
+                return self.Hotkey
+            end
+            
             
             base_class.setting_dropdown_getselection = function(self) 
                 return self.Selection
@@ -613,7 +662,7 @@ local ui = {} do
                     self.SliderFill.Position = dim2off(mf((cval - min) * self.Ratio), 0)
                     self.SliderAmnt.Text = self.StepFormat:format(cval)
                     
-                   pcall(self.Flags.ValueChanged, cval)
+                    pcall(self.Flags.ValueChanged, cval)
                 end
                 
                 self.CurrentVal = cval
@@ -749,8 +798,8 @@ local ui = {} do
                        m_ModuleEnableEffect2.Parent = m_ModuleEnableEffect
                       
                       m_ModuleText = inst('TextLabel')
-                      m_ModuleText.Size = dim2(1, -8, 1, 0)
-                      m_ModuleText.Position = dim2off(8, 0)
+                      m_ModuleText.Size = dim2(1, -5, 1, 0)
+                      m_ModuleText.Position = dim2off(5, 0)
                       m_ModuleText.BackgroundTransparency = 1
                       m_ModuleText.Font = 'SourceSans'
                       m_ModuleText.TextXAlignment = 'Left'
@@ -927,7 +976,7 @@ local ui = {} do
                      m_ModuleText.Parent = m_ModuleBackground
                       
                       m_ModulePadding = inst("UIPadding")
-                      m_ModulePadding.PaddingLeft = dim2off(8, 0).X
+                      m_ModulePadding.PaddingLeft = dim2off(5, 0).X
                       m_ModulePadding.Parent = m_ModuleText
                      
                      m_ModuleIcon = inst('TextLabel')
@@ -1046,8 +1095,8 @@ local ui = {} do
                       m_Highlight.Parent = m_ModuleBackground
                      
                      m_ModuleText = inst('TextLabel')
-                     m_ModuleText.Size = dim2(1, -8, 1, 0)
-                     m_ModuleText.Position = dim2off(8, 0)
+                     m_ModuleText.Size = dim2(1, -5, 1, 0)
+                     m_ModuleText.Position = dim2off(5, 0)
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.Font = 'SourceSans'
                      m_ModuleText.TextXAlignment = 'Left'
@@ -1439,6 +1488,85 @@ local ui = {} do
             
             return H_Object   
         end
+        base_class.module_create_hotkey = function(self, text) 
+            local H_IndexOffset = self.ZIndex+1
+            
+            local h_Hotkey
+             local h_Text
+            
+            do
+                h_Hotkey = inst("Frame")
+                h_Hotkey.Size = dim2(1, 0, 0, 25)
+                h_Hotkey.BackgroundColor3 = colors['bg_setting']
+                h_Hotkey.BorderSizePixel = 0
+                h_Hotkey.ZIndex = H_IndexOffset
+                h_Hotkey.Parent = self.Menu
+                 
+                 h_Text = inst('TextLabel')
+                 h_Text.Size = dim2(1, -10, 1, 0)
+                 h_Text.Position = dim2off(10, 0)
+                 h_Text.BackgroundTransparency = 1
+                 h_Text.Font = 'SourceSans'
+                 h_Text.TextXAlignment = 'Left'
+                 h_Text.TextColor3 = colors['text1']
+                 h_Text.TextSize = 18
+                 h_Text.Text = tostring(text)..': N/A'
+                 h_Text.TextStrokeTransparency = 0
+                 h_Text.TextStrokeColor3 = colors['text3']
+                 h_Text.ZIndex = H_IndexOffset
+                 h_Text.Parent = h_Hotkey
+            end
+                
+            local H_Object = {} do 
+                H_Object.Label = h_Text
+                H_Object.Hotkey = nil
+                
+                H_Object.Parent = self
+                H_Object.Tooltip = nil
+                
+                H_Object.Name = tostring(text)
+                H_Object.Flags = {}
+                H_Object.Flags['HotkeySet'] = true
+                
+                H_Object.bind = base_class.setting_hotkey_sethotkey
+                H_Object.SetHotkey = base_class.setting_hotkey_sethotkeyexplicit
+                H_Object.GetHotkey = base_class.setting_hotkey_gethotkey
+                
+                H_Object.Connect = base_class.generic_connect
+                H_Object.SetTooltip = base_class.generic_tooltip
+            end
+            
+            do
+                h_Hotkey.InputBegan:Connect(function(io) 
+                    local uitv = io.UserInputType.Value
+                    if (uitv == 0) then
+                        H_Object:bind()
+                        return
+                    end
+                end)
+                
+                h_Hotkey.MouseEnter:Connect(function() 
+                    h_Hotkey.BackgroundColor3 = colors['bg_setting-b']
+                    
+                    local tt = H_Object.Tooltip
+                    if (tt) then
+                        w_Tooltip.Text = tt
+                        w_TooltipHeader.Text = H_Object.Name
+                        w_TooltipHeader.Visible = true
+                    end
+                end)
+                
+                h_Hotkey.MouseLeave:Connect(function() 
+                    h_Hotkey.BackgroundColor3 = colors['bg_setting']
+                    
+                    if (w_Tooltip.Text == H_Object.Tooltip) then
+                        w_TooltipHeader.Visible = false
+                    end
+                end)
+            end
+            
+            return H_Object   
+        end
         base_class.module_create_slider = function(self, text, args) 
             text = tostring(text)
             
@@ -1549,7 +1677,7 @@ local ui = {} do
                 S_Object.SliderSize = s_SliderBarBg.AbsoluteSize.X
                 
                 S_Object.CurrentVal = args['cur']
-                S_Object.PreviousVal = args['cur']
+                S_Object.PreviousVal = nil
                 S_Object.Min = args['min']
                 S_Object.Max = args['max']
                 S_Object.Step = args['step']
@@ -1571,6 +1699,9 @@ local ui = {} do
                 S_Object.Connect = base_class.generic_connect
                 S_Object.SetTooltip = base_class.generic_tooltip
             end
+            
+            S_Object:SetValue(args['cur'])
+            
             do
                 s_Slider.MouseEnter:Connect(function() 
                     s_Slider.BackgroundColor3 = colors['bg_setting-b']
@@ -1637,8 +1768,8 @@ local ui = {} do
                 o_Option.Parent = self.Menu
                  
                  o_Text = inst('TextLabel')
-                 o_Text.Size = dim2(1, -10, 1, 0)
-                 o_Text.Position = dim2off(10, 0)
+                 o_Text.Size = dim2(1, -15, 1, 0)
+                 o_Text.Position = dim2off(15, 0)
                  o_Text.BackgroundTransparency = 1
                  o_Text.Font = 'SourceSans'
                  o_Text.TextXAlignment = 'Left'
@@ -1902,6 +2033,8 @@ local ui = {} do
         colors = nil
         shadow,getnext,stroke,round,uierror = nil
         ui_Menus = nil
+        
+        _G.RLLoaded = false
     end
     function ui:GetModules() 
         return ui_Modules
@@ -1996,12 +2129,14 @@ local cons = {}
 local l_plr = serv_players.LocalPlayer
 local l_chr = l_plr.Character
 local l_hum = l_chr:FindFirstChild("Humanoid")
-local l_rp = l_chr:FindFirstChild("HumanoidRootPart")
+local l_humrp = l_chr:FindFirstChild("HumanoidRootPart")
+
+local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass("Camera")
 
 cons['chr'] = l_plr.CharacterAdded:Connect(function(c) 
     l_chr = c
     l_hum = c:WaitForChild("Humanoid",3)
-    l_rp = c:WaitForChild("HumanoidRootPart",3)
+    l_humrp = c:WaitForChild("HumanoidRootPart",3)
 end)
 
 -- Every single player 
@@ -2061,6 +2196,13 @@ end
 
 cons['p1'] = serv_players.PlayerAdded:Connect(addplr)
 cons['p2'] = serv_players.PlayerRemoving:Connect(remplr)
+cons['cam'] = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function() 
+    local cc = workspace.CurrentCamera
+    if not cc then
+        cc = workspace:FindFirstChildOfClass("Camera")
+    end
+    l_cam = cc
+end)
 for i,p in ipairs(serv_players:GetChildren()) do 
     addplr(p)
 end
@@ -2123,7 +2265,7 @@ local m_combat = ui:CreateMenu('Combat') do
     -- Antiaim
     do 
         local c_aim_always = c_antiaim:AddToggle('Always spin')
-        local c_aim_mode = c_antiaim:AddDropdown('Anti-aim mode')
+        local c_aim_mode = c_antiaim:AddDropdown('Anti-aim mode', true)
         c_aim_mode:SetTooltip('The mode Anti-aim uses')
         c_aim_always:SetTooltip('Spins while not moving')
         
@@ -2195,15 +2337,19 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
+    local p_among       = m_player:AddMod('Amongus') -- turns into amongus
     local p_antiafk     = m_player:AddMod('Anti-AFK') -- Anti AFK w/ walk around modes and generic getconnections:Disable mode
     local p_antifling   = m_player:AddMod('Anti-fling') -- Prevents skids from flinging you
     local p_antiwarp    = m_player:AddMod('Anti-warp') -- Prevents you from being teleported backwards, has a lerp setting
     local p_autoclick   = m_player:AddMod('Auto clicker') -- Auto clicker
-    local p_tools       = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
+    local p_fancy       = m_player:AddMod('Fancy chat') -- Fancy chat
+    local p_flashback   = m_player:AddMod('Flashback')
     local p_logs        = m_player:AddMod('Logs') -- Join and chat logs
     local p_pathfind    = m_player:AddMod('Pathfinder') -- Does some funny stuff for pathing
     local p_radar       = m_player:AddMod('Radar') -- Radar for other players
     local p_respawn     = m_player:AddMod('Respawn') -- Better version of resetting, can fix some glitches that come w/ reanimations
+    local p_tools       = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
+    local p_tweaks      = m_player:AddMod('Game tweaks') -- Lets you force enable stuff
     
     -- Anti afk
     do 
@@ -2233,7 +2379,7 @@ local m_player = ui:CreateMenu('Player') do
             end
             if (p == 'Walk around') then
                 spawn(function() 
-                    local base = l_rp.Position
+                    local base = l_humrp.Position
                     while (p_antiafk:IsEnabled()) do 
                         print(wait(mr()*8))
                         l_hum:MoveTo(base + vec3(
@@ -2272,7 +2418,43 @@ local m_player = ui:CreateMenu('Player') do
             p_antifling_mode:AddOption('Teleport'):SetTooltip('Teleports you away from them. Very funny to use but you can still be flung')
         end
     end
+    -- Antiwarp
+    do end
+    -- Autoclick
+    do 
+        p_autoclick:AddHotkey()
     
+    end 
+    -- Flashback
+    do 
+        local flash_delay = p_flashback:AddSlider("Delay", {min=0,max=2,cur=0,step=0.1})
+        flash_delay:SetTooltip('How long to wait before teleporting you back')
+        
+        local fb_con
+        local resp_con
+        
+        p_flashback:Connect("Enabled", function() 
+            
+            local function bind(h) 
+                h.Died:Connect(function() 
+                    local pos = l_humrp.CFrame
+                    l_plr.CharacterAdded:Wait()
+                    delay(flash_delay:GetValue(), function() l_humrp.CFrame = pos end)
+                end)
+            end
+            
+            resp_con = l_plr.CharacterAdded:Connect(function() 
+                wait()
+                bind(l_hum)
+            end)
+            
+            bind(l_hum)
+        end)
+        p_flashback:Connect("Disabled", function() 
+            fb_con:Disconnect()
+            resp_con:Disconnect()
+        end)
+    end
     -- Respawn
     do 
         p_respawn:Connect("Enabled", function() 
@@ -2280,15 +2462,19 @@ local m_player = ui:CreateMenu('Player') do
         end)
     end
     
+    p_among:SetTooltip('Turns you into an among us character')
     p_antiafk:SetTooltip('Prevents you from being disconnected due to idling for too long')
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and check rates, as well as a lerp')
     p_autoclick:SetTooltip('Standard autoclicker')
-    p_tools:SetTooltip('Lets you equip and unequip multiple tools at once')
+    p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+    p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
     p_logs:SetTooltip('Displays logs for player joins, leaves, and messages')
     p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of ressetting, can fix some glitches with reanimations')
+    p_tools:SetTooltip('Lets you equip and unequip multiple tools at once')
+    p_tweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
 end
 local m_movement = ui:CreateMenu('Movement') do 
     local m_airjump   = m_movement:AddMod('Air jump') -- Lets you jump in air
@@ -2308,15 +2494,218 @@ local m_movement = ui:CreateMenu('Movement') do
     local m_step      = m_movement:AddMod('Step') -- Automatically teleports you on top of parts in front of you
     local m_velocity  = m_movement:AddMod('Velocity') -- Limits velocity or disables it
     
+    -- Airjump
+    do 
+        local mode = m_airjump:AddDropdown('Airjump mode',true)
+        mode:AddOption('Jump'):SetTooltip('Normal mode. If the game has something to prevent jumps, this will not work'):Select()
+        mode:AddOption('Velocity'):SetTooltip('Changes your velocity. Bypasses jump prevention, but this is not as realistic as actually jumping')
+        local velmount = m_airjump:AddSlider('Velocity amount', {min=-500,max=500,cur=70})
+        
+        local vel = 35
+        velmount:Connect("ValueChanged",function(v)vel=v;end)
+        local ajcon
+        
+        m_airjump:Connect("Enabled", function() 
+            if (mode:GetSelection() == 'Jump') then
+                if gpe then return end
+                ajcon = serv_uis.InputBegan:Connect(function(io, gpe) 
+                    if (io.KeyCode.Value == 32) then
+                        l_hum:ChangeState(3)
+                    end
+                end)
+            else
+                ajcon = serv_uis.InputBegan:Connect(function(io, gpe) 
+                    if gpe then return end 
+                    if (io.KeyCode.Value == 32) then
+                        l_humrp.Velocity = vec3(0, vel, 0)
+                    end
+                end)
+            end
+        end)
+    
+        m_airjump:Connect("Disabled", function() 
+            ajcon:Disconnect()
+        end)
+        
+        mode:Connect("SelectionChanged",function() 
+            if (m_airjump:IsEnabled()) then
+                m_airjump:Disable() 
+                m_airjump:Enable()
+            end
+        end)
+        
+        mode:SetTooltip('Mode for Airjump to use')
+        velmount:SetTooltip('Amount to set your velocity to for the Velocity mode')
+    end
+    
     -- Speed
     do 
+        local mode = m_speed:AddDropdown('Mode',true)
+        mode:AddOption('Standard'):SetTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
+        mode:AddOption('Velocity'):SetTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
+        mode:AddOption('Bhop'):SetTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
+        mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
+        mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
         
+        local speedslider = m_speed:AddSlider('Speed',{min=0,max=100,cur=50,step=0.1})
+        local speed = 50
+        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        local part
+        local scon
+        
+        local ev = serv_rs.Heartbeat
+        
+        m_speed:Connect("Enabled",function() 
+            local mode = mode:GetSelection()
+            
+            ratio(l_hum.Changed)
+            ratio(l_hum:GetPropertyChangedSignal("Jump"))
+            ratio(l_humrp.Changed)
+            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            
+            
+            if (scon) then scon:Disconnect() scon = nil end
+            
+            if (mode == 'Standard') then
+                scon = ev:Connect(function(dt) 
+                    l_humrp.CFrame += l_hum.MoveDirection * (5 * dt * speed)
+                end)
+            elseif (mode == 'Velocity') then
+                scon = ev:Connect(function(dt) 
+                    l_humrp.Velocity += l_hum.MoveDirection * (5 * dt * speed)
+                end)
+            elseif (mode == 'Bhop') then
+                scon = serv_rs.RenderStepped:Connect(function(dt) 
+                    local md = l_hum.MoveDirection
+                    
+                    l_humrp.Velocity += md * (5 * dt * speed)
+                    l_hum.Jump = not (md.Magnitude < 0.01 and true or false)
+                end)
+            elseif (mode == 'Part') then
+                part = inst("Part")
+                part.Transparency = 0.8
+                part.Size = vec3(4,4,1)
+                part.CanTouch = false
+                part.CanCollide = true
+                part.Anchored = false
+                part.Name = getnext()
+                part.Parent = workspace
+                scon = ev:Connect(function(dt) 
+                    local md = l_hum.MoveDirection
+                    local p = l_humrp.Position
+                    
+                    part.CFrame = cfn(p-(md), p)
+                    part.Velocity = md * (dt * speed * 1200)
+                    
+                    l_hum:ChangeState(8)
+                end)
+            elseif (mode == 'WalkSpeed') then
+                scon = ev:Connect(function() 
+                    l_hum.WalkSpeed = speed
+                end)
+            end
+        end)
+        
+        m_speed:Connect("Disabled",function() 
+            if (scon) then scon:Disconnect() scon = nil end
+            if (part) then part:Destroy() end
+            
+            unratio(l_hum.Changed)
+            unratio(l_hum:GetPropertyChangedSignal("Jump"))
+            unratio(l_humrp.Changed)
+            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+        end)
+        
+        mode:Connect("SelectionChanged",function() 
+            if (m_speed:IsEnabled()) then
+                m_speed:Disable()
+                m_speed:Enable()
+            end
+        end)
+        
+        mode:SetTooltip('Method used for the speedhack')
+        speedslider:SetTooltip('Amount of speed')
     end
     -- Noclip
     do 
         
     end
-    
+    -- Flight
+    do 
+        local ascend_h = m_flight:AddHotkey('Ascend key')
+        local descend_h = m_flight:AddHotkey('Descend key')
+        local mode = m_flight:AddDropdown('Flight Mode', true)
+        local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+        local camera = m_flight:AddToggle('Camera-based')
+        local turndir = m_flight:AddDropdown('Turn direction')
+        
+        mode:AddOption('Standard'):SetTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
+        mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')
+        mode:AddOption('Noclip'):SetTooltip('Like CFlight but you have noclip')
+        mode:AddOption('Vehicle'):SetTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
+        
+        
+        turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly'):Select()
+        turndir:AddOption('XZ'):SetTooltip('Follows the camera\'s direction on all axes but Y')
+        turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
+        turndir:AddOption('None'):SetTooltip('Doesn\'t follow the camera\'s direction')
+        
+        ascend:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
+        descend:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
+        mode:SetTooltip('The method Flight uses')
+        speed:SetTooltip('The speed of your flight')
+        camera:SetTooltip('When enabled the direction your camera faces affects your Y movement. Disabling allows you to look down / up without moving downwards / upwards')
+        turndir:SetTooltip('The direction your character faces')
+        
+        local fpart
+        local fcon
+        
+        local clvcon
+        local clv
+        
+        local ask
+        local dsk
+        
+        ascend_h:Connect("HotkeySet",function(j)ask=j;end)
+        descend_h:Connect("HotkeySet",function(k)dsk=k;end)
+        local speed = 30
+        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        
+        m_flight:Connect("Enabled", function()
+            clv = l_cam.CFrame.LookVector 
+            clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                clv = l_cam.CFrame.LookVector 
+            end)
+            
+            local curmod = mode:GetSelection()
+            local curturn = turndir:GetSelection()
+            
+            
+            if (mode == 'Standard') then
+                
+                if (curturn == 'XYZ') then
+                    
+                    fcon = serv_rs.HeartBeat:Connect(function(dt) 
+                        local cf = l_humrp.Position
+                        
+                        local up = serv_uis:IsKeyDown()
+                        
+                        l_humrp.CFrame = cfn(cf, cf + clv) * cfn()
+                    end)
+                    
+                elseif (curturn == 'XZ') then
+                    
+                elseif (curturn == 'Up') then
+                    
+                elseif (curturn == 'None') then
+                    
+                end
+            end
+        end)
+        
+    end
     
     
     m_airjump:SetTooltip('Lets you jump in air, may bypass jump restrictions')
@@ -2354,30 +2743,29 @@ local m_render = ui:CreateMenu('Render') do
     r_crosshair:SetTooltip('Crosshair configuration')
     r_esp:SetTooltip('Configurable ESP')
     r_freecam:SetTooltip('Standard freecam')
-	  r_fullbright:SetTooltip('Fullbright with different presets for different games')
+	r_fullbright:SetTooltip('Fullbright with different presets for different games')
     r_nametag:SetTooltip('Better nametags')
 end
-local m_misc = ui:CreateMenu('Misc') do 
-    local m_among      = m_misc:AddMod('Amongus') -- turns into amongus
-    local m_fancy      = m_misc:AddMod('Fancy chat') -- Fancy chat
-    local m_flashback  = m_misc:AddMod('Flashback') -- Teleport back when you die
-    local m_tweaks     = m_misc:AddMod('Game tweaks') -- Lets you force enable stuff
-    
-    
-    m_among:SetTooltip('Turns you into an among us character')
-    m_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
-    m_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
-    m_tweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
-    
-end
 local m_ui = ui:CreateMenu('UI') do 
-    local m_cmd = m_ui:AddMod('Command bar')
-    local m_hud = m_ui:AddMod('HUD')
-    local m_jeff = m_ui:AddMod('Jeff') -- Jeff
+    local u_cmd = m_ui:AddMod('Command bar')
+    local u_hud = m_ui:AddMod('HUD')
+    local u_jeff = m_ui:AddMod('Jeff') -- Jeff
     
-    m_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
-    m_hud:SetTooltip('Redline UI configuration')
-    m_jeff:SetTooltip('I forgot what this does')
+    do 
+        local a = u_jeff:AddToggle('Gamer mode')
+        a:SetTooltip('Does something epic i think')
+        
+        u_jeff:Connect("Enabled", function() 
+            if (mr() > 0.95) then
+                l_hum.Sit = a:IsEnabled()
+            end
+        end)
+    end
+    
+    
+    u_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
+    u_hud:SetTooltip('Redline UI configuration')
+    u_jeff:SetTooltip('I forgot what this does')
 end
 local m_server = ui:CreateMenu('Server') do 
     local s_rejoin = m_server:AddMod('Rejoin', 'Button')
@@ -2401,7 +2789,7 @@ local m_integrations = ui:CreateMenu('Integrations') do
     local m_rpc = m_integrations:AddMod('Discord RPC') -- Discord RPC stuff
 	
     m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
-    m_rpc:SetTooltip('Discord Rich Presence integration. Show your friends how you\'re doing funky stuff')
+    m_rpc:SetTooltip('Discord Rich Presence integration')
 end
 local m_search = ui:CreateMenu('Search') do 
     local _ = m_search:AddMod('Enter module name', 'Textbox')
@@ -2432,3 +2820,5 @@ local m_search = ui:CreateMenu('Search') do
         end
     end)
 end
+
+_G.RLLoaded = true
