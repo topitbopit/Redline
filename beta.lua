@@ -524,6 +524,24 @@ local ui = {} do
                 twn(self.Icon, {BackgroundTransparency = t and 0 or 1})
                 return self
             end 
+            base_class.setting_toggle_enable = function(self) 
+                self.Toggled = true
+                
+                pcall(self.Flags.Toggled, true)
+                pcall(self.Flags.Enabled)
+                
+                twn(self.Icon, {BackgroundTransparency = 0})
+                return self
+            end 
+            base_class.setting_toggle_disable = function(self) 
+                self.Toggled = false
+                
+                pcall(self.Flags.Toggled, false)
+                pcall(self.Flags.Disabled)
+                
+                twn(self.Icon, {BackgroundTransparency = 1})
+                return self
+            end 
             base_class.setting_toggle_getstate = function(self) 
                 return self.Toggled
             end
@@ -595,6 +613,8 @@ local ui = {} do
                     else
                         self.Hotkey = nil    
                         label.Text = self.Name..": N/A"
+                        
+                        pcall(self.Flags.HotkeySet, nil, 0)
                     end
                     c:Disconnect()
                 end)
@@ -1253,6 +1273,8 @@ local ui = {} do
                 T_Object.Name = text
                 
                 T_Object.Toggle = base_class.setting_toggle_self
+                T_Object.Disable = base_class.setting_toggle_disable
+                T_Object.Enable = base_class.setting_toggle_enable
                 T_Object.GetState = base_class.setting_toggle_getstate
                 
                 T_Object.Connect = base_class.generic_connect
@@ -2103,7 +2125,7 @@ local function ratio(signal)
         local connection = average[i]
         local confunc = connection.Function
         
-        if (islclosure(confunc)) then
+        if (confunc and islclosure(confunc)) then
             if (not isexecclosure(confunc)) then
                 connection:Disable()
             end
@@ -2139,10 +2161,12 @@ cons['chr'] = l_plr.CharacterAdded:Connect(function(c)
     l_humrp = c:WaitForChild("HumanoidRootPart",3)
 end)
 
+local rlfriends = {}
+
 -- Every single player 
-local p_players = {}
+local p_players_all = {}
 -- Every player minus friends and local player 
-local p_players_nolfr = {}
+local p_players = {}
 
 local function addplr(p) 
     local ptable = {}
@@ -2160,6 +2184,9 @@ local function addplr(p)
     end)
     
     ins(p_players_all, ptable)
+    if not (p == l_plr or rlfriends[p.Name]) then
+        ins(p_players, ptable)
+    end
 end 
 local function remplr(p) 
     -- Player left, find the player object in each table
@@ -2178,8 +2205,8 @@ local function remplr(p)
         end
     end
     -- Next check the other table
-    for i = 1, #p_players_nolfr do 
-        local plr = p_players_nolfr[i]
+    for i = 1, #p_players_all do 
+        local plr = p_players_all[i]
         -- Check for matching player objects
         if (plr.plr == p) then
             local cons = plr.cons
@@ -2337,17 +2364,18 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
-    local p_among       = m_player:AddMod('Amongus') -- turns into amongus
+    --local p_among       = m_player:AddMod('Amongus') -- turns into amongus
     local p_antiafk     = m_player:AddMod('Anti-AFK') -- Anti AFK w/ walk around modes and generic getconnections:Disable mode
     local p_antifling   = m_player:AddMod('Anti-fling') -- Prevents skids from flinging you
     local p_antiwarp    = m_player:AddMod('Anti-warp') -- Prevents you from being teleported backwards, has a lerp setting
     local p_autoclick   = m_player:AddMod('Auto clicker') -- Auto clicker
     local p_fancy       = m_player:AddMod('Fancy chat') -- Fancy chat
-    local p_flashback   = m_player:AddMod('Flashback')
+    local p_flashback   = m_player:AddMod('Flashback') -- Teleport back after you respawn
     local p_logs        = m_player:AddMod('Logs') -- Join and chat logs
     local p_pathfind    = m_player:AddMod('Pathfinder') -- Does some funny stuff for pathing
     local p_radar       = m_player:AddMod('Radar') -- Radar for other players
     local p_respawn     = m_player:AddMod('Respawn') -- Better version of resetting, can fix some glitches that come w/ reanimations
+    local p_slippery    = m_player:AddMod('Slippery') -- Makes your character act like you're running on ice 
     local p_tools       = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
     local p_tweaks      = m_player:AddMod('Game tweaks') -- Lets you force enable stuff
     
@@ -2418,29 +2446,63 @@ local m_player = ui:CreateMenu('Player') do
             mode:AddOption('Noclip'):SetTooltip('Activates noclip. However, it\'s only good at stopping weak flings, and you will still be slightly pushed around')
             mode:AddOption('Teleport'):SetTooltip('Teleports you away from them. Very funny to use but you\'ll likely be flung')
         end
-	
-	local pcon
-	p_antifling:Connect("Enabled", function() 
+        local distance = 25
+	    local pcon
+        
+        p_antifling:AddSlider('Distance',{min=1,max=50,cur=25,step=0.1}):SetTooltip('How close a player has to be to you to trigger the antifling'):Connect("ValueChanged",function(v)distance=v;end)
+        
+        
+	    p_antifling:Connect("Enabled", function() 
             local m = mode:GetSelection()
-	    if (m == 'Anchor') then
-		pcon = serv_rs.Heartbeat:Connect(function() 
-		    for i = 1, #				
-		end)
-	    end
-	end)
-	p_antlfling:Connect("Disabled", function() 
-	    if (pcon) then pcon:Disconnect() pcon = nil end		
-	end)
-	
-	
-	mode:Connect("SelectionChanged", function()
-	    if (p_antifling:IsEnabled()) then
-	        p_antifling:Disable()
-	        p_antifling:Enable()
-	    end
-	end)
-	
-	mode:SetTooltip('The method Antifling uses.')
+            if (m == 'Anchor') then
+                pcon = serv_rs.Heartbeat:Connect(function() 
+                    local self_pos = l_humrp.Position
+                    l_humrp.Anchored = false
+                    for i = 1, #p_players do 
+                        local plr = p_players[i]
+                        if ((plr.rp.Position - self_pos).Magnitude) < distance then
+                            l_humrp.Anchored = true
+                            break
+                        end
+                    end		
+                end)
+            elseif (m == 'Anchor (moveable)') then
+                
+            elseif (m == 'Noclip') then
+                pcon = serv_rs.Heartbeat:Connect(function() 
+                    local self_pos = l_humrp.Position
+                    l_humrp.Anchored = false
+                    for i = 1, #p_players do 
+                        local plr = p_players[i]
+                        if ((plr.rp.Position - self_pos).Magnitude) < distance then
+                            local c = l_chr:GetChildren()
+                            for i = 1, #c do 
+                                local v = c[i]
+                                if (v:IsA("BasePart")) then
+                                    v.CanCollide = false    
+                                end
+                            end
+                            break
+                        end
+                    end		
+                end)
+            elseif (m == 'Teleport') then
+                
+            end
+	    end)
+	    p_antifling:Connect("Disabled", function() 
+	        if (pcon) then pcon:Disconnect() pcon = nil end		
+	    end)
+    
+    
+	    mode:Connect("SelectionChanged", function()
+	        if (p_antifling:IsEnabled()) then
+	            p_antifling:Disable()
+	            p_antifling:Enable()
+	        end
+	    end)
+    
+	    mode:SetTooltip('The method Antifling uses.')
     end
     -- Antiwarp
     do end
@@ -2486,7 +2548,7 @@ local m_player = ui:CreateMenu('Player') do
         end)
     end
     
-    p_among:SetTooltip('Turns you into an among us character')
+    --p_among:SetTooltip('Turns you into an among us character')
     p_antiafk:SetTooltip('Prevents you from being disconnected due to idling for too long')
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and check rates, as well as a lerp')
@@ -2514,10 +2576,11 @@ local m_movement = ui:CreateMenu('Movement') do
     local m_noslow    = m_movement:AddMod('Noslowdown') -- Prevents you from being slowed down
     local m_parkour   = m_movement:AddMod('Parkour') -- Jumps when you reach the end of a block
     local m_phase     = m_movement:AddMod('Phase') -- Like TPbot, but more for movement rather than killing people
+    local m_safewalk  = m_movement:AddMod('Safewalk') -- Prevents you from walking off parts. Has several modes, like 0 walkspeed or anchor.
     local m_speed     = m_movement:AddMod('Speed') -- Speedhacks w/ various bypasses and settings
+    local m_spider    = m_movement:AddMod('Spider') -- Automatically walk up parts when you touch them. Like Step, but smoother.
     local m_step      = m_movement:AddMod('Step') -- Automatically teleports you on top of parts in front of you
     local m_velocity  = m_movement:AddMod('Velocity') -- Limits velocity or disables it
-    
     -- Airjump
     do 
         local mode = m_airjump:AddDropdown('Airjump mode',true)
@@ -2526,8 +2589,9 @@ local m_movement = ui:CreateMenu('Movement') do
         local velmount = m_airjump:AddSlider('Velocity amount', {min=-500,max=500,cur=70})
         
         local vel = 35
-        velmount:Connect("ValueChanged",function(v)vel=v;end)
         local ajcon
+        
+        velmount:Connect("ValueChanged",function(v)vel=v;end)
         
         m_airjump:Connect("Enabled", function() 
             if (mode:GetSelection() == 'Jump') then
@@ -2587,7 +2651,6 @@ local m_movement = ui:CreateMenu('Movement') do
             ratio(l_humrp.Changed)
             ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
             ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
-            
             
             if (scon) then scon:Disconnect() scon = nil end
             
@@ -2661,74 +2724,161 @@ local m_movement = ui:CreateMenu('Movement') do
         local ascend_h = m_flight:AddHotkey('Ascend key')
         local descend_h = m_flight:AddHotkey('Descend key')
         local mode = m_flight:AddDropdown('Flight Mode', true)
+        local turndir = m_flight:AddDropdown('Turn direction')
         local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
         local camera = m_flight:AddToggle('Camera-based')
-        local turndir = m_flight:AddDropdown('Turn direction')
+        
         
         mode:AddOption('Standard'):SetTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
         mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')
-        mode:AddOption('Noclip'):SetTooltip('Like CFlight but you have noclip')
         mode:AddOption('Vehicle'):SetTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
         
         
-        turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly'):Select()
+        turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly. <b>This is the typical option in every other flight script</b>'):Select()
         turndir:AddOption('XZ'):SetTooltip('Follows the camera\'s direction on all axes but Y')
         turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
-        turndir:AddOption('None'):SetTooltip('Doesn\'t follow the camera\'s direction')
+        turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
         
-        ascend:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
-        descend:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
-        mode:SetTooltip('The method Flight uses')
-        speed:SetTooltip('The speed of your flight')
-        camera:SetTooltip('When enabled the direction your camera faces affects your Y movement. Disabling allows you to look down / up without moving downwards / upwards')
-        turndir:SetTooltip('The direction your character faces')
+        local fpart -- flight part 
+        local fcon -- flight connection
         
-        local fpart
-        local fcon
+        local clvcon -- connection to update camera look vector
+        local clv -- camera look vector
+        local normclv -- normal unmodified one
         
-        local clvcon
-        local clv
+        local ask = Enum.KeyCode.E-- keycode for ascension
+        local dsk = Enum.KeyCode.Q-- keycode for descension
         
-        local ask
-        local dsk
+        local speed = 30 -- speed 
         
-        ascend_h:Connect("HotkeySet",function(j)ask=j;end)
-        descend_h:Connect("HotkeySet",function(k)dsk=k;end)
-        local speed = 30
+        local cambased = true 
+        camera:Enable()
+        
+        ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
+        descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
+        camera:Connect("Toggled",function(t)
+            cambased=t;
+            if (m_flight:IsEnabled()) then 
+                m_flight:Disable()
+                m_flight:Enable() 
+            end
+        end)
+        turndir:Connect("SelectionChanged",function() 
+            if (m_flight:IsEnabled()) then 
+                m_flight:Disable()
+                m_flight:Enable() 
+            end
+        end)
+        mode:Connect("SelectionChanged",function() 
+            if (m_flight:IsEnabled()) then 
+                m_flight:Disable()
+                m_flight:Enable() 
+            end
+        end)
         speedslider:Connect("ValueChanged",function(v)speed=v;end)
         
         m_flight:Connect("Enabled", function()
             clv = l_cam.CFrame.LookVector 
-            clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
-                clv = l_cam.CFrame.LookVector 
-            end)
+            normclv = clv
+            
+            ratio(l_humrp.Changed)
+            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
             
             local curmod = mode:GetSelection()
             local curturn = turndir:GetSelection()
             
+            local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
             
-            if (mode == 'Standard') then
-                
-                if (curturn == 'XYZ') then
-                    
-                    fcon = serv_rs.HeartBeat:Connect(function(dt) 
-                        local cf = l_humrp.Position
-                        
-                        local up = serv_uis:IsKeyDown()
-                        
-                        l_humrp.CFrame = cfn(cf, cf + clv) * cfn()
+            
+            if (curturn == 'XYZ') then 
+                clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                    normclv = l_cam.CFrame.LookVector
+                    clv = normclv
+                end)
+            elseif (curturn == 'XZ') then
+                clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                    normclv = l_cam.CFrame.LookVector
+                    clv = vec3(normclv.X, 0, normclv.Z)
+                end)
+            elseif (curturn == 'Up') then
+                if (cambased) then
+                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        normclv = l_cam.CFrame.LookVector
                     end)
-                    
-                elseif (curturn == 'XZ') then
-                    
-                elseif (curturn == 'Up') then
-                    
-                elseif (curturn == 'None') then
-                    
                 end
+                
+                clv = upp
+            elseif (curturn == 'Down') then
+                if (cambased) then
+                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        normclv = l_cam.CFrame.LookVector
+                    end)
+                end
+                
+                clv = downp
+            end
+            
+            
+            
+            
+            if (curmod == 'Standard') then
+                local base = l_humrp.CFrame
+                
+                
+                if (cambased) then
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        l_hum:ChangeState(1)
+                        l_humrp.Velocity = vec3(0,0,0)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        local b = base.Position
+                        l_humrp.CFrame = cfn(b, b + clv)
+                    end)
+                else
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        l_hum:ChangeState(1)
+                        l_humrp.Velocity = vec3(0,0,0)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        local b = base.Position
+                        l_humrp.CFrame = cfn(b, b + clv)
+                    end)
+                end
+            elseif (curmod == '') then
             end
         end)
         
+        m_flight:Connect("Disabled",function() 
+            if (fcon) then fcon:Disconnect() fcon = nil end 
+            if (clvcon) then clvcon:Disconnect() clvcon = nil end
+            if (fpart) then fpart:Destroy() fpart = nil end
+            l_hum:ChangeState(8)
+            
+            unratio(l_humrp.Changed)
+            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+        end)
+        
+        
+        ascend_h:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
+        descend_h:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
+        mode:SetTooltip('The method Flight uses')
+        speedslider:SetTooltip('The speed of your flight')
+        camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other flight script</b>')
+        turndir:SetTooltip('The direction your character faces')
     end
     
     
@@ -2759,7 +2909,7 @@ local m_render = ui:CreateMenu('Render') do
     local r_freecam     = m_render:AddMod('Freecam') -- Freecam w/ smooth flight and hard flight
     local r_fullbright  = m_render:AddMod('Fullbright') -- Fullbright w/ different modes
     local r_nametag     = m_render:AddMod('Nametags') -- Better nametags
-    
+    local r_zoom        = m_render:AddMod('Zoom') -- Binoculars
     
     r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
     r_bread:SetTooltip('Leaves a trail behind')
