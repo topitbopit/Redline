@@ -18,7 +18,7 @@ It is designed after and inspired by the many popular hacked clients of Minecraf
 
 ## Script
 ```lua
-loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty cool')()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty epic')()
 ```
 
 ## Why use it?
