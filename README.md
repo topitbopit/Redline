@@ -86,6 +86,8 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Low gravity or no gravity*
 **High jump**
 *Lets you jump higher*
+**Ice**
+*Makes you walk like you're on ice*
 **Jesus**
 *Lets you walk over dangerous parts*
 **Jetpack**
@@ -111,9 +113,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 
 ### Render
 **Better UI**
+*Improves Roblox UIs like the chat and inventory*
 **Breadcrumbs**
+*Leaves a trail behind you*
 **Camera tweaks**
+*Modify lots of camera attributes like camnoclip, max zoom. etc)
 **Crosshair**
+*Drawing crosshair configuration*
 **ESP**
 *Standard ESP with tons of configuration*
 **Freecam**
@@ -124,3 +130,25 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Detailed nametags above every player*
 **Zoom**
 *Like Optifine zoom*
+
+### UI
+**Command bar**
+*Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*
+**Hud**
+*Enable and disable various widgets like ping, velocity, framerate, etc.*
+**Jeff**
+*I forgor what this does* :skull:
+
+### Server
+**Rejoin**
+*Rejoins the current server*
+**Serverhop**
+*Server hops to a random server*
+**Private server**
+*Server hops to the smallest server*
+
+### Integrations
+**Discord Rich Prescence**
+*Show everyone else how cool you are for using Redline*
+**Roblox Alt Manager**
+*Lets you manage and use your alts. Requires the Roblox Alt Manager program.*
