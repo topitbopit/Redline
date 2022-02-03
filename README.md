@@ -1,5 +1,6 @@
 
 
+
 ## What is Redline?
 Redline is a massive script intended for tons of customization and configuration. 
 
@@ -14,7 +15,7 @@ It is designed after and inspired by the many popular hacked clients of Minecraf
 
 >**Note that this is not for Roblox Bedwars, Roblox Skywars, or other similar games.** This is a universal script intended to work across many / all games.
 
->**Note that Redline is still in beta.** Many features may not work yet.
+>**Note that Redline is still in beta.** Many features are not working yet.
 
 ## Script
 ```lua
@@ -105,3 +106,21 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Lets you climb up parts like a spider*
 **Step**
 *Teleports you up when you walk into a part*
+**Velocity**
+*Limits or disables your velocity*
+
+### Render
+**Better UI**
+**Breadcrumbs**
+**Camera tweaks**
+**Crosshair**
+**ESP**
+*Standard ESP with tons of configuration*
+**Freecam**
+*Flight but you control your camera*
+**Fullbright**
+*Disables lighting. Has several presets that may work for different games*
+**Nametags**
+*Detailed nametags above every player*
+**Zoom**
+*Like Optifine zoom*
