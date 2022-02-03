@@ -40,10 +40,9 @@ pcall(function()
     
     local inf = getinfo or debug.getinfo(2)
     if (inf) then
-        if (inf.source ~= "redline is pretty cool") then
+        if (inf.source ~= "redline is pretty epic") then
             warn("Looks like you're using an older version of Redline")
-            warn("The newest script has been automatically downloaded to your workspace.")
-            warn("Replace this script with the one located at workspace/REDLINE.lua")
+            warn("Check the github to get the newest script")
             return
         end
     end
@@ -402,6 +401,7 @@ local ui = {} do
             _.TextSize = 22
             _.Text = name
             --_.Name = name
+            _.RichText = true
             _.TextTransparency = 1
             _.TextStrokeTransparency = 1
             _.TextStrokeColor3 = colors['text3']
@@ -648,7 +648,7 @@ local ui = {} do
                 if (parent.Primary) then
                     
                     local n = parent.Parent.Name 
-                    ModListModify(n, n .. " ["..self.Name.."]")
+                    ModListModify(n, n .. " <font color='#DFDFDF'>["..self.Name.."]</font>")
                 end
                 
                 twn(self.Effect, {Size = s1}, true)
@@ -2149,6 +2149,7 @@ end
 local cons = {}
 
 local l_plr = serv_players.LocalPlayer
+local l_mouse = l_plr:GetMouse()
 local l_chr = l_plr.Character
 local l_hum = l_chr:FindFirstChild("Humanoid")
 local l_humrp = l_chr:FindFirstChild("HumanoidRootPart")
@@ -2169,6 +2170,7 @@ local p_players_all = {}
 local p_players = {}
 
 local function addplr(p) 
+    --printconsole('Adding player '..p.Name, 0, 255, 255)
     local ptable = {}
     ptable['plr'] = p
     ptable['chr'] = nil
@@ -2177,19 +2179,33 @@ local function addplr(p)
     
     ptable['cons'] = {}
     
+    --printconsole('Set up the table', 128, 128, 128)
     ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
         ptable['chr'] = c
         ptable['hum'] = c:WaitForChild("Humanoid", 1)
         ptable['rp'] = c:WaitForChild("HumanoidRootPart", 1)
+        --printconsole(p.Name..' respawned; Updated some vars n shit', 0, 255, 0)
     end)
+    
+    if (p.Character) then
+        ptable['chr'] = p.Character
+        ptable['hum'] = p.Character:FindFirstChild("Humanoid")
+        ptable['rp'] = p.Character:FindFirstChild("HumanoidRootPart")
+        --printconsole('Got character stuff', 128, 128, 128)
+    end
+    
     
     ins(p_players_all, ptable)
     if not (p == l_plr or rlfriends[p.Name]) then
+        --printconsole('Not blacklisted / local plr, added to player table', 0, 255, 0)
         ins(p_players, ptable)
     end
+    --printconsole('Inserted into proper tables', 128, 128, 128)
 end 
 local function remplr(p) 
+    --printconsole(p.Name..' left cleaning shit', 255, 255, 0)
     -- Player left, find the player object in each table
+    --printconsole('Clearing their player table [1]', 0, 255, 0)
     for i = 1, #p_players do 
         local plr = p_players[i]
         -- Check for matching player objects
@@ -2200,11 +2216,13 @@ local function remplr(p)
             -- Clear table and stuff
             p_players[i] = nil
             -- Remove it from the player list
+            --printconsole('Removed their player table [1]', 0, 255, 0)
             rem(p_players, i)
             break
         end
     end
     -- Next check the other table
+    --printconsole('Clearing their player table [2]', 0, 255, 0)
     for i = 1, #p_players_all do 
         local plr = p_players_all[i]
         -- Check for matching player objects
@@ -2215,6 +2233,7 @@ local function remplr(p)
             -- Clear table and stuff
             p_players_all[i] = nil
             -- Remove it from the player list
+            --printconsole('Removed their player table [2]', 0, 255, 0)
             rem(p_players_all, i)
             break
         end
@@ -2268,7 +2287,7 @@ local m_combat = ui:CreateMenu('Combat') do
         local c_aim_team   = c_aimbot:AddToggle('Team check')
         local c_aim_friend = c_aimbot:AddToggle('Friend check')
         local c_aim_lock   = c_aimbot:AddToggle('Player lock')
-        local c_aim_mode   = c_aimbot:AddDropdown('Aimbot mode',true)
+        local c_aim_mode   = c_aimbot:AddDropdown('Mode',true)
         local c_aim_smooth = c_aimbot:AddSlider('Smoothness',{min=0,max=100,cur=15,step=0.25})
         
         
@@ -2292,7 +2311,7 @@ local m_combat = ui:CreateMenu('Combat') do
     -- Antiaim
     do 
         local c_aim_always = c_antiaim:AddToggle('Always spin')
-        local c_aim_mode = c_antiaim:AddDropdown('Anti-aim mode', true)
+        local c_aim_mode = c_antiaim:AddDropdown('Mode', true)
         c_aim_mode:SetTooltip('The mode Anti-aim uses')
         c_aim_always:SetTooltip('Spins while not moving')
         
@@ -2364,24 +2383,23 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
-    --local p_among       = m_player:AddMod('Amongus') -- turns into amongus
     local p_antiafk     = m_player:AddMod('Anti-AFK') -- Anti AFK w/ walk around modes and generic getconnections:Disable mode
+    local p_anticrash   = m_player:AddMod('Anti-crash') -- Prevents game scripts from while true do end'ing you
     local p_antifling   = m_player:AddMod('Anti-fling') -- Prevents skids from flinging you
     local p_antiwarp    = m_player:AddMod('Anti-warp') -- Prevents you from being teleported backwards, has a lerp setting
     local p_autoclick   = m_player:AddMod('Auto clicker') -- Auto clicker
     local p_fancy       = m_player:AddMod('Fancy chat') -- Fancy chat
     local p_flashback   = m_player:AddMod('Flashback') -- Teleport back after you respawn
+    local p_ftools      = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
+    local p_gtweaks     = m_player:AddMod('Game tweaks') -- Lets you force enable stuff
     local p_logs        = m_player:AddMod('Logs') -- Join and chat logs
     local p_pathfind    = m_player:AddMod('Pathfinder') -- Does some funny stuff for pathing
     local p_radar       = m_player:AddMod('Radar') -- Radar for other players
     local p_respawn     = m_player:AddMod('Respawn') -- Better version of resetting, can fix some glitches that come w/ reanimations
-    local p_slippery    = m_player:AddMod('Slippery') -- Makes your character act like you're running on ice 
-    local p_tools       = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
-    local p_tweaks      = m_player:AddMod('Game tweaks') -- Lets you force enable stuff
     
     -- Anti afk
     do 
-        local p_afk_mode   = p_antiafk:AddDropdown('Anti-AFK mode', true)
+        local p_afk_mode   = p_antiafk:AddDropdown('Mode', true)
         do 
             local _ = p_afk_mode:AddOption('Standard')
             :Select()
@@ -2437,12 +2455,31 @@ local m_player = ui:CreateMenu('Player') do
             end
         end)
     end
+    -- Anticrash
+    do 
+        local sc = game:GetService("ScriptContext")
+        
+        local amnt = p_anticrash:AddSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):SetTooltip('Anti-crash sensitivity. <b>Setting this too low may mess with your game. Leave it at the default if you don\'t know what this does.</b>')
+        
+        amnt:Connect("ValueChanged",function(v) 
+            if (p_anticrash:IsEnabled()) then
+                sc:SetTimeout(v)
+            end
+        end)
+        
+        p_anticrash:Connect("Toggled",function(t) 
+            if t then
+                sc:SetTimeout(amnt:GetValue())
+            else
+                sc:SetTimeout(99)
+            end
+        end)
+    end
     -- Antifling
     do 
         local mode = p_antifling:AddDropdown('Method', true)
         do 
             mode:AddOption('Anchor'):Select():SetTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
-            mode:AddOption('Anchor (moveable)'):SetTooltip('Same as anchor but lets you move. Your characters position may not update until you unanchor')
             mode:AddOption('Noclip'):SetTooltip('Activates noclip. However, it\'s only good at stopping weak flings, and you will still be slightly pushed around')
             mode:AddOption('Teleport'):SetTooltip('Teleports you away from them. Very funny to use but you\'ll likely be flung')
         end
@@ -2460,21 +2497,20 @@ local m_player = ui:CreateMenu('Player') do
                     l_humrp.Anchored = false
                     for i = 1, #p_players do 
                         local plr = p_players[i]
-                        if ((plr.rp.Position - self_pos).Magnitude) < distance then
+                        local rp = plr.rp
+                        if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
                             l_humrp.Anchored = true
                             break
                         end
                     end		
-                end)
-            elseif (m == 'Anchor (moveable)') then
-                
+                end)                
             elseif (m == 'Noclip') then
                 pcon = serv_rs.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
-                    l_humrp.Anchored = false
                     for i = 1, #p_players do 
                         local plr = p_players[i]
-                        if ((plr.rp.Position - self_pos).Magnitude) < distance then
+                        local rp = plr.rp
+                        if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
                             local c = l_chr:GetChildren()
                             for i = 1, #c do 
                                 local v = c[i]
@@ -2487,7 +2523,17 @@ local m_player = ui:CreateMenu('Player') do
                     end		
                 end)
             elseif (m == 'Teleport') then
-                
+                pcon = serv_rs.Heartbeat:Connect(function() 
+                    local self_pos = l_humrp.Position
+                    for i = 1, #p_players do 
+                        local plr = p_players[i]
+                        local rp = plr.rp
+                        if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
+                            l_humrp.CFrame += vec3(mr(-100,100)*.1,mr(0,20)*.1,mr(-100,100)*.1)
+                            break
+                        end
+                    end		
+                end)
             end
 	    end)
 	    p_antifling:Connect("Disabled", function() 
@@ -2502,14 +2548,46 @@ local m_player = ui:CreateMenu('Player') do
 	        end
 	    end)
     
-	    mode:SetTooltip('The method Antifling uses.')
+	    mode:SetTooltip('The method Antifling uses')
     end
     -- Antiwarp
-    do end
+    do 
+        local lerpslider = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How close you should teleport back to your previous location when triggered; e.g. 1 = 100% previous, 0.5 = halfway there, etc.')
+        local distslider = p_antiwarp:AddSlider('Distance',{min=1,max=150,cur=20,step=0.1}):SetTooltip('How far you\'d have to be teleported before it gets set off')
+        local lerp = 1
+        local dist = 20
+        
+        lerpslider:Connect("ValueChanged",function(v)lerp=v;end)
+        distslider:Connect("ValueChanged",function(v)dist=v;end)
+        local con
+        local cf1 = l_humrp.CFrame
+        local cf2 = l_humrp.CFrame
+        p_antiwarp:Connect("Enabled",function() 
+            ratio(l_humrp.Changed)
+            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            cf2 = l_humrp.CFrame
+            con = serv_rs.Heartbeat:Connect(function() 
+                cf1 = l_humrp.CFrame 
+                if ((cf1.Position - cf2.Position).Magnitude > dist) then
+                    local _ = cf1:lerp(cf2, 1-lerp)
+                    cf2 = _
+                    l_humrp.CFrame = _
+                else
+                    cf2 = cf1
+                end
+            end)
+        end)
+        p_antiwarp:Connect("Disabled",function() 
+            if (con) then con:Disconnect() con=nil end
+            
+            unratio(l_humrp.Changed)
+            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+        end)
+    end
     -- Autoclick
     do 
-        p_autoclick:AddHotkey()
-    
+        p_autoclick:AddHotkey('Autoclick key')
+        
     end 
     -- Flashback
     do 
@@ -2548,25 +2626,26 @@ local m_player = ui:CreateMenu('Player') do
         end)
     end
     
-    --p_among:SetTooltip('Turns you into an among us character')
+    
     p_antiafk:SetTooltip('Prevents you from being disconnected due to idling for too long')
+    p_anticrash:SetTooltip('Prevents game scripts from while true do end\'ing you')
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
-    p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and check rates, as well as a lerp')
+    p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and lerp')
     p_autoclick:SetTooltip('Standard autoclicker')
     p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
     p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
+    p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
+    p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
     p_logs:SetTooltip('Displays logs for player joins, leaves, and messages')
     p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     p_radar:SetTooltip('Radar that displays where other players are')
-    p_respawn:SetTooltip('Better version of ressetting, can fix some glitches with reanimations')
-    p_tools:SetTooltip('Lets you equip and unequip multiple tools at once')
-    p_tweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
+    p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
 end
 local m_movement = ui:CreateMenu('Movement') do 
     local m_airjump   = m_movement:AddMod('Air jump') -- Lets you jump in air
     local m_blink     = m_movement:AddMod('Blink') -- Pseudo lagswitch
     local m_clicktp   = m_movement:AddMod('Click TP') -- Click TP
-    local m_fastfall  = m_movement:AddMod('Fast fall') -- Quick fall, can use raycasts or bodyvelocities
+    local m_fastfall  = m_movement:AddMod('Fastfall') -- Quick fall, can use raycasts or bodyvelocities
     local m_flight    = m_movement:AddMod('Flight') -- Flight w/ smooth and hard
     local m_float     = m_movement:AddMod('Float') -- Float
     local m_highjump  = m_movement:AddMod('High jump') -- Jump higher
@@ -2583,12 +2662,12 @@ local m_movement = ui:CreateMenu('Movement') do
     local m_velocity  = m_movement:AddMod('Velocity') -- Limits velocity or disables it
     -- Airjump
     do 
-        local mode = m_airjump:AddDropdown('Airjump mode',true)
-        mode:AddOption('Jump'):SetTooltip('Normal mode. If the game has something to prevent jumps, this will not work'):Select()
+        local mode = m_airjump:AddDropdown('Mode',true)
+        mode:AddOption('Jump'):SetTooltip('Simply just jumps. If the game has something to prevent jumps, this will not work'):Select()
         mode:AddOption('Velocity'):SetTooltip('Changes your velocity. Bypasses jump prevention, but this is not as realistic as actually jumping')
         local velmount = m_airjump:AddSlider('Velocity amount', {min=-500,max=500,cur=70})
         
-        local vel = 35
+        local vel = 70
         local ajcon
         
         velmount:Connect("ValueChanged",function(v)vel=v;end)
@@ -2625,7 +2704,42 @@ local m_movement = ui:CreateMenu('Movement') do
         mode:SetTooltip('Mode for Airjump to use')
         velmount:SetTooltip('Amount to set your velocity to for the Velocity mode')
     end
-    
+    -- Click tp
+    do 
+        local k = m_clicktp:AddHotkey('Teleport key'):SetTooltip('The key you have to be pressing in order to TP')
+        local key = Enum.KeyCode.LeftControl
+        k:Connect("HotkeySet",function(kc)key=kc;end)
+        k:SetHotkey(Enum.KeyCode.LeftControl)
+        
+        local mc
+        
+        m_clicktp:Connect("Toggled",function(t) 
+            if (t) then
+                local offset = vec3(0, 3, 0)
+                mc = l_mouse.Button1Down:Connect(function() 
+                    if (key) then
+                        if (serv_uis:IsKeyDown(key)) then
+                            local lv = l_humrp.CFrame.LookVector
+                            local p = l_mouse.Hit.Position + offset
+                            l_humrp.CFrame = cfn(p, p+lv)
+                        end
+                    else
+                        local lv = l_humrp.CFrame.LookVector
+                        local p = l_mouse.Hit.Position + offset
+                        l_humrp.CFrame = cfn(p, p+lv)
+                    end
+                end)
+            else
+                mc:Disconnect()
+            end
+        end)
+        
+    end
+    -- Fast fall
+    do 
+        local modedd = m_fastfall:AddDropdown('Mode'):SetTooltip('The method Fastfall uses')
+        modedd:AddOption('Raycast'):SetTooltip('Raycasts downwards, instantly teleporting you down')
+    end
     -- Speed
     do 
         local mode = m_speed:AddDropdown('Mode',true)
@@ -2723,7 +2837,7 @@ local m_movement = ui:CreateMenu('Movement') do
     do 
         local ascend_h = m_flight:AddHotkey('Ascend key')
         local descend_h = m_flight:AddHotkey('Descend key')
-        local mode = m_flight:AddDropdown('Flight Mode', true)
+        local mode = m_flight:AddDropdown('Method', true)
         local turndir = m_flight:AddDropdown('Turn direction')
         local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
         local camera = m_flight:AddToggle('Camera-based')
@@ -2739,9 +2853,12 @@ local m_movement = ui:CreateMenu('Movement') do
         turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
         turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
         
-        local fpart -- flight part 
+        local fi1 -- flight inst 1 
+        local fi2 -- flight inst 2  
         local fcon -- flight connection
         
+        
+        local cscon -- camera subject connection (vehicle fly)
         local clvcon -- connection to update camera look vector
         local clv -- camera look vector
         local normclv -- normal unmodified one
@@ -2833,7 +2950,7 @@ local m_movement = ui:CreateMenu('Movement') do
                         local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
                         
                         l_hum:ChangeState(1)
-                        l_humrp.Velocity = vec3(0,0,0)
+                        l_humrp.Velocity = nonep
                         
                         base += (l_hum.MoveDirection * dt * 3 * speed)
                         base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -2848,7 +2965,7 @@ local m_movement = ui:CreateMenu('Movement') do
                         local down = serv_uis:IsKeyDown(dsk)
                         
                         l_hum:ChangeState(1)
-                        l_humrp.Velocity = vec3(0,0,0)
+                        l_humrp.Velocity = nonep
                         
                         base += (l_hum.MoveDirection * dt * 3 * speed)
                         base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -2857,19 +2974,141 @@ local m_movement = ui:CreateMenu('Movement') do
                         l_humrp.CFrame = cfn(b, b + clv)
                     end)
                 end
-            elseif (curmod == '') then
+            elseif (curmod == 'Smooth') then
+                local base = l_humrp.CFrame
+                
+                fi1 = inst("Part")
+                fi1.CFrame = base
+                fi1.Transparency = 0.8
+                fi1.CanCollide = false
+                fi1.CanTouch = false
+                fi1.Anchored = false
+                fi1.Size = vec3(1, 1, 1)
+                fi1.Parent = workspace
+                
+                local pos = inst("BodyPosition")
+                pos.Position = base.Position
+                pos.D = 1900
+                pos.P = 125000
+                pos.MaxForce = vec3(9e9, 9e9, 9e9)
+                pos.Parent = fi1
+                local gyro = inst("BodyGyro")
+                gyro.D = 1900
+                gyro.P = 125000
+                gyro.MaxTorque = vec3(9e9, 9e9, 9e9)
+                gyro.Parent = fi1
+                
+                if (cambased) then
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        l_hum:ChangeState(1)
+                        l_humrp.Velocity = nonep
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        local b = base.Position
+                        
+                        pos.Position = b
+                        gyro.CFrame = cfn(b, b + clv)
+                        
+                        l_humrp.CFrame = fi1.CFrame 
+                    end)
+                else
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        l_hum:ChangeState(1)
+                        l_humrp.Velocity = nonep
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        local b = base.Position
+                        pos.Position = b
+                        gyro.CFrame = cfn(b, b + clv)
+                        
+                        l_humrp.CFrame = fi1.CFrame                     
+                    end)
+                end
+            elseif (curmod == 'Vehicle') then
+                local base = l_humrp.CFrame
+                
+                ratio(l_humrp.ChildAdded)
+                ratio(l_humrp.DescendantAdded)
+                
+                fi1 = inst("BodyPosition")
+                fi1.Position = base.Position
+                fi1.D = 1900
+                fi1.P = 125000
+                fi1.MaxForce = vec3(9e9, 9e9, 9e9)
+                fi1.Parent = l_humrp
+                
+                fi2 = inst("BodyGyro")
+                fi2.D = 1900
+                fi2.P = 125000
+                fi2.MaxTorque = vec3(9e9, 9e9, 9e9)
+                fi2.Parent = l_humrp
+                
+                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                    l_cam.CameraSubject = l_hum
+                end)
+                
+                if (cambased) then
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        l_hum:ChangeState(1)
+                        --l_humrp.Velocity = vec3(0,0,0)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        local b = base.Position
+                        
+                        fi1.Position = b
+                        fi2.CFrame = cfn(b, b + clv)
+                    end)
+                else
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        l_hum:ChangeState(1)
+                        --l_humrp.Velocity = vec3(0,0,0)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        local b = base.Position
+                        fi1.Position = b
+                        fi2.CFrame = cfn(b, b + clv)                   
+                    end)
+                end
             end
         end)
         
         m_flight:Connect("Disabled",function() 
             if (fcon) then fcon:Disconnect() fcon = nil end 
             if (clvcon) then clvcon:Disconnect() clvcon = nil end
-            if (fpart) then fpart:Destroy() fpart = nil end
+            if (fi1) then fi1:Destroy() fi1 = nil end
+            if (fi2) then fi2:Destroy() fi2 = nil end
+            if (cscon) then cscon:Destroy() cscon = nil end 
             l_hum:ChangeState(8)
             
             unratio(l_humrp.Changed)
             unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
             unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            unratio(l_humrp.ChildAdded)
+            unratio(l_humrp.DescendantAdded)
         end)
         
         
