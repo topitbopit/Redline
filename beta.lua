@@ -2395,7 +2395,7 @@ local m_player = ui:CreateMenu('Player') do
     local p_logs        = m_player:AddMod('Logs') -- Join and chat logs
     local p_pathfind    = m_player:AddMod('Pathfinder') -- Does some funny stuff for pathing
     local p_radar       = m_player:AddMod('Radar') -- Radar for other players
-    local p_respawn     = m_player:AddMod('Respawn') -- Better version of resetting, can fix some glitches that come w/ reanimations
+    local p_respawn     = m_player:AddMod('Respawn', 'Button') -- Better version of resetting, can fix some glitches that come w/ reanimations
     
     -- Anti afk
     do 
@@ -3120,7 +3120,6 @@ local m_movement = ui:CreateMenu('Movement') do
         turndir:SetTooltip('The direction your character faces')
     end
     
-    
     m_airjump:SetTooltip('Lets you jump in air, may bypass jump restrictions')
     m_blink:SetTooltip('Pseudo lagswitch. Doesn\'t actually choke packets. Raknet libraries (like Celery\'s) will be supported eventually')
     m_clicktp:SetTooltip('Standard clickteleport')
@@ -3149,6 +3148,195 @@ local m_render = ui:CreateMenu('Render') do
     local r_fullbright  = m_render:AddMod('Fullbright') -- Fullbright w/ different modes
     local r_nametag     = m_render:AddMod('Nametags') -- Better nametags
     local r_zoom        = m_render:AddMod('Zoom') -- Binoculars
+    
+    -- Freecam
+    do 
+        local ascend_h = r_freecam:AddHotkey('Ascend key')
+        local descend_h = r_freecam:AddHotkey('Descend key')
+        local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+        local camera = r_freecam:AddToggle('Camera-based')
+        local mode = r_freecam:AddDropdown('Method', true)
+        local freezemode = r_freecam:AddDropdown('Freeze mode')
+        
+        
+        mode:AddOption('Standard'):SetTooltip('Standard freecam'):Select()
+        mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')        
+        freezemode:AddOption('Anchor'):SetTooltip('Anchors your character'):Select()
+        freezemode:AddOption('Walkspeed'):SetTooltip('Sets your walkspeed to 0')
+        freezemode:AddOption('Stuck'):SetTooltip('Constantly overwrites your position')
+        
+        local campart -- camera part
+        local fcon -- flight connection
+        
+        local clvcon -- clv connection
+        local cscon -- camera subject connection
+        
+        local ask = Enum.KeyCode.E-- keycode for ascension
+        local dsk = Enum.KeyCode.Q-- keycode for descension
+        
+        local speed = 30 -- speed 
+        
+        local cambased = true 
+        camera:Enable()
+        
+        ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
+        descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
+        camera:Connect("Toggled",function(t)
+            cambased=t;
+            if (r_freecam:IsEnabled()) then 
+                r_freecam:Disable()
+                r_freecam:Enable() 
+            end
+        end)
+        mode:Connect("SelectionChanged",function() 
+            if (r_freecam:IsEnabled()) then 
+                r_freecam:Disable()
+                r_freecam:Enable() 
+            end
+        end)
+        freezemode:Connect("SelectionChanged",function() 
+            if (r_freecam:IsEnabled()) then 
+                r_freecam:Disable()
+                r_freecam:Enable() 
+            end
+        end)
+        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        
+        local stuckcon, oldwalk
+        
+        r_freecam:Connect("Enabled", function()
+            local curmod = mode:GetSelection()        
+            local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
+            
+            local base = l_humrp.Position
+            campart = inst("Part")
+            campart.Position = base
+            campart.Transparency = 1
+            campart.CanCollide = false
+            campart.CanTouch = false
+            campart.Anchored = true
+            campart.Size = vec3(1, 1, 1)
+            campart.Parent = workspace       
+            
+            local normclv = l_cam.CFrame.LookVector
+            clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                normclv = l_cam.CFrame.LookVector
+            end)
+            l_cam.CameraSubject = campart
+            l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                if (l_cam.CameraSubject ~= campart) then
+                    l_cam.CameraSubject = campart
+                end
+            end)
+            
+            if (curmod == 'Standard') then
+                if (cambased) then
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        campart.Position = base
+                    end)
+                else
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        campart.Position = base
+                    end)
+                end
+            elseif (curmod == 'Smooth') then
+                local pos = inst("BodyPosition")
+                pos.Position = base.Position
+                pos.D = 1900
+                pos.P = 125000
+                pos.MaxForce = vec3(9e9, 9e9, 9e9)
+                pos.Parent = campart
+                
+                campart.Anchored = false
+                
+                if (cambased) then
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        pos.Position = base
+                    end)
+                else
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        base += (l_hum.MoveDirection * dt * 3 * speed)
+                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        pos.Position = base
+                    end)
+                end
+            end
+            
+            local fmode = freezemode:GetSelection()
+            if (fmode == 'Anchor') then
+                l_humrp.Anchored = true
+            elseif (fmode == 'Walkspeed') then
+                oldwalk = l_hum.WalkSpeed
+                l_hum.WalkSpeed = 0
+            elseif (fmode == 'Stuck') then
+                local cf = l_humrp.CFrame
+                ratio(l_humrp.Changed)
+                ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                stuckcon = serv_rs.Heartbeat:Connect(function() 
+                    l_humrp.CFrame = cf
+                end)
+            end
+        end)
+        
+        r_freecam:Connect("Disabled",function() 
+            if (fcon) then fcon:Disconnect() fcon = nil end 
+            if (clvcon) then clvcon:Disconnect() clvcon = nil end
+            if (campart) then campart:Destroy() campart = nil end
+            if (cscon) then cscon:Destroy() cscon = nil end
+            
+            l_cam.CameraSubject = l_hum
+            
+            if (l_humrp.Anchored == true) then
+                l_humrp.Anchored = false
+            
+            elseif (l_hum.WalkSpeed == 0) then
+                l_humrp.WalkSpeed = oldwalk
+            
+            elseif (stuckcon) then
+                stuckcon:Disconnect()
+                stuckcon = nil
+                unratio(l_humrp.Changed)
+                unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            end
+        end)
+        
+        
+        ascend_h:SetTooltip('When pressed the freecam vertically ascends'):SetHotkey(Enum.KeyCode.E)
+        descend_h:SetTooltip('When pressed the freecam vertically descends'):SetHotkey(Enum.KeyCode.Q)
+        mode:SetTooltip('The method Freecam uses')
+        speedslider:SetTooltip('The speed of your freecam flight')
+        camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other freecam script</b>')
+    end
+    -- Zoom
+    do 
+    
+    end
     
     r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
     r_bread:SetTooltip('Leaves a trail behind')
