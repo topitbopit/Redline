@@ -24,10 +24,10 @@
 if (_G.RLLoaded) then
     if (printconsole) then 
         printconsole("Already loaded Redline", 255, 64, 64)
-        printconsole("Destroy the current script by pressing [End].\nIf you don't have an end key too bad", 192, 192, 192)
+        printconsole("Destroy the current script by pressing [End]", 192, 192, 255)
         return
     else
-        warn("Already loaded Redline")
+        warn("Already loaded Redline\nDestroy the current script by pressing [End]")
         return
     end
 end
@@ -103,28 +103,28 @@ local time = tick
 -- { UI Colors } --
 local colors = _G.RLTHEME or {} do 
     -- generic
-    colors['outline']       = rgb(075, 075, 080) -- outline color
-    colors['shadow']        = rgb(005, 005, 010) -- go figure
-    colors['bg']            = rgb(023, 022, 027) -- window background
-    colors['enabled']       = rgb(225, 035, 035) -- enabled
-    -- backgrounds 
-    colors['bg_header']     = rgb(035, 035, 040) -- header background
-    colors['bg_object']     = rgb(030, 030, 035) -- object background
-    colors['bg_setting']    = rgb(025, 025, 030) -- setting background
-    colors['bg_dropdown']   = rgb(020, 020, 025) -- dropdown background
+    colors['outline']       = rgb(075, 075, 080); -- outline color
+    colors['shadow']        = rgb(005, 005, 010); -- go figure
+    colors['bg']            = rgb(023, 022, 027); -- window background
+    colors['enabled']       = rgb(225, 035, 035); -- enabled
+    -- backgrounds
+    colors['bg_header']     = rgb(035, 035, 040); -- header background
+    colors['bg_object']     = rgb(030, 030, 035); -- object background
+    colors['bg_setting']    = rgb(025, 025, 030); -- setting background
+    colors['bg_dropdown']   = rgb(020, 020, 025); -- dropdown background
     -- backgrounds selected
-    colors['bg_header-b']   = rgb(038, 038, 043) -- header hovering
-    colors['bg_object-b']   = rgb(033, 033, 038) -- object hovering
-    colors['bg_setting-b']  = rgb(028, 028, 033) -- setting hovering
-    colors['bg_dropdown-b'] = rgb(023, 023, 028) -- dropdown hovering
+    colors['bg_header-b']   = rgb(038, 038, 043); -- header hovering
+    colors['bg_object-b']   = rgb(033, 033, 038); -- object hovering
+    colors['bg_setting-b']  = rgb(028, 028, 033); -- setting hovering
+    colors['bg_dropdown-b'] = rgb(023, 023, 028); -- dropdown hovering
     -- slider
-    colors['slider_fg']     = rgb(160, 160, 165) -- slider foreground
-    colors['slider_bg']     = rgb(055, 055, 060) -- slider background
-    colors['slider_head']   = rgb(130, 130, 135) -- slider head
+    colors['slider_fg']     = rgb(160, 160, 165); -- slider foreground
+    colors['slider_bg']     = rgb(055, 055, 060); -- slider background
+    colors['slider_head']   = rgb(130, 130, 135); -- slider head
     -- text
-    colors['text1']         = rgb(255, 255, 255) -- main text
-    colors['text2']         = rgb(170, 170, 255) -- sub text
-    colors['text3']         = rgb(020, 020, 025) -- sub text
+    colors['text1']         = rgb(255, 255, 255); -- main text
+    colors['text2']         = rgb(170, 170, 255); -- sub text
+    colors['text3']         = rgb(020, 020, 025); -- sub text
 end
 
 -- { UI functions / variables } --
@@ -307,43 +307,44 @@ local ui = {} do
         w_ModListTitle.Parent = w_ModList
         
         w_TooltipHeader = inst("TextLabel")
-        w_TooltipHeader.Size = dim2off(175,20)
-        w_TooltipHeader.BackgroundTransparency = 0
-        w_TooltipHeader.Font = 'SourceSans'
-        w_TooltipHeader.TextColor3 = colors['text1']
-        w_TooltipHeader.TextXAlignment = 'Center'
-        w_TooltipHeader.TextSize = 19
-        w_TooltipHeader.Text = "Hi"
-        w_TooltipHeader.TextStrokeTransparency = 0
-        w_TooltipHeader.TextStrokeColor3 = colors['text3']
         w_TooltipHeader.BackgroundColor3 = colors['bg_header']
-        w_TooltipHeader.BorderSizePixel = 1
-        w_TooltipHeader.BorderMode = 'Inset'
+        w_TooltipHeader.BackgroundTransparency = 0
         w_TooltipHeader.BorderColor3 = colors['outline']
-        w_TooltipHeader.ZIndex = 1500
+        w_TooltipHeader.BorderMode = 'Inset'
+        w_TooltipHeader.BorderSizePixel = 1
+        w_TooltipHeader.Font = 'SourceSans'
+        w_TooltipHeader.RichText = true
+        w_TooltipHeader.Size = dim2off(175,20)
+        w_TooltipHeader.Text = "Hi"
+        w_TooltipHeader.TextColor3 = colors['text1']
+        w_TooltipHeader.TextSize = 19
+        w_TooltipHeader.TextStrokeColor3 = colors['text3']
+        w_TooltipHeader.TextStrokeTransparency = 0
+        w_TooltipHeader.TextXAlignment = 'Center'
         w_TooltipHeader.Visible = false 
+        w_TooltipHeader.ZIndex = 1500
         w_TooltipHeader.Parent = w_Screen
         
         w_Tooltip = inst("TextLabel")
-        w_Tooltip.Size = dim2off(175,25)
+        w_Tooltip.BackgroundColor3 = colors['bg']
         w_Tooltip.BackgroundTransparency = 0.2
+        w_Tooltip.BorderColor3 = colors['outline']
+        w_Tooltip.BorderMode = 'Inset'
+        w_Tooltip.BorderSizePixel = 1
         w_Tooltip.Font = 'SourceSans'
+        w_Tooltip.Position = dim2off(-1, 18)
+        w_Tooltip.RichText = true
+        w_Tooltip.Size = dim2off(175,25)
+        w_Tooltip.Text = ""
         w_Tooltip.TextColor3 = colors['text1']
+        w_Tooltip.TextSize = 17
+        w_Tooltip.TextStrokeColor3 = colors['text3']
+        w_Tooltip.TextStrokeTransparency = 0
+        w_Tooltip.TextWrapped = true
         w_Tooltip.TextXAlignment = 'Left'
         w_Tooltip.TextYAlignment = 'Top'
-        w_Tooltip.TextSize = 17
-        w_Tooltip.Text = ""
-        w_Tooltip.TextWrapped = true
-        w_Tooltip.Position = dim2off(-1, 18)
-        w_Tooltip.TextStrokeTransparency = 0
-        w_Tooltip.TextStrokeColor3 = colors['text3']
-        w_Tooltip.BackgroundColor3 = colors['bg']
-        w_Tooltip.BorderSizePixel = 1
-        w_Tooltip.BorderMode = 'Inset'
-        w_Tooltip.BorderColor3 = colors['outline']
-        w_Tooltip.ZIndex = 1500
-        w_Tooltip.RichText = true
         w_Tooltip.Visible = true 
+        w_Tooltip.ZIndex = 1500
         w_Tooltip.Parent = w_TooltipHeader
         
         local __ = inst("UIPadding")
@@ -755,7 +756,6 @@ local ui = {} do
         
         -- Creation functions
         base_class.menu_create_module = function(self, text, Type, nohotkey) 
-            text = tostring(text):sub(1,30)
             Type = Type or 'Toggle'
             local M_IndexOffset = self.ZIndex+1
             
@@ -785,65 +785,66 @@ local ui = {} do
                     m_ModuleRoot.Parent = self.Menu
                     
                      m_ModuleBackground = inst("Frame")
-                     m_ModuleBackground.Size = dim2(1,0,0,25)
-                     m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.BackgroundColor3 = colors['bg_object']
+                     m_ModuleBackground.BorderSizePixel = 0
+                     m_ModuleBackground.Size = dim2(1,0,0,25)
+                     m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
                       m_Highlight = inst("Frame")
-                      m_Highlight.Size = dim2sca(1,1)
+                      m_Highlight.Active = false
                       m_Highlight.BackgroundColor3 = colors['enabled']
                       m_Highlight.BackgroundTransparency = 0.7
-                      m_Highlight.Active = false
+                      m_Highlight.BorderSizePixel = 0
+                      m_Highlight.Size = dim2sca(1,1)
                       m_Highlight.Visible = false
                       m_Highlight.ZIndex = M_IndexOffset
-                      m_Highlight.BorderSizePixel = 0
                       m_Highlight.Parent = m_ModuleBackground
                       
                       m_ModuleEnableEffect = inst("Frame")
                       m_ModuleEnableEffect.BackgroundColor3 = colors['text1']
                       m_ModuleEnableEffect.BackgroundTransparency = 0.92
+                      m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ClipsDescendants = true
                       m_ModuleEnableEffect.Size = dim2(0,0,1,0)
-                      m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                       
                        m_ModuleEnableEffect2 = inst("Frame")
                        m_ModuleEnableEffect2.BackgroundColor3 = colors['enabled']
-                       m_ModuleEnableEffect2.Size = dim2(0,2,1,0)
                        m_ModuleEnableEffect2.BorderSizePixel = 0
+                       m_ModuleEnableEffect2.Size = dim2(0,2,1,0)
                        m_ModuleEnableEffect2.ZIndex = M_IndexOffset
                        m_ModuleEnableEffect2.Parent = m_ModuleEnableEffect
                       
                       m_ModuleText = inst('TextLabel')
-                      m_ModuleText.Size = dim2(1, -5, 1, 0)
-                      m_ModuleText.Position = dim2off(5, 0)
                       m_ModuleText.BackgroundTransparency = 1
                       m_ModuleText.Font = 'SourceSans'
-                      m_ModuleText.TextXAlignment = 'Left'
+                      m_ModuleText.Position = dim2off(5, 0)
+                      m_ModuleText.RichText = true
+                      m_ModuleText.Size = dim2(1, -5, 1, 0)
+                      m_ModuleText.Text = text
                       m_ModuleText.TextColor3 = colors['text1']
                       m_ModuleText.TextSize = 20
-                      m_ModuleText.Text = text
-                      m_ModuleText.TextStrokeTransparency = 0
                       m_ModuleText.TextStrokeColor3 = colors['text3']
+                      m_ModuleText.TextStrokeTransparency = 0
+                      m_ModuleText.TextXAlignment = 'Left'
                       m_ModuleText.ZIndex = M_IndexOffset
                       m_ModuleText.Parent = m_ModuleBackground
                       
                       m_ModuleIcon = inst('TextLabel')
-                      m_ModuleIcon.Size = dim2off(25, 25)
-                      m_ModuleIcon.Position = dim2sca(1,0)
                       m_ModuleIcon.AnchorPoint = vec2(1,0)
                       m_ModuleIcon.BackgroundTransparency = 1
                       m_ModuleIcon.Font = 'SourceSans'
-                      m_ModuleIcon.TextXAlignment = 'Center'
+                      m_ModuleIcon.Position = dim2sca(1,0)
+                      m_ModuleIcon.Rotation = 0
+                      m_ModuleIcon.Size = dim2off(25, 25)
+                      m_ModuleIcon.Text = '+'
                       m_ModuleIcon.TextColor3 = colors['text1']
                       m_ModuleIcon.TextSize = 18
-                      m_ModuleIcon.Text = '+'
-                      m_ModuleIcon.TextStrokeTransparency = 0
                       m_ModuleIcon.TextStrokeColor3 = colors['text3']
-                      m_ModuleIcon.Rotation = 0
+                      m_ModuleIcon.TextStrokeTransparency = 0
+                      m_ModuleIcon.TextXAlignment = 'Center'
                       m_ModuleIcon.ZIndex = M_IndexOffset
                       m_ModuleIcon.Parent = m_ModuleBackground
                     
@@ -892,6 +893,8 @@ local ui = {} do
                     M_Object.AddModHotkey = base_class.module_create_modhotkey
                     M_Object.AddHotkey = base_class.module_create_hotkey
                     M_Object.AddSlider = base_class.module_create_slider
+                    M_Object.AddInput = base_class.module_create_input
+                    M_Object.AddButton = base_class.module_create_button
                     
                     M_Object.setvis = base_class.module_setvis
                     
@@ -1030,9 +1033,7 @@ local ui = {} do
                     
                     M_Object.Name = text
                     M_Object.ZIndex = M_IndexOffset
-                    
-                    M_Object.Click = base_class.module_click_self
-                    
+                                        
                     M_Object.Connect = base_class.generic_connect
                     M_Object.SetTooltip = base_class.generic_tooltip
                 end
@@ -1115,16 +1116,17 @@ local ui = {} do
                       m_Highlight.Parent = m_ModuleBackground
                      
                      m_ModuleText = inst('TextLabel')
-                     m_ModuleText.Size = dim2(1, -5, 1, 0)
-                     m_ModuleText.Position = dim2off(5, 0)
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.Font = 'SourceSans'
-                     m_ModuleText.TextXAlignment = 'Left'
+                     m_ModuleText.Position = dim2off(5, 0)
+                     m_ModuleText.RichText = true
+                     m_ModuleText.Size = dim2(1, -5, 1, 0)
+                     m_ModuleText.Text = text
                      m_ModuleText.TextColor3 = colors['text1']
                      m_ModuleText.TextSize = 20
-                     m_ModuleText.Text = text
-                     m_ModuleText.TextStrokeTransparency = 0
                      m_ModuleText.TextStrokeColor3 = colors['text3']
+                     m_ModuleText.TextStrokeTransparency = 0
+                     m_ModuleText.TextXAlignment = 'Left'
                      m_ModuleText.ZIndex = M_IndexOffset
                      m_ModuleText.Parent = m_ModuleBackground
                      
@@ -1769,6 +1771,214 @@ local ui = {} do
             end
             return S_Object            
         end
+        base_class.module_create_input = function(self, text) 
+            text = tostring(text)
+            local I_IndexOffset = self.ZIndex + 1 
+            
+            local i_Input
+             local i_Padding
+             local i_Icon
+
+            do
+                i_Input = inst('TextBox')
+                i_Input.Size = dim2(1, 0, 1, 0)
+                i_Input.Position = dim2off(0, 0)
+                i_Input.ClearTextOnFocus = true
+                i_Input.TextWrapped = true
+                i_Input.BackgroundTransparency = 1
+                i_Input.BackgroundColor3 = colors['bg_setting']
+                i_Input.Font = 'SourceSans'
+                i_Input.TextXAlignment = 'Left'
+                i_Input.TextColor3 = colors['text1']
+                i_Input.TextSize = 20
+                i_Input.Text = text
+                i_Input.TextStrokeTransparency = 0
+                i_Input.TextStrokeColor3 = colors['text3']
+                i_Input.ZIndex = I_IndexOffset
+                i_Input.Parent = self.Menu
+                 
+                 i_Padding = inst("UIPadding")
+                 i_Padding.PaddingLeft = dim2off(10, 0).X
+                 i_Padding.Parent = i_Input
+                
+                i_Icon = inst('TextLabel')
+                i_Icon.Size = dim2off(25, 25)
+                i_Icon.Position = dim2sca(1,0)
+                i_Icon.AnchorPoint = vec2(1,0)
+                i_Icon.BackgroundTransparency = 1
+                i_Icon.Font = 'SourceSans'
+                i_Icon.TextXAlignment = 'Center'
+                i_Icon.TextColor3 = colors['text1']
+                i_Icon.TextSize = 18
+                i_Icon.Text = '🅃'
+                i_Icon.TextStrokeTransparency = 0
+                i_Icon.TextStrokeColor3 = colors['text3']
+                i_Icon.Rotation = 0
+                i_Icon.ZIndex = I_IndexOffset
+                i_Icon.Parent = i_Input
+            end
+                
+            local I_Object = {} do 
+                I_Object.Tooltip = nil
+                
+                
+                I_Object.Flags = {} do 
+                    I_Object.Flags['Focused'] = true
+                    I_Object.Flags['Unfocused'] = true
+                    I_Object.Flags['TextChanged'] = true
+                end
+                                
+                I_Object.Name = text
+                I_Object.ZIndex = M_IndexOffset
+                                
+                I_Object.Connect = base_class.generic_connect
+                I_Object.SetTooltip = base_class.generic_tooltip
+            end
+            
+            do
+                i_Input.MouseEnter:Connect(function() 
+                    i_Input.BackgroundColor3 = colors['bg_object-b']
+                    
+                    
+                    local tt = I_Object.Tooltip
+                    if (tt) then
+                        w_Tooltip.Text = tt
+                        w_TooltipHeader.Text = I_Object.Name
+                        w_TooltipHeader.Visible = true
+                    end
+                end)
+                
+                i_Input.MouseLeave:Connect(function() 
+                    i_Input.BackgroundColor3 = colors['bg_object']
+                    
+                    if (w_Tooltip.Text == I_Object.Tooltip) then
+                        w_TooltipHeader.Visible = false
+                    end
+                end)
+                
+                i_Input.FocusLost:Connect(function(enter) 
+                    pcall(I_Object.Flags.Unfocused, i_Input.Text, enter)
+                end)
+                i_Input.Focused:Connect(function() 
+                    pcall(I_Object.Flags.Focused)
+                end)
+                i_Input:GetPropertyChangedSignal("Text"):Connect(function() 
+                    pcall(I_Object.Flags.TextChanged, i_Input.Text)
+                end)
+            end
+            
+            return I_Object
+        end
+        base_class.module_create_button = function(self, text) 
+            text = tostring(text)
+            
+            local B_IndexOffset = self.ZIndex + 1
+            
+            local b_Background
+             local b_EnableEffect
+             local b_Text
+             local b_Icon
+            
+            do
+                b_Background = inst("Frame")
+                b_Background.BackgroundColor3 = colors['bg_setting'] 
+                b_Background.BorderSizePixel = 0
+                b_Background.Size = dim2(1,0,0,25)
+                b_Background.ZIndex = B_IndexOffset
+                b_Background.Parent = self.Menu
+                
+                 b_EnableEffect = inst("Frame")
+                 b_EnableEffect.BackgroundColor3 = colors['text1']
+                 b_EnableEffect.BackgroundTransparency = 1
+                 b_EnableEffect.BorderSizePixel = 0
+                 b_EnableEffect.ClipsDescendants = true
+                 b_EnableEffect.Size = dim2(1,0,1,0)
+                 b_EnableEffect.ZIndex = B_IndexOffset
+                 b_EnableEffect.Parent = b_Background
+                
+                 b_Text = inst('TextLabel')
+                 b_Text.BackgroundTransparency = 1
+                 b_Text.Font = 'SourceSans'
+                 b_Text.Position = dim2off(10, 0)
+                 b_Text.Size = dim2(1, -10, 1, 0)
+                 b_Text.Text = text
+                 b_Text.TextColor3 = colors['text1']
+                 b_Text.TextSize = 20
+                 b_Text.TextStrokeColor3 = colors['text3']
+                 b_Text.TextStrokeTransparency = 0
+                 b_Text.TextXAlignment = 'Left'
+                 b_Text.ZIndex = B_IndexOffset
+                 b_Text.Parent = b_Background
+                 
+                 b_Icon = inst('TextLabel')
+                 b_Icon.AnchorPoint = vec2(1,0)
+                 b_Icon.BackgroundTransparency = 1
+                 b_Icon.Font = 'SourceSans'
+                 b_Icon.Position = dim2sca(1,0)
+                 b_Icon.Rotation = 0
+                 b_Icon.Size = dim2off(25, 25)
+                 b_Icon.Text = '⦿'
+                 b_Icon.TextColor3 = colors['text1']
+                 b_Icon.TextSize = 18
+                 b_Icon.TextStrokeColor3 = colors['text3']
+                 b_Icon.TextStrokeTransparency = 0
+                 b_Icon.TextXAlignment = 'Center'
+                 b_Icon.ZIndex = B_IndexOffset
+                 b_Icon.Parent = b_Background
+            end
+                
+            local B_Object = {} do 
+                B_Object.Tooltip = nil
+                
+                
+                B_Object.Flags = {} do 
+                    B_Object.Flags['Clicked'] = true
+                end
+                
+                B_Object.Effect = b_EnableEffect
+                
+                B_Object.Name = text
+                B_Object.ZIndex = B_IndexOffset
+                
+                B_Object.Click = base_class.module_click_self
+                
+                B_Object.Connect = base_class.generic_connect
+                B_Object.SetTooltip = base_class.generic_tooltip
+            end
+            
+            do
+                b_Background.InputBegan:Connect(function(io) 
+                    local uitv = io.UserInputType.Value
+                    if (uitv == 0) then
+                        B_Object:Click()
+                        return
+                    end
+                end)
+                
+                b_Background.MouseEnter:Connect(function() 
+                    b_Background.BackgroundColor3 = colors['bg_setting-b']
+                    
+                    
+                    local tt = B_Object.Tooltip
+                    if (tt) then
+                        w_Tooltip.Text = tt
+                        w_TooltipHeader.Text = B_Object.Name
+                        w_TooltipHeader.Visible = true
+                    end
+                end)
+                
+                b_Background.MouseLeave:Connect(function() 
+                    b_Background.BackgroundColor3 = colors['bg_setting'] 
+                    
+                    if (w_Tooltip.Text == B_Object.Tooltip) then
+                        w_TooltipHeader.Visible = false
+                    end
+                end)
+            end
+            
+            return B_Object
+        end
+        
         
         
         base_class.dropdown_create_option = function(self, text) 
@@ -2061,6 +2271,7 @@ local ui = {} do
     function ui:GetModules() 
         return ui_Modules
     end
+    function ui:GetScreen() return w_Screen end
     
     ui.Flags = {}
     ui.Flags.Destroying = true
@@ -2273,13 +2484,16 @@ ui:Connect("Destroying", function()
     end
 end)
 
+local donetxt = ' <font color="rgb(255,87,68)">[Done]</font>'
+
+
 local m_combat = ui:CreateMenu('Combat') do 
-    local c_aimbot  = m_combat:AddMod('Aimbot') -- Locks mouse / camera onto target, useful for shooter games
-    local c_antiaim = m_combat:AddMod('Anti-aim') -- Spins you around, janks up hitboxes
-    local c_hitbox  = m_combat:AddMod('Hitboxes') -- Hitbox expander
-    local c_stare   = m_combat:AddMod('Stare') -- Always faces you towards the nearest player, useful for sword fighting games
-    local c_tpbot   = m_combat:AddMod('TPbot') -- TPbot, useful for sword fighting games
-    local c_trigbot = m_combat:AddMod('Triggerbot') -- Triggerbot, useful for shooter games    
+    local c_aimbot  = m_combat:AddMod('Aimbot')
+    local c_antiaim = m_combat:AddMod('Anti-aim')
+    local c_hitbox  = m_combat:AddMod('Hitboxes')
+    local c_stare   = m_combat:AddMod('Stare')
+    local c_tpbot   = m_combat:AddMod('TPbot')
+    local c_trigbot = m_combat:AddMod('Triggerbot')
     
     
     -- Aimbot 
@@ -2383,19 +2597,19 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
-    local p_antiafk     = m_player:AddMod('Anti-AFK') -- Anti AFK w/ walk around modes and generic getconnections:Disable mode
-    local p_anticrash   = m_player:AddMod('Anti-crash') -- Prevents game scripts from while true do end'ing you
-    local p_antifling   = m_player:AddMod('Anti-fling') -- Prevents skids from flinging you
-    local p_antiwarp    = m_player:AddMod('Anti-warp') -- Prevents you from being teleported backwards, has a lerp setting
-    local p_autoclick   = m_player:AddMod('Auto clicker') -- Auto clicker
-    local p_fancy       = m_player:AddMod('Fancy chat') -- Fancy chat
-    local p_flashback   = m_player:AddMod('Flashback') -- Teleport back after you respawn
-    local p_ftools      = m_player:AddMod('Funky tools') -- Lets you toggle multiple tools onto your character at once
-    local p_gtweaks     = m_player:AddMod('Game tweaks') -- Lets you force enable stuff
-    local p_logs        = m_player:AddMod('Logs') -- Join and chat logs
-    local p_pathfind    = m_player:AddMod('Pathfinder') -- Does some funny stuff for pathing
-    local p_radar       = m_player:AddMod('Radar') -- Radar for other players
-    local p_respawn     = m_player:AddMod('Respawn', 'Button') -- Better version of resetting, can fix some glitches that come w/ reanimations
+    local p_antiafk     = m_player:AddMod('Anti-AFK'..donetxt)
+    local p_anticrash   = m_player:AddMod('Anti-crash'..donetxt)
+    local p_antifling   = m_player:AddMod('Anti-fling'..donetxt)
+    local p_antiwarp    = m_player:AddMod('Anti-warp'..donetxt)
+    local p_autoclick   = m_player:AddMod('Auto clicker')
+    local p_fancy       = m_player:AddMod('Fancy chat')
+    local p_flashback   = m_player:AddMod('Flashback'..donetxt)
+    local p_ftools      = m_player:AddMod('Funky tools')
+    local p_gtweaks     = m_player:AddMod('Game tweaks')
+    local p_logs        = m_player:AddMod('Logs')
+    local p_pathfind    = m_player:AddMod('Pathfinder')
+    local p_radar       = m_player:AddMod('Radar')
+    local p_respawn     = m_player:AddMod('Respawn'..donetxt, 'Toggle')
     
     -- Anti afk
     do 
@@ -2428,7 +2642,7 @@ local m_player = ui:CreateMenu('Player') do
                 spawn(function() 
                     local base = l_humrp.Position
                     while (p_antiafk:IsEnabled()) do 
-                        print(wait(mr()*8))
+                        wait(mr()*8)
                         l_hum:MoveTo(base + vec3(
                             (mr()-.5)*15,
                             0,
@@ -2642,24 +2856,24 @@ local m_player = ui:CreateMenu('Player') do
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
 end
 local m_movement = ui:CreateMenu('Movement') do 
-    local m_airjump   = m_movement:AddMod('Air jump') -- Lets you jump in air
-    local m_blink     = m_movement:AddMod('Blink') -- Pseudo lagswitch
-    local m_clicktp   = m_movement:AddMod('Click TP') -- Click TP
-    local m_fastfall  = m_movement:AddMod('Fastfall') -- Quick fall, can use raycasts or bodyvelocities
-    local m_flight    = m_movement:AddMod('Flight') -- Flight w/ smooth and hard
-    local m_float     = m_movement:AddMod('Float') -- Float
-    local m_highjump  = m_movement:AddMod('High jump') -- Jump higher
-    local m_jesus     = m_movement:AddMod('Jesus') -- Walk above water
-    local m_jetpack   = m_movement:AddMod('Jetpack') -- Sidegrade of flight
-    local m_noclip    = m_movement:AddMod('Noclip') -- Standard noclip, comes with a few bypasses
-    local m_noslow    = m_movement:AddMod('Noslowdown') -- Prevents you from being slowed down
-    local m_parkour   = m_movement:AddMod('Parkour') -- Jumps when you reach the end of a block
-    local m_phase     = m_movement:AddMod('Phase') -- Like TPbot, but more for movement rather than killing people
-    local m_safewalk  = m_movement:AddMod('Safewalk') -- Prevents you from walking off parts. Has several modes, like 0 walkspeed or anchor.
-    local m_speed     = m_movement:AddMod('Speed') -- Speedhacks w/ various bypasses and settings
-    local m_spider    = m_movement:AddMod('Spider') -- Automatically walk up parts when you touch them. Like Step, but smoother.
-    local m_step      = m_movement:AddMod('Step') -- Automatically teleports you on top of parts in front of you
-    local m_velocity  = m_movement:AddMod('Velocity') -- Limits velocity or disables it
+    local m_airjump   = m_movement:AddMod('Air jump'..donetxt)
+    local m_blink     = m_movement:AddMod('Blink')
+    local m_clicktp   = m_movement:AddMod('Click TP'..donetxt)
+    local m_fastfall  = m_movement:AddMod('Fastfall')
+    local m_flight    = m_movement:AddMod('Flight'..donetxt)
+    local m_float     = m_movement:AddMod('Float'..donetxt)
+    local m_highjump  = m_movement:AddMod('High jump')
+    local m_jesus     = m_movement:AddMod('Jesus')
+    local m_jetpack   = m_movement:AddMod('Jetpack')
+    local m_noclip    = m_movement:AddMod('Noclip')
+    local m_noslow    = m_movement:AddMod('Noslowdown')
+    local m_parkour   = m_movement:AddMod('Parkour')
+    local m_phase     = m_movement:AddMod('Phase')
+    local m_safewalk  = m_movement:AddMod('Safewalk')
+    local m_speed     = m_movement:AddMod('Speed'..donetxt)
+    local m_spider    = m_movement:AddMod('Spider')
+    local m_step      = m_movement:AddMod('Step')
+    local m_velocity  = m_movement:AddMod('Velocity')
     -- Airjump
     do 
         local mode = m_airjump:AddDropdown('Mode',true)
@@ -2739,6 +2953,66 @@ local m_movement = ui:CreateMenu('Movement') do
     do 
         local modedd = m_fastfall:AddDropdown('Mode'):SetTooltip('The method Fastfall uses')
         modedd:AddOption('Raycast'):SetTooltip('Raycasts downwards, instantly teleporting you down')
+    end
+    -- Float
+    do 
+        local mode = m_float:AddDropdown('Mode'):SetTooltip('What method Float will use')
+        mode:AddOption('Undetectable'):SetTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s undetectable'):Select()
+        mode:AddOption('Velocity'):SetTooltip('Uses a bodymover. Has better results, but is easier to detect')
+        
+        local vel = m_float:AddSlider('Velocity',{min=-30,cur=0,max=30,step=0.1}):SetTooltip('The amount of velocity you\'ll have when floating')
+        local amnt = 0
+        
+        vel:Connect("ValueChanged",a)
+        
+        mode:Connect("SelectionChanged",function() 
+            if (m_float:IsEnabled()) then
+                m_float:Disable()
+                m_float:Enable()
+            end
+        end)
+        
+        local fcon
+        local finst
+        
+        local a = function(v) amnt = v; end
+        local b = function(v) finst.Velocity = vec3(0, v, 0) end
+        
+        
+        
+        m_float:Connect("Enabled",function() 
+            local mode = mode:GetSelection()
+            if (mode == 'Undetectable') then
+                fcon = serv_rs.Heartbeat:Connect(function() 
+                    local vel = l_humrp.Velocity
+                    
+                    l_humrp.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
+                end)
+            elseif (mode == 'Velocity') then
+                ratio(l_humrp.ChildAdded)
+                ratio(l_humrp.DescendantAdded)
+                
+                finst = inst("BodyVelocity")
+                finst.MaxForce = vec3(0, 9e9, 0)
+                finst.Velocity = vec3(0, vel:GetValue(), 0)
+                finst.Parent = l_humrp
+                
+                vel:Connect("ValueChanged",b)
+            end
+        end)
+        m_float:Connect("Disabled",function() 
+            if (finst) then finst:Destroy(); finst = nil end
+            if (fcon) then fcon:Disconnect() fcon = nil end
+            
+            vel:Connect("ValueChanged",a)
+            
+            unratio(l_humrp.ChildAdded)
+            unratio(l_humrp.DescendantAdded)
+        end)
+        
+        
+        
+        
     end
     -- Speed
     do 
@@ -3133,28 +3407,33 @@ local m_movement = ui:CreateMenu('Movement') do
     m_noslow:SetTooltip('Prevents you from being slowed down')
     m_parkour:SetTooltip('Jumps when you reach the end of a part')
     m_phase:SetTooltip('Like TPbot, but for movement rather than combat')
+    m_safewalk:SetTooltip('Prevents you from walking off of a part')
     m_speed:SetTooltip('Speedhacks with various bypasses and settings')
-    m_step:SetTooltip('Automatically teleports you on top of parts in front of you when walked into')
+    m_spider:SetTooltip('Climbs you up parts you walk into')
+    m_step:SetTooltip('Teleports you on top of parts you walk into')
     m_velocity:SetTooltip('Limits velocity or disables it')
 end
 local m_render = ui:CreateMenu('Render') do 
     
-    local r_betterui    = m_render:AddMod('Better UI') -- Improves existing roblox uis, like the chat and inventory
-    local r_bread       = m_render:AddMod('Breadcrumbs') -- Leave a trail behind 
-    local r_camtweaks   = m_render:AddMod('Camera tweaks') -- Lets the camera look through blocks
-    local r_crosshair   = m_render:AddMod('Crosshair') -- Crosshair configuration
-    local r_esp         = m_render:AddMod('ESP') -- Player esp, part esp
-    local r_freecam     = m_render:AddMod('Freecam') -- Freecam w/ smooth flight and hard flight
-    local r_fullbright  = m_render:AddMod('Fullbright') -- Fullbright w/ different modes
-    local r_nametag     = m_render:AddMod('Nametags') -- Better nametags
-    local r_zoom        = m_render:AddMod('Zoom') -- Binoculars
+    local r_betterui    = m_render:AddMod('Better UI')
+    local r_bread       = m_render:AddMod('Breadcrumbs')
+    local r_camtweaks   = m_render:AddMod('Camera tweaks')
+    local r_crosshair   = m_render:AddMod('Crosshair')
+    local r_esp         = m_render:AddMod('ESP')
+    local r_freecam     = m_render:AddMod('Freecam'..donetxt)
+    local r_fullbright  = m_render:AddMod('Fullbright')
+    local r_nametag     = m_render:AddMod('Nametags')
+    local r_zoom        = m_render:AddMod('Zoom'..donetxt)
     
     -- Freecam
     do 
         local ascend_h = r_freecam:AddHotkey('Ascend key')
         local descend_h = r_freecam:AddHotkey('Descend key')
-        local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
         local camera = r_freecam:AddToggle('Camera-based')
+        local gotocam = r_freecam:AddButton('Goto freecam')
+        
+        
+        local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
         local mode = r_freecam:AddDropdown('Method', true)
         local freezemode = r_freecam:AddDropdown('Freeze mode')
         
@@ -3202,7 +3481,7 @@ local m_render = ui:CreateMenu('Render') do
         end)
         speedslider:Connect("ValueChanged",function(v)speed=v;end)
         
-        local stuckcon, oldwalk
+        local stuckcon, stuckcf, oldwalk
         
         r_freecam:Connect("Enabled", function()
             local curmod = mode:GetSelection()        
@@ -3255,7 +3534,7 @@ local m_render = ui:CreateMenu('Render') do
                 end
             elseif (curmod == 'Smooth') then
                 local pos = inst("BodyPosition")
-                pos.Position = base.Position
+                pos.Position = base
                 pos.D = 1900
                 pos.P = 125000
                 pos.MaxForce = vec3(9e9, 9e9, 9e9)
@@ -3295,11 +3574,11 @@ local m_render = ui:CreateMenu('Render') do
                 oldwalk = l_hum.WalkSpeed
                 l_hum.WalkSpeed = 0
             elseif (fmode == 'Stuck') then
-                local cf = l_humrp.CFrame
+                stuckcf = l_humrp.CFrame
                 ratio(l_humrp.Changed)
                 ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
                 stuckcon = serv_rs.Heartbeat:Connect(function() 
-                    l_humrp.CFrame = cf
+                    l_humrp.CFrame = stuckcf
                 end)
             end
         end)
@@ -3316,7 +3595,7 @@ local m_render = ui:CreateMenu('Render') do
                 l_humrp.Anchored = false
             
             elseif (l_hum.WalkSpeed == 0) then
-                l_humrp.WalkSpeed = oldwalk
+                l_humrp.WalkSpeed = (oldwalk == 0 and 16 or oldwalk) -- Prevent getting infinitely stuck
             
             elseif (stuckcon) then
                 stuckcon:Disconnect()
@@ -3326,50 +3605,79 @@ local m_render = ui:CreateMenu('Render') do
             end
         end)
         
+        gotocam:Connect("Clicked",function() 
+            local pos = campart.Position
+            local new = cfn(pos, pos+l_humrp.CFrame.LookVector)
+            stuckcf = new
+            l_humrp.CFrame = new
+        end)
         
         ascend_h:SetTooltip('When pressed the freecam vertically ascends'):SetHotkey(Enum.KeyCode.E)
+        camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other freecam script</b>')
         descend_h:SetTooltip('When pressed the freecam vertically descends'):SetHotkey(Enum.KeyCode.Q)
         mode:SetTooltip('The method Freecam uses')
         speedslider:SetTooltip('The speed of your freecam flight')
-        camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other freecam script</b>')
+        freezemode:SetTooltip('The method used to make your character not move')
     end
     -- Zoom
     do 
-    
+        local slider = r_zoom:AddSlider('Zoom amount',{min=0,max=100,cur=30,step=0.1}):SetTooltip('The amount to zoom in by')
+                
+        r_zoom:Connect("Toggled",function(t) 
+            if (t) then
+                l_cam.FieldOfView = 70-(slider:GetValue()*.5)
+                slider:Connect("ValueChanged",function(v) 
+                    l_cam.FieldOfView = 70-(v*.5)
+                end)
+            else
+                slider:Connect("ValueChanged",nil)
+                l_cam.FieldOfView = 70
+            end
+        end)
+
     end
     
+	r_fullbright:SetTooltip('Fullbright with different presets for different games')
     r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
     r_bread:SetTooltip('Leaves a trail behind')
     r_camtweaks:SetTooltip('Options for configuring the camera, like noclip-cam, maxzoom, smooth camera, etc. For 3rd person, use Game tweaks under Misc')
     r_crosshair:SetTooltip('Crosshair configuration')
     r_esp:SetTooltip('Configurable ESP')
     r_freecam:SetTooltip('Standard freecam')
-	r_fullbright:SetTooltip('Fullbright with different presets for different games')
     r_nametag:SetTooltip('Better nametags')
+    r_zoom:SetTooltip('Like Optifine\'s zoom')
 end
 local m_ui = ui:CreateMenu('UI') do 
     local u_cmd = m_ui:AddMod('Command bar')
-    local u_hud = m_ui:AddMod('HUD')
-    local u_jeff = m_ui:AddMod('Jeff') -- Jeff
+    local u_jeff = m_ui:AddMod('Jeff')
     
+    -- jeff 
     do 
-        local a = u_jeff:AddToggle('Gamer mode')
-        a:SetTooltip('Does something epic i think')
-        
-        u_jeff:Connect("Enabled", function() 
-            if (mr() > 0.95) then
-                l_hum.Sit = a:IsEnabled()
+        local _
+        u_jeff:Connect("Toggled", function(t) 
+            if (t) then
+                _ = inst("ImageLabel")
+                _.Size = dim2off(250, 250)
+                _.BackgroundTransparency = 1
+                _.Position = dim2(1, -250, 1, 0)
+                _.Image = "rbxassetid://8723094657"
+                _.ResampleMode = 'Pixelated'
+                _.Parent = ui:GetScreen()
+                
+                ctwn(_, {Position = dim2(1, -250, 1, -130)}, 25)
+            else
+                _:Destroy()
             end
+            
         end)
     end
     
     
     u_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
-    u_hud:SetTooltip('Redline UI configuration')
     u_jeff:SetTooltip('I forgot what this does')
 end
 local m_server = ui:CreateMenu('Server') do 
-    local s_rejoin = m_server:AddMod('Rejoin', 'Button')
+    local s_rejoin = m_server:AddMod('Rejoin'..donetxt, 'Button')
     local s_shop = m_server:AddMod('Serverhop', 'Button')
     
     s_rejoin:Connect("Clicked",function() 
@@ -3386,8 +3694,8 @@ local m_server = ui:CreateMenu('Server') do
     s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
 end
 local m_integrations = ui:CreateMenu('Integrations') do 
-    local m_alt = m_integrations:AddMod('Alt manager') -- Roblox Alt Manager stuff, requires Roblox Alt Manager (3rd party program)
-    local m_rpc = m_integrations:AddMod('Discord RPC') -- Discord RPC stuff
+    local m_alt = m_integrations:AddMod('Alt manager')
+    local m_rpc = m_integrations:AddMod('Discord RPC')
 	
     m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
     m_rpc:SetTooltip('Discord Rich Presence integration')
