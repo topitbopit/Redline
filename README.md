@@ -1,5 +1,5 @@
 ## Notice
-**This is in insanely early beta! Only like 5 things actually work (and even so are still unfinished)**
+**This is in insanely early beta! Only like 5 things actually work (and even so are still unfinished)**  
 Scroll down to the modules section to see what's working
 
 ## What is Redline?
@@ -32,22 +32,23 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 >*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to use an alt!*
 
 ## Q/A
-**This mod doesn't work in this game**
-Open up an issue or DM me (jeffismyname#4316) and I'll check it out 
-If it's something simple (like a connection I forgot about) I'll most likely fix it soon. 
-If it's something more complicated (like a serverside ac bypass) then I'll most likely not do it.
-**When will UI configuration be added?**
-There is no ETA, but it will be added eventually in another window.
-**Can I whitelist my friends from a certain mod (ex. aimbot)?**
-Although there is no menu to add friends yet, Redline does have internal support for friend whitelisting. It will be added soon.
-**Can I use the ui library?**
-Sure, but Redline's UI was made specifically for Redline. Most stuff that you want is probably not gonna be there. If you want a similar library that might have more features, check out [Herrtt's aimhot library](https://github.com/Herrtt/AimHot-v8/blob/master/UiLib.lua)
-**Can I copy / use some of the code?**
-Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste parts. 
-If you want to instead just remake what I did but use the same methods (ex. flight, speed), then go ahead
-**What does X module do**
-As of now the descriptions are all over the place. This readme's descriptions are different than the script's descriptions, which are different than the descriptions in code, etc.
-Eventually I'll rewrite every description to make more sense / go into more detail
+**This mod doesn't work in this game**  
+Open up an issue or DM me (jeffismyname#4316) and I'll check it out   
+If it's something simple (like a connection I forgot about) I'll most likely fix it soon.   
+If it's something more complicated (like a serverside ac bypass) then I'll most likely not do it.  
+**When will UI configuration be added?**  
+There is no ETA, but it will be added eventually in another window.  
+**Can I whitelist my friends from a certain mod (ex. aimbot)?**  
+Although there is no menu to add friends yet, Redline does have internal support for friend whitelisting. It will be added soon.  
+**Can I use the ui library?**   
+Sure, but Redline's UI was made specifically for Redline. Most stuff that you want is probably not gonna be there. Also, read the question below.   
+If you want a similar library that might have more features, check out [Herrtt's aimhot library](https://github.com/Herrtt/AimHot-v8/blob/master/UiLib.lua)  
+**Can I copy / use some of the code?**  
+Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste parts.    
+If you want to instead just remake what I did but use the same methods (ex. flight, speed), then go ahead     
+**What does X module do**    
+As of now the descriptions are all over the place. This readme's descriptions are different than the script's descriptions, which are different than the descriptions in code, etc.  
+Eventually I'll rewrite every description to make more sense / go into more detail  
 
 ## Modules
 
@@ -154,11 +155,11 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 ### UI  
 **Command bar**  
 *Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*  
-**Jeff**  [DONE]
+**Jeff**  [DONE]  
 *I forgor what this does* :skull:  
   
 ### Server  
-**Rejoin**  [DONE]
+**Rejoin**  [DONE]  
 *Rejoins the current server*  
 **Serverhop**  
 *Server hops to a random server*  
