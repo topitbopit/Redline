@@ -32,123 +32,124 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 ## Modules
 
 ### Combat
-**Aimbot**
-*Classic FPS mouse aimbot. Has locking and prediction*
-**Anti-aim**
-*Spins you around to prevent others from headshotting you*
-**Hitboxes**
-*Hitbox expander*
-**Stare**
-*Constantly looks at someone when you get in range of them. Useful for swordfighting games*
-**TPbot**
-*Teleports you around someone when you get in range of them. Useful for swordfighting games*
-**Triggerbot**
-*Automatically clicks when you mouse over a player*
+**Aimbot**  
+*Classic FPS mouse aimbot. Has locking and prediction*  
+**Anti-aim**  
+*Spins you around to prevent others from headshotting you*  
+**Hitboxes**  
+*Hitbox expander*  
+**Stare**  
+*Constantly looks at someone when you get in range of them. Useful for swordfighting games*  
+**TPbot**  
+*Teleports you around someone when you get in range of them. Useful for swordfighting games*  
+**Triggerbot**  
+*Automatically clicks when you mouse over a player*  
 
-### Player
-**Anti-AFK**
-*Prevents you from being disconnected for idling*
-**Anti-fling**
-*Prevents you from being flung by other players*
-**Anti-warp**
-*Prevents you from being teleported (as in a position change, not across places / games)*
-**Autoclicker**
-*Clicks for you. Has tons of modes, like jitter and double click*
-**Fancy chat**
-*Makes your chat fancy*
-**Flashback**
-*Teleports you back to where you were before you died*
-**Funky tools**
-*Lets you toggle tools and equip multiple tools at once*
-**Game tweaks**
-*Force enable or disable various things, such as first person camera, chat, inventory, and more*
-**Logs**
-*Displays logs for player joins, leaves, and messages*
-**Pathfinder**
-*Automatically pathfinds to a point you choose. Kinda like baritone but without all of the extra features*
-**Radar**
-*Radar that displays where other players are*
-**Respawn**
-*Force resets you. Can fix some glitches with reanimations*
-
-### Movement
-**Air jump**
-*Lets you jump in the air*
-**Blink**
-*Pseudo lagswitch. Doesn't actually choke packets*
-**Click TP**
-*Standard click TP*
-**Fast fall**
-*Makes you quickly fall. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*
-**Flight**
-*Standard fly with tons of options*
-**Float**
-*Low gravity or no gravity*
-**High jump**
-*Lets you jump higher*
-**Ice**
-*Makes you walk like you're on ice*
-**Jesus**
-*Lets you walk over dangerous parts*
-**Jetpack**
-*Like flight, but different*
-**Noclip**
-*Standard noclip*
-**Noslowdown**
-*Prevents you from being slowed down; your walkspeed can't go under 16 and you can't be anchored*
-**Parkour**
-*Automatically jumps when you reach the end of a block*
-**Phase**
-*Teleports you insanely fast around a central position. Useful for games like Jailbreak to avoid arrests*
-**Safewalk**
-*Prevents you from walking off of a part*
-**Speedhack**
-*Classic speedhack. Has plenty of modes*
-**Spider**
-*Lets you climb up parts like a spider*
-**Step**
-*Teleports you up when you walk into a part*
-**Velocity**
-*Limits or disables your velocity*
-
-### Render
-**Better UI**
-*Improves Roblox UIs like the chat and inventory*
-**Breadcrumbs**
-*Leaves a trail behind you*
-**Camera tweaks**
-*Modify lots of camera attributes like camnoclip, max zoom. etc)
-**Crosshair**
-*Drawing crosshair configuration*
-**ESP**
-*Standard ESP with tons of configuration*
-**Freecam**
-*Flight but you control your camera*
-**Fullbright**
-*Disables lighting. Has several presets that may work for different games*
-**Nametags**
-*Detailed nametags above every player*
-**Zoom**
-*Like Optifine zoom*
-
-### UI
-**Command bar**
-*Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*
-**Hud**
-*Enable and disable various widgets like ping, velocity, framerate, etc.*
-**Jeff**
-*I forgor what this does* :skull:
-
-### Server
-**Rejoin**
-*Rejoins the current server*
-**Serverhop**
-*Server hops to a random server*
-**Private server**
-*Server hops to the smallest server*
-
-### Integrations
-**Discord Rich Prescence**
-*Show everyone else how cool you are for using Redline*
-**Roblox Alt Manager**
-*Lets you manage and use your alts. Requires the Roblox Alt Manager program.*
+### Player  
+**Anti-AFK**  
+*Prevents you from being disconnected for idling*  
+**Anti-fling**  
+*Prevents you from being flung by other players*  
+**Anti-warp**  
+*Prevents you from being teleported (as in a position change, not across places / games)*  
+**Autoclicker**  
+*Clicks for you. Has tons of modes, like jitter and double click*  
+**Fancy chat**  
+*Makes your chat fancy*  
+**Flashback**  
+*Teleports you back to where you were before you died*  
+**Funky tools**  
+*Lets you toggle tools and equip multiple tools at once*  
+**Game tweaks**  
+*Force enable or disable various things, such as first person camera, chat, inventory, and more*  
+**Logs**  
+*Displays logs for player joins, leaves, and messages*  
+**Pathfinder**  
+*Automatically pathfinds to a point you choose. Kinda like baritone but without all of the extra features*  
+**Radar**  
+*Radar that displays where other players are*  
+**Respawn**  
+*Force resets you. Can fix some glitches with reanimations*  
+  
+### Movement  
+**Air jump**  
+*Lets you jump in the air*  
+**Blink**  
+*Pseudo lagswitch. Doesn't actually choke packets*  
+**Click TP**  
+*Standard click TP*  
+**Fast fall**  
+*Makes you quickly fall. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
+**Flight**  
+*Standard fly with tons of options*  
+**Float**  
+*Low gravity or no gravity*  
+**High jump**   
+*Lets you jump higher*  
+**Ice**  
+*Makes you walk like you're on ice*  
+**Jesus**  
+*Lets you walk over dangerous parts*  
+**Jetpack**  
+*Like flight, but different*  
+**Noclip**  
+*Standard noclip*  
+**Noslowdown**  
+*Prevents you from being slowed down; your walkspeed can't go under 16 and you can't be anchored*  
+**Parkour**  
+*Automatically jumps when you reach the end of a block*  
+**Phase**  
+*Teleports you insanely fast around a central position. Useful for games like Jailbreak to avoid arrests*  
+**Safewalk**  
+*Prevents you from walking off of a part*  
+**Speedhack**  
+*Classic speedhack. Has plenty of modes*  
+**Spider**  
+*Lets you climb up parts like a spider*  
+**Step**  
+*Teleports you up when you walk into a part*  
+**Velocity**  
+*Limits or disables your velocity*  
+  
+### Render  
+**Better UI**  
+*Improves Roblox UIs like the chat and inventory*  
+**Breadcrumbs**  
+*Leaves a trail behind you*  
+**Camera tweaks**  
+*Modify lots of camera attributes like camnoclip, max zoom. etc)  
+**Crosshair**  
+*Drawing crosshair configuration*  
+**ESP**  
+*Standard ESP with tons of configuration*  
+**Freecam**  
+*Flight but you control your camera*  
+**Fullbright**  
+*Disables lighting. Has several presets that may work for different games*  
+**Nametags**  
+*Detailed nametags above every player*  
+**Zoom**  
+*Like Optifine zoom*  
+  
+### UI  
+**Command bar**  
+*Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*  
+**Hud**  
+*Enable and disable various widgets like ping, velocity, framerate, etc.*  
+**Jeff**  
+*I forgor what this does* :skull:  
+  
+### Server  
+**Rejoin**  
+*Rejoins the current server*  
+**Serverhop**  
+*Server hops to a random server*  
+**Private server**  
+*Server hops to the smallest server*  
+  
+### Integrations  
+**Discord Rich Prescence**  
+*Show everyone else how cool you are for using Redline*  
+**Roblox Alt Manager**  
+*Lets you manage and use your alts. Requires the Roblox Alt Manager program.*  
+    
