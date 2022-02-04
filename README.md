@@ -1,5 +1,6 @@
-
-
+## Notice
+**This is in insanely early beta! Only like 5 things actually work (and even so are still unfinished)**
+Scroll down to the modules section to see what's working
 
 ## What is Redline?
 Redline is a massive script intended for tons of customization and configuration. 
@@ -27,7 +28,26 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 - **Features.** Redline has tons of unique features that have never been seen, such as Discord Rich Presence.
 - **Speed.** Redline is designed to be super fast and easy to use.  No annoying menus to navigate, no textboxes to type in, and no clutter on your screen.
 - **Optimization & Security.** Every module is extremely optimized and has anticheat bypass measures. This lets you safely and smoothly exploit without getting banned. 
+- **Open source.** Wanna know how something works? Great! Open up the source and Ctrl+F to find what you need.
 >*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to use an alt!*
+
+## Q/A
+**This mod doesn't work in this game**
+Open up an issue or DM me (jeffismyname#4316) and I'll check it out 
+If it's something simple (like a connection I forgot about) I'll most likely fix it soon. 
+If it's something more complicated (like a serverside ac bypass) then I'll most likely not do it.
+**When will UI configuration be added?**
+There is no ETA, but it will be added eventually in another window.
+**Can I whitelist my friends from a certain mod (ex. aimbot)?**
+Although there is no menu to add friends yet, Redline does have internal support for friend whitelisting. It will be added soon.
+**Can I use the ui library?**
+Sure, but Redline's UI was made specifically for Redline. Most stuff that you want is probably not gonna be there. If you want a similar library that might have more features, check out [Herrtt's aimhot library](https://github.com/Herrtt/AimHot-v8/blob/master/UiLib.lua)
+**Can I copy / use some of the code?**
+Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste parts. 
+If you want to instead just remake what I did but use the same methods (ex. flight, speed), then go ahead
+**What does X module do**
+As of now the descriptions are all over the place. This readme's descriptions are different than the script's descriptions, which are different than the descriptions in code, etc.
+Eventually I'll rewrite every description to make more sense / go into more detail
 
 ## Modules
 
@@ -46,17 +66,17 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Automatically clicks when you mouse over a player*  
 
 ### Player  
-**Anti-AFK**  
+**Anti-AFK** [DONE]    
 *Prevents you from being disconnected for idling*  
-**Anti-fling**  
+**Anti-fling** [DONE]  
 *Prevents you from being flung by other players*  
-**Anti-warp**  
+**Anti-warp** [DONE]  
 *Prevents you from being teleported (as in a position change, not across places / games)*  
 **Autoclicker**  
 *Clicks for you. Has tons of modes, like jitter and double click*  
 **Fancy chat**  
 *Makes your chat fancy*  
-**Flashback**  
+**Flashback** [DONE]  
 *Teleports you back to where you were before you died*  
 **Funky tools**  
 *Lets you toggle tools and equip multiple tools at once*  
@@ -68,21 +88,21 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Automatically pathfinds to a point you choose. Kinda like baritone but without all of the extra features*  
 **Radar**  
 *Radar that displays where other players are*  
-**Respawn**  
+**Respawn** [DONE]  
 *Force resets you. Can fix some glitches with reanimations*  
   
 ### Movement  
-**Air jump**  
+**Air jump**  [DONE]  
 *Lets you jump in the air*  
 **Blink**  
 *Pseudo lagswitch. Doesn't actually choke packets*  
-**Click TP**  
+**Click TP**  [almost done]  
 *Standard click TP*  
 **Fast fall**  
 *Makes you quickly fall. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
-**Flight**  
+**Flight**  [almost done]  
 *Standard fly with tons of options*  
-**Float**  
+**Float**  [almost done]  
 *Low gravity or no gravity*  
 **High jump**   
 *Lets you jump higher*  
@@ -102,7 +122,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Teleports you insanely fast around a central position. Useful for games like Jailbreak to avoid arrests*  
 **Safewalk**  
 *Prevents you from walking off of a part*  
-**Speedhack**  
+**Speedhack**  [DONE]
 *Classic speedhack. Has plenty of modes*  
 **Spider**  
 *Lets you climb up parts like a spider*  
@@ -122,7 +142,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 *Drawing crosshair configuration*  
 **ESP**  
 *Standard ESP with tons of configuration*  
-**Freecam**  
+**Freecam**  [DONE]
 *Flight but you control your camera*  
 **Fullbright**  
 *Disables lighting. Has several presets that may work for different games*  
@@ -134,13 +154,11 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 ### UI  
 **Command bar**  
 *Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*  
-**Hud**  
-*Enable and disable various widgets like ping, velocity, framerate, etc.*  
-**Jeff**  
+**Jeff**  [DONE]
 *I forgor what this does* :skull:  
   
 ### Server  
-**Rejoin**  
+**Rejoin**  [DONE]
 *Rejoins the current server*  
 **Serverhop**  
 *Server hops to a random server*  
