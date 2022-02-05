@@ -66,14 +66,15 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 -- { Microops } --
 
 -- Services
-local serv_rs = game:GetService('RunService')
-local serv_uis = game:GetService('UserInputService')
-local serv_ts = game:GetService('TweenService')
-local serv_gui = game:GetService('GuiService')
-local serv_ctx = game:GetService('ContextActionService')
-local serv_http = game:GetService('HttpService')
-local serv_tp = game:GetService('TeleportService')
+local serv_ctx     = game:GetService('ContextActionService')
+local serv_gui     = game:GetService('GuiService')
+local serv_http    = game:GetService('HttpService')
 local serv_players = game:GetService('Players')
+local serv_rs      = game:GetService('RunService')
+local serv_tp      = game:GetService('TeleportService')
+local serv_ts      = game:GetService('TweenService')
+local serv_uis     = game:GetService('UserInputService')
+local serv_vim     = game:GetService("VirtualInputManager")
 
 -- Colors
 local rgb,hsv,c3n = Color3.fromRGB, Color3.fromHSV, Color3.new
@@ -94,7 +95,7 @@ local mc = math.clamp
 -- Utf8
 local uc = utf8.char
 -- Table
-local ins,rem = table.insert, table.remove
+local ins,rem,cle = table.insert, table.remove, table.clear
 -- Os
 local date = os.date
 local time = tick
@@ -859,6 +860,7 @@ local ui = {} do
                     
                      m_MenuListLayout = inst('UIListLayout')
                      m_MenuListLayout.FillDirection = 'Vertical'
+                     m_MenuListLayout.SortOrder = 2
                      m_MenuListLayout.HorizontalAlignment = 'Left'
                      m_MenuListLayout.VerticalAlignment = 'Top'
                      m_MenuListLayout.Parent = m_Menu
@@ -1061,6 +1063,7 @@ local ui = {} do
                     
                     m_ModuleText.FocusLost:Connect(function(enter) 
                         pcall(M_Object.Flags.Unfocused, m_ModuleText.Text, enter)
+                        m_ModuleText.Text = M_Object.Name
                     end)
                     m_ModuleText.Focused:Connect(function() 
                         pcall(M_Object.Flags.Focused)
@@ -1278,6 +1281,7 @@ local ui = {} do
                 T_Object.Disable = base_class.setting_toggle_disable
                 T_Object.Enable = base_class.setting_toggle_enable
                 T_Object.GetState = base_class.setting_toggle_getstate
+                T_Object.IsEnabled = base_class.setting_toggle_getstate
                 
                 T_Object.Connect = base_class.generic_connect
                 T_Object.SetTooltip = base_class.generic_tooltip
@@ -1780,20 +1784,23 @@ local ui = {} do
              local i_Icon
 
             do
+
+                
                 i_Input = inst('TextBox')
-                i_Input.Size = dim2(1, 0, 1, 0)
-                i_Input.Position = dim2off(0, 0)
-                i_Input.ClearTextOnFocus = true
-                i_Input.TextWrapped = true
-                i_Input.BackgroundTransparency = 1
                 i_Input.BackgroundColor3 = colors['bg_setting']
+                i_Input.BackgroundTransparency = 0
+                i_Input.BorderSizePixel = 0 
+                i_Input.ClearTextOnFocus = true
                 i_Input.Font = 'SourceSans'
-                i_Input.TextXAlignment = 'Left'
-                i_Input.TextColor3 = colors['text1']
-                i_Input.TextSize = 20
+                i_Input.Position = dim2off(0, 0)
+                i_Input.Size = dim2(1, 0, 0, 25)
                 i_Input.Text = text
-                i_Input.TextStrokeTransparency = 0
+                i_Input.TextColor3 = colors['text1']
+                i_Input.TextSize = 18
                 i_Input.TextStrokeColor3 = colors['text3']
+                i_Input.TextStrokeTransparency = 0
+                i_Input.TextWrapped = true
+                i_Input.TextXAlignment = 'Left'
                 i_Input.ZIndex = I_IndexOffset
                 i_Input.Parent = self.Menu
                  
@@ -1802,18 +1809,18 @@ local ui = {} do
                  i_Padding.Parent = i_Input
                 
                 i_Icon = inst('TextLabel')
-                i_Icon.Size = dim2off(25, 25)
-                i_Icon.Position = dim2sca(1,0)
                 i_Icon.AnchorPoint = vec2(1,0)
                 i_Icon.BackgroundTransparency = 1
                 i_Icon.Font = 'SourceSans'
-                i_Icon.TextXAlignment = 'Center'
+                i_Icon.Position = dim2sca(1,0)
+                i_Icon.Rotation = 0
+                i_Icon.Size = dim2off(25, 25)
+                i_Icon.Text = '🅃'
                 i_Icon.TextColor3 = colors['text1']
                 i_Icon.TextSize = 18
-                i_Icon.Text = '🅃'
-                i_Icon.TextStrokeTransparency = 0
                 i_Icon.TextStrokeColor3 = colors['text3']
-                i_Icon.Rotation = 0
+                i_Icon.TextStrokeTransparency = 0
+                i_Icon.TextXAlignment = 'Center'
                 i_Icon.ZIndex = I_IndexOffset
                 i_Icon.Parent = i_Input
             end
@@ -1827,9 +1834,9 @@ local ui = {} do
                     I_Object.Flags['Unfocused'] = true
                     I_Object.Flags['TextChanged'] = true
                 end
-                                
+                
                 I_Object.Name = text
-                I_Object.ZIndex = M_IndexOffset
+                I_Object.ZIndex = I_IndexOffset
                                 
                 I_Object.Connect = base_class.generic_connect
                 I_Object.SetTooltip = base_class.generic_tooltip
@@ -1837,7 +1844,7 @@ local ui = {} do
             
             do
                 i_Input.MouseEnter:Connect(function() 
-                    i_Input.BackgroundColor3 = colors['bg_object-b']
+                    i_Input.BackgroundColor3 = colors['bg_setting-b']
                     
                     
                     local tt = I_Object.Tooltip
@@ -1849,7 +1856,7 @@ local ui = {} do
                 end)
                 
                 i_Input.MouseLeave:Connect(function() 
-                    i_Input.BackgroundColor3 = colors['bg_object']
+                    i_Input.BackgroundColor3 = colors['bg_setting']
                     
                     if (w_Tooltip.Text == I_Object.Tooltip) then
                         w_TooltipHeader.Visible = false
@@ -1858,6 +1865,7 @@ local ui = {} do
                 
                 i_Input.FocusLost:Connect(function(enter) 
                     pcall(I_Object.Flags.Unfocused, i_Input.Text, enter)
+                    i_Input.Text = I_Object.Name
                 end)
                 i_Input.Focused:Connect(function() 
                     pcall(I_Object.Flags.Focused)
@@ -1903,7 +1911,7 @@ local ui = {} do
                  b_Text.Size = dim2(1, -10, 1, 0)
                  b_Text.Text = text
                  b_Text.TextColor3 = colors['text1']
-                 b_Text.TextSize = 20
+                 b_Text.TextSize = 18
                  b_Text.TextStrokeColor3 = colors['text3']
                  b_Text.TextStrokeTransparency = 0
                  b_Text.TextXAlignment = 'Left'
@@ -2336,7 +2344,7 @@ local function ratio(signal)
         local connection = average[i]
         local confunc = connection.Function
         
-        if (confunc and islclosure(confunc)) then
+        if (type(confunc) == "function" and islclosure(confunc)) then
             if (not isexecclosure(confunc)) then
                 connection:Disable()
             end
@@ -2349,7 +2357,7 @@ local function unratio(signal)
         local connection = average[i]
         local confunc = connection.Function
         
-        if (islclosure(confunc)) then
+        if (type(confunc) == "function" and islclosure(confunc)) then
             if (not isexecclosure(confunc)) then
                 connection:Enable()
             end
@@ -2610,6 +2618,7 @@ local m_player = ui:CreateMenu('Player') do
     local p_pathfind    = m_player:AddMod('Pathfinder')
     local p_radar       = m_player:AddMod('Radar')
     local p_respawn     = m_player:AddMod('Respawn'..donetxt, 'Toggle')
+    local p_waypoints   = m_player:AddMod('Waypoints'..donetxt)
     
     -- Anti afk
     do 
@@ -2766,7 +2775,7 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Antiwarp
     do 
-        local lerpslider = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How close you should teleport back to your previous location when triggered; e.g. 1 = 100% previous, 0.5 = halfway there, etc.')
+        local lerpslider = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How much you will be teleported back when antiwarp gets triggered')
         local distslider = p_antiwarp:AddSlider('Distance',{min=1,max=150,cur=20,step=0.1}):SetTooltip('How far you\'d have to be teleported before it gets set off')
         local lerp = 1
         local dist = 20
@@ -2783,7 +2792,7 @@ local m_player = ui:CreateMenu('Player') do
             con = serv_rs.Heartbeat:Connect(function() 
                 cf1 = l_humrp.CFrame 
                 if ((cf1.Position - cf2.Position).Magnitude > dist) then
-                    local _ = cf1:lerp(cf2, 1-lerp)
+                    local _ = cf1:lerp(cf2, lerp)
                     cf2 = _
                     l_humrp.CFrame = _
                 else
@@ -2800,7 +2809,12 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Autoclick
     do 
-        p_autoclick:AddHotkey('Autoclick key')
+        local buttontype = p_autoclick:AddDropdown('Button',true)
+        buttontype:AddOption('Left click')
+        buttontype:AddOption('Right click')
+        buttontype:AddOption('Custom')
+        
+        local customkey = p_autoclick:AddHotkey()
         
     end 
     -- Flashback
@@ -2839,7 +2853,154 @@ local m_player = ui:CreateMenu('Player') do
             l_hum:Destroy()
         end)
     end
-    
+    -- Waypoints
+    do
+        local waypoints
+        local makewp = p_waypoints:AddInput('Make waypoint')
+        local gotowp = p_waypoints:AddInput('Goto waypoint')
+        local delewp = p_waypoints:AddInput('Delete waypoint')
+        local deleall = p_waypoints:AddButton('Delete all waypoints')
+        
+        local folder
+        
+        local cg = game.CoreGui
+        
+        local function makewaypoint(text) 
+            local new = {}
+            new[1] = text
+            new[2] = l_humrp.CFrame
+            
+            local a = inst("BillboardGui")
+            local b = inst("BoxHandleAdornment")
+            local c = inst("Part")
+            local d = inst("TextLabel")
+            
+            
+            c.Anchored = true
+            c.CanCollide = false
+            c.CanTouch = false
+            c.Color = c3n(0,0,0)
+            c.Name = getnext()
+            c.Size = vec3(1, 1, 1)
+            c.Position = new[2].Position
+            c.Transparency = 1
+            
+            a.Adornee = c
+            a.AlwaysOnTop = true
+            a.LightInfluence = 0.8
+            a.Size = dim2(1.5, 30, 0.75, 15)
+            
+            b.Adornee = c
+            b.AlwaysOnTop = false
+            b.ZIndex = 10
+            b.Color3 = c3n(0,0,0)
+            b.Size = vec3(2, 100, 2)
+            b.SizeRelativeOffset = vec3(0, 100, 0)
+            b.Transparency = 0.5
+            
+            d.BackgroundColor3 = colors['bg_header']
+            d.BackgroundTransparency = 0.6
+            d.BorderColor3 = colors['outline']
+            d.BorderSizePixel = 1
+            d.Font = 'SourceSans'
+            d.Size = dim2sca(1,1)
+            d.Text = text
+            d.TextColor3 = colors['text1']
+            d.TextScaled = true
+            d.TextStrokeColor3 = colors['shadow']
+            d.TextStrokeTransparency = 0
+            
+            
+            
+            c.Parent = folder
+            a.Parent = folder
+            b.Parent = folder
+            d.Parent = a
+            
+            
+            
+            new[3] = a
+            new[4] = b
+            new[5] = c
+            new[6] = d
+            
+            ins(waypoints, new)
+        end
+        
+        
+        makewp:Connect("Unfocused",function(text) 
+            if (not p_waypoints:IsEnabled()) then p_waypoints:Enable() end
+            
+            for i = 1, #waypoints do
+                local wp = waypoints[i]
+                if (wp[1] == text) then
+                    for i = 3, 5 do wp[i]:Destroy() end
+                    rem(waypoints, i)
+                    break
+                end
+            end 
+            
+            makewaypoint(text)
+        end)
+        
+        delewp:Connect("Unfocused",function(text) 
+            for i = 1, #waypoints do
+                local wp = waypoints[i]
+                if (wp[1] == text) then
+                    for i = 3, 5 do wp[i]:Destroy() end
+                    rem(waypoints, i)
+                    break
+                end
+            end 
+        end)
+        
+        gotowp:Connect("Unfocused",function(text) 
+            for i = 1, #waypoints do
+                local wp = waypoints[i]
+                if (wp[1] == text) then
+                    ratio(l_humrp.Changed)
+                    ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                    l_humrp.CFrame = wp[2]
+                    unratio(l_humrp.Changed)
+                    unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                end
+            end 
+        end)
+        
+        deleall:Connect("Clicked",function() 
+            for i = 1, #waypoints do
+                local wp = waypoints[i]
+                for i = 3, 5 do wp[i]:Destroy() end
+                waypoints[i] = nil
+            end
+            cle(waypoints)
+        end)
+        
+        p_waypoints:Connect("Enabled",function() 
+            waypoints = {}
+            
+            folder = inst("Folder")
+            folder.Name = getnext()
+            folder.Parent = game.CoreGui
+        end)
+        
+        p_waypoints:Connect("Disabled",function() 
+            folder:Destroy()
+            
+            
+            for i = 1, #waypoints do
+                local wp = waypoints[i]
+                for i = 3, 5 do wp[i]:Destroy() end
+                waypoints[i] = nil
+            end
+            waypoints = nil
+            
+        end)
+        
+        deleall:SetTooltip('Deletes all waypoints. Preferable over untoggling and retoggling')
+        makewp:SetTooltip('Makes a waypoint at your position with the name you type in')
+        delewp:SetTooltip('Deletes all waypoints matching the name you type in')
+    end
     
     p_antiafk:SetTooltip('Prevents you from being disconnected due to idling for too long')
     p_anticrash:SetTooltip('Prevents game scripts from while true do end\'ing you')
@@ -2854,6 +3015,7 @@ local m_player = ui:CreateMenu('Player') do
     p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
+    p_waypoints:SetTooltip('Lets you save positions and teleport to them later')
 end
 local m_movement = ui:CreateMenu('Movement') do 
     local m_airjump   = m_movement:AddMod('Air jump'..donetxt)
@@ -3023,7 +3185,7 @@ local m_movement = ui:CreateMenu('Movement') do
         mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
         mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
         
-        local speedslider = m_speed:AddSlider('Speed',{min=0,max=100,cur=50,step=0.1})
+        local speedslider = m_speed:AddSlider('Speed',{min=0,max=200,cur=50,step=0.1})
         local speed = 50
         speedslider:Connect("ValueChanged",function(v)speed=v;end)
         local part
@@ -3430,9 +3592,9 @@ local m_render = ui:CreateMenu('Render') do
         local ascend_h = r_freecam:AddHotkey('Ascend key')
         local descend_h = r_freecam:AddHotkey('Descend key')
         local camera = r_freecam:AddToggle('Camera-based')
+        local resetonenable = r_freecam:AddToggle('Reset pos on enable')
         local gotocam = r_freecam:AddButton('Goto freecam')
-        
-        
+        local resetcam = r_freecam:AddButton('Reset freecam position')
         local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
         local mode = r_freecam:AddDropdown('Method', true)
         local freezemode = r_freecam:AddDropdown('Freeze mode')
@@ -3452,6 +3614,10 @@ local m_render = ui:CreateMenu('Render') do
         
         local ask = Enum.KeyCode.E-- keycode for ascension
         local dsk = Enum.KeyCode.Q-- keycode for descension
+        
+        local fcampos = l_humrp.Position
+        
+        
         
         local speed = 30 -- speed 
         
@@ -3484,12 +3650,16 @@ local m_render = ui:CreateMenu('Render') do
         local stuckcon, stuckcf, oldwalk
         
         r_freecam:Connect("Enabled", function()
+            print(pcall(function()
             local curmod = mode:GetSelection()        
             local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
             
-            local base = l_humrp.Position
+            if (resetonenable:IsEnabled()) then
+                fcampos = l_humrp.Position
+            end
+            
             campart = inst("Part")
-            campart.Position = base
+            campart.Position = fcampos
             campart.Transparency = 1
             campart.CanCollide = false
             campart.CanTouch = false
@@ -3515,26 +3685,26 @@ local m_render = ui:CreateMenu('Render') do
                         local down = serv_uis:IsKeyDown(dsk)
                         local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
                         
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
                         
-                        campart.Position = base
+                        campart.Position = fcampos
                     end)
                 else
                     fcon = serv_rs.Heartbeat:Connect(function(dt) 
                         local up = serv_uis:IsKeyDown(ask)
                         local down = serv_uis:IsKeyDown(dsk)
                         
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
                         
-                        campart.Position = base
+                        campart.Position = fcampos
                     end)
                 end
             elseif (curmod == 'Smooth') then
                 local pos = inst("BodyPosition")
-                pos.Position = base
+                pos.Position = fcampos
                 pos.D = 1900
                 pos.P = 125000
                 pos.MaxForce = vec3(9e9, 9e9, 9e9)
@@ -3548,21 +3718,21 @@ local m_render = ui:CreateMenu('Render') do
                         local down = serv_uis:IsKeyDown(dsk)
                         local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
                         
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
                         
-                        pos.Position = base
+                        pos.Position = fcampos
                     end)
                 else
                     fcon = serv_rs.Heartbeat:Connect(function(dt) 
                         local up = serv_uis:IsKeyDown(ask)
                         local down = serv_uis:IsKeyDown(dsk)
                         
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
                         
-                        pos.Position = base
+                        pos.Position = fcampos
                     end)
                 end
             end
@@ -3581,6 +3751,7 @@ local m_render = ui:CreateMenu('Render') do
                     l_humrp.CFrame = stuckcf
                 end)
             end
+        end))
         end)
         
         r_freecam:Connect("Disabled",function() 
@@ -3612,16 +3783,23 @@ local m_render = ui:CreateMenu('Render') do
             l_humrp.CFrame = new
         end)
         
+        resetcam:Connect("Clicked",function() 
+            fcampos = l_humrp.Position
+        end)
+        
         ascend_h:SetTooltip('When pressed the freecam vertically ascends'):SetHotkey(Enum.KeyCode.E)
         camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other freecam script</b>')
         descend_h:SetTooltip('When pressed the freecam vertically descends'):SetHotkey(Enum.KeyCode.Q)
         mode:SetTooltip('The method Freecam uses')
         speedslider:SetTooltip('The speed of your freecam flight')
         freezemode:SetTooltip('The method used to make your character not move')
+        gotocam:SetTooltip('Brings you to the camera')
+        resetcam:SetTooltip('Resets the camera\'s position')
+        resetonenable:SetTooltip('Resets the camera\'s position when Freecam gets enabled')
     end
     -- Zoom
     do 
-        local slider = r_zoom:AddSlider('Zoom amount',{min=0,max=100,cur=30,step=0.1}):SetTooltip('The amount to zoom in by')
+        local slider = r_zoom:AddSlider('Zoom amount',{min=0,max=150,cur=30,step=0.1}):SetTooltip('The amount to zoom in by')
                 
         r_zoom:Connect("Toggled",function(t) 
             if (t) then
