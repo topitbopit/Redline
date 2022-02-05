@@ -91,7 +91,10 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 *Radar that displays where other players are*  
 **Respawn** [DONE]  
 *Force resets you. Can fix some glitches with reanimations*  
-  
+**Waypoints** [DONE]
+*Lets you save positions and teleport back to them later*
+
+
 ### Movement  
 **Air jump**  [DONE]  
 *Lets you jump in the air*  
