@@ -21,6 +21,10 @@
 ★☆
 ]]--
 
+
+---@diagnostic disable:undefined-global
+---@diagnostic disable:undefined-field
+
 if (_G.RLLoaded) then
     if (printconsole) then 
         printconsole("Already loaded Redline", 255, 64, 64)
@@ -735,6 +739,10 @@ local ui = {} do
         end
         
         -- Generic funcs
+        
+        ---@param self table
+        ---@param tooltip string
+        ---@return table
         base_class.generic_tooltip = function(self, tooltip) 
             if (tooltip) then
                 self.Tooltip = tostring(tooltip)    
@@ -773,7 +781,8 @@ local ui = {} do
                   local m_Highlight
                   local m_ModuleText
                   local m_ModuleIcon
-                 local m_ModuleMenu
+                 local m_Menu
+                  local m_MenuListLayout
                 
                 do
                     m_ModuleRoot = inst("ImageButton")
@@ -955,6 +964,7 @@ local ui = {} do
             elseif (Type == 'Textbox') then
                 local m_ModuleRoot
                  local m_ModuleBackground
+                 local m_ModuleEnableEffect
                   local m_ModuleText
                    local m_ModulePadding
                   local m_ModuleIcon
@@ -2042,7 +2052,6 @@ local ui = {} do
                 O_Object.Tooltip = nil
                 O_Object.Selected = false
                 
-                O_Object.Icon = t_Box2
                 O_Object.Name = text
                 O_Object.Parent = self
                 
@@ -2271,7 +2280,7 @@ local ui = {} do
         
         -- Variable clearing
         colors = nil
-        shadow,getnext,stroke,round,uierror = nil
+        shadow,getnext,stroke,round,uierror = nil,nil,nil,nil,nil
         ui_Menus = nil
         
         _G.RLLoaded = false
@@ -2279,7 +2288,116 @@ local ui = {} do
     function ui:GetModules() 
         return ui_Modules
     end
-    function ui:GetScreen() return w_Screen end
+    function ui:GetScreen() 
+        return w_Screen 
+    end
+    
+    local notifs = {}
+    function ui:Notify(title, text, duration) 
+        duration = mc(duration or 2, 0.1, 30)
+        
+        local m_Notif
+         local m_Description
+         local m_Header
+          local m_Title
+          local m_Icon
+          local m_Text
+        
+        local sound
+        do 
+            sound = inst("Sound")
+            sound.Playing = true
+            sound.SoundId = "rbxassetid://8745692251"
+            sound.Volume = 1
+            sound.Parent = w_Screen 
+            
+            m_Notif = inst('Frame')
+            m_Notif.AnchorPoint = vec2(1,1)
+            m_Notif.BackgroundColor3 = colors['bg_object']
+            m_Notif.BorderColor3 = colors['outline']
+            m_Notif.BorderSizePixel = 1
+            m_Notif.Position = dim2(1, 275, 1, -((#notifs*125)+((#notifs+1)*50)))
+            m_Notif.Size = dim2off(225, 125)
+            m_Notif.ZIndex = 162
+            m_Notif.Parent = w_Screen
+            
+             m_Progress = inst("Frame")
+             m_Progress.BackgroundColor3 = colors['enabled']
+             m_Progress.BorderSizePixel = 0
+             m_Progress.Position = dim2off(0, 30)
+             m_Progress.Size = dim2off(225, 1)
+             m_Progress.ZIndex = 163
+             m_Progress.Parent = m_Notif
+            
+             m_Header = inst('Frame')
+             m_Header.BackgroundColor3 = colors['bg_header']
+             m_Header.BorderColor3 = colors['outline']
+             m_Header.BorderSizePixel = 1
+             m_Header.Size = dim2off(225, 30)
+             m_Header.ZIndex = 162
+             m_Header.Parent = m_Notif
+             
+              m_Text = inst('TextLabel')
+              m_Text.BackgroundTransparency = 1
+              m_Text.Font = 'SourceSans'
+              m_Text.Position = dim2off(32, 0)
+              m_Text.RichText = true
+              m_Text.Size = dim2(1, -32, 1, 0)
+              m_Text.Text = tostring(title)
+              m_Text.TextColor3 = colors['text1']
+              m_Text.TextSize = 22
+              m_Text.TextStrokeColor3 = colors['text3']
+              m_Text.TextStrokeTransparency = 0
+              m_Text.TextXAlignment = 'Left'
+              m_Text.ZIndex = 162
+              m_Text.Parent = m_Header
+              
+              m_Description = inst('TextLabel')
+              m_Description.BackgroundTransparency = 1
+              m_Description.Font = 'SourceSans'
+              m_Description.Position = dim2off(4, 32)
+              m_Description.RichText = true
+              m_Description.Size = dim2(1, -4, 1, -32)
+              m_Description.Text = tostring(text)
+              m_Description.TextColor3 = colors['text1']
+              m_Description.TextSize = 20
+              m_Description.TextStrokeColor3 = colors['text3']
+              m_Description.TextStrokeTransparency = 0
+              m_Description.TextWrapped = true
+              m_Description.TextXAlignment = 'Left'
+              m_Description.TextYAlignment = 'Top'
+              m_Description.ZIndex = 162
+              m_Description.Parent = m_Notif
+              
+              m_Icon = inst('ImageLabel')
+              m_Icon.Size = dim2off(30, 30)
+              m_Icon.Position = dim2sca(0,0)
+              m_Icon.BackgroundTransparency = 1
+              m_Icon.ImageColor3 = colors['text1']
+              m_Icon.Image = 'rbxassetid://8745673635'
+              m_Icon.Rotation = 0
+              m_Icon.ZIndex = 162
+              m_Icon.Parent = m_Header
+        end
+        
+        ins(notifs, m_Notif)
+        
+        twn(m_Notif, {Position = m_Notif.Position - dim2off(325)},true)
+        ctwn(m_Progress, {Size = dim2off(0, 1)}, duration)
+        delay(duration, function() 
+            for i = 1, #notifs do 
+                if (notifs[i] == m_Notif) then 
+                    rem(notifs, i) 
+                end 
+            end
+            for i = 1, #notifs do 
+                twn(notifs[i], {Position = dim2(1, -50, 1, -(((i-1)*125)+(i*50)))}, true)
+            end
+            twn(m_Notif, {Position = dim2(1, -50, 1, 200)}, true).Completed:Wait()
+            m_Notif:Destroy()
+        end)
+    end
+    
     
     ui.Flags = {}
     ui.Flags.Destroying = true
@@ -2319,23 +2437,34 @@ end,false,999999,Enum.KeyCode.End)
 
 -- holy shit
 local isexecclosure = is_synapse_function or 
-    isourclosure or 
-    is_our_closure or 
-    isoxygenfunction or 
-    isexecclosure or 
-    isexecfunction or 
-    is_exec_function or 
-    is_exec_func or 
-    is_executor_closure or 
+
+
     is_exec_closure or 
-    isexecfunc or 
+    is_exec_func or 
+    is_exec_function or 
+    is_executor_closure or 
     is_executor_func or 
     is_executor_function or
+    is_our_closure or 
+    is_our_func or
+    is_our_function or 
+    is_synapse_closure or 
+    is_synapse_func or 
+    is_synapse_function or 
     iselectronfunction or 
+    isexecclosure or 
+    isexecfunc or 
+    isexecfunction or 
     isexecutorclosure or
-    iskrnlfunction or
+    isexecutorfunc or 
+    isexecutorfunction or
+    isfluxusfunction or 
     iskrnlclosure or
-    isfluxusfunction
+    iskrnlfunction or
+    isourclosure or 
+    isourfunc or
+    isourfunction or
+    isoxygenfunction
     
 -- disable non executor connections
 local function ratio(signal) 
@@ -3122,7 +3251,7 @@ local m_movement = ui:CreateMenu('Movement') do
         mode:AddOption('Undetectable'):SetTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s undetectable'):Select()
         mode:AddOption('Velocity'):SetTooltip('Uses a bodymover. Has better results, but is easier to detect')
         
-        local vel = m_float:AddSlider('Velocity',{min=-30,cur=0,max=30,step=0.1}):SetTooltip('The amount of velocity you\'ll have when floating')
+        local vel = m_float:AddSlider('Velocity',{min=-10,cur=0,max=10,step=0.1}):SetTooltip('The amount of velocity you\'ll have when floating')
         local amnt = 0
         
         vel:Connect("ValueChanged",a)
@@ -3589,19 +3718,25 @@ local m_render = ui:CreateMenu('Render') do
     
     -- Freecam
     do 
+        -- Hotkeys
         local ascend_h = r_freecam:AddHotkey('Ascend key')
         local descend_h = r_freecam:AddHotkey('Descend key')
-        local camera = r_freecam:AddToggle('Camera-based')
-        local resetonenable = r_freecam:AddToggle('Reset pos on enable')
-        local gotocam = r_freecam:AddButton('Goto freecam')
-        local resetcam = r_freecam:AddButton('Reset freecam position')
-        local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+        -- Dropdowns
         local mode = r_freecam:AddDropdown('Method', true)
         local freezemode = r_freecam:AddDropdown('Freeze mode')
+        -- sliders 
+        local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+        -- buttons
+        local gotocam = r_freecam:AddButton('Goto freecam')
+        local resetcam = r_freecam:AddButton('Reset freecam position')
+        -- toggles
+        local camera = r_freecam:AddToggle('Camera-based')
+        local resetonenable = r_freecam:AddToggle('Reset pos on enable')
         
         
         mode:AddOption('Standard'):SetTooltip('Standard freecam'):Select()
-        mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')        
+        mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')  
+        mode:AddOption('Bypass'):SetTooltip('<b>Currently unfinished.</b> May bypass some anticheats / game mechanics that break freecam, but it\'s extremely janky')      
         freezemode:AddOption('Anchor'):SetTooltip('Anchors your character'):Select()
         freezemode:AddOption('Walkspeed'):SetTooltip('Sets your walkspeed to 0')
         freezemode:AddOption('Stuck'):SetTooltip('Constantly overwrites your position')
@@ -3615,10 +3750,7 @@ local m_render = ui:CreateMenu('Render') do
         local ask = Enum.KeyCode.E-- keycode for ascension
         local dsk = Enum.KeyCode.Q-- keycode for descension
         
-        local fcampos = l_humrp.Position
-        
-        
-        
+        local fcampos = l_humrp.Position        
         local speed = 30 -- speed 
         
         local cambased = true 
@@ -3650,7 +3782,7 @@ local m_render = ui:CreateMenu('Render') do
         local stuckcon, stuckcf, oldwalk
         
         r_freecam:Connect("Enabled", function()
-            print(pcall(function()
+            
             local curmod = mode:GetSelection()        
             local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
             
@@ -3658,27 +3790,28 @@ local m_render = ui:CreateMenu('Render') do
                 fcampos = l_humrp.Position
             end
             
-            campart = inst("Part")
-            campart.Position = fcampos
-            campart.Transparency = 1
-            campart.CanCollide = false
-            campart.CanTouch = false
-            campart.Anchored = true
-            campart.Size = vec3(1, 1, 1)
-            campart.Parent = workspace       
-            
             local normclv = l_cam.CFrame.LookVector
             clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
                 normclv = l_cam.CFrame.LookVector
             end)
-            l_cam.CameraSubject = campart
-            l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
-                if (l_cam.CameraSubject ~= campart) then
-                    l_cam.CameraSubject = campart
-                end
-            end)
             
             if (curmod == 'Standard') then
+                campart = inst("Part")
+                campart.Position = fcampos
+                campart.Transparency = 1
+                campart.CanCollide = false
+                campart.CanTouch = false
+                campart.Anchored = true
+                campart.Size = vec3(1, 1, 1)
+                campart.Parent = workspace  
+                
+                l_cam.CameraSubject = campart
+                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                    if (l_cam.CameraSubject ~= campart) then
+                        l_cam.CameraSubject = campart
+                    end
+                end)
+                
                 if (cambased) then
                     fcon = serv_rs.Heartbeat:Connect(function(dt) 
                         local up = serv_uis:IsKeyDown(ask)
@@ -3703,6 +3836,23 @@ local m_render = ui:CreateMenu('Render') do
                     end)
                 end
             elseif (curmod == 'Smooth') then
+                campart = inst("Part")
+                campart.Position = fcampos
+                campart.Transparency = 1
+                campart.CanCollide = false
+                campart.CanTouch = false
+                campart.Anchored = true
+                campart.Size = vec3(1, 1, 1)
+                campart.Parent = workspace  
+                
+                l_cam.CameraSubject = campart
+                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                    if (l_cam.CameraSubject ~= campart) then
+                        l_cam.CameraSubject = campart
+                    end
+                end)
+                
+                
                 local pos = inst("BodyPosition")
                 pos.Position = fcampos
                 pos.D = 1900
@@ -3735,15 +3885,70 @@ local m_render = ui:CreateMenu('Render') do
                         pos.Position = fcampos
                     end)
                 end
+            
+            elseif (curmod == 'Bypass') then
+                
+                l_cam.CameraSubject = l_hum
+                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                    if (l_cam.CameraSubject ~= l_hum) then
+                        l_cam.CameraSubject = l_hum
+                    end
+                end)
+                
+                if (cambased) then
+                    local cf = cfn(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        l_humrp.CFrame = cf
+                        
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        
+                        local movevec = (l_hum.MoveDirection * dt * 3 * speed)
+                        local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        local cupvec = ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        
+                        fcampos += movevec
+                        fcampos -= upvec
+                        fcampos -= cupvec
+                        
+                        local normalized = cfn(fcampos):ToObjectSpace(cf)
+                        
+                        l_hum.CameraOffset = (normalized).Position
+                    end)
+                else
+                    local cf = cfn(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
+                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                        l_humrp.CFrame = cf
+                        
+                        local up = serv_uis:IsKeyDown(ask)
+                        local down = serv_uis:IsKeyDown(dsk)
+                        
+                        local movevec = (l_hum.MoveDirection * dt * 3 * speed)
+                        local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                        
+                        fcampos += movevec
+                        fcampos -= upvec
+                        
+                        local normalized = cfn(fcampos):ToObjectSpace(cf)
+                        
+                        l_hum.CameraOffset = (normalized).Position
+                    end)
+                end
             end
             
             local fmode = freezemode:GetSelection()
+            
+            
             if (fmode == 'Anchor') then
                 l_humrp.Anchored = true
+                
             elseif (fmode == 'Walkspeed') then
                 oldwalk = l_hum.WalkSpeed
                 l_hum.WalkSpeed = 0
+                
             elseif (fmode == 'Stuck') then
+                
                 stuckcf = l_humrp.CFrame
                 ratio(l_humrp.Changed)
                 ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
@@ -3751,24 +3956,37 @@ local m_render = ui:CreateMenu('Render') do
                     l_humrp.CFrame = stuckcf
                 end)
             end
-        end))
         end)
         
         r_freecam:Connect("Disabled",function() 
-            if (fcon) then fcon:Disconnect() fcon = nil end 
-            if (clvcon) then clvcon:Disconnect() clvcon = nil end
-            if (campart) then campart:Destroy() campart = nil end
-            if (cscon) then cscon:Destroy() cscon = nil end
+            
+            if (fcon) then 
+                fcon:Disconnect() 
+                fcon = nil 
+            end 
+            if (clvcon) then 
+                clvcon:Disconnect() 
+                clvcon = nil 
+            end
+            if (campart) then 
+                campart:Destroy() 
+                campart = nil 
+            end
+            if (cscon) then 
+                cscon:Disconnect() 
+                cscon = nil 
+            end
             
             l_cam.CameraSubject = l_hum
+            l_hum.CameraOffset = vec3(0, 0, 0)
             
             if (l_humrp.Anchored == true) then
                 l_humrp.Anchored = false
             
             elseif (l_hum.WalkSpeed == 0) then
                 l_humrp.WalkSpeed = (oldwalk == 0 and 16 or oldwalk) -- Prevent getting infinitely stuck
-            
-            elseif (stuckcon) then
+            end
+            if (stuckcon) then
                 stuckcon:Disconnect()
                 stuckcon = nil
                 unratio(l_humrp.Changed)
@@ -3797,6 +4015,10 @@ local m_render = ui:CreateMenu('Render') do
         resetcam:SetTooltip('Resets the camera\'s position')
         resetonenable:SetTooltip('Resets the camera\'s position when Freecam gets enabled')
     end
+    -- Esp
+    do 
+        --r_esp:AddSlider('')
+    end
     -- Zoom
     do 
         local slider = r_zoom:AddSlider('Zoom amount',{min=0,max=150,cur=30,step=0.1}):SetTooltip('The amount to zoom in by')
@@ -3824,10 +4046,13 @@ local m_render = ui:CreateMenu('Render') do
     r_freecam:SetTooltip('Standard freecam')
     r_nametag:SetTooltip('Better nametags')
     r_zoom:SetTooltip('Like Optifine\'s zoom')
+    
+    
 end
 local m_ui = ui:CreateMenu('UI') do 
     local u_cmd = m_ui:AddMod('Command bar')
     local u_jeff = m_ui:AddMod('Jeff')
+    local u_plr = m_ui:AddMod('Player notifications')
     
     -- jeff 
     do 
@@ -3849,10 +4074,42 @@ local m_ui = ui:CreateMenu('UI') do
             
         end)
     end
-    
+    -- plr
+    do 
+        local rfriends = u_plr:AddToggle('Roblox friends only'):SetTooltip('Only send notifications if they are your roblox friend')
+        
+        local join
+        local leave 
+        
+        u_plr:Connect("Enabled",function() 
+            join = serv_players.PlayerAdded:Connect(function(p) 
+                if (l_plr:IsFriendsWith(p.UserId)) then
+                    ui:Notify('Friend joined',p.Name..' has joined your server',2)
+                else
+                    if (not rfriends:IsEnabled()) then
+                        ui:Notify('Player joined',p.Name..' has joined the server',2)
+                    end
+                end
+            end)
+            leave = serv_players.PlayerRemoving:Connect(function(p) 
+                if (l_plr:IsFriendsWith(p.UserId)) then
+                    ui:Notify('Friend left',p.Name..' has left your server',2)
+                else
+                    if (not rfriends:IsEnabled()) then
+                        ui:Notify('Player left',p.Name..' has left the server',2)
+                    end
+                end
+            end)
+        end)
+        u_plr:Connect("Disabled",function() 
+            join:Disconnect()
+            leave:Disconnect()
+        end)
+    end
     
     u_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
     u_jeff:SetTooltip('I forgot what this does')
+    u_plr:SetTooltip('Get notifications when a player joins / leaves')
 end
 local m_server = ui:CreateMenu('Server') do 
     local s_rejoin = m_server:AddMod('Rejoin'..donetxt, 'Button')
@@ -3909,3 +4166,4 @@ local m_search = ui:CreateMenu('Search') do
 end
 
 _G.RLLoaded = true
+ui:Notify('Redline loaded', 'Redline is now ready to use. Press RightShift to begin.', 5)
