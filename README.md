@@ -96,11 +96,11 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 
 
 ### Movement  
-**Air jump**  [DONE]  
-*Lets you jump in the air*  
-**Blink**  
-*Pseudo lagswitch. Doesn't actually choke packets*  
-**Click TP**  [almost done]  
+**Air jump**  [DONE]   
+*Lets you jump in the air*   
+**Blink**   
+*Pseudo lagswitch. Doesn't actually choke packets*   
+**Click TP**  [almost done]   
 *Standard click TP*  
 **Fast fall**  
 *Makes you quickly fall. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
@@ -112,21 +112,21 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 *Lets you jump higher*  
 **Ice**  
 *Makes you walk like you're on ice*  
-**Jesus**  
+**Jesus**   
 *Lets you walk over dangerous parts*  
 **Jetpack**  
 *Like flight, but different*  
 **Noclip**  
-*Standard noclip*  
+*Standard noclip*   
 **Noslowdown**  
 *Prevents you from being slowed down; your walkspeed can't go under 16 and you can't be anchored*  
 **Parkour**  
 *Automatically jumps when you reach the end of a block*  
 **Phase**  
-*Teleports you insanely fast around a central position. Useful for games like Jailbreak to avoid arrests*  
+*Teleports you insanely fast around a central position. Useful for games like Prison Life to avoid arrests*  
 **Safewalk**  
 *Prevents you from walking off of a part*  
-**Speedhack**  [DONE]
+**Speedhack**  [DONE]   
 *Classic speedhack. Has plenty of modes*  
 **Spider**  
 *Lets you climb up parts like a spider*  
@@ -136,17 +136,17 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 *Limits or disables your velocity*  
   
 ### Render  
-**Better UI**  
-*Improves Roblox UIs like the chat and inventory*  
+**Better UI**   
+*Improves Roblox UIs like the chat and inventory*   
 **Breadcrumbs**  
-*Leaves a trail behind you*  
-**Camera tweaks**  
-*Modify lots of camera attributes like camnoclip, max zoom. etc)  
-**Crosshair**  
-*Drawing crosshair configuration*  
-**ESP**  
-*Standard ESP with tons of configuration*  
-**Freecam**  [DONE]
+*Leaves a trail behind you*   
+**Camera tweaks**   
+*Modify lots of camera attributes like camnoclip, max zoom. etc)   
+**Crosshair**   
+*Drawing crosshair configuration*   
+**ESP**   
+*Standard ESP with tons of configuration*   
+**Freecam**  [DONE]  
 *Flight but you control your camera*  
 **Fullbright**  
 *Disables lighting. Has several presets that may work for different games*  
@@ -160,15 +160,20 @@ Eventually I'll rewrite every description to make more sense / go into more deta
 *Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*  
 **Jeff**  [DONE]  
 *I forgor what this does* :skull:  
-  
-### Server  
+**Player alerts**  [DONE]
+*Notifies you when a player joins or leaves*   
+   
+### Server   
+**Private server**   
+*Server hops to the smallest server*   
 **Rejoin**  [DONE]  
 *Rejoins the current server*  
 **Serverhop**  
 *Server hops to a random server*  
-**Private server**  
-*Server hops to the smallest server*  
-  
+**Server browser** 
+*Lets you view existing servers and join them*   
+
+
 ### Integrations  
 **Discord Rich Prescence**  
 *Show everyone else how cool you are for using Redline*  
