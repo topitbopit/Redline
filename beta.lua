@@ -2293,7 +2293,8 @@ local ui = {} do
     end
     
     local notifs = {}
-    function ui:Notify(title, text, duration) 
+    local notifsounds = {"rbxassetid://8747340426","rbxassetid://8745692251",''}
+    function ui:Notify(title, text, duration, tone) 
         duration = mc(duration or 2, 0.1, 30)
         
         local m_Notif
@@ -2305,21 +2306,22 @@ local ui = {} do
         
         local sound
         do 
-            sound = inst("Sound")
-            sound.Playing = true
-            sound.SoundId = "rbxassetid://8745692251"
-            sound.Volume = 1
-            sound.Parent = w_Screen 
             
             m_Notif = inst('Frame')
             m_Notif.AnchorPoint = vec2(1,1)
             m_Notif.BackgroundColor3 = colors['bg_object']
             m_Notif.BorderColor3 = colors['outline']
             m_Notif.BorderSizePixel = 1
-            m_Notif.Position = dim2(1, 275, 1, -((#notifs*125)+((#notifs+1)*50)))
+            m_Notif.Position = dim2(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
             m_Notif.Size = dim2off(225, 125)
             m_Notif.ZIndex = 162
             m_Notif.Parent = w_Screen
+            
+            sound = inst("Sound")
+            sound.Playing = true
+            sound.SoundId = notifsounds[tone or 3]
+            sound.Volume = 2
+            sound.Parent = m_Notif 
             
              m_Progress = inst("Frame")
              m_Progress.BackgroundColor3 = colors['enabled']
@@ -2370,8 +2372,8 @@ local ui = {} do
               m_Description.Parent = m_Notif
               
               m_Icon = inst('ImageLabel')
-              m_Icon.Size = dim2off(30, 30)
-              m_Icon.Position = dim2sca(0,0)
+              m_Icon.Size = dim2off(26, 26)
+              m_Icon.Position = dim2off(2,2)
               m_Icon.BackgroundTransparency = 1
               m_Icon.ImageColor3 = colors['text1']
               m_Icon.Image = 'rbxassetid://8745673635'
@@ -2382,7 +2384,7 @@ local ui = {} do
         
         ins(notifs, m_Notif)
         
-        twn(m_Notif, {Position = m_Notif.Position - dim2off(325)},true)
+        twn(m_Notif, {Position = m_Notif.Position - dim2off(300)},true)
         ctwn(m_Progress, {Size = dim2off(0, 1)}, duration)
         delay(duration, function() 
             for i = 1, #notifs do 
@@ -2391,9 +2393,9 @@ local ui = {} do
                 end 
             end
             for i = 1, #notifs do 
-                twn(notifs[i], {Position = dim2(1, -50, 1, -(((i-1)*125)+(i*50)))}, true)
+                twn(notifs[i], {Position = dim2(1, -25, 1, -(((i-1)*125)+(i*25)))}, true)
             end
-            twn(m_Notif, {Position = dim2(1, -50, 1, 200)}, true).Completed:Wait()
+            twn(m_Notif, {Position = dim2(1, -25, 1, 200)}, true).Completed:Wait()
             m_Notif:Destroy()
         end)
     end
@@ -2948,7 +2950,7 @@ local m_player = ui:CreateMenu('Player') do
     end 
     -- Flashback
     do 
-        local flash_delay = p_flashback:AddSlider("Delay", {min=0,max=2,cur=0,step=0.1})
+        local flash_delay = p_flashback:AddSlider("Delay", {min=0,max=5,cur=0,step=0.1})
         flash_delay:SetTooltip('How long to wait before teleporting you back')
         
         local fb_con
@@ -3023,8 +3025,8 @@ local m_player = ui:CreateMenu('Player') do
             b.AlwaysOnTop = false
             b.ZIndex = 10
             b.Color3 = c3n(0,0,0)
-            b.Size = vec3(2, 100, 2)
-            b.SizeRelativeOffset = vec3(0, 100, 0)
+            b.Size = vec3(1, 200, 1)
+            b.SizeRelativeOffset = vec3(0, 200, 0)
             b.Transparency = 0.5
             
             d.BackgroundColor3 = colors['bg_header']
@@ -4084,19 +4086,19 @@ local m_ui = ui:CreateMenu('UI') do
         u_plr:Connect("Enabled",function() 
             join = serv_players.PlayerAdded:Connect(function(p) 
                 if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend joined',p.Name..' has joined your server',2)
+                    ui:Notify('Friend joined',p.Name..' has joined your server',2,2)
                 else
                     if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player joined',p.Name..' has joined the server',2)
+                        ui:Notify('Player joined',p.Name..' has joined the server',2,2)
                     end
                 end
             end)
             leave = serv_players.PlayerRemoving:Connect(function(p) 
                 if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend left',p.Name..' has left your server',2)
+                    ui:Notify('Friend left',p.Name..' has left your server',2,1)
                 else
                     if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player left',p.Name..' has left the server',2)
+                        ui:Notify('Player left',p.Name..' has left the server',2,1)
                     end
                 end
             end)
@@ -4112,9 +4114,10 @@ local m_ui = ui:CreateMenu('UI') do
     u_plr:SetTooltip('Get notifications when a player joins / leaves')
 end
 local m_server = ui:CreateMenu('Server') do 
+    local s_priv = m_server:AddMod('Private server', 'Button')
     local s_rejoin = m_server:AddMod('Rejoin'..donetxt, 'Button')
     local s_shop = m_server:AddMod('Serverhop', 'Button')
-    
+    local s_viewer = m_server:AddMod('Server browser')
     s_rejoin:Connect("Clicked",function() 
         if #serv_players:GetPlayers() <= 1 then
         	l_plr:Kick("\nRejoining, one second...")
@@ -4125,13 +4128,22 @@ local m_server = ui:CreateMenu('Server') do
         end
     end)
     
-    s_rejoin:SetTooltip('Rejoins you into the current server. <b>Don\'t swap too many times, or you\'ll get error 268</b>')
+    s_priv:SetTooltip('Hops you to the smallest server. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
+    s_rejoin:SetTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
     s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
+    s_viewer:SetTooltip('Lets you view all the existing servers and hop to them')
 end
 local m_integrations = ui:CreateMenu('Integrations') do 
     local m_alt = m_integrations:AddMod('Alt manager')
-    local m_rpc = m_integrations:AddMod('Discord RPC')
+    local m_rpc = m_integrations:AddMod('Discord Rich Presence')
 	
+    -- rpc
+    do 
+        m_rpc:Connect("Enabled",function() 
+            ui:Notify('Rich Presence failed', 'Currently unfinished', 3, 1)
+        end)
+    end
+    
     m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
     m_rpc:SetTooltip('Discord Rich Presence integration')
 end
@@ -4166,4 +4178,4 @@ local m_search = ui:CreateMenu('Search') do
 end
 
 _G.RLLoaded = true
-ui:Notify('Redline loaded', 'Redline is now ready to use. Press RightShift to begin.', 5)
+ui:Notify('Redline loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 2)
