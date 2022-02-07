@@ -62,6 +62,7 @@ if (not isfile('REDLINE/config.json')) then
     --writefile('REDLINE/config.json', '')
 end
 
+local REDLINEVER = "v0.1.0"
 
 
 -- { Wait for load } --
@@ -103,6 +104,10 @@ local ins,rem,cle = table.insert, table.remove, table.clear
 -- Os
 local date = os.date
 local time = tick
+
+
+local workspace = workspace
+local ipairs = ipairs
 
 
 -- { UI Colors } --
@@ -247,6 +252,8 @@ local ui = {} do
      local w_TooltipHeader
       local w_Tooltip
     local w_Backframe
+     local w_Help
+     local w_Modal
     local w_ModList
      local w_ModListLayout
      local w_ModListTitle
@@ -258,25 +265,53 @@ local ui = {} do
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
         w_Screen.Name = getnext()
         pcall(function() 
-            --syn.protect_gui(w_Screen)
+            syn.protect_gui(w_Screen)
         end)
         w_Screen.DisplayOrder = 939393
-        w_Screen.Parent = gethui and gethui() or get_hidden_gui and get_hidden_gui() or game.CoreGui
+        w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
         
         
         w_Backframe = inst('Frame')
-        w_Backframe.Size = dim2sca(1,1)
         w_Backframe.BackgroundColor3 = colors['bg']
         w_Backframe.BackgroundTransparency = 0.3
         w_Backframe.BorderSizePixel = 0
+        w_Backframe.ClipsDescendants = false
+        w_Backframe.Size = dim2sca(1,1)
         w_Backframe.Visible = false
         w_Backframe.Parent = w_Screen
+        
+        w_Modal = inst('TextButton')
+        w_Modal.Active = false
+        w_Modal.BackgroundTransparency = 1
+        w_Modal.Modal = true
+        w_Modal.Parent = w_Backframe
+        w_Modal.Size = dim2off(1,1)
+        w_Modal.Text = ''
+        
+        w_Help = inst("TextLabel")
+        w_Help.AnchorPoint = vec2(1,1)
+        w_Help.BackgroundTransparency = 1
+        w_Help.Font = 'SourceSans'
+        w_Help.Position = dim2sca(1,1)
+        w_Help.RichText = true
+        w_Help.Size = dim2off(300,300)
+        w_Help.Text = ""
+        w_Help.TextColor3 = colors['text1']
+        w_Help.TextSize = 20
+        w_Help.TextStrokeColor3 = colors['text3']
+        w_Help.TextStrokeTransparency = 0
+        w_Help.TextXAlignment = 'Left'
+        w_Help.TextYAlignment = 'Top'
+        w_Help.Visible = false
+        w_Help.ZIndex = 1
+        w_Help.Parent = w_Backframe
         
         local w_Icon = inst("ImageLabel")
         w_Icon.Image = "rbxassetid://8677436980"
         w_Icon.Size = dim2off(256, 256)
         w_Icon.Position = dim2off(0, -64)
         w_Icon.BackgroundTransparency = 1
+        w_Icon.ZIndex = 500
         w_Icon.Parent = w_Backframe
         
         w_ModList = inst('Frame')
@@ -304,7 +339,7 @@ local ui = {} do
         w_ModListTitle.TextXAlignment = 'Left'
         w_ModListTitle.TextColor3 = colors['text1']
         w_ModListTitle.TextSize = 24
-        w_ModListTitle.Text = " Redline"
+        w_ModListTitle.Text = " Redline "..REDLINEVER
         w_ModListTitle.LayoutOrder = 939
         w_ModListTitle.TextStrokeTransparency = 0
         w_ModListTitle.TextStrokeColor3 = colors['text3']
@@ -900,6 +935,7 @@ local ui = {} do
                     M_Object.Root = m_ModuleRoot
                     
                     M_Object.AddToggle = base_class.module_create_toggle
+                    M_Object.AddLabel = base_class.module_create_label
                     M_Object.AddDropdown = base_class.module_create_dropdown
                     M_Object.AddModHotkey = base_class.module_create_modhotkey
                     M_Object.AddHotkey = base_class.module_create_hotkey
@@ -1218,6 +1254,71 @@ local ui = {} do
                 ins(ui_Modules, M_Object)
                 return M_Object
             end
+        end
+        base_class.module_create_label = function(self, text) 
+            text = tostring(text)
+            
+            -- Yes, this is recycled from toggles
+            
+            local T_IndexOffset = self.ZIndex+1
+            
+            local t_Text
+            
+            do
+                 t_Text = inst('TextLabel')
+                 t_Text.BackgroundTransparency = 0
+                 t_Text.BorderSizePixel = 0
+                 t_Text.BackgroundColor3 = colors['bg_setting']
+                 t_Text.Font = 'SourceSans'
+                 t_Text.Position = dim2off(10, 0)
+                 t_Text.RichText = true
+                 t_Text.Size = dim2(1, 0, 0, 25)
+                 t_Text.Text = text
+                 t_Text.TextColor3 = colors['text1']
+                 t_Text.TextSize = 18
+                 t_Text.TextStrokeColor3 = colors['text3']
+                 t_Text.TextStrokeTransparency = 0
+                 t_Text.TextWrapped = true
+                 t_Text.TextXAlignment = 'Left'
+                 t_Text.TextYAlignment = 'Top'
+                 t_Text.ZIndex = T_IndexOffset
+                 t_Text.Parent = self.Menu
+            end
+            
+            for i = 1, 25 do 
+                if (t_Text.TextFits) then
+                    break
+                end
+                t_Text.Size += dim2off(0,25)
+            end
+                
+            local T_Object = {} do 
+                T_Object.Tooltip = nil
+                T_Object.Toggled = false
+                
+                T_Object.Name = text
+                T_Object.SetTooltip = base_class.generic_tooltip
+            end
+            
+            do
+                t_Text.MouseEnter:Connect(function()                     
+                    local tt = T_Object.Tooltip
+                    if (tt) then
+                        w_Tooltip.Text = tt
+                        w_TooltipHeader.Text = T_Object.Name
+                        w_TooltipHeader.Visible = true
+                    end
+                end)
+                
+                t_Text.MouseLeave:Connect(function() 
+                    
+                    if (w_Tooltip.Text == T_Object.Tooltip) then
+                        w_TooltipHeader.Visible = false
+                    end
+                end)
+            end
+            
+            return T_Object            
         end
         base_class.module_create_toggle = function(self, text) 
             text = tostring(text)
@@ -2742,10 +2843,10 @@ local m_player = ui:CreateMenu('Player') do
     local p_antiwarp    = m_player:AddMod('Anti-warp'..donetxt)
     local p_autoclick   = m_player:AddMod('Auto clicker')
     local p_fancy       = m_player:AddMod('Fancy chat')
+    local p_flag        = m_player:AddMod('Fake lag')
     local p_flashback   = m_player:AddMod('Flashback'..donetxt)
     local p_ftools      = m_player:AddMod('Funky tools')
     local p_gtweaks     = m_player:AddMod('Game tweaks')
-    local p_logs        = m_player:AddMod('Logs')
     local p_pathfind    = m_player:AddMod('Pathfinder')
     local p_radar       = m_player:AddMod('Radar')
     local p_respawn     = m_player:AddMod('Respawn'..donetxt, 'Toggle')
@@ -3139,10 +3240,10 @@ local m_player = ui:CreateMenu('Player') do
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and lerp')
     p_autoclick:SetTooltip('Standard autoclicker')
     p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+    p_flag:SetTooltip('Makes your character look laggy')
     p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
     p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
     p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
-    p_logs:SetTooltip('Displays logs for player joins, leaves, and messages')
     p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
@@ -3152,21 +3253,21 @@ local m_movement = ui:CreateMenu('Movement') do
     local m_airjump   = m_movement:AddMod('Air jump'..donetxt)
     local m_blink     = m_movement:AddMod('Blink')
     local m_clicktp   = m_movement:AddMod('Click TP'..donetxt)
-    local m_fastfall  = m_movement:AddMod('Fastfall')
     local m_flight    = m_movement:AddMod('Flight'..donetxt)
     local m_float     = m_movement:AddMod('Float'..donetxt)
     local m_highjump  = m_movement:AddMod('High jump')
     local m_jesus     = m_movement:AddMod('Jesus')
     local m_jetpack   = m_movement:AddMod('Jetpack')
     local m_noclip    = m_movement:AddMod('Noclip')
+    local m_nofall    = m_movement:AddMod('Nofall'..donetxt)
     local m_noslow    = m_movement:AddMod('Noslowdown')
-    local m_parkour   = m_movement:AddMod('Parkour')
+    local m_parkour   = m_movement:AddMod('Parkour'..donetxt)
     local m_phase     = m_movement:AddMod('Phase')
     local m_safewalk  = m_movement:AddMod('Safewalk')
     local m_speed     = m_movement:AddMod('Speed'..donetxt)
     local m_spider    = m_movement:AddMod('Spider')
     local m_step      = m_movement:AddMod('Step')
-    local m_velocity  = m_movement:AddMod('Velocity')
+    local m_velocity  = m_movement:AddMod('Velocity'..donetxt)
     -- Airjump
     do 
         local mode = m_airjump:AddDropdown('Mode',true)
@@ -3242,11 +3343,6 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
         
     end
-    -- Fast fall
-    do 
-        local modedd = m_fastfall:AddDropdown('Mode'):SetTooltip('The method Fastfall uses')
-        modedd:AddOption('Raycast'):SetTooltip('Raycasts downwards, instantly teleporting you down')
-    end
     -- Float
     do 
         local mode = m_float:AddDropdown('Mode'):SetTooltip('What method Float will use')
@@ -3307,97 +3403,107 @@ local m_movement = ui:CreateMenu('Movement') do
         
         
     end
-    -- Speed
+    -- Nofall
     do 
-        local mode = m_speed:AddDropdown('Mode',true)
-        mode:AddOption('Standard'):SetTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
-        mode:AddOption('Velocity'):SetTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
-        mode:AddOption('Bhop'):SetTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
-        mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
-        mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
+        local modedd = m_nofall:AddDropdown('Mode', true):SetTooltip('The method Nofall uses')
+        modedd:AddOption('Smart'):SetTooltip('Boosts you up a bit before you hit the ground'):Select()
+        modedd:AddOption('Drop'):SetTooltip('Instantly teleports you down')
         
-        local speedslider = m_speed:AddSlider('Speed',{min=0,max=200,cur=50,step=0.1})
-        local speed = 50
-        speedslider:Connect("ValueChanged",function(v)speed=v;end)
-        local part
-        local scon
+        local smarsens_slid = m_nofall:AddSlider('Smart vel. threshold',{min=30,max=300,cur=100,step=0.1}):SetTooltip('How fast you need to be falling before it can boost you')
+        local dropsens_slid = m_nofall:AddSlider('Drop sensitivity',{min=5,max=50,cur=10,step=0.1}):SetTooltip('How high the fall has to be before it will teleport you')
         
-        local ev = serv_rs.Heartbeat
+        local smarsens = -100
+        local dropsens = 10
         
-        m_speed:Connect("Enabled",function() 
-            local mode = mode:GetSelection()
+        smarsens_slid:Connect("ValueChanged",function(v)smarsens=-v;end)
+        dropsens_slid:Connect("ValueChanged",function(v)dropsens=v;end)
+        
+        local plrcon
+        local rcon
+        
+        m_nofall:Connect("Enabled",function() 
+            local down = vec3(0, -1000000, 0)
+            local p = RaycastParams.new()
+            p.FilterDescendantsInstances = {l_chr}
+            p.FilterType = Enum.RaycastFilterType.Blacklist
             
-            ratio(l_hum.Changed)
-            ratio(l_hum:GetPropertyChangedSignal("Jump"))
-            ratio(l_humrp.Changed)
-            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            plrcon = l_plr.CharacterAdded:Connect(function(c) 
+                p.FilterDescendantsInstances = {c}
+            end)
             
-            if (scon) then scon:Disconnect() scon = nil end
-            
-            if (mode == 'Standard') then
-                scon = ev:Connect(function(dt) 
-                    l_humrp.CFrame += l_hum.MoveDirection * (5 * dt * speed)
+            if (modedd:GetSelection() == 'Drop') then
+                rcon = serv_rs.Heartbeat:Connect(function() 
+                    local j = workspace:Raycast(l_humrp.Position, down, p)
+                    if (j) then
+                        if (j.Distance > dropsens) then
+                            local hv = l_humrp.Velocity
+                            if (hv.Y < 0) then
+                                local p = j.Position
+                                l_humrp.CFrame = cfn(p, p + l_humrp.CFrame.LookVector)
+                                l_humrp.Velocity = vec3(hv.X, 10, hv.Z)
+                            end
+                        end
+                    end
                 end)
-            elseif (mode == 'Velocity') then
-                scon = ev:Connect(function(dt) 
-                    l_humrp.Velocity += l_hum.MoveDirection * (5 * dt * speed)
-                end)
-            elseif (mode == 'Bhop') then
-                scon = serv_rs.RenderStepped:Connect(function(dt) 
-                    local md = l_hum.MoveDirection
-                    
-                    l_humrp.Velocity += md * (5 * dt * speed)
-                    l_hum.Jump = not (md.Magnitude < 0.01 and true or false)
-                end)
-            elseif (mode == 'Part') then
-                part = inst("Part")
-                part.Transparency = 0.8
-                part.Size = vec3(4,4,1)
-                part.CanTouch = false
-                part.CanCollide = true
-                part.Anchored = false
-                part.Name = getnext()
-                part.Parent = workspace
-                scon = ev:Connect(function(dt) 
-                    local md = l_hum.MoveDirection
-                    local p = l_humrp.Position
-                    
-                    part.CFrame = cfn(p-(md), p)
-                    part.Velocity = md * (dt * speed * 1200)
-                    
-                    l_hum:ChangeState(8)
-                end)
-            elseif (mode == 'WalkSpeed') then
-                scon = ev:Connect(function() 
-                    l_hum.WalkSpeed = speed
+            else
+                local holding = false
+                rcon = serv_rs.Heartbeat:Connect(function() 
+                    local j = workspace:Raycast(l_humrp.Position, down, p)
+                    if (j and j.Distance < 8) then
+                        if (holding) then return end
+                        
+                        local hv = l_humrp.Velocity
+                        if (hv.Y < smarsens) then
+                            l_humrp.Velocity = vec3(hv.X, 30, hv.Z)
+                            holding = true
+                            delay(0.5, function()
+                                holding = false
+                            end)
+                        end
+                    end
                 end)
             end
         end)
         
-        m_speed:Connect("Disabled",function() 
-            if (scon) then scon:Disconnect() scon = nil end
-            if (part) then part:Destroy() end
-            
-            unratio(l_hum.Changed)
-            unratio(l_hum:GetPropertyChangedSignal("Jump"))
-            unratio(l_humrp.Changed)
-            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+        m_nofall:Connect("Disabled",function() 
+            if (rcon) then rcon:Disconnect() rcon = nil end
+            if (plrcon) then plrcon:Disconnect() plrcon = nil end
         end)
         
-        mode:Connect("SelectionChanged",function() 
-            if (m_speed:IsEnabled()) then
-                m_speed:Disable()
-                m_speed:Enable()
+        modedd:Connect("SelectionChanged",function() 
+            if (m_nofall:IsEnabled()) then
+                m_nofall:Disable()
+                m_nofall:Enable()
             end
         end)
-        
-        mode:SetTooltip('Method used for the speedhack')
-        speedslider:SetTooltip('Amount of speed')
     end
-    -- Noclip
+    -- Parkour
     do 
+        local delayslid = m_parkour:AddSlider('Delay before jumping',{min=0,max=0.2,cur=0,step=0.01}):SetTooltip('How long to wait before jumping')
+        local delay = 0
+        local humcon
+        
+        delayslid:Connect("ValueChanged",function(v)delay=v;end)
+        
+        m_parkour:Connect("Toggled",function(t) 
+            if (t) then
+                local a = Enum.Material.Air
+                humcon = l_hum:GetPropertyChangedSignal("FloorMaterial"):Connect(function() 
+                    if (l_hum.FloorMaterial == a) then
+                        if (delay == 0) then
+                            if (l_hum.Jump) then return end
+                            l_hum:ChangeState(3)
+                        else
+                            wait(delay)
+                            if (l_hum.Jump) then return end
+                            l_hum:ChangeState(3)
+                        end
+                    end
+                end)
+            else
+                if (humcon) then humcon:Disconnect() humcon = nil end
+            end
+        end)
         
     end
     -- Flight
@@ -3686,11 +3792,128 @@ local m_movement = ui:CreateMenu('Movement') do
         camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other flight script</b>')
         turndir:SetTooltip('The direction your character faces')
     end
+    -- Speed
+    do 
+        local mode = m_speed:AddDropdown('Mode',true)
+        mode:AddOption('Standard'):SetTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
+        mode:AddOption('Velocity'):SetTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
+        mode:AddOption('Bhop'):SetTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
+        mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
+        mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
+        
+        local speedslider = m_speed:AddSlider('Speed',{min=0,max=200,cur=50,step=0.1})
+        local speed = 50
+        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        local part
+        local scon
+        
+        local ev = serv_rs.Heartbeat
+        
+        m_speed:Connect("Enabled",function() 
+            local mode = mode:GetSelection()
+            
+            ratio(l_hum.Changed)
+            ratio(l_hum:GetPropertyChangedSignal("Jump"))
+            ratio(l_humrp.Changed)
+            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            
+            if (scon) then scon:Disconnect() scon = nil end
+            
+            if (mode == 'Standard') then
+                scon = ev:Connect(function(dt) 
+                    l_humrp.CFrame += l_hum.MoveDirection * (5 * dt * speed)
+                end)
+            elseif (mode == 'Velocity') then
+                scon = ev:Connect(function(dt) 
+                    l_humrp.Velocity += l_hum.MoveDirection * (5 * dt * speed)
+                end)
+            elseif (mode == 'Bhop') then
+                scon = serv_rs.RenderStepped:Connect(function(dt) 
+                    local md = l_hum.MoveDirection
+                    
+                    l_humrp.Velocity += md * (5 * dt * speed)
+                    l_hum.Jump = not (md.Magnitude < 0.01 and true or false)
+                end)
+            elseif (mode == 'Part') then
+                part = inst("Part")
+                part.Transparency = 0.8
+                part.Size = vec3(4,4,1)
+                part.CanTouch = false
+                part.CanCollide = true
+                part.Anchored = false
+                part.Name = getnext()
+                part.Parent = workspace
+                scon = ev:Connect(function(dt) 
+                    local md = l_hum.MoveDirection
+                    local p = l_humrp.Position
+                    
+                    part.CFrame = cfn(p-(md), p)
+                    part.Velocity = md * (dt * speed * 1200)
+                    
+                    l_hum:ChangeState(8)
+                end)
+            elseif (mode == 'WalkSpeed') then
+                scon = ev:Connect(function() 
+                    l_hum.WalkSpeed = speed
+                end)
+            end
+        end)
+        
+        m_speed:Connect("Disabled",function() 
+            if (scon) then scon:Disconnect() scon = nil end
+            if (part) then part:Destroy() end
+            
+            unratio(l_hum.Changed)
+            unratio(l_hum:GetPropertyChangedSignal("Jump"))
+            unratio(l_humrp.Changed)
+            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+        end)
+        
+        mode:Connect("SelectionChanged",function() 
+            if (m_speed:IsEnabled()) then
+                m_speed:Disable()
+                m_speed:Enable()
+            end
+        end)
+        
+        mode:SetTooltip('Method used for the speedhack')
+        speedslider:SetTooltip('Amount of speed')
+    end
+    -- Velocity
+    do 
+        local xslider = m_velocity:AddSlider('X',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max X velocity you can have')
+        local yslider = m_velocity:AddSlider('Y',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max Y velocity you can have')
+        local zslider = m_velocity:AddSlider('Z',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max Z velocity you can have')
+        
+        local x,y,z = 20,20,20
+        
+        xslider:Connect("ValueChanged",function(v)x=v;end)
+        yslider:Connect("ValueChanged",function(v)y=v;end)
+        zslider:Connect("ValueChanged",function(v)z=v;end)
+        
+        local velc
+        m_velocity:Connect("Enabled",function() 
+            velc = serv_rs.Stepped:Connect(function() 
+                local v = l_humrp.Velocity
+                l_humrp.Velocity = vec3(
+                    mc(v.X,-x,x),
+                    mc(v.Y,-y,y),
+                    mc(v.Z,-z,z)
+                )
+            end)
+        end)
+        
+        m_velocity:Connect("Disabled",function() 
+            if (velc) then velc:Disconnect() velc = nil end
+        end)
+    end
     
     m_airjump:SetTooltip('Lets you jump in air, may bypass jump restrictions')
     m_blink:SetTooltip('Pseudo lagswitch. Doesn\'t actually choke packets. Raknet libraries (like Celery\'s) will be supported eventually')
     m_clicktp:SetTooltip('Standard clickteleport')
-    m_fastfall:SetTooltip('Makes you instantly / near instantly fall down. Useful for bypassing fall damage in games like Natural Disaster Survival')
+    m_nofall:SetTooltip('Makes you instantly fall down, or bounce before you land. Useful for bypassing fall damage in games like Natural Disaster Survival')
     m_flight:SetTooltip('Standard flight, comes with a few bypasses')
     m_float:SetTooltip('Makes you float')
     m_highjump:SetTooltip('Increases how high you jump')
@@ -3704,7 +3927,7 @@ local m_movement = ui:CreateMenu('Movement') do
     m_speed:SetTooltip('Speedhacks with various bypasses and settings')
     m_spider:SetTooltip('Climbs you up parts you walk into')
     m_step:SetTooltip('Teleports you on top of parts you walk into')
-    m_velocity:SetTooltip('Limits velocity or disables it')
+    m_velocity:SetTooltip('Limits your velocity')
 end
 local m_render = ui:CreateMenu('Render') do 
     
@@ -4053,9 +4276,8 @@ local m_render = ui:CreateMenu('Render') do
 end
 local m_ui = ui:CreateMenu('UI') do 
     local u_cmd = m_ui:AddMod('Command bar')
-    local u_jeff = m_ui:AddMod('Jeff')
-    local u_plr = m_ui:AddMod('Player notifications')
-    
+    local u_jeff = m_ui:AddMod('Jeff'..donetxt)
+    local u_plr = m_ui:AddMod('Player notifications'..donetxt)
     -- jeff 
     do 
         local _
@@ -4079,6 +4301,10 @@ local m_ui = ui:CreateMenu('UI') do
     -- plr
     do 
         local rfriends = u_plr:AddToggle('Roblox friends only'):SetTooltip('Only send notifications if they are your roblox friend')
+        local sound = u_plr:AddToggle('Play sound'):SetTooltip('Play the notif sound'):Enable()
+        
+        local h = true
+        sound:Connect("Toggled",function(t)h=t;end)
         
         local join
         local leave 
@@ -4086,19 +4312,19 @@ local m_ui = ui:CreateMenu('UI') do
         u_plr:Connect("Enabled",function() 
             join = serv_players.PlayerAdded:Connect(function(p) 
                 if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend joined',p.Name..' has joined your server',2,2)
+                    ui:Notify('Friend joined',p.Name..' has joined your server',2.5,h and 2 or 3)
                 else
                     if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player joined',p.Name..' has joined the server',2,2)
+                        ui:Notify('Player joined',p.Name..' has joined the server',2.5,h and 2 or 3)
                     end
                 end
             end)
             leave = serv_players.PlayerRemoving:Connect(function(p) 
                 if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend left',p.Name..' has left your server',2,1)
+                    ui:Notify('Friend left',p.Name..' has left your server',2.5,h and 1 or 3)
                 else
                     if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player left',p.Name..' has left the server',2,1)
+                        ui:Notify('Player left',p.Name..' has left the server',2.5,h and 1 or 3)
                     end
                 end
             end)
@@ -4176,6 +4402,19 @@ local m_search = ui:CreateMenu('Search') do
         end
     end)
 end
+local m_changelog = ui:CreateMenu('Changelog') do 
+    local _ = m_changelog:AddMod('Version 0.1.0',nil,true)
+    _:AddLabel([[ - Added Fakelag mod
+- Added Sound option to Player notifs
+- Added another notification sound
+- Added changelog menu, new changes will be documented here
+- Added server browser mod
+- Finished Parkour, Velocity, and Nofall
+- Made mouse unlock when the Redline window is open
+- Marked Jeff and Player notifs as done
+- Removed Logs since player logs aren't that important
+- Renamed Fastfall to Nofall]])
+end
 
 _G.RLLoaded = true
-ui:Notify('Redline loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 2)
+ui:Notify('Redline ('..REDLINEVER..') loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 2)
