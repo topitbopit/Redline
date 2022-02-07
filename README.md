@@ -27,31 +27,30 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 - **Customizability.** Nearly every module has tons of settings to toy around with.
 - **Features.** Redline has tons of unique features that have never been seen, such as Discord Rich Presence.
 - **Speed.** Redline is designed to be super fast and easy to use.  No annoying menus to navigate, no textboxes to type in, and no clutter on your screen.
-- **Optimization & Security.** Every module is extremely optimized and has anticheat bypass measures. This lets you safely and smoothly exploit without getting banned. 
-- **Open source.** Wanna know how something works? Great! Open up the source and Ctrl+F to find what you need.
+- **Optimization.** Every module is extremely optimized. Even on lower end hardware, Redline will still run quick. 
+- **Secure.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline module is handled in a unique, hard-to-detect way.
 >*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to use an alt!*
 
 ## Q/A
-**This mod doesn't work in this game**  
-Open up an issue or DM me (jeffismyname#4316) and I'll check it out   
-If it's something simple (like a connection I forgot about) I'll most likely fix it soon.   
-If it's something more complicated (like a serverside ac bypass) then I'll most likely not do it.  
-**When will UI configuration be added?**  
-There is no ETA, but it will be added eventually in another window.  
-**Can I whitelist my friends from a certain mod (ex. aimbot)?**  
-Although there is no menu to add friends yet, Redline does have internal support for friend whitelisting. It will be added soon.  
+**This mod is detected in this game**   
+Open up an issue or DM me (jeffismyname#4316) and I'll check it out.  
+Note that game specific, serverside anticheats are most likely not gonna be bypassed. (ex. Jailbreak or Phantom forces)  
+**When will UI configuration be added?**    
+There is no ETA, but it will be added eventually in another window.   
+**Can I whitelist my friends from a certain mod (ex. prevent them from being locked onto with aimbot)?**  
+Although there is no menu to add friends yet, Redline does have internal support for a friends list and player whitelisting. It will be added soon.    
 **Can I use the ui library?**   
 Sure, but Redline's UI was made specifically for Redline. Most stuff that you want is probably not gonna be there. Also, read the question below.   
 If you want a similar library that might have more features, check out [Herrtt's aimhot library](https://github.com/Herrtt/AimHot-v8/blob/master/UiLib.lua)  
-**Can I copy / use some of the code?**  
-Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste parts.    
+**Can I copy / use some of the code?**   
+Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste anything.    
 If you want to instead just remake what I did but use the same methods (ex. flight, speed), then go ahead     
 **What does X module do**    
-As of now the descriptions are all over the place. This readme's descriptions are different than the script's descriptions, which are different than the descriptions in code, etc.  
-Eventually I'll rewrite every description to make more sense / go into more detail  
-
-## Modules
-
+Open up an issue or DM me if a module description isn't clear   
+**Why won't Redline execute?**  
+Make sure your executor is supported. Open up an issue / DM me of the error you get.   
+## Modules   
+  
 ### Combat
 **Aimbot**  
 *Classic FPS mouse aimbot. Has locking and prediction*  
