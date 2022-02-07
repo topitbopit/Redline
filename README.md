@@ -49,6 +49,14 @@ If you want to instead just remake what I did but use the same methods (ex. flig
 Open up an issue or DM me if a module description isn't clear   
 **Why won't Redline execute?**  
 Make sure your executor is supported. Open up an issue / DM me of the error you get.   
+
+## Supported executors  
+- Synapse X, fully tested   
+- Comet, fully tested  
+- Fluxus, fully tested  
+Others may work and will be tested soon.   
+  
+
 ## Modules   
   
 ### Combat
@@ -101,25 +109,25 @@ Make sure your executor is supported. Open up an issue / DM me of the error you 
 *Pseudo lagswitch. Doesn't actually choke packets*   
 **Click TP**  [almost done]   
 *Standard click TP*  
-**Fast fall**  
-*Makes you quickly fall. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
 **Flight**  [almost done]  
 *Standard fly with tons of options*  
 **Float**  [almost done]  
 *Low gravity or no gravity*  
 **High jump**   
 *Lets you jump higher*  
-**Ice**  
+**Ice**   
 *Makes you walk like you're on ice*  
 **Jesus**   
 *Lets you walk over dangerous parts*  
-**Jetpack**  
-*Like flight, but different*  
+**Jetpack**   
+*Like flight, but you're affected by gravity and can accelerate by pressing space*  
 **Noclip**  
 *Standard noclip*   
+**Nofall**  [DONE]
+*Makes you quickly fall or bounce before you hit the ground. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
 **Noslowdown**  
 *Prevents you from being slowed down; your walkspeed can't go under 16 and you can't be anchored*  
-**Parkour**  
+**Parkour**  [DONE]   
 *Automatically jumps when you reach the end of a block*  
 **Phase**  
 *Teleports you insanely fast around a central position. Useful for games like Prison Life to avoid arrests*  
@@ -131,7 +139,7 @@ Make sure your executor is supported. Open up an issue / DM me of the error you 
 *Lets you climb up parts like a spider*  
 **Step**  
 *Teleports you up when you walk into a part*  
-**Velocity**  
+**Velocity**  [DONE]   
 *Limits or disables your velocity*  
   
 ### Render  
@@ -151,7 +159,7 @@ Make sure your executor is supported. Open up an issue / DM me of the error you 
 *Disables lighting. Has several presets that may work for different games*  
 **Nametags**  
 *Detailed nametags above every player*  
-**Zoom**  
+**Zoom**  [DONE]   
 *Like Optifine zoom*  
   
 ### UI  
