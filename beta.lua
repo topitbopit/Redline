@@ -62,7 +62,7 @@ if (not isfile('REDLINE/config.json')) then
     --writefile('REDLINE/config.json', '')
 end
 
-local REDLINEVER = "v0.1.0"
+local REDLINEVER = "v0.1.1"
 
 
 -- { Wait for load } --
@@ -74,6 +74,7 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 local serv_ctx     = game:GetService('ContextActionService')
 local serv_gui     = game:GetService('GuiService')
 local serv_http    = game:GetService('HttpService')
+local serv_net     = game:GetService("NetworkClient")
 local serv_players = game:GetService('Players')
 local serv_rs      = game:GetService('RunService')
 local serv_tp      = game:GetService('TeleportService')
@@ -205,10 +206,9 @@ end
 
 
 
-
+local W_WindowOpen = false
 -- { UI } --
 local ui = {} do 
-    local W_WindowOpen = false
     
     local ui_Hotkeys = {}
     local ui_Connections = {}
@@ -2602,8 +2602,8 @@ local cons = {}
 local l_plr = serv_players.LocalPlayer
 local l_mouse = l_plr:GetMouse()
 local l_chr = l_plr.Character
-local l_hum = l_chr:FindFirstChild("Humanoid")
-local l_humrp = l_chr:FindFirstChild("HumanoidRootPart")
+local l_hum = l_chr and l_chr:FindFirstChild("Humanoid")
+local l_humrp = l_chr and l_chr:FindFirstChild("HumanoidRootPart")
 
 local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass("Camera")
 
@@ -2619,6 +2619,7 @@ local rlfriends = {}
 local p_players_all = {}
 -- Every player minus friends and local player 
 local p_players = {}
+local p_names = {}
 
 local function addplr(p) 
     --printconsole('Adding player '..p.Name, 0, 255, 255)
@@ -2652,6 +2653,8 @@ local function addplr(p)
         ins(p_players, ptable)
     end
     --printconsole('Inserted into proper tables', 128, 128, 128)
+    
+    p_names[p.Name] = p
 end 
 local function remplr(p) 
     --printconsole(p.Name..' left cleaning shit', 255, 255, 0)
@@ -2689,6 +2692,8 @@ local function remplr(p)
             break
         end
     end
+    
+    p_names[p.Name] = nil
 end
 
 cons['p1'] = serv_players.PlayerAdded:Connect(addplr)
@@ -2704,6 +2709,129 @@ for i,p in ipairs(serv_players:GetChildren()) do
     addplr(p)
 end
 
+local fakechar do 
+    fakechar = inst("Model")
+    fakechar.Name = getnext()
+
+
+    local Head = inst("Part")
+    Head.Anchored = false
+    Head.CanCollide = false
+    Head.Name = "Head"
+    Head.Size = vec3(2, 1, 1)
+    Head.Transparency = 0
+    Head.Parent = fakechar
+
+    local Torso = inst("Part")
+    Torso.Anchored = false
+    Torso.CanCollide = false
+    Torso.Name = "Torso"
+    Torso.Size = vec3(2, 2, 1)
+    Torso.Parent = fakechar
+
+    local Left_Arm = inst("Part")
+    Left_Arm.Anchored = false
+    Left_Arm.CanCollide = false
+    Left_Arm.Name = "Left Arm"
+    Left_Arm.Size = vec3(1, 2, 1)
+    Left_Arm.Parent = fakechar
+
+    local Right_Arm = inst("Part")
+    Right_Arm.Anchored = false
+    Right_Arm.CanCollide = false
+    Right_Arm.Name = "Right Arm"
+    Right_Arm.Size = vec3(1, 2, 1)
+    Right_Arm.Parent = fakechar
+
+    local Left_Leg = inst("Part")
+    Left_Leg.Anchored = false
+    Left_Leg.CanCollide = false
+    Left_Leg.Name = "Left Leg"
+    Left_Leg.Size = vec3(1, 2, 1)
+    Left_Leg.Parent = fakechar
+
+    local Right_Leg = inst("Part")
+    Right_Leg.Anchored = false
+    Right_Leg.CanCollide = false
+    Right_Leg.Name = "Right Leg"
+    Right_Leg.Size = vec3(1, 2, 1)
+    Right_Leg.Parent = fakechar
+
+    local HumanoidRootPart = inst("Part")
+    HumanoidRootPart.Anchored = true
+    HumanoidRootPart.CanCollide = false
+    HumanoidRootPart.Name = "HumanoidRootPart"
+    HumanoidRootPart.Size = vec3(2, 2, 1)
+    HumanoidRootPart.Transparency = 1
+    HumanoidRootPart.Parent = fakechar
+
+    local Right_Shoulder = inst("Motor6D")
+    Right_Shoulder.C0 = cfn(1, 0.5, 0)
+    Right_Shoulder.C1 = cfn(-0.5, 0.5, 0)
+    Right_Shoulder.Name = "Right Shoulder"
+    Right_Shoulder.Part0 = Torso
+    Right_Shoulder.Part1 = Right_Arm
+    Right_Shoulder.Parent = Torso
+
+    local Left_Shoulder = inst("Motor6D")
+    Left_Shoulder.C0 = cfn(-1, 0.5, 0)
+    Left_Shoulder.C1 = cfn(0.5, 0.5, 0)
+    Left_Shoulder.Name = "Left Shoulder"
+    Left_Shoulder.Part0 = Torso
+    Left_Shoulder.Part1 = Left_Arm
+    Left_Shoulder.Parent = Torso
+
+    local Right_Hip = inst("Motor6D")
+    Right_Hip.C0 = cfn(1, -1, 0)
+    Right_Hip.C1 = cfn(0.5, 1, 0)
+    Right_Hip.Name = "Right Hip"
+    Right_Hip.Part0 = Torso
+    Right_Hip.Part1 = Right_Leg
+    Right_Hip.Parent = Torso
+
+    local Left_Hip = inst("Motor6D")
+    Left_Hip.C0 = cfn(-1, -1, 0)
+    Left_Hip.C1 = cfn(-0.5, 1, 0)
+    Left_Hip.Name = "Left Hip"
+    Left_Hip.Part0 = Torso
+    Left_Hip.Part1 = Left_Leg
+    Left_Hip.Parent = Torso
+
+    local Neck = inst("Motor6D")
+    Neck.C0 = cfn(0, 1, 0)
+    Neck.C1 = cfn(0, -0.5, 0)
+    Neck.Name = "Neck"
+    Neck.Part0 = Torso
+    Neck.Part1 = Head
+    Neck.Parent = Torso
+
+    local RootJoint = inst("Motor6D")
+    RootJoint.C0 = cfn(0, 0, 0)
+    RootJoint.C1 = cfn(0, 0, 0)
+    RootJoint.Name = "RootJoint"
+    RootJoint.Part0 = HumanoidRootPart
+    RootJoint.Part1 = Torso
+    RootJoint.Parent = HumanoidRootPart
+    
+    do 
+        local _ = fakechar:GetChildren()
+        for i = 1, #_ do
+            local c = _[i]
+            if (not c:IsA("BasePart")) then continue end
+            c.Material = 1584
+            c.Color = c3n(0.52, 0.52, 0.55)
+            
+            local _ = inst("BoxHandleAdornment")
+            _.Adornee = c
+            _.AlwaysOnTop = true
+            _.ZIndex = 10
+            _.Color3 = colors['enabled']
+            _.Size = c.Size
+            _.Transparency = 0.5
+            _.Parent = c
+        end
+    end
+end
 
 ui:Connect("Destroying", function() 
     for i,v in pairs(cons) do v:Disconnect() end
@@ -2722,6 +2850,8 @@ ui:Connect("Destroying", function()
         local _ = p_players_nolfr[i].cons
         for i = 1, #_ do _[i]:Disconnect() end
     end
+    
+    fakechar:Destroy()
 end)
 
 local donetxt = ' <font color="rgb(255,87,68)">[Done]</font>'
@@ -2733,7 +2863,7 @@ local m_combat = ui:CreateMenu('Combat') do
     local c_hitbox  = m_combat:AddMod('Hitboxes')
     local c_stare   = m_combat:AddMod('Stare')
     local c_tpbot   = m_combat:AddMod('TPbot')
-    local c_trigbot = m_combat:AddMod('Triggerbot')
+    local c_trigbot = m_combat:AddMod('Triggerbot'..donetxt)
     
     
     -- Aimbot 
@@ -2764,19 +2894,39 @@ local m_combat = ui:CreateMenu('Combat') do
     end
     -- Antiaim
     do 
-        local c_aim_always = c_antiaim:AddToggle('Always spin')
-        local c_aim_mode = c_antiaim:AddDropdown('Mode', true)
-        c_aim_mode:SetTooltip('The mode Anti-aim uses')
-        c_aim_always:SetTooltip('Spins while not moving')
+        local c_aim_always = c_antiaim:AddToggle('Always spin'):SetTooltip('Spins while not moving')
+        local c_aim_mode = c_antiaim:AddDropdown('Direction', true):SetTooltip('The mode Anti-aim uses')
         
-        do 
-            local _ = c_aim_mode:AddOption('Horizontal spin')
-            :Select()
-            :SetTooltip('Only spins you around horizontally')
-            
-            c_aim_mode:AddOption('Omnidirectional spin')
-            :SetTooltip('Spins you around in every direction')
-        end
+        c_aim_mode:AddOption('Horizontal'):Select():SetTooltip('Only spins you around horizontally')
+        c_aim_mode:AddOption('Omnidirectional'):SetTooltip('Spins you around in every direction')
+        
+        c_aim_always:Connect("Toggled",function(t) 
+            if (c_antiaim:IsEnabled()) then
+                c_antiaim:Disable()
+                c_antiaim:Enable()
+            end
+        end)
+        
+        local aacon
+        
+        c_antiaim:Connect("Enabled",function() 
+            if (c_aim_always:IsEnabled()) then 
+                aacon = serv_rs.RenderStepped:Connect(function() 
+                    local p = l_humrp.Position
+                    l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
+                end)
+            else
+                aacon = serv_rs.RenderStepped:Connect(function() 
+                    if (l_hum.MoveDirection.Magnitude < 0.02) then return end
+                    
+                    local p = l_humrp.Position
+                    l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
+                end)
+            end
+        end)
+        c_antiaim:Connect("Disabled",function() 
+            if (aacon) then aacon:Disconnect() aacon = nil end 
+        end)
         
         
         c_antiaim:SetTooltip('Prevents others from headshotting you by spinning you around')
@@ -2825,15 +2975,291 @@ local m_combat = ui:CreateMenu('Combat') do
     end
     -- Trig bot
     do 
-        local c_trig_team = c_trigbot:AddToggle('Team check')
-        local c_trig_friend = c_trigbot:AddToggle('Friend check')
+        local keydd = c_trigbot:AddDropdown('Click type'):SetTooltip('The key that gets pressed')
+        local modedd = c_trigbot:AddDropdown('Shoot mode',true):SetTooltip('The type of click to do (i.e. auto = hold, semi = spam, etc.)')
+        local needsheldh = c_trigbot:AddHotkey('Safety key'):SetTooltip('Triggerbot only clicks if this key is held')
+        local rateslid = c_trigbot:AddSlider('Check rate',{min=0,max=0.1,step=0.01,cur=0.03}):SetTooltip('How often targets are checked for')
+        local clickslid = c_trigbot:AddSlider('Click speed',{min=0,max=0.5,step=0.01,cur=0}):SetTooltip('The delay between clicks on Spam')
+        local team = c_trigbot:AddToggle('Team check'):SetTooltip('Disables Triggerbot for your teammates')
+        
+        keydd:AddOption('Mouse1'):SetTooltip('Clicks MouseButton1 (left click)'):Select()
+        keydd:AddOption('Mouse2'):SetTooltip('Clicks MouseButton2 (right click')
+        
+        modedd:AddOption('Spam'):SetTooltip('Spams button down while there\'s a target'):Select()
+        modedd:AddOption('Hold'):SetTooltip('Holds button down while there\'s a target')
         
         
-        c_trig_team:SetTooltip('Disables Triggerbot for your teammates')
-        c_trig_friend:SetTooltip('Disables Triggerbot for your friends')
+                
+        local isholding = false -- if currently holding down
+        local washolding = false -- if previously was holding down
+        local isspamming = false -- if spamming
+        local slowspam = false -- slow spam
+        local prox = false
+        local dont = false -- whether or not to delay a stop spamming
+        local tcon1 -- triggerbot connection
+        local tcon2 -- spam connection
+        
+        local mode = 'Spam'
+        local key = 1
+        local rate = 0.03
+        local click = 0
+        local needsheld = needsheldh:GetHotkey()
+        
+        needsheldh:Connect("HotkeySet",function(v)needsheld=v;end)
+        rateslid:Connect("ValueChanged",function(v)rate=v;end)
+        clickslid:Connect("ValueChanged",function(v)click=v;end)
+        keydd:Connect("SelectionChanged",function(v)key=(v=='Mouse1'and 1 or 2);end)
+        
+        modedd:Connect("SelectionChanged",function(v) 
+            mode = v
+            if (c_trigbot:IsEnabled()) then
+                c_trigbot:Disable()
+                c_trigbot:Enable()
+            end
+        end)
+        
+        local wl
+        c_trigbot:Connect("Enabled",function() 
+            wl = {}
+            wl['HumanoidRootPart'] = true
+            wl['Left Leg'] = true
+            wl['Right Leg'] = true
+            wl['Left Arm'] = true
+            wl['Right Arm'] = true
+            wl['Torso'] = true
+            wl['Head'] = true        
+            wl['UpperTorso'] = true
+            wl['LowerTorso'] = true
+            wl['LeftUpperArm'] = true
+            wl['LeftLowerArm'] = true
+            wl['LeftHand'] = true
+            wl['RightUpperArm'] = true
+            wl['RightLowerArm'] = true
+            wl['RightHand'] = true
+            wl['LeftUpperLeg'] = true
+            wl['LeftLowerLeg'] = true
+            wl['LeftFoot'] = true
+            wl['RightUpperLeg'] = true
+            wl['RightLowerLeg'] = true
+            wl['RightFoot'] = true
+            
+            local spam_handleclick
+            local spam_handletarget
+            local hold_handle
+            
+            spam_handleclick = function() 
+                if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
+                    return 
+                end
+                
+                if (isspamming) then
+                    (key < 2 and mouse1click or mouse2click)();
+                end
+            end
+            
+            if (team:IsEnabled()) then
+                
+                if (game.PlaceId == 292439477) then
+                    
+                else
+                
+                    spam_handletarget = function() 
+                        local t = l_mouse.Target
+                        if (t) then
+                            local a = wl[t.Name] and p_names[t.Parent.Name]
+                            print(t.Parent.Name)
+                            if (a and (a.Team ~= l_plr.Team)) then 
+                                isspamming = true
+                            else
+                                prox = false
+                                local mp = l_mouse.Hit.Position
+                                for i = 1, #p_players do 
+                                    local rp = p_players[i]['rp']
+                                    if (rp and ((rp.Position - mp).Magnitude < 5)) then
+                                        isspamming = true
+                                        prox = true
+                                        break
+                                    end
+                                end
+                                
+                                if (prox == false and isspamming == true) then 
+                                    if (dont == false) then
+                                        dont = true
+                                        delay(0.02, function() 
+                                            isspamming = false
+                                            dont = false
+                                        end)
+                                    end
+                                end
+                            end
+                        else
+                            isspamming = false
+                        end
+                    end
+                    
+                    hold_handle = function() 
+                        isholding = 1
+                        local t = l_mouse.Target
+                        local a = wl[t.Name] and p_names[t.Parent.Name]
+                        if (t) then 
+                            print(t.Parent.Name)
+                            if (a and (a.Team ~= l_plr.Team)) then 
+                                isholding = 2
+                            else
+                                local mp = l_mouse.Hit.Position
+                                for i = 1, #p_players do 
+                                    local rp = p_players[i]['rp']
+                                    if (rp and ((rp.Position - mp).Magnitude < 5)) then
+                                        isholding = 2
+                                        break
+                                    end
+                                end
+                            end
+                            if (isholding == 2 and washolding == false) then 
+                                if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
+                                else
+                                    (key < 2 and mouse1press or mouse2press)();
+                                    washolding = true
+                                end
+                            elseif (isholding == 1 and washolding == true) then
+                                if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
+                                else
+                                    (key < 2 and mouse1release or mouse2release)();
+                                    washolding = false
+                                end
+                            end
+                        else
+                            if (isholding == 1 and washolding == true) then
+                                if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
+                                else
+                                    (key < 2 and mouse1release or mouse2release)();
+                                    washolding = false
+                                end
+                            end
+                        end
+                    end
+                
+                end
+            else
+                spam_handletarget = function() 
+                    local t = l_mouse.Target
+                    if (t) then
+                        if (wl[t.Name]) then 
+                            isspamming = true
+                        else
+                            prox = false
+                            local mp = l_mouse.Hit.Position
+                            for i = 1, #p_players do 
+                                local rp = p_players[i]['rp']
+                                if (rp and ((rp.Position - mp).Magnitude < 5)) then
+                                    isspamming = true
+                                    prox = true
+                                    break
+                                end
+                            end
+                            
+                            if (prox == false and isspamming == true) then 
+                                if (dont == false) then
+                                    dont = true
+                                    delay(0.02, function() 
+                                        isspamming = false
+                                        dont = false
+                                    end)
+                                end
+                            end
+                        end
+                    else
+                        isspamming = false
+                    end
+                end
+                
+                hold_handle = function() 
+                    isholding = 1
+                    local t = l_mouse.Target
+                    if (t) then
+                        if (wl[t.Name]) then 
+                            isholding = 2
+                        else
+                            local mp = l_mouse.Hit.Position
+                            for i = 1, #p_players do 
+                                local rp = p_players[i]['rp']
+                                if (rp and ((rp.Position - mp).Magnitude < 5)) then
+                                    isholding = 2
+                                    break
+                                end
+                            end
+                        end
+                        if (isholding == 2 and washolding == false) then 
+                            if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
+                            else
+                                (key < 2 and mouse1press or mouse2press)();
+                                washolding = true
+                            end
+                        elseif (isholding == 1 and washolding == true) then
+                            if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
+                            else
+                                (key < 2 and mouse1release or mouse2release)();
+                                washolding = false
+                            end
+                        end
+                    else
+                        if (isholding == 1 and washolding == true) then
+                            if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
+                            else
+                                (key < 2 and mouse1release or mouse2release)();
+                                washolding = false
+                            end
+                        end
+                    end
+                end
+            end
+            
+            
+            
+            if (mode == 'Spam') then
+                if (click == 0) then
+                    tcon2 = serv_rs.RenderStepped:Connect(spam_handleclick)
+                else
+                    spawn(function() 
+                        while c_trigbot:IsEnabled() do 
+                            spam_handleclick()
+                            wait(click)
+                        end
+                    end)
+                end
+                if (rate == 0) then
+                    tcon1 = serv_rs.RenderStepped:Connect(spam_handletarget)
+                else
+                    spawn(function() 
+                        while c_trigbot:IsEnabled() do 
+                            spam_handletarget()
+                            wait(rate)
+                        end
+                    end)
+                end
+            else
+                print(rate, rate == 0)
+                if (rate == 0) then
+                    tcon1 = serv_rs.RenderStepped:Connect(hold_handle)
+                else
+                    spawn(function() 
+                        while c_trigbot:IsEnabled() do 
+                            hold_handle()
+                            wait(rate)
+                        end
+                    end)
+                end
+            end
+        end)
+        
+        c_trigbot:Connect("Disabled",function() 
+            wl = nil
+            
+            if (tcon1) then tcon1:Disconnect() tcon1 = nil end
+            if (tcon2) then tcon2:Disconnect() tcon2 = nil end
+        end)
         
         c_trigbot:SetTooltip('Automatically clicks when you mouse over a player')
-        
     end
 end
 local m_player = ui:CreateMenu('Player') do 
@@ -2843,10 +3269,10 @@ local m_player = ui:CreateMenu('Player') do
     local p_antiwarp    = m_player:AddMod('Anti-warp'..donetxt)
     local p_autoclick   = m_player:AddMod('Auto clicker')
     local p_fancy       = m_player:AddMod('Fancy chat')
-    local p_flag        = m_player:AddMod('Fake lag')
+    local p_flag        = m_player:AddMod('Fakelag'..donetxt)
     local p_flashback   = m_player:AddMod('Flashback'..donetxt)
-    local p_ftools      = m_player:AddMod('Funky tools')
-    local p_gtweaks     = m_player:AddMod('Game tweaks')
+    --local p_ftools      = m_player:AddMod('Funky tools')
+    --local p_gtweaks     = m_player:AddMod('Game tweaks')
     local p_pathfind    = m_player:AddMod('Pathfinder')
     local p_radar       = m_player:AddMod('Radar')
     local p_respawn     = m_player:AddMod('Respawn'..donetxt, 'Toggle')
@@ -3015,8 +3441,8 @@ local m_player = ui:CreateMenu('Player') do
         lerpslider:Connect("ValueChanged",function(v)lerp=v;end)
         distslider:Connect("ValueChanged",function(v)dist=v;end)
         local con
-        local cf1 = l_humrp.CFrame
-        local cf2 = l_humrp.CFrame
+        local cf1 = l_humrp and l_humrp.CFrame or cfn(0,0,0)
+        local cf2 = l_humrp and l_humrp.CFrame or cfn(0,0,0)
         p_antiwarp:Connect("Enabled",function() 
             ratio(l_humrp.Changed)
             ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
@@ -3049,6 +3475,85 @@ local m_player = ui:CreateMenu('Player') do
         local customkey = p_autoclick:AddHotkey()
         
     end 
+    -- Fake lag
+    do 
+        local methoddd = p_flag:AddDropdown('Method',true)
+        methoddd:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
+        methoddd:AddOption('Real'):SetTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
+        
+        local method = 'Fake'
+        
+        local rateslid = p_flag:AddSlider('Amount',{min=1,max=10,step=0.1,cur=3}):SetTooltip('Lag amount. The larger the number, the more lag you have')
+        local lag = 3
+        
+        rateslid:Connect("ValueChanged",function(v)lag=v;end)
+        
+        
+        local glitchrp
+        p_flag:Connect("Enabled",function() 
+            local fakerp = fakechar.HumanoidRootPart
+            
+            
+            fakechar.Parent = workspace
+            if (method == 'Fake') then
+                local s = method
+                spawn(function() 
+                    while true do 
+                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        wait((mr(20,40)*.1) / lag)
+                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        
+                        fakechar.Parent = workspace
+                        fakerp.CFrame = l_humrp.CFrame
+                        
+                        glitchrp = l_humrp:Clone()
+                        glitchrp.Parent = workspace
+                        
+                        wait(mr(1,lag)*.1)
+                        fakechar.Parent = nil
+                        if (glitchrp) then 
+                            glitchrp:Destroy()
+                        end
+                    end 
+                end)
+            else
+                spawn(function() 
+                    local s = method
+                    while true do 
+                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        wait(5 / lag)
+                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        
+                        
+                        fakechar.Parent = workspace
+                        fakerp.CFrame = l_humrp.CFrame
+                        
+                        serv_net:SetOutgoingKBPSLimit(1)
+                        
+                        wait(mr(1,lag)*.1)
+                        fakechar.Parent = nil
+                        serv_net:SetOutgoingKBPSLimit(9e9)
+                    end 
+                end)
+            end 
+            
+        end)
+        
+        p_flag:Connect("Disabled",function() 
+            if (glitchrp) then glitchrp:Destroy() glitchrp = nil end 
+            
+            fakechar.Parent = nil
+            serv_net:SetOutgoingKBPSLimit(9e9)
+        end)
+        
+        methoddd:Connect("SelectionChanged",function(v) 
+            method = v
+            if (p_flag:IsEnabled()) then
+                p_flag:Disable()
+                p_flag:Enable()
+            end
+        end)
+    end
     -- Flashback
     do 
         local flash_delay = p_flashback:AddSlider("Delay", {min=0,max=5,cur=0,step=0.1})
@@ -3240,10 +3745,10 @@ local m_player = ui:CreateMenu('Player') do
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and lerp')
     p_autoclick:SetTooltip('Standard autoclicker')
     p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
-    p_flag:SetTooltip('Makes your character look laggy')
+    p_flag:SetTooltip('Makes your character look laggy. Similar to blink')
     p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
-    p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
-    p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
+    --p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
+    --p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
     p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
@@ -3251,7 +3756,7 @@ local m_player = ui:CreateMenu('Player') do
 end
 local m_movement = ui:CreateMenu('Movement') do 
     local m_airjump   = m_movement:AddMod('Air jump'..donetxt)
-    local m_blink     = m_movement:AddMod('Blink')
+    local m_blink     = m_movement:AddMod('Blink'..donetxt)
     local m_clicktp   = m_movement:AddMod('Click TP'..donetxt)
     local m_flight    = m_movement:AddMod('Flight'..donetxt)
     local m_float     = m_movement:AddMod('Float'..donetxt)
@@ -3311,6 +3816,35 @@ local m_movement = ui:CreateMenu('Movement') do
         
         mode:SetTooltip('Mode for Airjump to use')
         velmount:SetTooltip('Amount to set your velocity to for the Velocity mode')
+    end
+    -- Blink
+    do 
+        --local methoddd = m_blink:AddDropdown('Method',true)
+        --methoddd:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Simply exploits a roblox glitch to freeze your character'):Select()
+        --methoddd:AddOption('Network'):SetTooltip('Limits your actual network usage. Lags more than just your movement')
+        
+        local b 
+        
+        m_blink:Connect("Enabled",function() 
+            --local method = methoddd:GetSelection()
+            
+            --if (method == 'Fake') then
+            b = l_humrp:Clone()
+            b.Parent = workspace
+            
+            fakechar.HumanoidRootPart.CFrame = l_humrp.CFrame
+            fakechar.Parent = workspace
+            --elseif (method == 'Network') then
+            --    serv_net:SetOutgoingKBPSLimit(1)
+            --end
+        end)
+        
+        m_blink:Connect("Disabled",function() 
+            if (b) then b:Destroy() b = nil end 
+            
+            fakechar.Parent = nil
+            --serv_net:SetOutgoingKBPSLimit(9e9)
+        end)
     end
     -- Click tp
     do 
@@ -3911,7 +4445,7 @@ local m_movement = ui:CreateMenu('Movement') do
     end
     
     m_airjump:SetTooltip('Lets you jump in air, may bypass jump restrictions')
-    m_blink:SetTooltip('Pseudo lagswitch. Doesn\'t actually choke packets. Raknet libraries (like Celery\'s) will be supported eventually')
+    m_blink:SetTooltip('Pseudo lagswitch, makes your character look frozen. <b>Do not combine with fakelag.</b>')
     m_clicktp:SetTooltip('Standard clickteleport')
     m_nofall:SetTooltip('Makes you instantly fall down, or bounce before you land. Useful for bypassing fall damage in games like Natural Disaster Survival')
     m_flight:SetTooltip('Standard flight, comes with a few bypasses')
@@ -3975,7 +4509,7 @@ local m_render = ui:CreateMenu('Render') do
         local ask = Enum.KeyCode.E-- keycode for ascension
         local dsk = Enum.KeyCode.Q-- keycode for descension
         
-        local fcampos = l_humrp.Position        
+        local fcampos = l_humrp and l_humrp.Position or vec3(0,0,0)        
         local speed = 30 -- speed 
         
         local cambased = true 
@@ -4403,8 +4937,11 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
-    local _ = m_changelog:AddMod('Version 0.1.0',nil,true)
-    _:AddLabel([[ - Added Fakelag mod
+    m_changelog:AddMod('Version 0.1.1',nil,true):AddLabel([[ - Finished Fakelag and Blink
+- Almost finished Triggerbot, team check and spam may have issues
+- Started work on Antiaim]]) 
+
+    m_changelog:AddMod('Version 0.1.0',nil,true):AddLabel([[ - Added Fakelag mod
 - Added Sound option to Player notifs
 - Added another notification sound
 - Added changelog menu, new changes will be documented here
