@@ -23,6 +23,9 @@ It is designed after and inspired by the many popular hacked clients of Minecraf
 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty epic')()
 ```
 
+## Preview
+![](https://cdn.discordapp.com/attachments/917914099759849482/940853797624905728/sample.png)
+
 ## Why use it?
 - **Customizability.** Nearly every module has tons of settings to toy around with.
 - **Features.** Redline has tons of unique features that have never been seen, such as Discord Rich Presence.
