@@ -5,16 +5,9 @@
 Scroll down to the modules section to see what's working
 
 ## What is Redline?
-Redline is a massive script intended for tons of customization and configuration. 
+Redline is a massive universal script intended for customization, ease of use, and security. 
 
-It is designed after and inspired by the many popular hacked clients of Minecraft, such as
-
-- [Meteor](https://meteorclient.com/)'s UI
-- [Entropy](https://entropy.club)'s color palette
-- [Impact](https://impactclient.net/)'s features
-- [Wurst](https://wurstclient.net/)'s features
-- [Aristois](https://aristois.net/)'s features + UI
-- [Inertia](https://inertiaclient.com)'s features
+It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Entropy](https://entropy.club), [Impact](https://impactclient.net/), and more.   
 
 >**Note that this is not for Roblox Bedwars, Roblox Skywars, or other similar games.** This is a universal script intended to work across many / all games.
 
@@ -33,7 +26,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 - **Features.** Redline has tons of unique features that have never been seen, such as Discord Rich Presence.
 - **Speed.** Redline is designed to be super fast and easy to use.  No annoying menus to navigate, no textboxes to type in, and no clutter on your screen.
 - **Optimization.** Every module is extremely optimized. Even on lower end hardware, Redline will still run quick. 
-- **Secure.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline module is handled in a unique, hard-to-detect way.
+- **Security.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline module is handled in a unique, hard-to-detect way. This is definitely safer than other universal scripts.  
 >*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to use an alt!*
 
 ## Q/A
