@@ -62,7 +62,7 @@ if (not isfile('REDLINE/config.json')) then
     --writefile('REDLINE/config.json', '')
 end
 
-local REDLINEVER = "v0.1.1"
+local REDLINEVER = "v0.2.0"
 
 
 -- { Wait for load } --
@@ -117,7 +117,7 @@ local colors = _G.RLTHEME or {} do
     colors['outline']       = rgb(075, 075, 080); -- outline color
     colors['shadow']        = rgb(005, 005, 010); -- go figure
     colors['bg']            = rgb(023, 022, 027); -- window background
-    colors['enabled']       = rgb(225, 035, 035); -- enabled
+    colors['enabled']       = rgb(225, 035, 061); -- enabled
     -- backgrounds
     colors['bg_header']     = rgb(035, 035, 040); -- header background
     colors['bg_object']     = rgb(030, 030, 035); -- object background
@@ -182,10 +182,10 @@ do
         tween:Play()
         return tween
     end
-    function ctwn(twn_target, twn_settings, twn_dur) 
+    function ctwn(twn_target, twn_settings, twn_dur, twn_style, twn_dir) 
         local tween = serv_ts:Create(
             twn_target,
-            TweenInfo.new(twn_dur,10,1),
+            TweenInfo.new(twn_dur,twn_style or 10,twn_dir or 1),
             twn_settings
         )
         tween:Play()
@@ -259,13 +259,20 @@ local ui = {} do
      local w_ModListTitle
     
     
+    local ModlistPadding = {
+        dim2off(-100, 0).X;
+        dim2off(8, 0).X;
+        Enum.TextXAlignment.Left;
+        'PaddingLeft';
+    } 
+    
     do 
         w_Screen = inst('ScreenGui')
         w_Screen.IgnoreGuiInset = true
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
         w_Screen.Name = getnext()
         pcall(function() 
-            syn.protect_gui(w_Screen)
+            --syn.protect_gui(w_Screen)
         end)
         w_Screen.DisplayOrder = 939393
         w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
@@ -315,14 +322,15 @@ local ui = {} do
         w_Icon.Parent = w_Backframe
         
         w_ModList = inst('Frame')
-        w_ModList.Size = dim2(0,200,0.3,0)
-        w_ModList.Position = dim2sca(0,1)
         w_ModList.AnchorPoint = vec2(0, 1)
-        w_ModList.BackgroundTransparency = 1
         w_ModList.BackgroundColor3 = colors['bg']
-        w_ModList.BorderSizePixel = 1
-        w_ModList.BorderMode = 'Inset'
+        w_ModList.BackgroundTransparency = 1
         w_ModList.BorderColor3 = colors['outline']
+        w_ModList.BorderMode = 'Inset'
+        w_ModList.BorderSizePixel = 1
+        w_ModList.Position = dim2sca(0,1)
+        w_ModList.Size = dim2(0,200,0.3,0)
+        w_ModList.Visible = false
         w_ModList.Parent = w_Screen
         
         w_ModListLayout = inst('UIListLayout')
@@ -339,7 +347,7 @@ local ui = {} do
         w_ModListTitle.TextXAlignment = 'Left'
         w_ModListTitle.TextColor3 = colors['text1']
         w_ModListTitle.TextSize = 24
-        w_ModListTitle.Text = " Redline "..REDLINEVER
+        w_ModListTitle.Text = ' '.."Redline "..REDLINEVER..' '
         w_ModListTitle.LayoutOrder = 939
         w_ModListTitle.TextStrokeTransparency = 0
         w_ModListTitle.TextStrokeColor3 = colors['text3']
@@ -403,6 +411,40 @@ local ui = {} do
         end)
     end
     
+    function ui:manageml(x1,x2,align,paddir) 
+        ModlistPadding[1] = x1 and dim2off(x1, 0).X or ModlistPadding[1]
+        ModlistPadding[2] = x2 and dim2off(x2, 0).X or ModlistPadding[2]
+        ModlistPadding[4] = paddir or ModlistPadding[4]
+        
+        if (align and align ~= ModlistPadding[3]) then
+            local c = w_ModList:GetChildren()
+            local _ = ModlistPadding[2]
+            local __ = ModlistPadding[4]
+            local ___ = __ == 'PaddingLeft' and 'PaddingRight' or __
+            local ____ = dim2off(0,0).X
+            for i = 1, #c do
+                local v = c[i]
+                if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
+                    v.TextXAlignment = align
+                    local p = v.P
+                    p[__] = _
+                    p[___] = ____
+                end
+            end
+            w_ModListTitle.TextXAlignment = align
+            ModlistPadding[3] = align
+        end
+        
+        
+        return {
+            w_ModList;
+            w_ModListLayout;
+            w_ModListTitle;
+        }
+    end
+    
+    
+    
     ui_Connections['t'] = serv_rs.RenderStepped:Connect(function() 
         local pos = serv_uis:GetMouseLocation()
         w_TooltipHeader.Position = dim2off(pos.X+15, pos.Y+15)
@@ -416,15 +458,16 @@ local ui = {} do
         ModListEnable = function(name) 
             local b = mods_instance[name]
             
+            b.TextXAlignment = ModlistPadding[3]
             b.Parent = w_ModList
-            twn(b.P, {PaddingLeft = dim2off(8, 0).X},true)
+            twn(b.P, {[ModlistPadding[4]] = ModlistPadding[2]},true)
             twn(b, {Size = dim2(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
         end
         
         ModListDisable = function(name)
             local b = mods_instance[name]
             
-            twn(b.P, {PaddingLeft = dim2off(-100, 0).X},true)
+            twn(b.P, {[ModlistPadding[4]] = ModlistPadding[1]},true)
             twn(b, {Size = dim2(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
         end
         
@@ -437,7 +480,7 @@ local ui = {} do
             _.Size = dim2(0, 0, 0, 0)
             _.BackgroundTransparency = 1
             _.Font = 'SourceSans'
-            _.TextXAlignment = 'Left'
+            _.TextXAlignment = ModlistPadding[3]
             _.TextColor3 = colors['text1']
             _.TextSize = 22
             _.Text = name
@@ -455,7 +498,7 @@ local ui = {} do
             
             local __ = inst("UIPadding")
             __.Name = 'P'
-            __.PaddingLeft = dim2off(-100, 0).X
+            __[ModlistPadding[4]] = ModlistPadding[1]
             __.Parent = _
         end
     end
@@ -532,6 +575,16 @@ local ui = {} do
                 ModListDisable(self.Name)
                 return self
             end
+            base_class.module_toggle_reset = function(self)
+                if (self.OToggled) then
+                    local f = self.Flags
+                    pcall(f.Toggled, false)
+                    pcall(f.Disabled)
+                    
+                    pcall(f.Toggled, true)
+                    pcall(f.Enabled)
+                end
+            end
             base_class.module_getstate_self = function(self) return self.OToggled end
             base_class.module_getstate_menu = function(self) return self.MToggled end
             
@@ -583,6 +636,16 @@ local ui = {} do
                 twn(self.Icon, {BackgroundTransparency = 1})
                 return self
             end 
+            base_class.setting_toggle_reset = function(self) 
+                if (self.Toggled) then
+                    local f = self.Flags
+                    pcall(f.Toggled, false)
+                    pcall(f.Disabled)
+                    
+                    pcall(f.Toggled, true)
+                    pcall(f.Enabled)
+                end
+            end
             base_class.setting_toggle_getstate = function(self) 
                 return self.Toggled
             end
@@ -948,6 +1011,7 @@ local ui = {} do
                     M_Object.Toggle = base_class.module_toggle_self
                     M_Object.Disable = base_class.module_toggle_disable
                     M_Object.Enable = base_class.module_toggle_enable
+                    M_Object.Reset = base_class.module_toggle_reset
                     
                     M_Object.ToggleMenu = base_class.module_toggle_menu
                     M_Object.GetState = base_class.module_getstate_self
@@ -1391,6 +1455,7 @@ local ui = {} do
                 T_Object.Toggle = base_class.setting_toggle_self
                 T_Object.Disable = base_class.setting_toggle_disable
                 T_Object.Enable = base_class.setting_toggle_enable
+                T_Object.Reset = base_class.setting_toggle_reset
                 T_Object.GetState = base_class.setting_toggle_getstate
                 T_Object.IsEnabled = base_class.setting_toggle_getstate
                 
@@ -2170,7 +2235,7 @@ local ui = {} do
             do
                 o_Option.InputBegan:Connect(function(io) 
                     local uitv = io.UserInputType.Value
-                    if (uitv == 0) then
+                    if (uitv == 0 or uitv == 1) then
                         O_Object:Select()
                         return
                     end
@@ -2854,19 +2919,19 @@ ui:Connect("Destroying", function()
     fakechar:Destroy()
 end)
 
-local donetxt = ' <font color="rgb(255,87,68)">[Done]</font>'
+local betatxt = ' <font color="rgb(255,87,68)">[BETA]</font>'
 
 
 local m_combat = ui:CreateMenu('Combat') do 
-    local c_aimbot  = m_combat:AddMod('Aimbot')
-    local c_antiaim = m_combat:AddMod('Anti-aim')
-    local c_hitbox  = m_combat:AddMod('Hitboxes')
-    local c_stare   = m_combat:AddMod('Stare')
-    local c_tpbot   = m_combat:AddMod('TPbot')
-    local c_trigbot = m_combat:AddMod('Triggerbot'..donetxt)
+    --local c_aimbot  = m_combat:AddMod('Aimbot')
+    --local c_antiaim = m_combat:AddMod('Anti-aim'..betatxt)
+    --local c_hitbox  = m_combat:AddMod('Hitboxes')
+    --local c_stare   = m_combat:AddMod('Stare')
+    --local c_tpbot   = m_combat:AddMod('TPbot')
+    local c_trigbot = m_combat:AddMod('Triggerbot'..betatxt)
     
     
-    -- Aimbot 
+    --[[ Aimbot
     do
         local c_aim_team   = c_aimbot:AddToggle('Team check')
         local c_aim_friend = c_aimbot:AddToggle('Friend check')
@@ -2892,46 +2957,117 @@ local m_combat = ui:CreateMenu('Combat') do
         
         c_aimbot:SetTooltip('Classic aimbot, use in FPS games like Arsenal')
     end
-    -- Antiaim
+    ]]
+    --[[ Antiaim
     do 
-        local c_aim_always = c_antiaim:AddToggle('Always spin'):SetTooltip('Spins while not moving')
-        local c_aim_mode = c_antiaim:AddDropdown('Direction', true):SetTooltip('The mode Anti-aim uses')
+        local s_always = c_antiaim:AddToggle('Always works'):SetTooltip('Spins / teleports / whatevers while not moving')
+        local s_mode = c_antiaim:AddDropdown('Mode', true):SetTooltip('The mode Anti-aim uses')
         
-        c_aim_mode:AddOption('Horizontal'):Select():SetTooltip('Only spins you around horizontally')
-        c_aim_mode:AddOption('Omnidirectional'):SetTooltip('Spins you around in every direction')
+        local s_mindist = c_antiaim:AddSlider('Teleport: Min dist',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Minimum distance Teleport can move you away from the main position')
+        local s_maxdist = c_antiaim:AddSlider('Teleport: Max dist',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Maximum distance Teleport can move you away from the main position')
+        local s_speed   = c_antiaim:AddSlider('Teleport: Speed',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Speed you move while Teleport is enabled')
+        local s_face    = c_antiaim:AddToggle('Teleport: Face center'):SetTooltip('Makes your character face towards the central position')
         
-        c_aim_always:Connect("Toggled",function(t) 
-            if (c_antiaim:IsEnabled()) then
-                c_antiaim:Disable()
-                c_antiaim:Enable()
-            end
+        s_mode:AddOption('Teleport'):SetTooltip('Teleports you around a central position'):Select()
+        s_mode:AddOption('Spin'):SetTooltip('Spins you around to prevent headshots')
+        
+        
+        local speed = s_speed:GetValue()
+        local maxdist = s_maxdist:GetValue()
+        local mindist = s_mindist:GetValue()
+        local face = false
+        
+        s_always:Connect("Toggled",function(t) 
+            c_antiaim:Reset()
         end)
+        s_speed:Connect("ValueChanged",function(v)speed=v;end)
+        s_maxdist:Connect("ValueChanged",function(v)maxdist=v;end)
+        s_mindist:Connect("ValueChanged",function(v)mindist=v;end)
+        s_face:Connect("Toggled",function(t)face=t;end)
         
         local aacon
+        local tppart
+        
         
         c_antiaim:Connect("Enabled",function() 
-            if (c_aim_always:IsEnabled()) then 
-                aacon = serv_rs.RenderStepped:Connect(function() 
-                    local p = l_humrp.Position
-                    l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
-                end)
-            else
-                aacon = serv_rs.RenderStepped:Connect(function() 
-                    if (l_hum.MoveDirection.Magnitude < 0.02) then return end
-                    
-                    local p = l_humrp.Position
-                    l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
-                end)
+            local mode = s_mode:GetSelection()
+            
+            if (mode == 'Spin') then
+                if (s_always:IsEnabled()) then 
+                    aacon = serv_rs.RenderStepped:Connect(function() 
+                        local p = l_humrp.Position
+                        l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
+                    end)
+                else
+                    aacon = serv_rs.RenderStepped:Connect(function() 
+                        if (l_hum.MoveDirection.Magnitude < 0.02) then return end
+                        
+                        local p = l_humrp.Position
+                        l_humrp.CFrame = cfn(p, p+vec3(mr()-.5,0,mr()-.5))
+                    end)
+                end
+            elseif (mode == 'Teleport') then
+                tppart = inst("Part")
+                tppart.Anchor = true
+                tppart.CanCollide = false
+                tppart.CanTouch = false
+                tppart.Name = getnext()
+                tppart.Transparency = 1
+                tppart.Parent = workspace
+                
+                local cf = l_humrp and l_humrp.CFrame or l_cam.CFrame
+                tppart.CFrame = cf
+                
+                l_cam.CameraSubject = tppart
+                if (s_always:IsEnabled()) then 
+                    aacon = serv_rs.Heartbeat:Connect(function(dt) 
+                        cf += l_hum.MoveDirection * (dt * 3 * speed)
+                        tppart.CFrame = cf  
+                        
+                        lv = l_humrp.CFrame.LookVector
+                                    
+                        local p1 = cf.Position
+                        local p2 = p1+vec3(
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist))
+                        )
+                        
+                        l_humrp.CFrame = cfn(p2, face and p1 or p2 + lv)
+                    end)
+                else
+                    aacon = serv_rs.Heartbeat:Connect(function() 
+                        if (l_hum.MoveDirection.Magnitude < 0.02) then return end
+                        
+                        cf += l_hum.MoveDirection * (dt * 3 * speed)
+                        tppart.CFrame = cf  
+                        
+                        lv = l_humrp.CFrame.LookVector
+                                    
+                        local p1 = cf.Position
+                        local p2 = p1+vec3(
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
+                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist))
+                        )
+                        
+                        l_humrp.CFrame = cfn(p2, face and p1 or p2 + lv)
+                    end)
+                end            
             end
         end)
         c_antiaim:Connect("Disabled",function() 
             if (aacon) then aacon:Disconnect() aacon = nil end 
+            if (tppart) then tppart:Destroy() tppart = nil end
+            
+            l_cam.CameraSubject = l_hum
         end)
         
         
-        c_antiaim:SetTooltip('Prevents others from headshotting you by spinning you around')
+        c_antiaim:SetTooltip('Prevents others from shooting you by moving you around')
     end
-    -- Hitbox
+    ]]--
+    --[[ Hitbox
     do 
         local c_hitb_team    = c_hitbox:AddToggle('Team check')
         local c_hitb_friend  = c_hitbox:AddToggle('Friend check')
@@ -2944,7 +3080,9 @@ local m_combat = ui:CreateMenu('Combat') do
         
         c_hitbox:SetTooltip('Hitbox expander, use in FPS or swordfighting games')
     end
-    -- Stare
+    
+    ]]
+    --[[ Stare
     do
         local c_stare_team   = c_stare:AddToggle('Team check')
         local c_stare_friend = c_stare:AddToggle('Friend check')
@@ -2973,6 +3111,7 @@ local m_combat = ui:CreateMenu('Combat') do
         -- Get distance, check if less than user input 
         -- If so then lock onto them until their character dies or you move away
     end
+    ]]
     -- Trig bot
     do 
         local keydd = c_trigbot:AddDropdown('Click type'):SetTooltip('The key that gets pressed')
@@ -3012,10 +3151,7 @@ local m_combat = ui:CreateMenu('Combat') do
         
         modedd:Connect("SelectionChanged",function(v) 
             mode = v
-            if (c_trigbot:IsEnabled()) then
-                c_trigbot:Disable()
-                c_trigbot:Enable()
-            end
+            c_trigbot:Reset()
         end)
         
         local wl
@@ -3263,20 +3399,20 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
-    local p_antiafk     = m_player:AddMod('Anti-AFK'..donetxt)
-    local p_anticrash   = m_player:AddMod('Anti-crash'..donetxt)
-    local p_antifling   = m_player:AddMod('Anti-fling'..donetxt)
-    local p_antiwarp    = m_player:AddMod('Anti-warp'..donetxt)
+    local p_antiafk     = m_player:AddMod('Anti-AFK')
+    local p_anticrash   = m_player:AddMod('Anti-crash')
+    local p_antifling   = m_player:AddMod('Anti-fling')
+    local p_antiwarp    = m_player:AddMod('Anti-warp')
     local p_autoclick   = m_player:AddMod('Auto clicker')
-    local p_fancy       = m_player:AddMod('Fancy chat')
-    local p_flag        = m_player:AddMod('Fakelag'..donetxt)
-    local p_flashback   = m_player:AddMod('Flashback'..donetxt)
+    --local p_fancy       = m_player:AddMod('Fancy chat')
+    local p_flag        = m_player:AddMod('Fakelag')
+    local p_flashback   = m_player:AddMod('Flashback')
     --local p_ftools      = m_player:AddMod('Funky tools')
     --local p_gtweaks     = m_player:AddMod('Game tweaks')
-    local p_pathfind    = m_player:AddMod('Pathfinder')
-    local p_radar       = m_player:AddMod('Radar')
-    local p_respawn     = m_player:AddMod('Respawn'..donetxt, 'Toggle')
-    local p_waypoints   = m_player:AddMod('Waypoints'..donetxt)
+    --local p_pathfind    = m_player:AddMod('Pathfinder')
+    --local p_radar       = m_player:AddMod('Radar')
+    local p_respawn     = m_player:AddMod('Respawn', 'Toggle')
+    local p_waypoints   = m_player:AddMod('Waypoints')
     
     -- Anti afk
     do 
@@ -3330,10 +3466,7 @@ local m_player = ui:CreateMenu('Player') do
         end)
         p_afk_mode:Connect("SelectionChanged", function(v) 
             p = v
-            if (p_antiafk:IsEnabled()) then
-                p_antiafk:Disable()
-                p_antiafk:Enable()
-            end
+            p_antiafk:Reset()
         end)
     end
     -- Anticrash
@@ -3423,10 +3556,7 @@ local m_player = ui:CreateMenu('Player') do
     
     
 	    mode:Connect("SelectionChanged", function()
-	        if (p_antifling:IsEnabled()) then
-	            p_antifling:Disable()
-	            p_antifling:Enable()
-	        end
+	        p_antifling:Reset()
 	    end)
     
 	    mode:SetTooltip('The method Antifling uses')
@@ -3467,13 +3597,59 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Autoclick
     do 
-        local buttontype = p_autoclick:AddDropdown('Button',true)
-        buttontype:AddOption('Left click')
-        buttontype:AddOption('Right click')
-        buttontype:AddOption('Custom')
+        local s_buttontype = p_autoclick:AddDropdown('Mouse key',true)
+        s_buttontype:AddOption('Mouse1'):SetTooltip('Clicks Mouse1 / left click'):Select()
+        s_buttontype:AddOption('Mouse2'):SetTooltip('Clicks Mouse2 / right click')      
         
-        local customkey = p_autoclick:AddHotkey()
         
+        
+        local s_clickrate = p_autoclick:AddSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):SetTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
+        
+        
+        local buttontype = 'Mouse1'
+        s_buttontype:Connect("SelectionChanged",function(v)
+            buttontype = v
+            p_autoclick:Reset()
+        end)
+        local clickrate = s_clickrate:GetValue()
+        s_clickrate:Connect("ValueChanged",function(v)clickrate = v;
+            if (v == 0) then
+                p_autoclick:Reset()
+            end
+        end)
+        
+        
+        local ccon
+        local c
+        p_autoclick:Connect("Enabled",function() 
+            c = mr(1, 9999)
+            local _ = c
+            
+            if (clickrate == 0) then
+                local f = buttontype == 'Mouse1' and mouse1click or mouse2click
+                ccon = serv_rs.RenderStepped:Connect(function() 
+                    if (not W_WindowOpen) then
+                        f()
+                    end
+                end)
+            else
+                spawn(function() 
+                    local f = buttontype == 'Mouse1' and mouse1click or mouse2click
+                    while (p_autoclick:IsEnabled()) do 
+                        
+                        if (not W_WindowOpen) then
+                            f()
+                        end
+                        wait(clickrate)
+                        if (c ~= _) then warn'emergency broke' break end
+                    end
+                end)
+            end
+        end)
+        
+        p_autoclick:Connect("Disabled",function() 
+            if (ccon) then ccon:Disconnect() ccon = nil end
+        end)
     end 
     -- Fake lag
     do 
@@ -3548,10 +3724,7 @@ local m_player = ui:CreateMenu('Player') do
         
         methoddd:Connect("SelectionChanged",function(v) 
             method = v
-            if (p_flag:IsEnabled()) then
-                p_flag:Disable()
-                p_flag:Enable()
-            end
+            p_flag:Reset()
         end)
     end
     -- Flashback
@@ -3744,35 +3917,35 @@ local m_player = ui:CreateMenu('Player') do
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and lerp')
     p_autoclick:SetTooltip('Standard autoclicker')
-    p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+    --p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
     p_flag:SetTooltip('Makes your character look laggy. Similar to blink')
     p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
     --p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
     --p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
-    p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
-    p_radar:SetTooltip('Radar that displays where other players are')
+    --p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
+    --p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
     p_waypoints:SetTooltip('Lets you save positions and teleport to them later')
 end
 local m_movement = ui:CreateMenu('Movement') do 
-    local m_airjump   = m_movement:AddMod('Air jump'..donetxt)
-    local m_blink     = m_movement:AddMod('Blink'..donetxt)
-    local m_clicktp   = m_movement:AddMod('Click TP'..donetxt)
-    local m_flight    = m_movement:AddMod('Flight'..donetxt)
-    local m_float     = m_movement:AddMod('Float'..donetxt)
-    local m_highjump  = m_movement:AddMod('High jump')
-    local m_jesus     = m_movement:AddMod('Jesus')
-    local m_jetpack   = m_movement:AddMod('Jetpack')
-    local m_noclip    = m_movement:AddMod('Noclip')
-    local m_nofall    = m_movement:AddMod('Nofall'..donetxt)
-    local m_noslow    = m_movement:AddMod('Noslowdown')
-    local m_parkour   = m_movement:AddMod('Parkour'..donetxt)
-    local m_phase     = m_movement:AddMod('Phase')
-    local m_safewalk  = m_movement:AddMod('Safewalk')
-    local m_speed     = m_movement:AddMod('Speed'..donetxt)
-    local m_spider    = m_movement:AddMod('Spider')
-    local m_step      = m_movement:AddMod('Step')
-    local m_velocity  = m_movement:AddMod('Velocity'..donetxt)
+    local m_airjump   = m_movement:AddMod('Air jump')
+    local m_blink     = m_movement:AddMod('Blink')
+    local m_clicktp   = m_movement:AddMod('Click TP')
+    local m_flight    = m_movement:AddMod('Flight')
+    local m_float     = m_movement:AddMod('Float')
+    --local m_highjump  = m_movement:AddMod('High jump')
+    --local m_jesus     = m_movement:AddMod('Jesus')
+    --local m_jetpack   = m_movement:AddMod('Jetpack')
+    --local m_noclip    = m_movement:AddMod('Noclip')
+    local m_nofall    = m_movement:AddMod('Nofall')
+    --local m_noslow    = m_movement:AddMod('Noslowdown')
+    local m_parkour   = m_movement:AddMod('Parkour')
+    --local m_phase     = m_movement:AddMod('Phase')
+    --local m_safewalk  = m_movement:AddMod('Safewalk')
+    local m_speed     = m_movement:AddMod('Speed')
+    --local m_spider    = m_movement:AddMod('Spider')
+    --local m_step      = m_movement:AddMod('Step')
+    local m_velocity  = m_movement:AddMod('Velocity')
     -- Airjump
     do 
         local mode = m_airjump:AddDropdown('Mode',true)
@@ -3808,10 +3981,7 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
         
         mode:Connect("SelectionChanged",function() 
-            if (m_airjump:IsEnabled()) then
-                m_airjump:Disable() 
-                m_airjump:Enable()
-            end
+            m_airjump:Reset()
         end)
         
         mode:SetTooltip('Mode for Airjump to use')
@@ -3877,6 +4047,283 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
         
     end
+    -- Flight
+    do 
+            local ascend_h = m_flight:AddHotkey('Ascend key')
+            local descend_h = m_flight:AddHotkey('Descend key')
+            local mode = m_flight:AddDropdown('Method', true)
+            local turndir = m_flight:AddDropdown('Turn direction')
+            local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+            local camera = m_flight:AddToggle('Camera-based')
+            
+            
+            mode:AddOption('Standard'):SetTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
+            mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')
+            mode:AddOption('Vehicle'):SetTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
+            
+            
+            turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly. <b>This is the typical option in every other flight script</b>'):Select()
+            turndir:AddOption('XZ'):SetTooltip('Follows the camera\'s direction on all axes but Y')
+            turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
+            turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
+            
+            local fi1 -- flight inst 1 
+            local fi2 -- flight inst 2  
+            local fcon -- flight connection
+            
+            
+            local cscon -- camera subject connection (vehicle fly)
+            local clvcon -- connection to update camera look vector
+            local clv -- camera look vector
+            local normclv -- normal unmodified one
+            
+            local ask = Enum.KeyCode.E-- keycode for ascension
+            local dsk = Enum.KeyCode.Q-- keycode for descension
+            
+            local speed = 30 -- speed 
+            
+            local cambased = true 
+            camera:Enable()
+            
+            ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
+            descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
+            camera:Connect("Toggled",function(t)
+                cambased=t;
+                m_flight:Reset()
+            end)
+            turndir:Connect("SelectionChanged",function() 
+                m_flight:Reset()
+            end)
+            mode:Connect("SelectionChanged",function() 
+                m_flight:Reset()
+            end)
+            speedslider:Connect("ValueChanged",function(v)speed=v;end)
+            
+            m_flight:Connect("Enabled", function()
+                clv = l_cam.CFrame.LookVector 
+                normclv = clv
+                
+                ratio(l_humrp.Changed)
+                ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+                
+                local curmod = mode:GetSelection()
+                local curturn = turndir:GetSelection()
+                
+                local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
+                
+                
+                if (curturn == 'XYZ') then 
+                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        normclv = l_cam.CFrame.LookVector
+                        clv = normclv
+                    end)
+                elseif (curturn == 'XZ') then
+                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        normclv = l_cam.CFrame.LookVector
+                        clv = vec3(normclv.X, 0, normclv.Z)
+                    end)
+                elseif (curturn == 'Up') then
+                    if (cambased) then
+                        clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                            normclv = l_cam.CFrame.LookVector
+                        end)
+                    end
+                    
+                    clv = upp
+                elseif (curturn == 'Down') then
+                    if (cambased) then
+                        clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                            normclv = l_cam.CFrame.LookVector
+                        end)
+                    end
+                    
+                    clv = downp
+                end
+                
+                
+                
+                
+                if (curmod == 'Standard') then
+                    local base = l_humrp.CFrame
+                    
+                    
+                    if (cambased) then
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                            
+                            l_hum:ChangeState(1)
+                            l_humrp.Velocity = nonep
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                            
+                            local b = base.Position
+                            l_humrp.CFrame = cfn(b, b + clv)
+                        end)
+                    else
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            
+                            l_hum:ChangeState(1)
+                            l_humrp.Velocity = nonep
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            
+                            local b = base.Position
+                            l_humrp.CFrame = cfn(b, b + clv)
+                        end)
+                    end
+                elseif (curmod == 'Smooth') then
+                    local base = l_humrp.CFrame
+                    
+                    fi1 = inst("Part")
+                    fi1.CFrame = base
+                    fi1.Transparency = 1
+                    fi1.CanCollide = false
+                    fi1.CanTouch = false
+                    fi1.Anchored = false
+                    fi1.Size = vec3(1, 1, 1)
+                    fi1.Parent = workspace
+                    
+                    local pos = inst("BodyPosition")
+                    pos.Position = base.Position
+                    pos.D = 1900
+                    pos.P = 125000
+                    pos.MaxForce = vec3(9e9, 9e9, 9e9)
+                    pos.Parent = fi1
+                    local gyro = inst("BodyGyro")
+                    gyro.D = 1900
+                    gyro.P = 125000
+                    gyro.MaxTorque = vec3(9e9, 9e9, 9e9)
+                    gyro.Parent = fi1
+                    
+                    if (cambased) then
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                            
+                            l_hum:ChangeState(1)
+                            l_humrp.Velocity = nonep
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                            
+                            local b = base.Position
+                            
+                            pos.Position = b
+                            gyro.CFrame = cfn(b, b + clv)
+                            
+                            l_humrp.CFrame = fi1.CFrame 
+                        end)
+                    else
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            
+                            l_hum:ChangeState(1)
+                            l_humrp.Velocity = nonep
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            
+                            local b = base.Position
+                            pos.Position = b
+                            gyro.CFrame = cfn(b, b + clv)
+                            
+                            l_humrp.CFrame = fi1.CFrame                     
+                        end)
+                    end
+                elseif (curmod == 'Vehicle') then
+                    local base = l_humrp.CFrame
+                    
+                    ratio(l_humrp.ChildAdded)
+                    ratio(l_humrp.DescendantAdded)
+                    
+                    fi1 = inst("BodyPosition")
+                    fi1.Position = base.Position
+                    fi1.D = 1900
+                    fi1.P = 125000
+                    fi1.MaxForce = vec3(9e9, 9e9, 9e9)
+                    fi1.Parent = l_humrp
+                    
+                    fi2 = inst("BodyGyro")
+                    fi2.D = 1900
+                    fi2.P = 125000
+                    fi2.MaxTorque = vec3(9e9, 9e9, 9e9)
+                    fi2.Parent = l_humrp
+                    
+                    cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                        l_cam.CameraSubject = l_hum
+                    end)
+                    
+                    if (cambased) then
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                            
+                            l_hum:ChangeState(1)
+                            --l_humrp.Velocity = vec3(0,0,0)
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                            
+                            local b = base.Position
+                            
+                            fi1.Position = b
+                            fi2.CFrame = cfn(b, b + clv)
+                        end)
+                    else
+                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
+                            local up = serv_uis:IsKeyDown(ask)
+                            local down = serv_uis:IsKeyDown(dsk)
+                            
+                            l_hum:ChangeState(1)
+                            --l_humrp.Velocity = vec3(0,0,0)
+                            
+                            base += (l_hum.MoveDirection * dt * 3 * speed)
+                            base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
+                            
+                            local b = base.Position
+                            fi1.Position = b
+                            fi2.CFrame = cfn(b, b + clv)                   
+                        end)
+                    end
+                end
+            end)
+            
+            m_flight:Connect("Disabled",function() 
+                if (fcon) then fcon:Disconnect() fcon = nil end 
+                if (clvcon) then clvcon:Disconnect() clvcon = nil end
+                if (fi1) then fi1:Destroy() fi1 = nil end
+                if (fi2) then fi2:Destroy() fi2 = nil end
+                if (cscon) then cscon:Destroy() cscon = nil end 
+                l_hum:ChangeState(8)
+                
+                unratio(l_humrp.Changed)
+                unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+                unratio(l_humrp.ChildAdded)
+                unratio(l_humrp.DescendantAdded)
+            end)
+            
+            
+            ascend_h:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
+            descend_h:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
+            mode:SetTooltip('The method Flight uses')
+            speedslider:SetTooltip('The speed of your flight')
+            camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other flight script</b>')
+            turndir:SetTooltip('The direction your character faces')
+    end
     -- Float
     do 
         local mode = m_float:AddDropdown('Mode'):SetTooltip('What method Float will use')
@@ -3889,10 +4336,7 @@ local m_movement = ui:CreateMenu('Movement') do
         vel:Connect("ValueChanged",a)
         
         mode:Connect("SelectionChanged",function() 
-            if (m_float:IsEnabled()) then
-                m_float:Disable()
-                m_float:Enable()
-            end
+            m_float:Reset()
         end)
         
         local fcon
@@ -4005,10 +4449,7 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
         
         modedd:Connect("SelectionChanged",function() 
-            if (m_nofall:IsEnabled()) then
-                m_nofall:Disable()
-                m_nofall:Enable()
-            end
+            m_nofall:Reset()
         end)
     end
     -- Parkour
@@ -4039,292 +4480,6 @@ local m_movement = ui:CreateMenu('Movement') do
             end
         end)
         
-    end
-    -- Flight
-    do 
-        local ascend_h = m_flight:AddHotkey('Ascend key')
-        local descend_h = m_flight:AddHotkey('Descend key')
-        local mode = m_flight:AddDropdown('Method', true)
-        local turndir = m_flight:AddDropdown('Turn direction')
-        local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
-        local camera = m_flight:AddToggle('Camera-based')
-        
-        
-        mode:AddOption('Standard'):SetTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
-        mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')
-        mode:AddOption('Vehicle'):SetTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
-        
-        
-        turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly. <b>This is the typical option in every other flight script</b>'):Select()
-        turndir:AddOption('XZ'):SetTooltip('Follows the camera\'s direction on all axes but Y')
-        turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
-        turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
-        
-        local fi1 -- flight inst 1 
-        local fi2 -- flight inst 2  
-        local fcon -- flight connection
-        
-        
-        local cscon -- camera subject connection (vehicle fly)
-        local clvcon -- connection to update camera look vector
-        local clv -- camera look vector
-        local normclv -- normal unmodified one
-        
-        local ask = Enum.KeyCode.E-- keycode for ascension
-        local dsk = Enum.KeyCode.Q-- keycode for descension
-        
-        local speed = 30 -- speed 
-        
-        local cambased = true 
-        camera:Enable()
-        
-        ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
-        descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
-        camera:Connect("Toggled",function(t)
-            cambased=t;
-            if (m_flight:IsEnabled()) then 
-                m_flight:Disable()
-                m_flight:Enable() 
-            end
-        end)
-        turndir:Connect("SelectionChanged",function() 
-            if (m_flight:IsEnabled()) then 
-                m_flight:Disable()
-                m_flight:Enable() 
-            end
-        end)
-        mode:Connect("SelectionChanged",function() 
-            if (m_flight:IsEnabled()) then 
-                m_flight:Disable()
-                m_flight:Enable() 
-            end
-        end)
-        speedslider:Connect("ValueChanged",function(v)speed=v;end)
-        
-        m_flight:Connect("Enabled", function()
-            clv = l_cam.CFrame.LookVector 
-            normclv = clv
-            
-            ratio(l_humrp.Changed)
-            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
-            
-            local curmod = mode:GetSelection()
-            local curturn = turndir:GetSelection()
-            
-            local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
-            
-            
-            if (curturn == 'XYZ') then 
-                clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
-                    normclv = l_cam.CFrame.LookVector
-                    clv = normclv
-                end)
-            elseif (curturn == 'XZ') then
-                clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
-                    normclv = l_cam.CFrame.LookVector
-                    clv = vec3(normclv.X, 0, normclv.Z)
-                end)
-            elseif (curturn == 'Up') then
-                if (cambased) then
-                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
-                        normclv = l_cam.CFrame.LookVector
-                    end)
-                end
-                
-                clv = upp
-            elseif (curturn == 'Down') then
-                if (cambased) then
-                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
-                        normclv = l_cam.CFrame.LookVector
-                    end)
-                end
-                
-                clv = downp
-            end
-            
-            
-            
-            
-            if (curmod == 'Standard') then
-                local base = l_humrp.CFrame
-                
-                
-                if (cambased) then
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
-                        
-                        l_hum:ChangeState(1)
-                        l_humrp.Velocity = nonep
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
-                        
-                        local b = base.Position
-                        l_humrp.CFrame = cfn(b, b + clv)
-                    end)
-                else
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        
-                        l_hum:ChangeState(1)
-                        l_humrp.Velocity = nonep
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        
-                        local b = base.Position
-                        l_humrp.CFrame = cfn(b, b + clv)
-                    end)
-                end
-            elseif (curmod == 'Smooth') then
-                local base = l_humrp.CFrame
-                
-                fi1 = inst("Part")
-                fi1.CFrame = base
-                fi1.Transparency = 0.8
-                fi1.CanCollide = false
-                fi1.CanTouch = false
-                fi1.Anchored = false
-                fi1.Size = vec3(1, 1, 1)
-                fi1.Parent = workspace
-                
-                local pos = inst("BodyPosition")
-                pos.Position = base.Position
-                pos.D = 1900
-                pos.P = 125000
-                pos.MaxForce = vec3(9e9, 9e9, 9e9)
-                pos.Parent = fi1
-                local gyro = inst("BodyGyro")
-                gyro.D = 1900
-                gyro.P = 125000
-                gyro.MaxTorque = vec3(9e9, 9e9, 9e9)
-                gyro.Parent = fi1
-                
-                if (cambased) then
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
-                        
-                        l_hum:ChangeState(1)
-                        l_humrp.Velocity = nonep
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
-                        
-                        local b = base.Position
-                        
-                        pos.Position = b
-                        gyro.CFrame = cfn(b, b + clv)
-                        
-                        l_humrp.CFrame = fi1.CFrame 
-                    end)
-                else
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        
-                        l_hum:ChangeState(1)
-                        l_humrp.Velocity = nonep
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        
-                        local b = base.Position
-                        pos.Position = b
-                        gyro.CFrame = cfn(b, b + clv)
-                        
-                        l_humrp.CFrame = fi1.CFrame                     
-                    end)
-                end
-            elseif (curmod == 'Vehicle') then
-                local base = l_humrp.CFrame
-                
-                ratio(l_humrp.ChildAdded)
-                ratio(l_humrp.DescendantAdded)
-                
-                fi1 = inst("BodyPosition")
-                fi1.Position = base.Position
-                fi1.D = 1900
-                fi1.P = 125000
-                fi1.MaxForce = vec3(9e9, 9e9, 9e9)
-                fi1.Parent = l_humrp
-                
-                fi2 = inst("BodyGyro")
-                fi2.D = 1900
-                fi2.P = 125000
-                fi2.MaxTorque = vec3(9e9, 9e9, 9e9)
-                fi2.Parent = l_humrp
-                
-                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
-                    l_cam.CameraSubject = l_hum
-                end)
-                
-                if (cambased) then
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
-                        
-                        l_hum:ChangeState(1)
-                        --l_humrp.Velocity = vec3(0,0,0)
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        base += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
-                        
-                        local b = base.Position
-                        
-                        fi1.Position = b
-                        fi2.CFrame = cfn(b, b + clv)
-                    end)
-                else
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        
-                        l_hum:ChangeState(1)
-                        --l_humrp.Velocity = vec3(0,0,0)
-                        
-                        base += (l_hum.MoveDirection * dt * 3 * speed)
-                        base += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        
-                        local b = base.Position
-                        fi1.Position = b
-                        fi2.CFrame = cfn(b, b + clv)                   
-                    end)
-                end
-            end
-        end)
-        
-        m_flight:Connect("Disabled",function() 
-            if (fcon) then fcon:Disconnect() fcon = nil end 
-            if (clvcon) then clvcon:Disconnect() clvcon = nil end
-            if (fi1) then fi1:Destroy() fi1 = nil end
-            if (fi2) then fi2:Destroy() fi2 = nil end
-            if (cscon) then cscon:Destroy() cscon = nil end 
-            l_hum:ChangeState(8)
-            
-            unratio(l_humrp.Changed)
-            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
-            unratio(l_humrp.ChildAdded)
-            unratio(l_humrp.DescendantAdded)
-        end)
-        
-        
-        ascend_h:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
-        descend_h:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
-        mode:SetTooltip('The method Flight uses')
-        speedslider:SetTooltip('The speed of your flight')
-        camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>Leaving this on is the typical option in every other flight script</b>')
-        turndir:SetTooltip('The direction your character faces')
     end
     -- Speed
     do 
@@ -4406,10 +4561,7 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
         
         mode:Connect("SelectionChanged",function() 
-            if (m_speed:IsEnabled()) then
-                m_speed:Disable()
-                m_speed:Enable()
-            end
+            m_speed:Reset()
         end)
         
         mode:SetTooltip('Method used for the speedhack')
@@ -4444,36 +4596,36 @@ local m_movement = ui:CreateMenu('Movement') do
         end)
     end
     
+    --m_highjump:SetTooltip('Increases how high you jump')
+    --m_jesus:SetTooltip('Lets you walk on non-collidable parts')
+    --m_jetpack:SetTooltip('Like flight but more velocity based')
+    --m_noclip:SetTooltip('Standard noclip, comes with a few bypasses')
+    --m_noslow:SetTooltip('Prevents you from being slowed down')
+    --m_phase:SetTooltip('Like TPbot, but for movement rather than combat')
+    --m_safewalk:SetTooltip('Prevents you from walking off of a part')
+    --m_spider:SetTooltip('Climbs you up parts you walk into')
+    --m_step:SetTooltip('Teleports you on top of parts you walk into')
     m_airjump:SetTooltip('Lets you jump in air, may bypass jump restrictions')
     m_blink:SetTooltip('Pseudo lagswitch, makes your character look frozen. <b>Do not combine with fakelag.</b>')
     m_clicktp:SetTooltip('Standard clickteleport')
-    m_nofall:SetTooltip('Makes you instantly fall down, or bounce before you land. Useful for bypassing fall damage in games like Natural Disaster Survival')
     m_flight:SetTooltip('Standard flight, comes with a few bypasses')
     m_float:SetTooltip('Makes you float')
-    m_highjump:SetTooltip('Increases how high you jump')
-    m_jesus:SetTooltip('Lets you walk on non-collidable parts')
-    m_jetpack:SetTooltip('Like flight but more velocity based')
-    m_noclip:SetTooltip('Standard noclip, comes with a few bypasses')
-    m_noslow:SetTooltip('Prevents you from being slowed down')
+    m_nofall:SetTooltip('Makes you instantly fall down, or bounce before you land. Useful for bypassing fall damage in games like Natural Disaster Survival')
     m_parkour:SetTooltip('Jumps when you reach the end of a part')
-    m_phase:SetTooltip('Like TPbot, but for movement rather than combat')
-    m_safewalk:SetTooltip('Prevents you from walking off of a part')
     m_speed:SetTooltip('Speedhacks with various bypasses and settings')
-    m_spider:SetTooltip('Climbs you up parts you walk into')
-    m_step:SetTooltip('Teleports you on top of parts you walk into')
     m_velocity:SetTooltip('Limits your velocity')
 end
 local m_render = ui:CreateMenu('Render') do 
     
-    local r_betterui    = m_render:AddMod('Better UI')
-    local r_bread       = m_render:AddMod('Breadcrumbs')
-    local r_camtweaks   = m_render:AddMod('Camera tweaks')
-    local r_crosshair   = m_render:AddMod('Crosshair')
-    local r_esp         = m_render:AddMod('ESP')
-    local r_freecam     = m_render:AddMod('Freecam'..donetxt)
-    local r_fullbright  = m_render:AddMod('Fullbright')
-    local r_nametag     = m_render:AddMod('Nametags')
-    local r_zoom        = m_render:AddMod('Zoom'..donetxt)
+    --local r_betterui    = m_render:AddMod('Better UI')
+    --local r_bread       = m_render:AddMod('Breadcrumbs')
+    --local r_camtweaks   = m_render:AddMod('Camera tweaks')
+    --local r_crosshair   = m_render:AddMod('Crosshair')
+    --local r_esp         = m_render:AddMod('ESP')
+    local r_freecam     = m_render:AddMod('Freecam')
+    --local r_fullbright  = m_render:AddMod('Fullbright')
+    --local r_nametag     = m_render:AddMod('Nametags')
+    local r_zoom        = m_render:AddMod('Zoom')
     
     -- Freecam
     do 
@@ -4519,22 +4671,13 @@ local m_render = ui:CreateMenu('Render') do
         descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
         camera:Connect("Toggled",function(t)
             cambased=t;
-            if (r_freecam:IsEnabled()) then 
-                r_freecam:Disable()
-                r_freecam:Enable() 
-            end
+            r_freecam:Reset()
         end)
         mode:Connect("SelectionChanged",function() 
-            if (r_freecam:IsEnabled()) then 
-                r_freecam:Disable()
-                r_freecam:Enable() 
-            end
+            r_freecam:Reset()
         end)
         freezemode:Connect("SelectionChanged",function() 
-            if (r_freecam:IsEnabled()) then 
-                r_freecam:Disable()
-                r_freecam:Enable() 
-            end
+            r_freecam:Reset()
         end)
         speedslider:Connect("ValueChanged",function(v)speed=v;end)
         
@@ -4796,22 +4939,23 @@ local m_render = ui:CreateMenu('Render') do
 
     end
     
-	r_fullbright:SetTooltip('Fullbright with different presets for different games')
-    r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
-    r_bread:SetTooltip('Leaves a trail behind')
-    r_camtweaks:SetTooltip('Options for configuring the camera, like noclip-cam, maxzoom, smooth camera, etc. For 3rd person, use Game tweaks under Misc')
-    r_crosshair:SetTooltip('Crosshair configuration')
-    r_esp:SetTooltip('Configurable ESP')
-    r_freecam:SetTooltip('Standard freecam')
-    r_nametag:SetTooltip('Better nametags')
+	--r_fullbright:SetTooltip('Fullbright with different presets for different games')
+    --r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
+    --r_bread:SetTooltip('Leaves a trail behind')
+    --r_camtweaks:SetTooltip('Options for configuring the camera, like noclip-cam, maxzoom, smooth camera, etc. For 3rd person, use Game tweaks under Misc')
+    --r_crosshair:SetTooltip('Crosshair configuration')
+    --r_esp:SetTooltip('Configurable ESP')
+    --r_nametag:SetTooltip('Better nametags')
+    r_freecam:SetTooltip('Your average freecam')
     r_zoom:SetTooltip('Like Optifine\'s zoom')
     
     
 end
 local m_ui = ui:CreateMenu('UI') do 
-    local u_cmd = m_ui:AddMod('Command bar')
-    local u_jeff = m_ui:AddMod('Jeff'..donetxt)
-    local u_plr = m_ui:AddMod('Player notifications'..donetxt)
+    --local u_cmd = m_ui:AddMod('Command bar')
+    local u_jeff = m_ui:AddMod('Jeff')
+    local u_plr = m_ui:AddMod('Player notifications')
+    local u_modlist = m_ui:AddMod('Mod list')
     -- jeff 
     do 
         local _
@@ -4868,16 +5012,88 @@ local m_ui = ui:CreateMenu('UI') do
             leave:Disconnect()
         end)
     end
+    -- modlist
+    do 
+        local corner = u_modlist:AddDropdown('Corner'):SetTooltip('The corner the modlist is in')
+        corner:AddOption('Top left'):SetTooltip('Sets the modlist to be at the top left')
+        corner:AddOption('Top right'):SetTooltip('Sets the modlist to be at the top right')
+        corner:AddOption('Bottom left'):SetTooltip('Sets the modlist to be at the bottom left; default option'):Select()
+        corner:AddOption('Bottom right'):SetTooltip('Sets the modlist to be at the bottom right')
+        
+        
+        local _ = ui:manageml()
+        local uiframe = _[1]
+        local uilist = _[2]
+        local uititle = _[3]
+        
+        corner:Connect("SelectionChanged",function() 
+            u_modlist:Reset()
+        end)
+        
+        u_modlist:Connect("Enabled",function() 
+            local s = corner:GetSelection()
+            
+            
+            if (s == 'Top left') then
+                uiframe.Position = dim2sca(0, 0)
+                uiframe.AnchorPoint = vec2(0, 0)
+                
+                uilist.HorizontalAlignment = 'Left'
+                uilist.VerticalAlignment = 'Top'
+                
+                ui:manageml(-100, 10, 'Left', 'PaddingLeft')
+                
+            elseif (s == 'Top right') then
+                uiframe.Position = dim2sca(1, 0)
+                uiframe.AnchorPoint = vec2(1, 0)
+                
+                uilist.HorizontalAlignment = 'Right'
+                uilist.VerticalAlignment = 'Top'
+                
+                ui:manageml(-100, 10, 'Right', 'PaddingRight')
+            elseif (s == 'Bottom left') then
+                uiframe.Position = dim2sca(0, 1)
+                uiframe.AnchorPoint = vec2(0, 1)
+                
+                uilist.HorizontalAlignment = 'Left'
+                uilist.VerticalAlignment = 'Bottom'
+                
+                ui:manageml(-100, 10, 'Left', 'PaddingLeft')
+            elseif (s == 'Bottom right') then
+                uiframe.Position = dim2sca(1, 1)
+                uiframe.AnchorPoint = vec2(1, 1)
+                
+                uilist.HorizontalAlignment = 'Right'
+                uilist.VerticalAlignment = 'Bottom'
+                
+                ui:manageml(-100, 10, 'Right', 'PaddingRight')
+            end
+            
+            
+            uiframe.Visible = true
+        end)
+        
+        u_modlist:Connect("Disabled",function() 
+            uiframe.Visible = false
+        end)
+        
+        
+        -- https://cdn.discordapp.com/attachments/910740525785706521/940869118071046194/you_should-5-1-4_001.mp4
+    end
+    u_modlist:Enable()
     
-    u_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
+    
+    
+    --u_cmd:SetTooltip('Redline command bar. Quickly toggle modules, do quick actions like chatting and leaving, and more')
     u_jeff:SetTooltip('I forgot what this does')
     u_plr:SetTooltip('Get notifications when a player joins / leaves')
+    u_modlist:SetTooltip('Lists what modules you have enabled')
 end
 local m_server = ui:CreateMenu('Server') do 
-    local s_priv = m_server:AddMod('Private server', 'Button')
-    local s_rejoin = m_server:AddMod('Rejoin'..donetxt, 'Button')
-    local s_shop = m_server:AddMod('Serverhop', 'Button')
-    local s_viewer = m_server:AddMod('Server browser')
+    --local s_priv = m_server:AddMod('Private server', 'Button')
+    local s_rejoin = m_server:AddMod('Rejoin', 'Button')
+    --local s_shop = m_server:AddMod('Serverhop', 'Button')
+    --local s_viewer = m_server:AddMod('Server browser')
     s_rejoin:Connect("Clicked",function() 
         if #serv_players:GetPlayers() <= 1 then
         	l_plr:Kick("\nRejoining, one second...")
@@ -4888,23 +5104,24 @@ local m_server = ui:CreateMenu('Server') do
         end
     end)
     
-    s_priv:SetTooltip('Hops you to the smallest server. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
+    --s_priv:SetTooltip('Hops you to the smallest server. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
     s_rejoin:SetTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
-    s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
-    s_viewer:SetTooltip('Lets you view all the existing servers and hop to them')
+    --s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
+    --s_viewer:SetTooltip('Lets you view all the existing servers and hop to them')
 end
 local m_integrations = ui:CreateMenu('Integrations') do 
-    local m_alt = m_integrations:AddMod('Alt manager')
+    --local m_alt = m_integrations:AddMod('Alt manager')
     local m_rpc = m_integrations:AddMod('Discord Rich Presence')
 	
     -- rpc
     do 
+        m_rpc:AddLabel('Lost access to my disc account with the Redline app set up, will be added when I get it back')
         m_rpc:Connect("Enabled",function() 
             ui:Notify('Rich Presence failed', 'Currently unfinished', 3, 1)
         end)
     end
     
-    m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
+    --m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
     m_rpc:SetTooltip('Discord Rich Presence integration')
 end
 local m_search = ui:CreateMenu('Search') do 
@@ -4937,6 +5154,17 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
+    m_changelog:AddMod('Version 0.2.0',nil,true):AddLabel([[- Added a Mod list module (under UI)
+- Added a [BETA] tag for mods in beta
+- Added a startup animation + sound
+- Almost finished antiaim
+- Changed the enable color to be the classic Redline red
+- Dropdown options can now be selected with right click
+- Finished Autoclicker 
+- Hid all of the unfinished modules, hopefully it won't look weird with everything gone
+- Removed the [Done] tags
+- Slightly improved performance when switching modes while a mod was enabled]])
+
     m_changelog:AddMod('Version 0.1.1',nil,true):AddLabel([[ - Finished Fakelag and Blink
 - Almost finished Triggerbot, team check and spam may have issues
 - Started work on Antiaim]]) 
@@ -4954,4 +5182,59 @@ local m_changelog = ui:CreateMenu('Changelog') do
 end
 
 _G.RLLoaded = true
+
+
+do
+    wait(0.5)
+    local screen = ui:GetScreen()
+    local res = serv_gui:GetScreenResolution()
+    local max = res.Y - 200
+    
+    local clip = inst("Frame")
+    clip.AnchorPoint = vec2(0.5, 0.5)
+    clip.BackgroundTransparency = 1
+    clip.ClipsDescendants = true
+    clip.Position = dim2sca(0.5, 0.5)
+    clip.Size = dim2off(max,max)
+    clip.Parent = screen
+    
+    local prism = inst("ImageLabel")
+    prism.AnchorPoint = vec2(0.5, 0.5)
+    prism.BackgroundTransparency = 1
+    prism.Image = 'rbxassetid://8781210660'
+    prism.ImageColor3 = colors['text1']
+    prism.Position = dim2sca(0.5, 0.5)
+    prism.Size = dim2off(0,0)
+    prism.Parent = clip
+    
+    local redline = inst("ImageLabel")
+    redline.BackgroundTransparency = 1
+    redline.Image = 'rbxassetid://8781211071'
+    redline.ImageColor3 = colors['enabled']
+    redline.AnchorPoint = vec2(0.5, 0.5)
+    redline.Position = dim2sca(0.5, 0.5)
+    redline.Size = dim2sca(0.8, 0.8)
+    redline.Parent = prism
+    
+    local sound = inst("Sound")
+    sound.SoundId = 'rbxassetid://8781250986'
+    sound.Volume = 1
+    sound.Parent = prism
+    sound:Play()
+    
+    ctwn(redline, {
+        ImageColor3 = colors['text1']
+    }, 1.5, 5, 1)
+    ctwn(prism, {
+        ImageColor3 = colors['enabled'];
+        Size = dim2off(max, max);
+    }, 1.5, 5, 1).Completed:Wait()
+    wait(0.5)
+    ctwn(clip, {
+        Size = dim2off(0, 0);
+    },0.5, 5, 1).Completed:Wait()
+    clip:Destroy()
+end
+
+
 ui:Notify('Redline ('..REDLINEVER..') loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 2)
