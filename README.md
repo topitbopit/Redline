@@ -46,7 +46,7 @@ If you want to instead just remake what I did but use the same methods (ex. flig
 **What does X module do**    
 Open up an issue or DM me if a module description isn't clear   
 **Why won't Redline execute?**  
-Make sure your executor is supported. Open up an issue / DM me of the error you get.   
+Make sure your executor is supported. Open up an issue / DM me the error you get.   
 
 ## Supported executors  
 - Synapse X, fully tested   
@@ -88,100 +88,100 @@ Others may work and will be tested soon.
 *Lets you toggle tools and equip multiple tools at once*  
 **Game tweaks**  
 *Force enable or disable various things, such as first person camera, chat, inventory, and more*  
-**Logs**  
-*Displays logs for player joins, leaves, and messages*  
-**Pathfinder**  
+**Pathfinder** [PLANNED]   
 *Automatically pathfinds to a point you choose. Kinda like baritone but without all of the extra features*  
-**Radar**  
+**Radar** [PLANNED]    
 *Radar that displays where other players are*  
-**Respawn** [DONE]  
+**Respawn**    
 *Force resets you. Can fix some glitches with reanimations*  
-**Waypoints** [DONE]
+**Waypoints** 
 *Lets you save positions and teleport back to them later*
 
 
 ### Movement  
-**Air jump**  [DONE]   
+**Air jump**     
 *Lets you jump in the air*   
 **Blink**   
 *Pseudo lagswitch. Doesn't actually choke packets*   
-**Click TP**  [almost done]   
+**Click TP**     
 *Standard click TP*  
-**Flight**  [almost done]  
+**Flight**     
 *Standard fly with tons of options*  
-**Float**  [almost done]  
+**Float**    
 *Low gravity or no gravity*  
-**High jump**   
+**High jump** [PLANNED]     
 *Lets you jump higher*  
-**Ice**   
+**Ice** [PLANNED]    
 *Makes you walk like you're on ice*  
-**Jesus**   
+**Jesus** [PLANNED]     
 *Lets you walk over dangerous parts*  
-**Jetpack**   
+**Jetpack** [PLANNED]     
 *Like flight, but you're affected by gravity and can accelerate by pressing space*  
-**Noclip**  
+**Noclip** [PLANNED]   
 *Standard noclip*   
-**Nofall**  [DONE]
+**Nofall**  
 *Makes you quickly fall or bounce before you hit the ground. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
-**Noslowdown**  
+**Noslowdown** [PLANNED]    
 *Prevents you from being slowed down; your walkspeed can't go under 16 and you can't be anchored*  
-**Parkour**  [DONE]   
+**Parkour**    
 *Automatically jumps when you reach the end of a block*  
-**Phase**  
+**Phase** [PLANNED]    
 *Teleports you insanely fast around a central position. Useful for games like Prison Life to avoid arrests*  
-**Safewalk**  
+**Safewalk** [PLANNED]    
 *Prevents you from walking off of a part*  
-**Speedhack**  [DONE]   
+**Speedhack**      
 *Classic speedhack. Has plenty of modes*  
-**Spider**  
+**Spider** [PLANNED]   
 *Lets you climb up parts like a spider*  
-**Step**  
+**Step** [PLANNED]    
 *Teleports you up when you walk into a part*  
-**Velocity**  [DONE]   
+**Velocity**     
 *Limits or disables your velocity*  
   
 ### Render  
-**Better UI**   
+**Better UI** [PLANNED]     
 *Improves Roblox UIs like the chat and inventory*   
-**Breadcrumbs**  
+**Breadcrumbs** [PLANNED]    
 *Leaves a trail behind you*   
-**Camera tweaks**   
+**Camera tweaks** [PLANNED]   
 *Modify lots of camera attributes like camnoclip, max zoom. etc)   
-**Crosshair**   
+**Crosshair** [PLANNED]  
 *Drawing crosshair configuration*   
-**ESP**   
+**ESP** [PLANNED]   
 *Standard ESP with tons of configuration*   
-**Freecam**  [DONE]  
+**Freecam**   
 *Flight but you control your camera*  
-**Fullbright**  
+**Fullbright**  [PLANNED]   
 *Disables lighting. Has several presets that may work for different games*  
-**Nametags**  
+**Nametags**  [PLANNED]    
 *Detailed nametags above every player*  
-**Zoom**  [DONE]   
+**Zoom**  
 *Like Optifine zoom*  
   
 ### UI  
-**Command bar**  
+**Command bar**   [PLANNED]  
 *Command bar that lets you quickly toggle modules with a textbox. Also has mods that aren't in the main gui like .tooldupe*  
-**Jeff**  [DONE]  
+**Jeff**   
 *I forgor what this does* :skull:  
-**Player alerts**  [DONE]
+**Player alerts**  
 *Notifies you when a player joins or leaves*   
+**Mod list**     
+*Shows what mods are currently enabled*   
    
 ### Server   
-**Private server**   
+**Private server**   [PLANNED]   
 *Server hops to the smallest server*   
-**Rejoin**  [DONE]  
+**Rejoin**  
 *Rejoins the current server*  
-**Serverhop**  
+**Serverhop**  [PLANNED]   
 *Server hops to a random server*  
-**Server browser** 
+**Server browser** [PLANNED]   
 *Lets you view existing servers and join them*   
 
 
 ### Integrations  
-**Discord Rich Prescence**  
+**Discord Rich Prescence**  [PLANNED]   
 *Show everyone else how cool you are for using Redline*  
-**Roblox Alt Manager**  
+**Roblox Alt Manager**  [PLANNED]    
 *Lets you manage and use your alts. Requires the Roblox Alt Manager program.*  
     
