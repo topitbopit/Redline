@@ -70,8 +70,8 @@ Others may work and will be tested soon.
 *Teleports you back to where you were before you died*  
 **Respawn**    
 *Force resets you. Can fix some glitches with reanimations*  
-**Waypoints** 
-*Lets you save positions and teleport back to them later*
+**Waypoints**   
+*Lets you save positions and teleport back to them later*   
 
 
 ### Movement  
