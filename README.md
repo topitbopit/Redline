@@ -58,36 +58,32 @@ Others may work and will be tested soon.
 ## Modules   
   
 ### Combat
-**Aimbot**  
+**Aimbot**  [PLANNED]    
 *Classic FPS mouse aimbot. Has locking and prediction*  
-**Anti-aim**  
+**Anti-aim**   
 *Spins you around to prevent others from headshotting you*  
-**Hitboxes**  
+**Hitboxes**  [PLANNED]    
 *Hitbox expander*  
-**Stare**  
+**Stare**  [PLANNED]     
 *Constantly looks at someone when you get in range of them. Useful for swordfighting games*  
-**TPbot**  
+**TPbot**  [PLANNED]    
 *Teleports you around someone when you get in range of them. Useful for swordfighting games*  
 **Triggerbot**  
 *Automatically clicks when you mouse over a player*  
 
 ### Player  
-**Anti-AFK** [DONE]    
+**Anti-AFK**    
 *Prevents you from being disconnected for idling*  
-**Anti-fling** [DONE]  
+**Anti-fling**  
 *Prevents you from being flung by other players*  
-**Anti-warp** [DONE]  
+**Anti-warp**   
 *Prevents you from being teleported (as in a position change, not across places / games)*  
-**Autoclicker**  
+**Autoclicker**   
 *Clicks for you. Has tons of modes, like jitter and double click*  
-**Fancy chat**  
+**Fancy chat**  [PLANNED]    
 *Makes your chat fancy*  
-**Flashback** [DONE]  
+**Flashback**   
 *Teleports you back to where you were before you died*  
-**Funky tools**  
-*Lets you toggle tools and equip multiple tools at once*  
-**Game tweaks**  
-*Force enable or disable various things, such as first person camera, chat, inventory, and more*  
 **Pathfinder** [PLANNED]   
 *Automatically pathfinds to a point you choose. Kinda like baritone but without all of the extra features*  
 **Radar** [PLANNED]    
