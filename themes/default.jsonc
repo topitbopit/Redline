@@ -8,6 +8,8 @@
 
     // Not all colors may have transparency
     "theme": {
+        "Font": "SourceSans",
+        
         "Generic_Outline": { // Outline color for nearly all outlines
             "Color": [75,75,80],
             "Transparency": 0
