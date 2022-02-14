@@ -1,0 +1,1 @@
+default|dark|ghost|blue|meteor
