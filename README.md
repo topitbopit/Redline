@@ -16,7 +16,6 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 ```
 
 ## Preview
-![](https://cdn.discordapp.com/attachments/917914099759849482/940853797624905728/sample.png)
 ![](https://cdn.discordapp.com/attachments/917914099759849482/942695408575057940/themes.png)
 
 ## Why use it?
