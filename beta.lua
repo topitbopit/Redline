@@ -5565,7 +5565,7 @@ local m_render = ui:CreateMenu('Render') do
         local s_looped = r_fullbright:AddToggle('Looped'):SetTooltip('Loops the fullbright every frame. Needed for games like the Rake or Lumber Tycoon')
         local s_mode = r_fullbright:AddDropdown('Mode',true):SetTooltip('Different modes for fullbright. Some may work better in other games')
         
-        s_mode:AddOption('Standard'):SetTooltip('Your average fullbright. Doesn\'t look too harsh')
+        s_mode:AddOption('Standard'):SetTooltip('Your average fullbright. Doesn\'t look too harsh'):Select()
         s_mode:AddOption('Bright'):SetTooltip('Insanely bright')
         s_mode:AddOption('Nofog'):SetTooltip('Only affects fog')
         s_mode:AddOption('Soft'):SetTooltip('Instead of turning everything white, it turns everything gray. Meant for games with bloom effects')
@@ -6016,7 +6016,8 @@ local m_ui = ui:CreateMenu('UI') do
                 local b = a:match('([^|]+)|')
                 local c = a:match('|(.+)')
                 
-                s_theme:AddOption(b):SetTooltip(c)
+                local _ = s_theme:AddOption(b):SetTooltip(c)
+                if ( i == 1 ) then _:Select() end
             end
         end)
     end
