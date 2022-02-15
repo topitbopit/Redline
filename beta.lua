@@ -42,7 +42,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = "v0.3.0"
+local REDLINEVER = "v0.3.1"
 
 
 -- { Wait for load } --
@@ -3883,21 +3883,94 @@ local m_combat = ui:CreateMenu('Combat') do
     end
 end
 local m_player = ui:CreateMenu('Player') do 
+    --local p_fancy       = m_player:AddMod('Fancy chat')
+    --local p_ftools      = m_player:AddMod('Funky tools')
+    --local p_gtweaks     = m_player:AddMod('Game tweaks')
+    --local p_pathfind    = m_player:AddMod('Pathfinder')
+    --local p_radar       = m_player:AddMod('Radar')
+    local p_animspeed   = m_player:AddMod('Animspeed')
     local p_antiafk     = m_player:AddMod('Anti-AFK')
     local p_anticrash   = m_player:AddMod('Anti-crash')
     local p_antifling   = m_player:AddMod('Anti-fling')
     local p_antiwarp    = m_player:AddMod('Anti-warp')
     local p_autoclick   = m_player:AddMod('Auto clicker')
-    --local p_fancy       = m_player:AddMod('Fancy chat')
     local p_flag        = m_player:AddMod('Fakelag')
     local p_flashback   = m_player:AddMod('Flashback')
-    --local p_ftools      = m_player:AddMod('Funky tools')
-    --local p_gtweaks     = m_player:AddMod('Game tweaks')
-    --local p_pathfind    = m_player:AddMod('Pathfinder')
-    --local p_radar       = m_player:AddMod('Radar')
     local p_respawn     = m_player:AddMod('Respawn', 'Toggle')
     local p_waypoints   = m_player:AddMod('Waypoints')
     
+    -- Anim speed
+    do 
+        local s_mode = p_animspeed:AddDropdown('Mode',true):SetTooltip('The way animation speed gets modified')
+        local s_max = p_animspeed:AddToggle('Max speed'):SetTooltip('Sets speed to the highest it possibly can')
+        local s_perframe = p_animspeed:AddToggle('Per frame'):SetTooltip('Updates animation speeds per frame')
+        local s_percent = p_animspeed:AddSlider('Speed (Percent)',{min=0,max=500,cur=100}):SetTooltip('Multiplies every animation\'s speed by this percent value')
+        local s_speed = p_animspeed:AddSlider('Speed (Absolute)',{min=0,max=100,cur=1,step=0.01}):SetTooltip('Sets every animation\'s speed to this value')
+        s_mode:AddOption('Absolute'):SetTooltip('Sets the animation speeds to this value'):Select()
+        s_mode:AddOption('Percent'):SetTooltip('Multiplies the animation speeds by this percent')
+        
+        
+        local max = s_max:IsEnabled()
+        local speed = s_speed:GetValue()
+        local percent = s_percent:GetValue()
+        local mode = s_mode:GetSelection()
+        
+        s_max:Connect('Toggled',function(t)max=t;end)
+        s_speed:Connect('ValueChanged',function(t)speed=t;end)
+        s_percent:Connect('ValueChanged',function(t)percent=t;end)
+        s_mode:Connect('SelectionChanged',function(t)mode=t;p_animspeed:Reset()end)
+        
+        
+        local animcon
+        p_animspeed:Connect('Enabled',function(t) 
+            local noob
+            if (max) then
+                noob = function(track) 
+                    track:AdjustSpeed(99999)
+                end
+            else
+                if (mode == 'Absolute') then
+                    noob = function(track) 
+                        track:AdjustSpeed(speed)
+                    end
+                else
+                    noob = function(track) 
+                        track:AdjustSpeed(track.Speed * (percent/100))
+                    end
+                end
+            end
+            
+            if (s_perframe:IsEnabled()) then
+                serv_rs:BindToRenderStep('RL-AnimSpeed',2356,function()
+                    local tracks = l_hum:GetPlayingAnimationTracks()
+                    
+                    for i = 1, #tracks do 
+                        noob(tracks[i])
+                    end
+                end)
+            else
+                animcon = l_hum.AnimationPlayed:Connect(noob)
+            
+                local tracks = l_hum:GetPlayingAnimationTracks()
+                
+                for i = 1, #tracks do 
+                    noob(tracks[i])
+                end
+            end
+            
+            resetcon = l_plr.CharacterAdded:Connect(function() 
+                wait()
+                p_animspeed:Reset()
+            end)
+        end)
+        
+        p_animspeed:Connect('Disabled',function() 
+            if (animcon) then animcon:Disconnect() animcon = nil end
+            if (resetcon) then resetcon:Disconnect() resetcon = nil end
+            serv_rs:UnbindFromRenderStep('RL-AnimSpeed')
+        end)
+        
+    end
     -- Anti afk
     do 
         local p_afk_mode   = p_antiafk:AddDropdown('Mode', true)
@@ -4090,7 +4163,7 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Autoclick
     do 
-        local s_buttontype = p_autoclick:AddDropdown('Mouse key',true)
+        local s_buttontype = p_autoclick:AddDropdown('Mouse key',true):SetTooltip('The key to click')
         s_buttontype:AddOption('Mouse1'):SetTooltip('Clicks Mouse1 / left click'):Select()
         s_buttontype:AddOption('Mouse2'):SetTooltip('Clicks Mouse2 / right click')      
         
@@ -4405,6 +4478,7 @@ local m_player = ui:CreateMenu('Player') do
         delewp:SetTooltip('Deletes all waypoints matching the name you type in')
     end
     
+    p_animspeed:SetTooltip('Changes the speed of your animations')
     p_antiafk:SetTooltip('Prevents you from being disconnected due to idling for too long')
     p_anticrash:SetTooltip('Prevents game scripts from while true do end\'ing you')
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
@@ -6094,6 +6168,11 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
+    m_changelog:AddMod('Version 0.3.1',nil,true):AddLabel([[- Added Animspeed module that changes the speed of your animations
+- Added a few tooltips for mods like Autoclicker
+- Edited the blue theme to make it look better]])
+    
+    
     m_changelog:AddMod('Version 0.3.0',nil,true):AddLabel([[- Added ESP module
 - Added Fullbright module w/ several modes and optional looping
 - Added a config file, only saves themes for now
