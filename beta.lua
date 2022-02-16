@@ -42,7 +42,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = "v0.3.1"
+local REDLINEVER = "v0.3.2"
 
 
 -- { Wait for load } --
@@ -4620,7 +4620,7 @@ local m_movement = ui:CreateMenu('Movement') do
             local descend_h = m_flight:AddHotkey('Descend key')
             local mode = m_flight:AddDropdown('Method', true)
             local turndir = m_flight:AddDropdown('Turn direction')
-            local speedslider = m_flight:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+            local speedslider = m_flight:AddSlider('Speed',{min=0,max=150,step=0.01,cur=30})
             local camera = m_flight:AddToggle('Camera-based')
             
             
@@ -5057,8 +5057,8 @@ local m_movement = ui:CreateMenu('Movement') do
         mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
         mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
         
-        local speedslider = m_speed:AddSlider('Speed',{min=0,max=200,cur=50,step=0.1})
-        local speed = 50
+        local speedslider = m_speed:AddSlider('Speed',{min=0,max=100,cur=30,step=0.01})
+        local speed = 30
         speedslider:Connect("ValueChanged",function(v)speed=v;end)
         local part
         local scon
@@ -6168,6 +6168,11 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
+    m_changelog:AddMod('Version 0.3.2',nil,true):AddLabel([[ - Lowered Speed's max value from 300 to 100
+- Removed the Gray theme since it sucks
+- Added a cyan theme called Cold
+- Edited how the blue theme looks again]])
+    
     m_changelog:AddMod('Version 0.3.1',nil,true):AddLabel([[- Added Animspeed module that changes the speed of your animations
 - Added a few tooltips for mods like Autoclicker
 - Edited the blue theme to make it look better]])
