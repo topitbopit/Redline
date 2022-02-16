@@ -1,8 +1,6 @@
-// Redline config file
-
+// Redline theme file
 
 {
-    // Theme
     // Transparency follows normal roblox rules where 0 is opaque and 1 is invisible
     // Color is formatted in RGB
 
@@ -59,14 +57,14 @@
         },
         
         "Slider_Foreground": { // Used for the slider "fill"
-            "Color": [160,160,165],
+            "Color": [225,75,80],
             "Transparency": 0
         },
-        "Slider_Background": { // Used for the background of sliders
+        "Slider_Background": { // Used for the background of sliders and outline of toggles
             "Color": [33,33,38],
             "Transparency": 0
         },
-        "Slider_Head": { // This is currently unused, but may be used in a future update
+        "Slider_Head": { // This is currently unused, but may be used in a future update. It would be used for a slider head
             "Color": [28,28,33]
         },
         
