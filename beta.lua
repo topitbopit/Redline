@@ -42,7 +42,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = "v0.3.2"
+local REDLINEVER = "v0.3.2.1"
 
 
 -- { Wait for load } --
@@ -133,12 +133,12 @@ local function DecodeThemeJson(json)
     return colors, trans, font
 end
 
-if (isfile('REDLINE/config.jsonc')) then
+if (isfile('REDLINE/theme.jsonc')) then
     _G.RLLOADERROR = 0
     
     local colors,trans,font
     pcall(function()
-        local j = readfile('REDLINE/config.jsonc')
+        local j = readfile('REDLINE/theme.jsonc')
         colors,trans,font = DecodeThemeJson(j)
     end)
     
@@ -173,8 +173,8 @@ do
     colors[11]  = colors[11] or rgb(028, 028, 033); -- setting hovering
     colors[12]  = colors[12] or rgb(023, 023, 028); -- dropdown hovering
     -- slider
-    colors[13]  = colors[13] or rgb(160, 160, 165); -- slider foreground
-    colors[14]  = colors[14] or rgb(055, 055, 060); -- slider background
+    colors[13]  = colors[13] or rgb(225, 075, 080); -- slider foreground
+    colors[14]  = colors[14] or rgb(033, 033, 038); -- slider background
     colors[15]  = colors[15] or rgb(130, 130, 135); -- slider head
     -- text  
     colors[16]  = colors[16] or rgb(255, 255, 255); -- main text
@@ -1937,7 +1937,7 @@ local ui = {} do
                   s_SliderBar = inst("Frame")
                   s_SliderBar.Size = dim2sca(1, 1)
                   s_SliderBar.Position = dim2(0,0)
-                  s_SliderBar.AnchorPoint = vec2(0, 0)
+                  s_SliderBar.AnchorPoint = vec2(1, 0)
                   s_SliderBar.BackgroundColor3 = colors[13]
                   s_SliderBar.BackgroundTransparency = trans[13]
                   s_SliderBar.BorderSizePixel = 0
@@ -5909,7 +5909,7 @@ local m_ui = ui:CreateMenu('UI') do
     do 
         
         local s_theme = u_theme:AddDropdown('Theme'):SetTooltip('The preset theme to use. If you want to make your own then edit the config')
-        local s_save = u_theme:AddButton('Save'):SetTooltip('Saves the selected theme to the config. Loads the theme on restart')
+        local s_save = u_theme:AddButton('Save'):SetTooltip('Saves the selected theme to the theme config. Loads the theme on restart')
         local s_apply = u_theme:AddButton('Apply [RESTARTS]'):SetTooltip('Click this when you\'re ready to apply. Automatically restarts')
         
         local themedata 
@@ -6074,10 +6074,10 @@ local m_ui = ui:CreateMenu('UI') do
         
         
         s_save:Connect('Clicked',function()
-            writefile('REDLINE/config.jsonc',themedata)
+            writefile('REDLINE/theme.jsonc',themedata)
         end)
         s_apply:Connect('Clicked',function()
-            writefile('REDLINE/config.jsonc',themedata)
+            writefile('REDLINE/theme.jsonc',themedata)
             ui:Destroy()
             loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()
         end)
@@ -6168,10 +6168,12 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
-    m_changelog:AddMod('Version 0.3.2',nil,true):AddLabel([[ - Lowered Speed's max value from 300 to 100
-- Removed the Gray theme since it sucks
-- Added a cyan theme called Cold
-- Edited how the blue theme looks again]])
+    m_changelog:AddMod('Version 0.3.2.1',nil,true):AddLabel([[ - Fixed a bug with how sliders worked which affected the colors
+- Updated every theme to be compatible with these changes]])
+    m_changelog:AddMod('Version 0.3.2',nil,true):AddLabel([[- Added a cyan theme called Cold
+- Edited how the blue theme looks again
+- Lowered Speed's max value from 300 to 100
+- Removed the Gray theme since it sucks]])
     
     m_changelog:AddMod('Version 0.3.1',nil,true):AddLabel([[- Added Animspeed module that changes the speed of your animations
 - Added a few tooltips for mods like Autoclicker
@@ -6277,16 +6279,16 @@ if (_G.RLLOADERROR ~= 0) then
         print(
             'The JSON decoder recognized the config as invalid JSON.'..
             '\nMake sure that the config is formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/config.jsonc) and reload Redline.'
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.jsonc) and reload Redline.'
         )
         
     elseif (err == 2) then
         ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 4, true)
         print('(Error code 2)')
         print(
-            'An unknown error occured while loading the config.'..
-            '\nMake sure that the config\'s values are formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/config.jsonc) and reload Redline.'
+            'An unknown error occured while loading the theme config.'..
+            '\nMake sure that the theme config\'s values are formatted properly.'..
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.jsonc) and reload Redline.'
         )
     end
 else
