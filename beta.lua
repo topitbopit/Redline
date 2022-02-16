@@ -116,8 +116,8 @@ local function DecodeThemeJson(json)
         switch['Hovering_Module']       = 10
         switch['Hovering_Setting']      = 11
         switch['Hovering_Dropdown']     = 12
-        switch['Slider_Background']     = 13
-        switch['Slider_Foreground']     = 14
+        switch['Slider_Foreground']     = 13
+        switch['Slider_Background']     = 14
         switch['Slider_Head']           = 15
         switch['Text_Main']             = 16
         switch['Text_Sub']              = 17
