@@ -65,8 +65,10 @@ Others may work and will be tested soon.
 **Anti-warp**   
 *Prevents you from being teleported (as in a position change, not across places / games)*  
 **Autoclicker**   
-*Clicks for you. Has tons of modes, like jitter and double click*  
-**Flashback**   
+*Clicks for you*   
+**Fakelag**   
+*Makes you look laggy for other players. Don't combine with Blink*   
+**Flashback**    
 *Teleports you back to where you were before you died*  
 **Respawn**    
 *Force resets you. Can fix some glitches with reanimations*  
@@ -99,6 +101,9 @@ Others may work and will be tested soon.
 *Flight but you control your camera*  
 **Zoom**  
 *Like Optifine zoom*  
+**Fullbright**   
+*Disables some lighting effects like fog and shadows. Can also be looped for games like LT2 or Rake*   
+  
   
 ### UI  
 **Jeff**   
@@ -107,7 +112,12 @@ Others may work and will be tested soon.
 *Notifies you when a player joins or leaves*   
 **Mod list**     
 *Shows what mods are currently enabled*   
-   
+**Themes**  
+*Lets you choose a theme and apply it to Redline*  
+**Widgets** [PLANNED]  
+*Lets you view stats, like mem usage, FPS, ping, velocity, position, etc.*  
+  
+
 ### Server   
 **Rejoin**  
 *Rejoins the current server*   
