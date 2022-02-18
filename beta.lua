@@ -42,7 +42,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = "v0.3.2.1"
+local REDLINEVER = "v0.4.0"
 
 
 -- { Wait for load } --
@@ -82,7 +82,7 @@ local mc = math.clamp
 -- Utf8
 local uc = utf8.char
 -- Table
-local ins,rem,cle = table.insert, table.remove, table.clear
+local ins,rem,cle,fin = table.insert, table.remove, table.clear, table.find
 -- Os
 local date = os.date
 local tick = tick
@@ -319,6 +319,7 @@ local ui = {} do
     local w_ModList
      local w_ModListLayout
      local w_ModListTitle
+    local w_MouseCursor
     
     
     local ModlistPadding = {
@@ -345,6 +346,7 @@ local ui = {} do
         w_Backframe.BackgroundTransparency = trans[3]
         w_Backframe.BorderSizePixel = 0
         w_Backframe.ClipsDescendants = false
+        w_Backframe.Position = dim2(0, 0, -1, 0)
         w_Backframe.Size = dim2sca(1,1)
         w_Backframe.Visible = false
         w_Backframe.Parent = w_Screen
@@ -374,14 +376,6 @@ local ui = {} do
         w_Help.Visible = false
         w_Help.ZIndex = 1
         w_Help.Parent = w_Backframe
-        
-        local w_Icon = inst("ImageLabel")
-        w_Icon.Image = "rbxassetid://8677436980"
-        w_Icon.Size = dim2off(256, 256)
-        w_Icon.Position = dim2off(0, -64)
-        w_Icon.BackgroundTransparency = 1
-        w_Icon.ZIndex = 500
-        w_Icon.Parent = w_Backframe
         
         w_ModList = inst('Frame')
         w_ModList.AnchorPoint = vec2(0, 1)
@@ -470,6 +464,17 @@ local ui = {} do
             end
             
         end)
+        
+        w_MouseCursor = inst('ImageLabel')
+        w_MouseCursor.BackgroundTransparency = 1
+        w_MouseCursor.Image = 'rbxassetid://8845749987'
+        w_MouseCursor.ImageColor3 = colors[4]
+        w_MouseCursor.ImageTransparency = 1
+        w_MouseCursor.Position = dim2off(150, 150)
+        w_MouseCursor.Size = dim2off(24, 24)
+        w_MouseCursor.Visible = true
+        w_MouseCursor.ZIndex = 1500
+        w_MouseCursor.Parent = w_Screen
     end
     
     function ui:manageml(x1,x2,align,paddir) 
@@ -508,7 +513,9 @@ local ui = {} do
     
     ui_Connections['t'] = serv_rs.RenderStepped:Connect(function() 
         local pos = serv_uis:GetMouseLocation()
-        w_TooltipHeader.Position = dim2off(pos.X+15, pos.Y+15)
+        local x,y = pos.X, pos.Y
+        w_TooltipHeader.Position = dim2off(x+15, y+15)
+        w_MouseCursor.Position = dim2off(x-4, y)
     end)
     
     
@@ -2529,7 +2536,6 @@ local ui = {} do
         serv_ctx:UnbindAction('RL-Destroy')
         
         -- Disconnections
-        pcall(function() input_connection:Disconnect() end)
         
         for i,v in pairs(ui_Connections) do 
             v:Disconnect() 
@@ -2638,8 +2644,9 @@ local ui = {} do
               m_Icon.Size = dim2off(26, 26)
               m_Icon.Position = dim2off(2,2)
               m_Icon.BackgroundTransparency = 1
-              m_Icon.ImageColor3 = colors[16]
-              m_Icon.Image = not warning and 'rbxassetid://8745673635' or 'rbxassetid://8811808911'
+              m_Icon.ImageColor3 = colors[4]
+              
+              m_Icon.Image = not warning and 'rbxassetid://8854459207' or 'rbxassetid://8854458547'
               m_Icon.Rotation = 0
               m_Icon.ZIndex = 162
               m_Icon.Parent = m_Header
@@ -2682,8 +2689,12 @@ local ui = {} do
             
             if (W_WindowOpen) then
                 w_Backframe.Visible = true
+                serv_uis.MouseIconEnabled = false
+                twn(w_MouseCursor, {ImageTransparency = 0.1}, true)
                 twn(w_Backframe, {Position = dim2(0, 0, 0, 0)}, true)
             else
+                serv_uis.MouseIconEnabled = true
+                twn(w_MouseCursor, {ImageTransparency = 1}, true)
                 twn(w_Backframe, {Position = dim2(0, 0, -1, 0)}, true).Completed:Connect(function() w_Backframe.Visible = false end)
             end
         end
@@ -2704,11 +2715,6 @@ local ui = {} do
 end
 -- // END REDLINE LIBRARY
 
-
-
-
-
--- Redline destruction
 
 
 -- Executor closure func
@@ -2780,84 +2786,78 @@ local l_chr = l_plr.Character
 local l_hum = l_chr and l_chr:FindFirstChild("Humanoid")
 local l_humrp = l_chr and l_chr:FindFirstChild("HumanoidRootPart")
 local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass("Camera")
--- Local handler
+-- Character respawn handler
 cons['chr'] = l_plr.CharacterAdded:Connect(function(c) 
     l_chr = c
     l_hum = c:WaitForChild("Humanoid",3)
     l_humrp = c:WaitForChild("HumanoidRootPart",3)
 end)
 
--- Player stuff
-local rlfriends = {}
--- Every single player 
-local p_players_all = {}
--- Every player minus friends and local player 
-local p_players = {}
-local p_names = {}
 
-local function addplr(p) 
-    local ptable = {}
-    ptable['plr'] = p
-    ptable['chr'] = nil
-    ptable['hum'] = nil
-    ptable['rp'] = nil
-    
-    ptable['cons'] = {}
-    
-    ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
-        ptable['chr'] = c
-        ptable['hum'] = c:WaitForChild("Humanoid", 1)
-        ptable['rp'] = c:WaitForChild("HumanoidRootPart", 1)
-    end)
-    
-    local chr = p.Character
-    if (chr) then
-        ptable['chr'] = chr
-        ptable['hum'] = chr:FindFirstChild("Humanoid")
-        ptable['rp'] = chr:FindFirstChild("HumanoidRootPart")
+local p_RLFriends    = {} -- Redline friends
+local p_RefKeys      = {} -- Player references (hashmap)
+local p_Names        = {} -- Player names (array)
+
+local function addplr(p)
+    local PlayerName = p.Name
+    if (p == l_plr or p_RLFriends[PlayerName]) then 
+        --printconsole(('Cancelled addition of %s'):format(PlayerName), 255, 0, 255)
+        return 
     end
     
-    
-    ins(p_players_all, ptable)
-    if not (p == l_plr or rlfriends[p.Name]) then
-        ins(p_players, ptable)
+    --printconsole(('Adding player %s, gotta do some shit'):format(PlayerName), 255, 0, 255)
+    local ptable = {} do
+        ptable['plr'] = p
+        ptable['chr'] = nil
+        ptable['hum'] = nil
+        ptable['rp'] = nil
+        
+        ptable['cons'] = {}
+        
+        ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
+            --printconsole('Character added, updating handler vars', 255, 255, 0)
+            ptable['chr'] = c
+            ptable['hum'] = c:WaitForChild("Humanoid", 1.5)
+            ptable['rp'] = c:WaitForChild("HumanoidRootPart", 1.5)
+            --printconsole('Updated', 0, 255, 0)
+        end)
+        --printconsole('Setup connections', 192, 192, 192)
+        local chr = p.Character
+        if (chr) then
+            ptable['chr'] = chr
+            ptable['hum'] = chr:FindFirstChild("Humanoid")
+            ptable['rp'] = chr:FindFirstChild("HumanoidRootPart")
+        end
+        --printconsole('Localized character stuff', 192, 192, 192)
+        --printconsole(('Setup ptable of %s'):format(PlayerName), 0, 255, 0)
     end
     
-    p_names[p.Name] = ptable
+    p_RefKeys[PlayerName] = ptable
+    ins(p_Names, PlayerName)
+    --printconsole(('Completed %s\'s player setup bullshit'):format(PlayerName), 0, 255, 0)
 end 
+
 local function remplr(p) 
-    -- Player left, find the player object in each table
-    for i = 1, #p_players do 
-        local plr = p_players[i]
-        -- Check for matching player objects
-        if (plr.plr == p) then
-            local cons = plr.cons
-            -- Disable connections
-            for i = 1, #cons do cons[i]:Disconnect() end
-            -- Clear table and stuff
-            p_players[i] = nil
-            -- Remove it from the player list
-            rem(p_players, i)
-            break
+    local PlayerName = p.Name
+    --printconsole(('Removing player %s, doing some shit'):format(PlayerName), 255, 0, 255)
+    do 
+        local ref = p_RefKeys[PlayerName]
+        local cons = ref.cons
+        for i = 1, #cons do 
+            --printconsole(' - Disconnected a connection ('..i..')', 255, 255, 0)
+            cons[i]:Disconnect()
         end
+        p_RefKeys[PlayerName].cons = nil -- just in case
+        --printconsole(' - Deleted cons table', 255, 255, 0)
+        p_RefKeys[PlayerName] = nil
+        --printconsole(' - Cleared player object from RefKeys, onto p_Names', 0, 255, 0)
+    end 
+    do
+        --printconsole('Getting index of name in p_Names...', 192, 192, 192)
+        local idx = fin(p_Names, PlayerName)
+        rem(p_Names, idx)
+        --printconsole('Probably got index ('..tostring(idx)..'), removing anyways', 255, 255, 0)
     end
-    -- Next check the other table
-    for i = 1, #p_players_all do 
-        local plr = p_players_all[i]
-        -- Check for matching player objects
-        if (plr.plr == p) then
-            local cons = plr.cons
-            -- Disable connections
-            for i = 1, #cons do cons[i]:Disconnect() end
-            -- Clear table and stuff
-            p_players_all[i] = nil
-            -- Remove it from the player list
-            rem(p_players_all, i)
-            break
-        end
-    end
-    
-    p_names[p.Name] = nil
 end
 
 cons['p1'] = serv_players.PlayerAdded:Connect(addplr)
@@ -2869,7 +2869,7 @@ cons['cam'] = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(functi
     end
     l_cam = cc
 end)
-for i,p in ipairs(serv_players:GetChildren()) do 
+for i,p in ipairs(serv_players:GetPlayers()) do 
     addplr(p)
 end
 
@@ -3061,6 +3061,10 @@ local esplib = {} do
     b.setpar = function(self, parent) 
         self['par'] = parent
     end
+    b.sethum = function(self, hum) 
+        self.Update = hum and b.update_2d_health or b.update_2d
+        self['hum'] = hum
+    end
     b.settext = function(self, text) 
         self['tex1'].Text = text
     end
@@ -3152,9 +3156,11 @@ local esplib = {} do
         obj['par'] = parent
         obj['des'] = false
         obj['cd'] = tick()
+        
         obj.Destroy = b.destroy
         obj.Update = obj['hum'] and b.update_2d_health or b.update_2d
         obj.SetParent = b.setpar
+        obj.SetHumanoid = b.sethum
         obj.SetText = b.settext
         obj.SetTextColor = b.settextcol
         ins(b.objects, obj)
@@ -3355,8 +3361,6 @@ end
 
 
 
-
-
 ui:Connect("Destroying", function() 
     for i,v in pairs(cons) do v:Disconnect() end
     for i,v in ipairs(ui:GetModules()) do 
@@ -3364,11 +3368,25 @@ ui:Connect("Destroying", function()
             v:Toggle()
         end
     end
-    
-    for i = 1, #p_players_all do 
-        local _ = p_players_all[i].cons
-        for i = 1, #_ do _[i]:Disconnect() end
+
+    for i = 1, #p_Names do 
+        local PlayerName = p_Names[i]
+        
+        do 
+            local ref = p_RefKeys[PlayerName]
+            local cons = ref.cons
+            for i = 1, #cons do 
+                cons[i]:Disconnect()
+            end
+            p_RefKeys[PlayerName].cons = nil -- just in case
+            p_RefKeys[PlayerName] = nil
+        end 
+        p_Names[i] = nil
     end
+    p_Names = nil
+    p_RefKeys = nil
+    
+    serv_uis.MouseIconEnabled = true
     
     fakechar:Destroy()
     esplib.DestroyAll()
@@ -3378,505 +3396,69 @@ local betatxt = ' <font color="rgb(255,87,68)">[BETA]</font>'
 
 
 local m_combat = ui:CreateMenu('Combat') do 
-    --local c_aimbot  = m_combat:AddMod('Aimbot')
-    --local c_antiaim = m_combat:AddMod('Anti-aim'..betatxt)
-    --local c_hitbox  = m_combat:AddMod('Hitboxes')
-    --local c_stare   = m_combat:AddMod('Stare')
-    --local c_tpbot   = m_combat:AddMod('TPbot')
     local c_trigbot = m_combat:AddMod('Triggerbot'..betatxt)
+    local c_hitbox = m_combat:AddMod('Hitboxes'..betatxt)
     
-    
-    --[[ Aimbot
-    do
-        local c_aim_team   = c_aimbot:AddToggle('Team check')
-        local c_aim_friend = c_aimbot:AddToggle('Friend check')
-        local c_aim_lock   = c_aimbot:AddToggle('Player lock')
-        local c_aim_mode   = c_aimbot:AddDropdown('Mode',true)
-        local c_aim_smooth = c_aimbot:AddSlider('Smoothness',{min=0,max=100,cur=15,step=0.25})
-        
-        
-        c_aim_team:SetTooltip('Blacklists players on your team from the aimbot check')
-        c_aim_friend:SetTooltip('Blacklists players added to your Redline friends list from the aimbot check')
-        c_aim_lock:SetTooltip('Locks onto the first valid player and doesn\'t switch from them')
-        c_aim_mode:SetTooltip('The aimbot mode used')
-        
-        do
-            c_aim_mode:AddOption('Mouse')
-            :Select()
-            :SetTooltip('Uses mousemoverel. May not be as stable as Camera, but it\'s significantly better.');
-            
-            c_aim_mode:AddOption('Camera')
-            :SetTooltip('Makes the Camera face the target. Although it works good, it has compatibility issues with complex games');
-        end
-        
-        
-        c_aimbot:SetTooltip('Classic aimbot, use in FPS games like Arsenal')
-    end
-    ]]
-    --[[ Antiaim
+    -- Hitbox expander
     do 
-        local s_always = c_antiaim:AddToggle('Always works'):SetTooltip('Spins / teleports / whatevers while not moving')
-        local s_mode = c_antiaim:AddDropdown('Mode', true):SetTooltip('The mode Anti-aim uses')
         
-        local s_mindist = c_antiaim:AddSlider('Teleport: Min dist',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Minimum distance Teleport can move you away from the main position')
-        local s_maxdist = c_antiaim:AddSlider('Teleport: Max dist',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Maximum distance Teleport can move you away from the main position')
-        local s_speed   = c_antiaim:AddSlider('Teleport: Speed',{min=0,max=50,cur=10,step=0.01}):SetTooltip('Speed you move while Teleport is enabled')
-        local s_face    = c_antiaim:AddToggle('Teleport: Face center'):SetTooltip('Makes your character face towards the central position')
-        
-        s_mode:AddOption('Teleport'):SetTooltip('Teleports you around a central position'):Select()
-        s_mode:AddOption('Spin'):SetTooltip('Spins you around to prevent headshots')
-        
-        
-        local speed = s_speed:GetValue()
-        local maxdist = s_maxdist:GetValue()
-        local mindist = s_mindist:GetValue()
-        local face = false
-        
-        s_always:Connect("Toggled",function(t) 
-            c_antiaim:Reset()
-        end)
-        s_speed:Connect("ValueChanged",function(v)speed=v;end)
-        s_maxdist:Connect("ValueChanged",function(v)maxdist=v;end)
-        s_mindist:Connect("ValueChanged",function(v)mindist=v;end)
-        s_face:Connect("Toggled",function(t)face=t;end)
-        
-        local aacon
-        local tppart
-        
-        
-        c_antiaim:Connect("Enabled",function() 
-            local mode = s_mode:GetSelection()
-            
-            if (mode == 'Spin') then
-                if (s_always:IsEnabled()) then 
-                    aacon = serv_rs.RenderStepped:Connect(function() 
-                        local p = l_humrp.Position
-                        l_humrp.CFrame = cf(p, p+vec3(mr()-.5,0,mr()-.5))
-                    end)
-                else
-                    aacon = serv_rs.RenderStepped:Connect(function() 
-                        if (l_hum.MoveDirection.Magnitude < 0.02) then return end
-                        
-                        local p = l_humrp.Position
-                        l_humrp.CFrame = cf(p, p+vec3(mr()-.5,0,mr()-.5))
-                    end)
-                end
-            elseif (mode == 'Teleport') then
-                tppart = inst("Part")
-                tppart.Anchor = true
-                tppart.CanCollide = false
-                tppart.CanTouch = false
-                tppart.Name = getnext()
-                tppart.Transparency = 1
-                tppart.Parent = workspace
-                
-                local cf = l_humrp and l_humrp.CFrame or l_cam.CFrame
-                tppart.CFrame = cf
-                
-                l_cam.CameraSubject = tppart
-                if (s_always:IsEnabled()) then 
-                    aacon = serv_rs.Heartbeat:Connect(function(dt) 
-                        cf += l_hum.MoveDirection * (dt * 3 * speed)
-                        tppart.CFrame = cf  
-                        
-                        lv = l_humrp.CFrame.LookVector
-                                    
-                        local p1 = cf.Position
-                        local p2 = p1+vec3(
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist))
-                        )
-                        
-                        l_humrp.CFrame = cf(p2, face and p1 or p2 + lv)
-                    end)
-                else
-                    aacon = serv_rs.Heartbeat:Connect(function() 
-                        if (l_hum.MoveDirection.Magnitude < 0.02) then return end
-                        
-                        cf += l_hum.MoveDirection * (dt * 3 * speed)
-                        tppart.CFrame = cf  
-                        
-                        lv = l_humrp.CFrame.LookVector
-                                    
-                        local p1 = cf.Position
-                        local p2 = p1+vec3(
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist)),
-                            mr(mr(-maxdist,-mindist),mr(mindist,maxdist))
-                        )
-                        
-                        l_humrp.CFrame = cf(p2, face and p1 or p2 + lv)
-                    end)
-                end            
-            end
-        end)
-        c_antiaim:Connect("Disabled",function() 
-            if (aacon) then aacon:Disconnect() aacon = nil end 
-            if (tppart) then tppart:Destroy() tppart = nil end
-            
-            l_cam.CameraSubject = l_hum
-        end)
-        
-        
-        c_antiaim:SetTooltip('Prevents others from shooting you by moving you around')
     end
-    ]]--
-    --[[ Hitbox
-    do 
-        local c_hitb_team    = c_hitbox:AddToggle('Team check')
-        local c_hitb_friend  = c_hitbox:AddToggle('Friend check')
-        local c_hitb_display = c_hitbox:AddToggle('Show hitboxes')
-        
-        c_hitb_team:SetTooltip('Disables the expander for your teammates')
-        c_hitb_friend:SetTooltip('Disables the expander for players on your Redline friends list')
-        c_hitb_display:SetTooltip('Displays the expanded hitboxes')
-        
-        
-        c_hitbox:SetTooltip('Hitbox expander, use in FPS or swordfighting games')
-    end
-    
-    ]]
-    --[[ Stare
-    do
-        local c_stare_team   = c_stare:AddToggle('Team check')
-        local c_stare_friend = c_stare:AddToggle('Friend check')
-        
-        c_stare_team:SetTooltip('Disables stare for your teammates')
-        c_stare_friend:SetTooltip('Disables stare for your friends')
-        
-        
-        
-        c_stare:SetTooltip('Always faces you towards the nearest player, useful for sword fighting games')
-    end
-    -- Tp bot 
-    do
-        local c_tpbot_team   = c_tpbot:AddToggle('Team check')
-        local c_tpbot_friend = c_tpbot:AddToggle('Friend check')
-        local c_tpbot_face   = c_tpbot:AddToggle('Face center')
-        
-        c_tpbot_team:SetTooltip('Disables TPbot for your teammates')
-        c_tpbot_friend:SetTooltip('Disables TPbot for your friends')
-        c_tpbot_face:SetTooltip('Faces your character towards the position you\'re teleporting around')
-        
-        
-        c_tpbot:SetTooltip('Teleports you around the nearest player. Can prevent you from being hit, also useful for swordfighting games')
-        
-        -- Check for closest player every .03s or so
-        -- Get distance, check if less than user input 
-        -- If so then lock onto them until their character dies or you move away
-    end
-    ]]
     -- Trig bot
     do 
-        local keydd = c_trigbot:AddDropdown('Click type'):SetTooltip('The key that gets pressed')
-        local modedd = c_trigbot:AddDropdown('Shoot mode',true):SetTooltip('The type of click to do (i.e. auto = hold, semi = spam, etc.)')
-        local needsheldh = c_trigbot:AddHotkey('Safety key'):SetTooltip('Triggerbot only clicks if this key is held')
-        local rateslid = c_trigbot:AddSlider('Check rate',{min=0,max=0.1,step=0.01,cur=0.03}):SetTooltip('How often targets are checked for')
-        local clickslid = c_trigbot:AddSlider('Click speed',{min=0,max=0.5,step=0.01,cur=0}):SetTooltip('The delay between clicks on Spam')
-        local team = c_trigbot:AddToggle('Team check'):SetTooltip('Disables Triggerbot for your teammates')
+        local s_MouseButton = c_trigbot:AddDropdown('Mouse button'):SetTooltip('The mouse button that gets clicked')
+        local s_ShootMode   = c_trigbot:AddDropdown('Shoot mode'):SetTooltip('The way triggerbot shoots when it finds someone')
+        local s_ScanMode    = c_trigbot:AddDropdown('Scan mode'):SetTooltip('The way triggerbot finds a target. Leave this on default if you don\'t know what this does')
         
-        keydd:AddOption('Mouse1'):SetTooltip('Clicks MouseButton1 (left click)'):Select()
-        keydd:AddOption('Mouse2'):SetTooltip('Clicks MouseButton2 (right click')
+        local s_SafetyKey   = c_trigbot:AddHotkey('Safety key'):SetTooltip('Will only shoot if this key is held')
+        local s_CheckRate   = c_trigbot:AddSlider('Check rate',{min=0,max=0.1,step=0.01,cur=0.03}):SetTooltip('How often targets are checked for')
+        local s_ClickSpeed  = c_trigbot:AddSlider('Click speed',{min=0,max=0.5,step=0.01,cur=0}):SetTooltip('The delay between clicks when Spam mode is enabled')
+        local s_Teamcheck   = c_trigbot:AddToggle('Team check'):SetTooltip('Disables Triggerbot for your teammates')
         
-        modedd:AddOption('Spam'):SetTooltip('Spams button down while there\'s a target'):Select()
-        modedd:AddOption('Hold'):SetTooltip('Holds button down while there\'s a target')
+        s_MouseButton:AddOption('Mouse1'):SetTooltip('Clicks MouseButton1 (left click)'):Select()
+        s_MouseButton:AddOption('Mouse2'):SetTooltip('Clicks MouseButton2 (right click')
         
+        s_ShootMode:AddOption('Spam'):SetTooltip('Spams button down while there\'s a target'):Select()
+        s_ShootMode:AddOption('Hold'):SetTooltip('Holds button down while there\'s a target')
         
-                
-        local isholding = false -- if currently holding down
-        local washolding = false -- if previously was holding down
-        local isspamming = false -- if spamming
-        local slowspam = false -- slow spam
-        local prox = false
-        local dont = false -- whether or not to delay a stop spamming
-        local tcon1 -- triggerbot connection
-        local tcon2 -- spam connection
-        
-        local mode = 'Spam'
-        local key = 1
-        local rate = 0.03
-        local click = 0
-        local needsheld = needsheldh:GetHotkey()
-        
-        needsheldh:Connect("HotkeySet",function(v)needsheld=v;end)
-        rateslid:Connect("ValueChanged",function(v)rate=v;end)
-        clickslid:Connect("ValueChanged",function(v)click=v;end)
-        keydd:Connect("SelectionChanged",function(v)key=(v=='Mouse1'and 1 or 2);end)
-        
-        modedd:Connect("SelectionChanged",function(v) 
-            mode = v
-            c_trigbot:Reset()
-        end)
+        s_ScanMode:AddOption('Raycast'):SetTooltip('Raycasts directly and checks if the target is valid. Works for players and NPCs')
+        s_ScanMode:AddOption('Proximity'):SetTooltip('Checks if any players are close to your mouse')
         
         local wl
         c_trigbot:Connect("Enabled",function() 
-            wl = {}
-            wl['HumanoidRootPart'] = true
-            wl['Left Leg'] = true
-            wl['Right Leg'] = true
-            wl['Left Arm'] = true
-            wl['Right Arm'] = true
-            wl['Torso'] = true
-            wl['Head'] = true        
-            wl['UpperTorso'] = true
-            wl['LowerTorso'] = true
-            wl['LeftUpperArm'] = true
-            wl['LeftLowerArm'] = true
-            wl['LeftHand'] = true
-            wl['RightUpperArm'] = true
-            wl['RightLowerArm'] = true
-            wl['RightHand'] = true
-            wl['LeftUpperLeg'] = true
-            wl['LeftLowerLeg'] = true
-            wl['LeftFoot'] = true
-            wl['RightUpperLeg'] = true
-            wl['RightLowerLeg'] = true
-            wl['RightFoot'] = true
+            ui:Notify('Triggerbot','Triggerbot is currently disabled while it is being remade. Please wait for it to be updated.',3,1)
+            do return end 
             
-            local spam_handleclick
-            local spam_handletarget
-            local hold_handle
-            
-            spam_handleclick = function() 
-                if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
-                    return 
-                end
-                
-                if (isspamming) then
-                    (key < 2 and mouse1click or mouse2click)();
-                end
+            wl = {} do
+                wl['HumanoidRootPart'] = true
+                wl['Left Leg'] = true
+                wl['Right Leg'] = true
+                wl['Left Arm'] = true
+                wl['Right Arm'] = true
+                wl['Torso'] = true
+                wl['Head'] = true        
+                wl['UpperTorso'] = true
+                wl['LowerTorso'] = true
+                wl['LeftUpperArm'] = true
+                wl['LeftLowerArm'] = true
+                wl['LeftHand'] = true
+                wl['RightUpperArm'] = true
+                wl['RightLowerArm'] = true
+                wl['RightHand'] = true
+                wl['LeftUpperLeg'] = true
+                wl['LeftLowerLeg'] = true
+                wl['LeftFoot'] = true
+                wl['RightUpperLeg'] = true
+                wl['RightLowerLeg'] = true
+                wl['RightFoot'] = true
             end
             
-            if (team:IsEnabled()) then
-                
-                if (game.PlaceId == 292439477) then
-                    
-                else
-                
-                    spam_handletarget = function() 
-                        -- check for target on mouse
-                        local targ = l_mouse.Target
-                        if (targ) then
-                            -- make sure that the part is whitelisted, if it's whitelisted get the player 
-                            local a = wl[targ.Name] and p_names[targ.Parent.Name]
-                            
-                            -- there is a valid player object, get the actual player instance and check teams
-                            if (a and (a.plr.Team ~= l_plr.Team)) then 
-                                -- it isnt on the same team, start spamming
-                                isspamming = true
-                            else
-                                -- in case the mouse check didn't exactly work do a proximity check
-                                prox = false
-                                -- get position 
-                                local mp = l_mouse.Hit.Position
-                                
-                                -- go through every player
-                                for i = 1, #p_players do 
-                                    -- get plr and rp
-                                    local plr = p_players[i]
-                                    local rp = plr.rp
-                                    -- check for distance
-                                    if (rp and ((rp.Position - mp).Magnitude < 5)) then
-                                        -- if close then teamcheck
-                                        local t = plr.plr.Team ~= l_plr.Team
-                                        
-                                        -- set spamming to true if the teamcheck works
-                                        isspamming = t and true or false
-                                        -- set prox as well
-                                        prox = isspamming or false
-                                        break
-                                    end
-                                end
-                                
-                                -- check if the prox check failed and if it's still spamming
-                                if (prox == false and isspamming == true) then 
-                                    -- check for bounce
-                                    if (dont == false) then
-                                        -- set bounce to true 
-                                        dont = true
-                                        -- delay a thread for 0.02s 
-                                        delay(0.02, function() 
-                                            -- disable spamming
-                                            isspamming = false
-                                            dont = false
-                                        end)
-                                    end
-                                end
-                            end
-                        else
-                            -- no target, disable spamming
-                            isspamming = false
-                        end
-                    end
-                    
-                    hold_handle = function()
-                        -- set holding mode to 1 (not holding)
-                        isholding = 1
-                        -- get the mouse target
-                        local targ = l_mouse.Target
-                        if (targ) then 
-                            -- make sure that the part is whitelisted, if it's whitelisted get the player 
-                            local a = wl[targ.Name] and p_names[targ.Parent.Name]
-                            
-                            -- there is a valid player object, get the actual player instance and check teams
-                            if (a and (a.Team ~= l_plr.Team)) then 
-                                -- if they arent on the same team then set state to 2 (holding)
-                                isholding = 2
-                            else
-                                -- if not then prox check like usual
-                                local mp = l_mouse.Hit.Position
-                                for i = 1, #p_players do 
-                                    local plr = p_players[i]
-                                    local rp = plr['rp']
-                                    if (rp and ((rp.Position - mp).Magnitude < 5)) then
-                                        isholding = 2
-                                        break
-                                    end
-                                end
-                            end
-                            if (isholding == 2 and washolding == false) then 
-                                if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
-                                else
-                                    (key == 1 and mouse1press or mouse2press)();
-                                    washolding = true
-                                end
-                            elseif (isholding == 1 and washolding == true) then
-                                if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
-                                else
-                                    (key == 1 and mouse1release or mouse2release)();
-                                    washolding = false
-                                end
-                            end
-                        else
-                            if (isholding == 1 and washolding == true) then
-                                if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
-                                else
-                                    (key < 2 and mouse1release or mouse2release)();
-                                    washolding = false
-                                end
-                            end
-                        end
-                    end
-                
-                end
-            else
-                spam_handletarget = function() 
-                    local t = l_mouse.Target
-                    if (t) then
-                        if (wl[t.Name]) then 
-                            isspamming = true
-                        else
-                            prox = false
-                            local mp = l_mouse.Hit.Position
-                            for i = 1, #p_players do 
-                                local rp = p_players[i]['rp']
-                                if (rp and ((rp.Position - mp).Magnitude < 5)) then
-                                    isspamming = true
-                                    prox = true
-                                    break
-                                end
-                            end
-                            
-                            if (prox == false and isspamming == true) then 
-                                if (dont == false) then
-                                    dont = true
-                                    delay(0.02, function() 
-                                        isspamming = false
-                                        dont = false
-                                    end)
-                                end
-                            end
-                        end
-                    else
-                        isspamming = false
-                    end
-                end
-                
-                hold_handle = function() 
-                    isholding = 1
-                    local t = l_mouse.Target
-                    if (t) then
-                        if (wl[t.Name]) then 
-                            isholding = 2
-                        else
-                            local mp = l_mouse.Hit.Position
-                            for i = 1, #p_players do 
-                                local rp = p_players[i]['rp']
-                                if (rp and ((rp.Position - mp).Magnitude < 5)) then
-                                    isholding = 2
-                                    break
-                                end
-                            end
-                        end
-                        if (isholding == 2 and washolding == false) then 
-                            if (W_WindowOpen or (needsheld ~= nil and serv_uis:IsKeyDown(needsheld) == false)) then 
-                            else
-                                (key < 2 and mouse1press or mouse2press)();
-                                washolding = true
-                            end
-                        elseif (isholding == 1 and washolding == true) then
-                            if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
-                            else
-                                (key < 2 and mouse1release or mouse2release)();
-                                washolding = false
-                            end
-                        end
-                    else
-                        if (isholding == 1 and washolding == true) then
-                            if (W_WindowOpen or needsheld and not serv_uis:IsKeyDown(needsheld)) then 
-                            else
-                                (key < 2 and mouse1release or mouse2release)();
-                                washolding = false
-                            end
-                        end
-                    end
-                end
-            end
-            
-            
-            
-            if (mode == 'Spam') then
-                if (click == 0) then
-                    tcon2 = serv_rs.RenderStepped:Connect(spam_handleclick)
-                else
-                    spawn(function() 
-                        while c_trigbot:IsEnabled() do 
-                            spam_handleclick()
-                            wait(click)
-                        end
-                    end)
-                end
-                if (rate == 0) then
-                    tcon1 = serv_rs.RenderStepped:Connect(spam_handletarget)
-                else
-                    spawn(function() 
-                        while c_trigbot:IsEnabled() do 
-                            spam_handletarget()
-                            wait(rate)
-                        end
-                    end)
-                end
-            else
-                print(rate, rate == 0)
-                if (rate == 0) then
-                    tcon1 = serv_rs.RenderStepped:Connect(hold_handle)
-                else
-                    spawn(function() 
-                        while c_trigbot:IsEnabled() do 
-                            hold_handle()
-                            wait(rate)
-                        end
-                    end)
-                end
-            end
+            local TrySpam
+            local TryHold
+            local CheckTeam
         end)
         
         c_trigbot:Connect("Disabled",function() 
             wl = nil
-            
-            if (tcon1) then tcon1:Disconnect() tcon1 = nil end
-            if (tcon2) then tcon2:Disconnect() tcon2 = nil end
         end)
         
         c_trigbot:SetTooltip('Automatically clicks when you mouse over a player')
@@ -4070,9 +3652,10 @@ local m_player = ui:CreateMenu('Player') do
                 pcon = serv_rs.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
                     l_humrp.Anchored = false
-                    for i = 1, #p_players do 
-                        local plr = p_players[i]
+                    for i = 1, #p_Names do 
+                        local plr = p_RefKeys[p_Names[i]]
                         local rp = plr.rp
+                        
                         if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
                             l_humrp.Anchored = true
                             break
@@ -4082,9 +3665,10 @@ local m_player = ui:CreateMenu('Player') do
             elseif (m == 'Noclip') then
                 pcon = serv_rs.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
-                    for i = 1, #p_players do 
-                        local plr = p_players[i]
+                    for i = 1, #p_Names do 
+                        local plr = p_RefKeys[p_Names[i]]
                         local rp = plr.rp
+                        
                         if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
                             local c = l_chr:GetChildren()
                             for i = 1, #c do 
@@ -4100,9 +3684,10 @@ local m_player = ui:CreateMenu('Player') do
             elseif (m == 'Teleport') then
                 pcon = serv_rs.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
-                    for i = 1, #p_players do 
-                        local plr = p_players[i]
+                    for i = 1, #p_Names do 
+                        local plr = p_RefKeys[p_Names[i]]
                         local rp = plr.rp
+                        
                         if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
                             l_humrp.CFrame += vec3(mr(-100,100)*.1,mr(0,20)*.1,mr(-100,100)*.1)
                             break
@@ -4219,52 +3804,69 @@ local m_player = ui:CreateMenu('Player') do
     end 
     -- Fake lag
     do 
-        local methoddd = p_flag:AddDropdown('Method',true)
-        methoddd:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
-        methoddd:AddOption('Real'):SetTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
+        local s_Method = p_flag:AddDropdown('Method',true)
+        s_Method:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
+        s_Method:AddOption('Real'):SetTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
         
-        local method = 'Fake'
+        local s_LagAmnt = p_flag:AddSlider('Amount',{min=1,max=10,step=0.1,cur=3}):SetTooltip('Lag amount. The larger the number, the more lag you have')
+        local LagAmnt = s_LagAmnt:GetValue()
+        local Method = s_Method:GetSelection()
         
-        local rateslid = p_flag:AddSlider('Amount',{min=1,max=10,step=0.1,cur=3}):SetTooltip('Lag amount. The larger the number, the more lag you have')
-        local lag = 3
+        s_LagAmnt:Connect("ValueChanged",function(v)LagAmnt=v;end)
+        s_Method:Connect("SelectionChanged",function(v)Method=v;p_flag:Reset()end)
         
-        rateslid:Connect("ValueChanged",function(v)lag=v;end)
-        
-        
-        local glitchrp
+        local seat
         p_flag:Connect("Enabled",function() 
             local fakerp = fakechar.HumanoidRootPart
             
-            
-            fakechar.Parent = workspace
-            if (method == 'Fake') then
-                local s = method
+            if (Method == 'Fake') then
+                local s = Method 
+                
+                local cf = l_humrp.CFrame
+                
+                seat = inst('Seat')
+                seat.Transparency = 1
+                seat.CanTouch = false
+                seat.CanCollide = false
+                seat.Anchored = true
+                seat.CFrame = cf
+                
+                local weld = inst('Weld')
+                weld.Part0 = seat
+                weld.Part1 = nil
+                weld.Parent = seat
+                
+                seat.Parent = workspace
+                
                 spawn(function() 
                     while true do 
-                        if (not p_flag:IsEnabled() or method ~= s) then break end
-                        wait((mr(20,40)*.1) / lag)
-                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        if (not p_flag:IsEnabled() or Method ~= s) then break end
+                        wait((mr(20,40)*.1) / LagAmnt)
+                        if (not p_flag:IsEnabled() or Method ~= s) then break end
                         
-                        fakechar.Parent = workspace
-                        fakerp.CFrame = l_humrp.CFrame
-                        
-                        glitchrp = l_humrp:Clone()
-                        glitchrp.Parent = workspace
-                        
-                        wait(mr(1,lag)*.1)
-                        fakechar.Parent = nil
-                        if (glitchrp) then 
-                            glitchrp:Destroy()
+                        do
+                            seat.Anchored = false
+                            local cf = l_humrp.CFrame
+                            fakechar.Parent = workspace
+                            fakerp.CFrame = cf
+                            
+                            seat.CFrame = cf
+                            weld.Part1 = l_humrp
                         end
+                        
+                        wait(mr(1,LagAmnt)*.1)
+                        fakechar.Parent = nil
+                        weld.Part1 = nil
+                        seat.Anchored = true
                     end 
                 end)
             else
                 spawn(function() 
-                    local s = method
+                    local s = Method
                     while true do 
-                        if (not p_flag:IsEnabled() or method ~= s) then break end
-                        wait(5 / lag)
-                        if (not p_flag:IsEnabled() or method ~= s) then break end
+                        if (not p_flag:IsEnabled() or Method ~= s) then break end
+                        wait(5 / LagAmnt)
+                        if (not p_flag:IsEnabled() or Method ~= s) then break end
                         
                         
                         fakechar.Parent = workspace
@@ -4272,25 +3874,19 @@ local m_player = ui:CreateMenu('Player') do
                         
                         serv_net:SetOutgoingKBPSLimit(1)
                         
-                        wait(mr(1,lag)*.1)
+                        wait(mr(1,LagAmnt)*.1)
                         fakechar.Parent = nil
                         serv_net:SetOutgoingKBPSLimit(9e9)
                     end 
                 end)
             end 
-            
         end)
         
         p_flag:Connect("Disabled",function() 
-            if (glitchrp) then glitchrp:Destroy() glitchrp = nil end 
+            if (seat) then seat:Destroy() seat = nil end 
             
             fakechar.Parent = nil
             serv_net:SetOutgoingKBPSLimit(9e9)
-        end)
-        
-        methoddd:Connect("SelectionChanged",function(v) 
-            method = v
-            p_flag:Reset()
         end)
     end
     -- Flashback
@@ -4560,27 +4156,34 @@ local m_movement = ui:CreateMenu('Movement') do
         --methoddd:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Simply exploits a roblox glitch to freeze your character'):Select()
         --methoddd:AddOption('Network'):SetTooltip('Limits your actual network usage. Lags more than just your movement')
         
-        local b 
+        local weld
+        local seat
         
         m_blink:Connect("Enabled",function() 
-            --local method = methoddd:GetSelection()
+            local cf = l_humrp.CFrame
             
-            --if (method == 'Fake') then
-            b = l_humrp:Clone()
-            b.Parent = workspace
+            seat = inst('Seat')
+            seat.Transparency = 1
+            seat.CanTouch = false
+            seat.CanCollide = false
+            seat.CFrame = cf
             
-            fakechar.HumanoidRootPart.CFrame = l_humrp.CFrame
+            weld = inst('Weld')
+            weld.Part0 = seat
+            weld.Part1 = l_humrp
+            weld.Parent = seat
+            
+            seat.Parent = workspace
+            
+            fakechar.HumanoidRootPart.CFrame = cf
             fakechar.Parent = workspace
-            --elseif (method == 'Network') then
-            --    serv_net:SetOutgoingKBPSLimit(1)
-            --end
         end)
         
         m_blink:Connect("Disabled",function() 
-            if (b) then b:Destroy() b = nil end 
+            if (weld) then weld:Destroy() weld = nil end
+            if (seat) then seat:Destroy() seat = nil end
             
             fakechar.Parent = nil
-            --serv_net:SetOutgoingKBPSLimit(9e9)
         end)
     end
     -- Click tp
@@ -5287,10 +4890,12 @@ local m_render = ui:CreateMenu('Render') do
                         local down = serv_uis:IsKeyDown(dsk)
                         local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
                         
-                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
-                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        local multiply = (dt*3*speed)
                         
+                        fcampos += (l_hum.MoveDirection * multiply)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*multiply)
+                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep))*multiply
+                                                
                         campart.Position = fcampos
                     end)
                 else
@@ -5337,9 +4942,11 @@ local m_render = ui:CreateMenu('Render') do
                         local down = serv_uis:IsKeyDown(dsk)
                         local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
                         
-                        fcampos += (l_hum.MoveDirection * dt * 3 * speed)
-                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
-                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
+                        local mul = (dt*3*speed)
+                        
+                        fcampos += (l_hum.MoveDirection * mul)
+                        fcampos += (((up and upp or nonep) + (down and downp or nonep))*mul)
+                        fcampos += ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*mul)
                         
                         pos.Position = fcampos
                     end)
@@ -5486,153 +5093,277 @@ local m_render = ui:CreateMenu('Render') do
     end
     -- Esp
     do 
-        local s_update = r_esp:AddSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):SetTooltip('Delay in ms between ESP updates')
-        local s_health = r_esp:AddToggle('Healthbars'):SetTooltip('Enables healthbars on the ESP')
-        local s_type = r_esp:AddDropdown('Esp type',true):SetTooltip('The type of ESP to use')
+        local s_UpdateDelay = r_esp:AddSlider('Update delay [Streamproof]',{min=0,max=0.2,cur=0,step=0.01}):SetTooltip('Delay in MS between ESP updates. <0.05 recommended')
+        local s_HealthToggle = r_esp:AddToggle('Healthbars [Streamproof]'):SetTooltip('Enables healthbars on the ESP. Completely depends on the game on whether or not it\'ll work well')
+        local s_EspType = r_esp:AddDropdown('Esp type',true):SetTooltip('The type of ESP to use. They all have varying levels of speed and detail')
 
-        s_type:AddOption('Drawing (2d)'):SetTooltip('2d box ESP. Insanely fast, looks good, and (depending on your exploit) is streamproof'):Select()
-        s_type:AddOption('Drawing (3d)'):SetTooltip('3d box ESP. Good for telling direction of players')
-        s_type:AddOption('Chams'):SetTooltip('Classic chams. Works the fastest and has the most compatibility, but isn\'t streamproof')
+        s_EspType:AddOption('Streamproof'):SetTooltip('Box ESP, requires Drawing library. '..
+        (
+            (({ identifyexecutor and identifyexecutor() })[1] == 'Synapse X') and '<b>Detected Synapse: Streamproof not supported</b>' or
+            (type(fluxus == 'table') and fluxus.request) and '<b>Detected Fluxus: Streamproof supported</b>' or
+            'Can be streamproof, depends on your exploit.'
+        )
+    
+        ):Select()
+        --s_EspType:AddOption('Quick'):SetTooltip('Faster version of Streamproof. May be slightly more accurate')
+        --s_EspType:AddOption('Chams'):SetTooltip('Uses the same method as Infinite Yield. Shows more detail than the other modes (save for hybrid)')
+        --s_EspType:AddOption('Hybrid'):SetTooltip('Quick and Chams combined. Looks the best, shouldn\'t lag much')
+        s_EspType:AddOption('Lines'):SetTooltip('Like chams, but with lines instead of boxes')
 
-        local update = s_update:GetValue()
-        s_update:Connect("ValueChanged",function(v)update=v;end)
-        s_health:Connect("Toggled",function()
-            r_esp:Reset()
-        end)
-        s_type:Connect("SelectionChanged",function()
-            r_esp:Reset()
-        end)
+        
+        local UpdateDelay   = s_UpdateDelay:GetValue()
+        local EspType       = s_EspType:GetSelection()
+        local HealthToggled = s_HealthToggle:GetState()
+        do
+            s_UpdateDelay:Connect("ValueChanged",function(v)UpdateDelay=v;end)
+            s_HealthToggle:Connect("Toggled",function(t)HealthToggled=t;
+                r_esp:Reset()
+            end)
+            s_EspType:Connect("SelectionChanged",function(v)EspType=v;
+                r_esp:Reset()
+            end)
+        end
+        
+        
+        local UpdateCon
+        local RGBCon
+        local OldESPMode
 
-        local updatecon
-        local plraddcon
-        local drawingactive
-
-
-        r_esp:Connect("Enabled",function() 
-            ui:Notify('Warning','ESP is currently in beta and is very buggy. Expect issues to occur',3,4,true)
+        local EspObjs2D = {}
+        local EspObjsChams = {}
+        local EspFolder
+        local PlrCons = {}
+        
+        local PlrAdded
+        local PlrRemoved
+        
+        r_esp:Connect("Enabled",function()
+            EspFolder = inst('Folder')
+            EspFolder.Name = getnext()
+            EspFolder.Parent = game.CoreGui
             
-            local usehealth = s_health:IsEnabled()
-            local mode = s_type:GetSelection()
-
-            if (mode == 'Drawing (2d)') then
-                drawingactive = true
-                local esps = {}
+            
+            OldESPMode = EspType
+            if (EspType == 'Streamproof') then
                 
-                for i = 1, #p_players do 
-                    local plrob = p_players[i]
-                    local plr = plrob.plr
-                    local name = plr.Name
-
-                    local h = usehealth and plrob.hum or nil
-                    local _ = esplib.Create2d(plrob.rp, name, h)
-                    _:SetTextColor(plr.TeamColor.Color)
-                    ins(esps, {_, name})
+                local function hookplr(plr) 
+                    local PlayerName = plr.Name
+                    local PlayerObject = p_RefKeys[PlayerName]
+                    local PlayerInstance = PlayerObject.plr
+                    
+                    local Humanoid = HealthToggled and PlayerObject.hum
+                    local EspObject = esplib.Create2d(PlayerObject.rp, PlayerName, Humanoid)
+                    EspObject:SetTextColor(PlayerInstance.TeamColor.Color)
+                    
+                    EspObjs2D[PlayerName] = EspObject
+                    
+                    PlrCons[PlayerName] = {}
+                    PlrCons[PlayerName][1] = plr:GetPropertyChangedSignal('TeamColor'):Connect(function() 
+                        EspObjs2D[PlayerName]:SetTextColor(plr.TeamColor.Color)
+                    end)
+                    PlrCons[PlayerName][2] = plr.CharacterAdded:Connect(function(c)
+                        local rp = c:WaitForChild('HumanoidRootPart',3)
+                        local hum
+                        if (HealthToggled) then
+                            hum = c:WaitForChild('Humanoid',3)
+                            EspObjs2D[PlayerName]:SetHumanoid(hum)
+                        end
+                        EspObjs2D[PlayerName]:SetParent(rp)
+                        
+                    end)
+                    PlrCons[PlayerName][3] = plr.CharacterRemoving:Connect(function()
+                        EspObjs2D[PlayerName]:SetParent(nil)
+                        EspObjs2D[PlayerName]:SetHumanoid(nil)
+                    end)
+                end
+                
+                
+                for i = 1, #p_Names do 
+                    hookplr(p_RefKeys[p_Names[i]].plr)
                 end
 
-                plraddcon = serv_players.PlayerAdded:Connect(function(plr) 
-                    wait()
-                    local name = plr.Name
-                    local plrob = p_names[name]
-
-                    local h = usehealth and plrob.hum or nil
-                    local _ = esplib.Create2d(plrob.rp, name, h)
-                    _:SetTextColor(plr.TeamColor.Color)
-                    ins(esps, {_, name})
+                PlrAdded = serv_players.PlayerAdded:Connect(function(plr) 
+                    wait(0.02)
+                    hookplr(plr)
                 end)
                 
-                spawn(function() 
-                    while true do 
-                        wait(1)
-                        if (not r_esp:IsEnabled()) then return end
-                        do
-                            local len = #esps
-                            if (len == 0) then 
-                                continue
-                            end
-
-                            for i = 1, len do 
-                                local obj = esps[i]
-                                local esp, pname = obj[1], obj[2]
-                                local pobj = p_names[pname]
-
-                                local par = esp['par']
-                                if (not pobj) then
-                                    esp:Destroy()
-                                    esps[i][2] = nil
-                                    continue
-                                end
-
-                                esp:SetTextColor(pobj.plr.TeamColor.Color)
-
-                                if ((not par) or (not par.Parent)) then
-                                    local rp = pobj.rp
-                                    if (rp) then 
-                                        esp:SetParent(pobj.rp)
-                                    end
-                                    continue
-                                end
-                            end
-                        end
-                    end
+                PlrRemoved = serv_players.PlayerRemoving:Connect(function(plr) 
+                    local PlayerName = plr.Name
+                    EspObjs2D[PlayerName]:Destroy()
+                    EspObjs2D[PlayerName] = nil
                 end)
 
-                if (update == 0) then 
-                    updatecon = serv_rs.RenderStepped:Connect(function()
+                if (UpdateDelay == 0) then 
+                    UpdateCon = serv_rs.RenderStepped:Connect(function()
                         if (not esplib.IsWindowFocused()) then return end
 
                         esplib.UpdateTick()
-                        for i = 1, #esps do
-                            local ob = esps[i]
-                            
-                            if (not ob or not ob[2]) then 
-                                rem(esps, i)
-                                i -=1
-                                continue 
-                            end
-                            ob[1]:Update()
+                        for i = 1, #p_Names do
+                            EspObjs2D[p_Names[i]]:Update()
                         end
                     end)
                 else
                     spawn(function()
-                        while (r_esp:IsEnabled()) do
-                            wait(update)
+                        while r_esp:IsEnabled() do 
                             if (not esplib.IsWindowFocused()) then continue end
+
                             esplib.UpdateTick()
-                            for i = 1, #esps do
-                                local ob = esps[i]
-                                if (not ob[2]) then 
-                                    rem(esps, i)
-                                    i -=1
-                                    continue 
-                                end
-                                ob[1]:Update()
+                            for i = 1, #p_Names do
+                                EspObjs2D[p_Names[i]]:Update()
                             end
+                            wait(UpdateDelay)
                         end
                     end)
                 end
                 
                 esplib.Ready()
-            elseif (mode == 'Drawing (3d)') then
-                ui:Notify('ESP','3D drawing is currently unfinished. Check back soon',2,1)
-            elseif (mode == 'Chams') then
-                ui:Notify('ESP','Chams is currently unfinished. Check back soon',2,1)
+            elseif (EspType == 'Quick') then 
+                
+            elseif (EspType == 'Hybrid') then
+            elseif (EspType == 'Chams') then
+            elseif (EspType == 'Lines') then
+                local function hookplr(plr) 
+                    local PlayerName = plr.Name
+                    local PlayerObject = p_RefKeys[PlayerName]
+                    local PlayerInstance = PlayerObject.plr
+                    
+                    local EspObject = {}
+                    do 
+                        local root = PlayerObject.rp
+                        
+                        EspObject[1] = {}
+                        
+                        local c = PlayerObject.chr and PlayerObject.chr:GetChildren() or {}
+                        for i = 1, 25 do 
+                            local v = c[i]
+                            if (v and v:IsA('BasePart') == false) then continue end
+                            
+                            
+                            local outline = inst("SelectionBox")
+                            outline.Adornee = v
+                            outline.LineThickness = 0.02
+                            outline.Color3 = c3(0.6, 0, 1)
+                            outline.Visible = true
+                            outline.Parent = EspFolder
+                            
+                            ins(EspObject[1], outline)
+                        end
+                        
+                        local bbg = inst('BillboardGui')
+                        bbg.Adornee = root
+                        bbg.AlwaysOnTop = true
+                        bbg.Size = dim2(4 + (#PlayerName * 0.3), 40, 1, 10)
+                        bbg.StudsOffsetWorldSpace = vec3(0, 4, 0)
+                        bbg.Parent = EspFolder
+                        
+                        local a = inst('TextLabel')
+                        a.BackgroundTransparency = 1
+                        a.Font = font
+                        a.Size = dim2sca(1, 1)
+                        a.Text = PlayerName
+                        a.TextColor3 = PlayerInstance.TeamColor.Color
+                        a.TextScaled = true
+                        a.TextStrokeColor3 = colors[18]
+                        a.TextStrokeTransparency = 0
+                        a.TextXAlignment = 'Center'
+                        a.Parent = bbg
+                        
+                        EspObject[2] = bbg
+                        EspObject[3] = a
+                    end
+                    
+                    EspObjsChams[PlayerName] = EspObject
+                    
+                    PlrCons[PlayerName] = {}
+                    PlrCons[PlayerName][1] = plr:GetPropertyChangedSignal('TeamColor'):Connect(function() 
+                        EspObjsChams[PlayerName][3].TextColor3 = plr.TeamColor.Color
+                    end)
+                    PlrCons[PlayerName][2] = plr.CharacterAdded:Connect(function(c)
+                        local root = c:WaitForChild('HumanoidRootPart',1)
+                        local obj = EspObjsChams[PlayerName]
+                        
+                        obj[2].Adornee = root
+                        wait(0.1)
+                        for i,v in ipairs(c:GetChildren()) do 
+                            if (v:IsA('BasePart') == false) then continue end
+                            local j = obj[1][i]
+                            if (j) then
+                                j.Adornee = v
+                            else
+                                print('Didn\'t find valid part',j)
+                            end
+                        end
+                    end)
+                end
+                
+                for i = 1, #p_Names do 
+                    hookplr(p_RefKeys[p_Names[i]].plr)
+                end
+
+                PlrAdded = serv_players.PlayerAdded:Connect(function(plr) 
+                    wait(0.1)
+                    hookplr(plr)
+                end)
+                
+                PlrRemoved = serv_players.PlayerRemoving:Connect(function(plr) 
+                    local PlayerName = plr.Name
+                    local obj = EspObjsChams[PlayerName]
+                    obj[2]:Destroy()
+                    
+                    local _ = obj[1]
+                    for i = 1, #_ do 
+                        _[i]:Destroy()
+                    end
+                    EspObjsChams[PlayerName] = nil
+                end)
+                
+                local time = 0
+                RGBCon = serv_rs.RenderStepped:Connect(function(dt) 
+                    time = (time > 1 and 0 or time + dt*0.05)
+                    local color = hsv(time, 1, 1)
+                    for i = 1, #p_Names do 
+                        local PlayerName = p_Names[i]
+                        local objs = EspObjsChams[PlayerName]
+                        if (not objs) then continue end
+                        objs = objs[1]
+                        for i = 1, #objs do 
+                            objs[i].Color3 = color
+                        end
+                    end
+                end)
             end
         end)
         r_esp:Connect("Disabled",function() 
-            if (updatecon) then updatecon:Disconnect() end
-            if (plraddcon) then plraddcon:Disconnect() end
-
-            if (drawingactive) then 
+            if (UpdateCon) then UpdateCon:Disconnect() UpdateCon = nil end
+            if (PlrAdded) then PlrAdded:Disconnect() PlrAdded = nil end
+            if (PlrRemoved) then PlrRemoved:Disconnect() PlrRemoved = nil end
+            
+            if (RGBCon) then RGBCon:Disconnect() RGBCon = nil end
+            
+            if (EspFolder) then EspFolder:Destroy() EspFolder = nil end
+            
+            for i = 1, #p_Names do
+                local cons = PlrCons[p_Names[i]]
+                local len = #cons
+                if (len == 0) then continue end
+                for i = 1, len do 
+                    cons[i]:Disconnect()
+                end
+            end
+            
+            
+            if (OldESPMode == 'Streamproof') then
                 local a = esplib.GetObjects()
                 for i = 1, #a do
-                    a[1]:Destroy() 
+                    a[1]:Destroy()
                 end
                 esplib.Sleep()
-
-                drawingactive = false
+            
+                cle(EspObjs2D)
             end
+            
+            
         end)
-
     end
     -- Fullbright
     do 
@@ -6168,6 +5899,20 @@ local m_search = ui:CreateMenu('Search') do
     end)
 end
 local m_changelog = ui:CreateMenu('Changelog') do 
+    m_changelog:AddMod('Version 0.4.0',nil,true):AddLabel([[- Added a custom mouse cursor, good for games w/o mouse icons
+- Added another ESP mode (Lines)
+- Disabled Triggerbot while its being remade
+- Fixed slide animation not happening when the gui first gets toggled
+- Hopefully improved mem usage since a ton of player handler stuff was remade
+- Improved ESP's stability a ton
+- Players leaving / joining should cause less overhead now
+- Removed a bunch of comments & unused module shit, improving load times
+- Removed redundant calculations in freecam
+- Replaced notif icons
+- Replaced the logo at the top left
+- Updated Fakelag and Blink to be compatible with both R6 and R15]])
+
+
     m_changelog:AddMod('Version 0.3.2.1',nil,true):AddLabel([[ - Fixed a bug with how sliders worked which affected the colors
 - Updated every theme to be compatible with these changes]])
     m_changelog:AddMod('Version 0.3.2',nil,true):AddLabel([[- Added a cyan theme called Cold
@@ -6267,6 +6012,27 @@ do
     ctwn(clip, {
         Size = dim2off(0, 0);
     },0.5, 5, 1).Completed:Wait()
+    
+    do
+        local bf = ui:GetBackframe()
+        redline.Parent = bf
+        prism.Parent = bf
+        
+        
+        redline.AnchorPoint = vec2(0,0)
+        prism.AnchorPoint = vec2(0,0)
+        
+        redline.Size = dim2off(150, 150)
+        prism.Size = dim2off(100, 100) 
+        
+        prism.Position = dim2off(25, -250)
+        redline.Position = dim2off(105, -255)
+        
+        twn(prism, {Position = dim2off(25, 25)},true)
+        twn(redline, {Position = dim2off(105, -5)},true)
+    end
+    
+    
     clip:Destroy()
 end
 
