@@ -3397,7 +3397,7 @@ local betatxt = ' <font color="rgb(255,87,68)">[BETA]</font>'
 
 local m_combat = ui:CreateMenu('Combat') do 
     local c_trigbot = m_combat:AddMod('Triggerbot'..betatxt)
-    local c_hitbox = m_combat:AddMod('Hitboxes'..betatxt)
+    --local c_hitbox = m_combat:AddMod('Hitboxes'..betatxt)
     
     -- Hitbox expander
     do 
