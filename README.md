@@ -18,13 +18,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 
 ## Preview
 Classic theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png | width=600)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png)  
 Dark theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/dark.png | width=600)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/dark.png)  
 Blue theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/blue.png | width=600)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/blue.png)  
 Cold theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/cold.png | width=600)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/cold.png)  
 
 ## Why use it?  
 - **Customizability.** Nearly every module has tons of settings to toy around with.  
