@@ -1,19 +1,25 @@
 --[[
-⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠁⡿⠀⢿⠈⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠁⠀⢸⠇⠀⠸⡇⠀⠈⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀  ⠀  ⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠀⠀⠀⠀⠀⣠⠞⠁⠀⠀⢀⡿⠀⠀⠀⢿⡀⠀⠀⠈⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⣶⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦
-  ⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⠀⠀⣠⠞⠁⠀⠀⠀⠀⣸⠃⠀⠀⠀⠘⣇⠀⠀⠀⠀⠈⠳⣄⠀⠀⠀⠀⠀⠀⣿⠀⠴⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣶⣤⣤⡀⠀⢀⣤⣤⣤⡀⠀⢠⣤⣦⣼⡏⢀⣤⣞⠁⠀⠀⠀⠀⠀⢀⡟⠀⠀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠈⣳⣤⡀⠀⠀⢸⡟⠀⣦⠀⣶⣦⣦⣄⠀⠀⣠⣤⣤⡀⠀⠀⠀⠀⠀⠀⠀✦
-⠀⠀⠀⠀⠀⠀⠀⢸⡏⠀⠈⠛⠀⣼⡇⠀⢹⡇⠀⣿⠁⠀⣿⡇⠈⠛⢯⡙⠛⠶⠦⣤⣄⣼⡃⠀⠀⠀⠀⠀⢘⣧⣠⣤⠴⠶⠛⢋⡽⠛⠁⠀⠀⢸⡇⢸⡏⢀⣿⠁⠀⣿⠆⢸⡏⠀⢈⣿⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠟⠛⠛⠁⢸⣏⠀⠀⣿⠀⠀⠀⠀⠙⢦⡀⠀⠀⠀⢹⡏⠛⠓⠶⠚⠛⢹⡏⠀⠀⠀⢀⡴⠋⠀⠀⠀⠀⠀⣿⠃⢸⡇⢸⡟⠀⠀⣿⠀⢾⡟⠛⠛⠁⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠾⠃⠀⠀⠀⠀⠘⠻⠾⠿⠂⠀⠙⠿⠿⠿⠀⠀⠀⠀⠀⠀⠙⢦⡀⠀⠀⣷⠀⠀⠀⠀⠀⣾⠀⠀⢀⡴⠋⠀⠀⠀⠀⠀⠀⠀⠿⠀⠿⠃⠸⠇⠀⠀⠟⠀⠈⠻⠷⠿⠆⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢦⡀⢸⡆⠀⠀⠀⢰⡇⢀⡴⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀✦⠀⠀⠀  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢶⣷⠀⠀⠀⣾⡶⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢧⣀⡼⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀✦⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+           ★          .=%%=.                      
+                    .+%%@@%%+.           ☆        
+                  .+%*-%**%-*%+.                  
+  ★     ☆       .+%*: =@::@= :*%+.                ★
+              .+%*:  .%+  +%.  :*%+.              
+            .+%*:    +@.  .@+    :*%+.      ☆     
+          .+%*:     .@+    +@.     :*%+.          
+        .+%*:       +%.    .%+       :*%+.        
+      .+%*:        :@=      =@:        :*%+.      ★
+    .=#*.          *%.      .%*          .*#=.    
+    *@%=--:.      :@-        -@:      .:--=%@*    
+    .=%@*+****++=-##.        .##-=++****+*@%=.    
+       =#*:  :-=+*@%**+=--=+**%@*+=-:  :*#=       
+        .+%*:     +@::-=++=-::@+     :*%+.        
+          .+%*:   .@=        =@.   :*%+.          ★
+            .+%*:  +@.      .@+  :*%+.            
+              .+%*:.%+      +%.:*%+.              
+    ★           .+%**@:    :@**%+.                
+                  .+%@*    *@%+.                  
+                    .=%*::*%=.                    
+  ☆                   .+##+.                      
 ]]--
 
 
@@ -27,11 +33,11 @@
 
 if (_G.RLLOADED) then
     if (printconsole) then 
-        printconsole("Already loaded Redline", 255, 64, 64)
-        printconsole("Destroy the current script by pressing [End]", 192, 192, 255)
+        printconsole('Already loaded Redline', 255, 64, 64)
+        printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
         return
     else
-        warn("Already loaded Redline\nDestroy the current script by pressing [End]")
+        warn('Already loaded Redline\nDestroy the current script by pressing [End]')
         return
     end
 end
@@ -42,7 +48,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = "v0.4.0"
+local REDLINEVER = 'v0.4.1'
 
 
 -- { Wait for load } --
@@ -54,21 +60,21 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 local serv_ctx     = game:GetService('ContextActionService')
 local serv_gui     = game:GetService('GuiService')
 local serv_http    = game:GetService('HttpService')
-local serv_net     = game:GetService("NetworkClient")
+local serv_net     = game:GetService('NetworkClient')
 local serv_players = game:GetService('Players')
-local serv_rs      = game:GetService('RunService')
-local serv_tp      = game:GetService('TeleportService')
-local serv_ts      = game:GetService('TweenService')
-local serv_uis     = game:GetService('UserInputService')
-local serv_vim     = game:GetService("VirtualInputManager")
+local serv_run     = game:GetService('RunService')
+local serv_tps     = game:GetService('TeleportService')
+local serv_twn     = game:GetService('TweenService')
+local serv_uinput  = game:GetService('UserInputService')
+local serv_vim     = game:GetService('VirtualInputManager')
 
 -- Colors
-local rgb,hsv,c3 = Color3.fromRGB, Color3.fromHSV, Color3.new
+local c_rgb,c_hsv,c_new = Color3.fromRGB, Color3.fromHSV, Color3.new
 -- UDim2
-local dim2off, dim2sca, dim2 = UDim2.fromOffset, UDim2.fromScale, UDim2.new
+local dim_off, dim_sca, dim_new = UDim2.fromOffset, UDim2.fromScale, UDim2.new
 -- Instances
-local inst = Instance.new
-local drawnew = Drawing.new
+local inst_new = Instance.new
+local draw_new = Drawing.new
 -- Vectors
 local vec3, vec2 = Vector3.new, Vector2.new
 -- CFrames
@@ -126,7 +132,7 @@ local function DecodeThemeJson(json)
         for i,v in pairs(theme) do
             if (type(v) ~= 'table') then continue end
             local col = v['Color'] 
-            colors[switch[i]] = rgb(col[1],col[2],col[3])
+            colors[switch[i]] = c_rgb(col[1],col[2],col[3])
             trans[switch[i]] = v['Transparency'] or 0
         end
     end
@@ -158,28 +164,28 @@ end
 local colors = _G.RLTHEME and _G.RLTHEME[1] or {} 
 do 
     -- generic
-    colors[1]   = colors[1]  or rgb(075, 075, 080); -- outline color
-    colors[2]   = colors[2]  or rgb(005, 005, 010); -- shadow
-    colors[3]   = colors[3]  or rgb(023, 022, 027); -- window background
-    colors[4]   = colors[4]  or rgb(225, 035, 061); -- enabled
+    colors[1]   = colors[1]  or c_rgb(075, 075, 080); -- outline color
+    colors[2]   = colors[2]  or c_rgb(005, 005, 010); -- shadow
+    colors[3]   = colors[3]  or c_rgb(023, 022, 027); -- window background
+    colors[4]   = colors[4]  or c_rgb(225, 035, 061); -- enabled
     -- backgrounds
-    colors[5]   = colors[5]  or rgb(035, 035, 040); -- header background
-    colors[6]   = colors[6]  or rgb(030, 030, 035); -- object background
-    colors[7]   = colors[7]  or rgb(025, 025, 030); -- setting background
-    colors[8]   = colors[8]  or rgb(020, 020, 025); -- dropdown background
+    colors[5]   = colors[5]  or c_rgb(035, 035, 040); -- header background
+    colors[6]   = colors[6]  or c_rgb(030, 030, 035); -- object background
+    colors[7]   = colors[7]  or c_rgb(025, 025, 030); -- setting background
+    colors[8]   = colors[8]  or c_rgb(020, 020, 025); -- dropdown background
     -- backgrounds selected
-    colors[9]   = colors[9]  or rgb(038, 038, 043); -- header hovering
-    colors[10]  = colors[10] or rgb(033, 033, 038); -- object hovering
-    colors[11]  = colors[11] or rgb(028, 028, 033); -- setting hovering
-    colors[12]  = colors[12] or rgb(023, 023, 028); -- dropdown hovering
+    colors[9]   = colors[9]  or c_rgb(038, 038, 043); -- header hovering
+    colors[10]  = colors[10] or c_rgb(033, 033, 038); -- object hovering
+    colors[11]  = colors[11] or c_rgb(028, 028, 033); -- setting hovering
+    colors[12]  = colors[12] or c_rgb(023, 023, 028); -- dropdown hovering
     -- slider
-    colors[13]  = colors[13] or rgb(225, 075, 080); -- slider foreground
-    colors[14]  = colors[14] or rgb(033, 033, 038); -- slider background
-    colors[15]  = colors[15] or rgb(130, 130, 135); -- slider head
+    colors[13]  = colors[13] or c_rgb(225, 075, 080); -- slider foreground
+    colors[14]  = colors[14] or c_rgb(033, 033, 038); -- slider background
+    colors[15]  = colors[15] or c_rgb(130, 130, 135); -- slider head
     -- text  
-    colors[16]  = colors[16] or rgb(255, 255, 255); -- main text
-    colors[17]  = colors[17] or rgb(170, 170, 255); -- sub text
-    colors[18]  = colors[18] or rgb(020, 020, 025); -- outline
+    colors[16]  = colors[16] or c_rgb(255, 255, 255); -- main text
+    colors[17]  = colors[17] or c_rgb(170, 170, 255); -- sub text
+    colors[18]  = colors[18] or c_rgb(020, 020, 025); -- outline
 end
 local trans = _G.RLTHEME and _G.RLTHEME[2] or {} do 
     trans[1]   = trans[1]   or 0;
@@ -207,15 +213,15 @@ local font = _G.RLTHEME and _G.RLTHEME[3] or 'SourceSans'
 local shadow,twn,ctwn,getnext,stroke,round,uierror
 do
     shadow = function(parent)
-        local _ = inst('ImageLabel')
+        local _ = inst_new('ImageLabel')
         _.BackgroundTransparency  = 1
         _.ImageTransparency       = 0.5
         _.SliceScale              = 1.3
         _.Image                   = 'rbxassetid://7603818383'
         _.AnchorPoint             = vec2(0.5,0.5)
         _.ImageColor3             = colors[2]
-        _.Position                = dim2sca(0.5, 0.5)
-        _.Size                    = dim2(1, 20, 1, 20)
+        _.Position                = dim_sca(0.5, 0.5)
+        _.Size                    = dim_new(1, 20, 1, 20)
         _.SliceCenter             = Rect.new(15, 15, 175, 175)
         _.ScaleType               = 'Slice'
         _.ZIndex                  = parent.ZIndex - 1 
@@ -224,7 +230,7 @@ do
         return _
     end
     stroke = function(parent,mode) 
-        local _ = inst('UIStroke')
+        local _ = inst_new('UIStroke')
         _.ApplyStrokeMode = mode or 'Contextual'
         _.Thickness = 1
         _.Color = colors[1]
@@ -236,7 +242,7 @@ do
     
     local info1, info2 = TweenInfo.new(0.1,10,1), TweenInfo.new(0.2,10,1)
     function twn(twn_target, twn_settings, twn_long) 
-        local tween = serv_ts:Create(
+        local tween = serv_twn:Create(
             twn_target,
             twn_long and info2 or info1,
             twn_settings
@@ -245,7 +251,7 @@ do
         return tween
     end
     function ctwn(twn_target, twn_settings, twn_dur, twn_style, twn_dir) 
-        local tween = serv_ts:Create(
+        local tween = serv_twn:Create(
             twn_target,
             TweenInfo.new(twn_dur,twn_style or 10,twn_dir or 1),
             twn_settings
@@ -283,7 +289,7 @@ local ui = {} do
     local monitor_inset = serv_gui:GetGuiInset()
     
     -- connections
-    ui_Connections['i'] = serv_uis.InputBegan:Connect(function(io, gpe) 
+    ui_Connections['i'] = serv_uinput.InputBegan:Connect(function(io, gpe) 
         if (gpe) then return end
         if (io.UserInputType.Value == 8) then
             local kcv = io.KeyCode.Value
@@ -297,9 +303,9 @@ local ui = {} do
     end)
     do
         local _ = 0
-        local __ = hsv
+        local __ = c_hsv
         
-        ui_Connections['r'] = serv_rs.RenderStepped:Connect(function(___) 
+        ui_Connections['r'] = serv_run.RenderStepped:Connect(function(___) 
             _ = (_ > 1 and 0 or _)+(___*.05)
             ___ = __(_,.9,1)
             for i = 1, #rgbinsts do 
@@ -323,14 +329,14 @@ local ui = {} do
     
     
     local ModlistPadding = {
-        dim2off(-100, 0).X;
-        dim2off(8, 0).X;
+        dim_off(-100, 0).X;
+        dim_off(8, 0).X;
         Enum.TextXAlignment.Left;
         'PaddingLeft';
     } 
     
     do 
-        w_Screen = inst('ScreenGui')
+        w_Screen = inst_new('ScreenGui')
         w_Screen.IgnoreGuiInset = true
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
         w_Screen.Name = getnext()
@@ -341,32 +347,32 @@ local ui = {} do
         w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
         
         
-        w_Backframe = inst('Frame')
+        w_Backframe = inst_new('Frame')
         w_Backframe.BackgroundColor3 = colors[3]
         w_Backframe.BackgroundTransparency = trans[3]
         w_Backframe.BorderSizePixel = 0
         w_Backframe.ClipsDescendants = false
-        w_Backframe.Position = dim2(0, 0, -1, 0)
-        w_Backframe.Size = dim2sca(1,1)
+        w_Backframe.Position = dim_new(0, 0, -1, 0)
+        w_Backframe.Size = dim_sca(1,1)
         w_Backframe.Visible = false
         w_Backframe.Parent = w_Screen
         
-        w_Modal = inst('TextButton')
+        w_Modal = inst_new('TextButton')
         w_Modal.Active = false
         w_Modal.BackgroundTransparency = 1
         w_Modal.Modal = true
         w_Modal.Parent = w_Backframe
-        w_Modal.Size = dim2off(1,1)
+        w_Modal.Size = dim_off(1,1)
         w_Modal.Text = ''
         
-        w_Help = inst("TextLabel")
+        w_Help = inst_new('TextLabel')
         w_Help.AnchorPoint = vec2(1,1)
         w_Help.BackgroundTransparency = 1
         w_Help.Font = font
-        w_Help.Position = dim2sca(1,1)
+        w_Help.Position = dim_sca(1,1)
         w_Help.RichText = true
-        w_Help.Size = dim2off(300,300)
-        w_Help.Text = ""
+        w_Help.Size = dim_off(300,300)
+        w_Help.Text = ''
         w_Help.TextColor3 = colors[16]
         w_Help.TextSize = 20
         w_Help.TextStrokeColor3 = colors[18]
@@ -377,46 +383,46 @@ local ui = {} do
         w_Help.ZIndex = 1
         w_Help.Parent = w_Backframe
         
-        w_ModList = inst('Frame')
+        w_ModList = inst_new('Frame')
         w_ModList.AnchorPoint = vec2(0, 1)
         w_ModList.BackgroundColor3 = colors[3]
         w_ModList.BackgroundTransparency = 1
         w_ModList.BorderColor3 = colors[1]
         w_ModList.BorderMode = 'Inset'
         w_ModList.BorderSizePixel = 1
-        w_ModList.Position = dim2sca(0,1)
-        w_ModList.Size = dim2(0,200,0.3,0)
+        w_ModList.Position = dim_sca(0,1)
+        w_ModList.Size = dim_new(0,200,0.3,0)
         w_ModList.Visible = false
         w_ModList.Parent = w_Screen
         
-        w_ModListLayout = inst('UIListLayout')
+        w_ModListLayout = inst_new('UIListLayout')
         w_ModListLayout.FillDirection = 'Vertical'
         w_ModListLayout.HorizontalAlignment = 'Left'
         w_ModListLayout.VerticalAlignment = 'Bottom'
         w_ModListLayout.Parent = w_ModList
         
-        w_ModListTitle = inst("TextLabel")
-        w_ModListTitle.Size = dim2(1, 0, 0, 30)
+        w_ModListTitle = inst_new('TextLabel')
+        w_ModListTitle.Size = dim_new(1, 0, 0, 30)
         w_ModListTitle.BackgroundTransparency = 1
         w_ModListTitle.Font = font
         w_ModListTitle.TextXAlignment = 'Left'
         w_ModListTitle.TextColor3 = colors[16]
         w_ModListTitle.TextSize = 24
-        w_ModListTitle.Text = ' '.."Redline "..REDLINEVER..' '
+        w_ModListTitle.Text = ' '..'Redline '..REDLINEVER..' '
         w_ModListTitle.LayoutOrder = 939
         w_ModListTitle.TextStrokeTransparency = 0
         w_ModListTitle.TextStrokeColor3 = colors[18]
         w_ModListTitle.ZIndex = 5
         w_ModListTitle.Parent = w_ModList
         
-        w_TooltipHeader = inst("TextLabel")
+        w_TooltipHeader = inst_new('TextLabel')
         w_TooltipHeader.BackgroundColor3 = colors[5]
         w_TooltipHeader.BackgroundTransparency = trans[5]
         w_TooltipHeader.BorderSizePixel = 0
         w_TooltipHeader.Font = font
         w_TooltipHeader.RichText = true
-        w_TooltipHeader.Size = dim2off(175,20)
-        w_TooltipHeader.Text = "Hi"
+        w_TooltipHeader.Size = dim_off(175,20)
+        w_TooltipHeader.Text = 'Hi'
         w_TooltipHeader.TextColor3 = colors[16]
         w_TooltipHeader.TextSize = 19
         w_TooltipHeader.TextStrokeColor3 = colors[18]
@@ -428,15 +434,15 @@ local ui = {} do
         
         stroke(w_TooltipHeader, 'Border')
         
-        w_Tooltip = inst("TextLabel")
+        w_Tooltip = inst_new('TextLabel')
         w_Tooltip.BackgroundColor3 = colors[3]
         w_Tooltip.BackgroundTransparency = trans[3]
         w_Tooltip.BorderSizePixel = 0
         w_Tooltip.Font = font
-        w_Tooltip.Position = dim2off(0, 21)
+        w_Tooltip.Position = dim_off(0, 21)
         w_Tooltip.RichText = true
-        w_Tooltip.Size = dim2off(175,25)
-        w_Tooltip.Text = ""
+        w_Tooltip.Size = dim_off(175,25)
+        w_Tooltip.Text = ''
         w_Tooltip.TextColor3 = colors[16]
         w_Tooltip.TextSize = 17
         w_Tooltip.TextStrokeColor3 = colors[18]
@@ -450,14 +456,14 @@ local ui = {} do
         
         stroke(w_Tooltip, 'Border')
         
-        local __ = inst("UIPadding")
-        __.PaddingLeft = dim2off(5, 0).X
-        --__.PaddingTop = dim2off(0, 5).Y
+        local __ = inst_new('UIPadding')
+        __.PaddingLeft = dim_off(5, 0).X
+        --__.PaddingTop = dim_off(0, 5).Y
         __.Parent = w_Tooltip
         
-        w_Tooltip:GetPropertyChangedSignal("Text"):Connect(function() 
-            w_Tooltip.Size = dim2off(175,25)
-            local n = dim2off(0,5)
+        w_Tooltip:GetPropertyChangedSignal('Text'):Connect(function() 
+            w_Tooltip.Size = dim_off(175,25)
+            local n = dim_off(0,5)
             for i = 1, 25 do 
                 w_Tooltip.Size += n
                 if (w_Tooltip.TextFits) then break end
@@ -465,21 +471,21 @@ local ui = {} do
             
         end)
         
-        w_MouseCursor = inst('ImageLabel')
+        w_MouseCursor = inst_new('ImageLabel')
         w_MouseCursor.BackgroundTransparency = 1
         w_MouseCursor.Image = 'rbxassetid://8845749987'
         w_MouseCursor.ImageColor3 = colors[4]
         w_MouseCursor.ImageTransparency = 1
-        w_MouseCursor.Position = dim2off(150, 150)
-        w_MouseCursor.Size = dim2off(24, 24)
+        w_MouseCursor.Position = dim_off(150, 150)
+        w_MouseCursor.Size = dim_off(24, 24)
         w_MouseCursor.Visible = true
         w_MouseCursor.ZIndex = 1500
         w_MouseCursor.Parent = w_Screen
     end
     
     function ui:manageml(x1,x2,align,paddir) 
-        ModlistPadding[1] = x1 and dim2off(x1, 0).X or ModlistPadding[1]
-        ModlistPadding[2] = x2 and dim2off(x2, 0).X or ModlistPadding[2]
+        ModlistPadding[1] = x1 and dim_off(x1, 0).X or ModlistPadding[1]
+        ModlistPadding[2] = x2 and dim_off(x2, 0).X or ModlistPadding[2]
         ModlistPadding[4] = paddir or ModlistPadding[4]
         
         if (align and align ~= ModlistPadding[3]) then
@@ -487,7 +493,7 @@ local ui = {} do
             local _ = ModlistPadding[2]
             local __ = ModlistPadding[4]
             local ___ = __ == 'PaddingLeft' and 'PaddingRight' or __
-            local ____ = dim2off(0,0).X
+            local ____ = dim_off(0,0).X
             for i = 1, #c do
                 local v = c[i]
                 if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
@@ -511,11 +517,11 @@ local ui = {} do
     
     
     
-    ui_Connections['t'] = serv_rs.RenderStepped:Connect(function() 
-        local pos = serv_uis:GetMouseLocation()
+    ui_Connections['t'] = serv_run.RenderStepped:Connect(function() 
+        local pos = serv_uinput:GetMouseLocation()
         local x,y = pos.X, pos.Y
-        w_TooltipHeader.Position = dim2off(x+15, y+15)
-        w_MouseCursor.Position = dim2off(x-4, y)
+        w_TooltipHeader.Position = dim_off(x+15, y+15)
+        w_MouseCursor.Position = dim_off(x-4, y)
     end)
     
     
@@ -529,14 +535,14 @@ local ui = {} do
             b.TextXAlignment = ModlistPadding[3]
             b.Parent = w_ModList
             twn(b.P, {[ModlistPadding[4]] = ModlistPadding[2]},true)
-            twn(b, {Size = dim2(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
+            twn(b, {Size = dim_new(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
         end
         
         ModListDisable = function(name)
             local b = mods_instance[name]
             
             twn(b.P, {[ModlistPadding[4]] = ModlistPadding[1]},true)
-            twn(b, {Size = dim2(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
+            twn(b, {Size = dim_new(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
         end
         
         ModListModify = function(name, new) 
@@ -544,8 +550,8 @@ local ui = {} do
         end
         
         ModListInit = function(name) 
-            local _ = inst("TextLabel")
-            _.Size = dim2(0, 0, 0, 0)
+            local _ = inst_new('TextLabel')
+            _.Size = dim_new(0, 0, 0, 0)
             _.BackgroundTransparency = 1
             _.Font = font
             _.TextXAlignment = ModlistPadding[3]
@@ -561,10 +567,10 @@ local ui = {} do
             
             mods_instance[name] = _
             
-            ins(rgbinsts, {_,"TextColor3"})
+            ins(rgbinsts, {_,'TextColor3'})
             
             
-            local __ = inst("UIPadding")
+            local __ = inst_new('UIPadding')
             __.Name = 'P'
             __[ModlistPadding[4]] = ModlistPadding[1]
             __.Parent = _
@@ -573,7 +579,7 @@ local ui = {} do
     
     -- Base class for stuff
     local base_class = {} do 
-        local s1,s2 = dim2(1,0,1,0), dim2(0,0,1,0)
+        local s1,s2 = dim_new(1,0,1,0), dim_new(0,0,1,0)
         
         
         
@@ -720,17 +726,17 @@ local ui = {} do
             
             base_class.setting_modhotkey_sethotkey = function(self) 
                 local label = self.Label
-                label.Text = "Press any key..."
+                label.Text = 'Press any key...'
                 
                 wait(0.01);
                 local c;
-                c = serv_uis.InputBegan:Connect(function(io,gpe)
+                c = serv_uinput.InputBegan:Connect(function(io,gpe)
                     
                     local kcv = io.KeyCode.Value
                     if (kcv ~= 0) then
                         
                         self.Hotkey = kcv
-                        label.Text = "Hotkey: "..io.KeyCode.Name
+                        label.Text = 'Hotkey: '..io.KeyCode.Name
                         
                         -- As scuffed as this is, it works
                         -- To prevent the module being bound from immediately toggling, a short delay is made
@@ -748,7 +754,7 @@ local ui = {} do
                         end)
                     else
                         self.Hotkey = nil    
-                        label.Text = "Hotkey: N/A"
+                        label.Text = 'Hotkey: N/A'
                         
                         local n = self.Parent.Name
                         for i = 1, #ui_Hotkeys do 
@@ -769,22 +775,22 @@ local ui = {} do
             
             base_class.setting_hotkey_sethotkey = function(self) 
                 local label = self.Label
-                label.Text = "Press any key..."
+                label.Text = 'Press any key...'
                 
                 wait(0.01);
                 local c;
-                c = serv_uis.InputBegan:Connect(function(io,gpe)
+                c = serv_uinput.InputBegan:Connect(function(io,gpe)
                     local kc = io.KeyCode
                     local kcv = kc.Value
                     if (kcv ~= 0) then
                         
                         self.Hotkey = kc
-                        label.Text = self.Name..": "..kc.Name
+                        label.Text = self.Name..': '..kc.Name
                         
                         pcall(self.Flags.HotkeySet, kc, kcv)
                     else
                         self.Hotkey = nil    
-                        label.Text = self.Name..": N/A"
+                        label.Text = self.Name..': N/A'
                         
                         pcall(self.Flags.HotkeySet, nil, 0)
                     end
@@ -794,7 +800,7 @@ local ui = {} do
             
             base_class.setting_hotkey_sethotkeyexplicit = function(self, kc) 
                 self.Hotkey = kc
-                self.Label.Text = self.Name..": "..kc.Name
+                self.Label.Text = self.Name..': '..kc.Name
                 return self
             end
             
@@ -830,7 +836,7 @@ local ui = {} do
                 if (parent.Primary) then
                     
                     local n = parent.Parent.Name 
-                    ModListModify(n, n .. " <font color='#DFDFDF'>["..self.Name.."]</font>")
+                    ModListModify(n, n .. ' <font color="#DFDFDF">['..self.Name..']</font>')
                 end
                 
                 twn(self.Effect, {Size = s1}, true)
@@ -861,7 +867,7 @@ local ui = {} do
                 if (pval ~= cval) then
                     pval = cval
                     
-                    self.SliderFill.Position = dim2off(mf((cval - min) * self.Ratio), 0)
+                    self.SliderFill.Position = dim_off(mf((cval - min) * self.Ratio), 0)
                     self.SliderAmnt.Text = self.StepFormat:format(cval)
                     
                     pcall(self.Flags.ValueChanged, cval)
@@ -880,7 +886,7 @@ local ui = {} do
                 
                 if (pval ~= cval) then
                     pval = cval
-                    self.SliderFill.Position = dim2off(mf((cval - min)*self.Ratio), 0)
+                    self.SliderFill.Position = dim_off(mf((cval - min)*self.Ratio), 0)
                     self.SliderAmnt.Text = self.StepFormat:format(cval)
                     
                     self.CurrentVal = cval
@@ -961,55 +967,55 @@ local ui = {} do
                   local m_MenuListLayout
                 
                 do
-                    m_ModuleRoot = inst("ImageButton")
-                    m_ModuleRoot.Size = dim2(1, 0, 0, 25)
-                    m_ModuleRoot.AutomaticSize = "Y"
+                    m_ModuleRoot = inst_new('ImageButton')
+                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
+                    m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.ClipsDescendants = false
                     m_ModuleRoot.BackgroundTransparency = 1
                     m_ModuleRoot.BorderSizePixel = 0
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst("Frame")
+                     m_ModuleBackground = inst_new('Frame')
                      m_ModuleBackground.BackgroundColor3 = colors[6]
                      m_ModuleBackground.BackgroundTransparency = trans[6]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim2(1,0,0,25)
+                     m_ModuleBackground.Size = dim_new(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
-                      m_Highlight = inst("Frame")
+                      m_Highlight = inst_new('Frame')
                       m_Highlight.Active = false
                       m_Highlight.BackgroundColor3 = colors[4]
                       m_Highlight.BackgroundTransparency = trans[4]
                       m_Highlight.BorderSizePixel = 0
-                      m_Highlight.Size = dim2sca(1,1)
+                      m_Highlight.Size = dim_sca(1,1)
                       m_Highlight.Visible = false
                       m_Highlight.ZIndex = M_IndexOffset
                       m_Highlight.Parent = m_ModuleBackground
                       
-                      m_ModuleEnableEffect = inst("Frame")
+                      m_ModuleEnableEffect = inst_new('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = colors[16]
                       m_ModuleEnableEffect.BackgroundTransparency = 0.92
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim2(0,0,1,0)
+                      m_ModuleEnableEffect.Size = dim_new(0,0,1,0)
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                       
-                       m_ModuleEnableEffect2 = inst("Frame")
+                       m_ModuleEnableEffect2 = inst_new('Frame')
                        m_ModuleEnableEffect2.BackgroundColor3 = colors[4]
                        m_ModuleEnableEffect2.BorderSizePixel = 0
-                       m_ModuleEnableEffect2.Size = dim2(0,2,1,0)
+                       m_ModuleEnableEffect2.Size = dim_new(0,2,1,0)
                        m_ModuleEnableEffect2.ZIndex = M_IndexOffset
                        m_ModuleEnableEffect2.Parent = m_ModuleEnableEffect
                       
-                      m_ModuleText = inst('TextLabel')
+                      m_ModuleText = inst_new('TextLabel')
                       m_ModuleText.BackgroundTransparency = 1
                       m_ModuleText.Font = font
-                      m_ModuleText.Position = dim2off(5, 0)
+                      m_ModuleText.Position = dim_off(5, 0)
                       m_ModuleText.RichText = true
-                      m_ModuleText.Size = dim2(1, -5, 1, 0)
+                      m_ModuleText.Size = dim_new(1, -5, 1, 0)
                       m_ModuleText.Text = text
                       m_ModuleText.TextColor3 = colors[16]
                       m_ModuleText.TextSize = 20
@@ -1019,13 +1025,13 @@ local ui = {} do
                       m_ModuleText.ZIndex = M_IndexOffset
                       m_ModuleText.Parent = m_ModuleBackground
                       
-                      m_ModuleIcon = inst('TextLabel')
+                      m_ModuleIcon = inst_new('TextLabel')
                       m_ModuleIcon.AnchorPoint = vec2(1,0)
                       m_ModuleIcon.BackgroundTransparency = 1
                       m_ModuleIcon.Font = font
-                      m_ModuleIcon.Position = dim2sca(1,0)
+                      m_ModuleIcon.Position = dim_sca(1,0)
                       m_ModuleIcon.Rotation = 0
-                      m_ModuleIcon.Size = dim2off(25, 25)
+                      m_ModuleIcon.Size = dim_off(25, 25)
                       m_ModuleIcon.Text = '+'
                       m_ModuleIcon.TextColor3 = colors[16]
                       m_ModuleIcon.TextSize = 18
@@ -1035,17 +1041,17 @@ local ui = {} do
                       m_ModuleIcon.ZIndex = M_IndexOffset
                       m_ModuleIcon.Parent = m_ModuleBackground
                     
-                    m_Menu = inst('Frame')
+                    m_Menu = inst_new('Frame')
                     m_Menu.BackgroundColor3 = colors[7]
                     m_Menu.BackgroundTransparency = 1
                     m_Menu.BorderSizePixel = 0
-                    m_Menu.Position = dim2off(0,25)
-                    m_Menu.Size = dim2(1,0,0,0)
+                    m_Menu.Position = dim_off(0,25)
+                    m_Menu.Size = dim_new(1,0,0,0)
                     m_Menu.Visible = false
                     m_Menu.ZIndex = M_IndexOffset-1
                     m_Menu.Parent = m_ModuleRoot
                     
-                     m_MenuListLayout = inst('UIListLayout')
+                     m_MenuListLayout = inst_new('UIListLayout')
                      m_MenuListLayout.FillDirection = 'Vertical'
                      m_MenuListLayout.SortOrder = 2
                      m_MenuListLayout.HorizontalAlignment = 'Left'
@@ -1150,37 +1156,37 @@ local ui = {} do
                   local m_ModuleIcon
 
                 do
-                    m_ModuleRoot = inst("Frame")
-                    m_ModuleRoot.AutomaticSize = "Y"
+                    m_ModuleRoot = inst_new('Frame')
+                    m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.BackgroundTransparency = 1
                     m_ModuleRoot.BorderSizePixel = 0
-                    m_ModuleRoot.Size = dim2(1, 0, 0, 25)
+                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst("Frame")
+                     m_ModuleBackground = inst_new('Frame')
                      m_ModuleBackground.BackgroundColor3 = colors[6]
                      m_ModuleBackground.BackgroundTransparency = trans[6]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim2(1,0,0,25)
+                     m_ModuleBackground.Size = dim_new(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
-                      m_ModuleEnableEffect = inst("Frame")
+                      m_ModuleEnableEffect = inst_new('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = colors[16]
                       m_ModuleEnableEffect.BackgroundTransparency = 1
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim2(1,0,1,0)
+                      m_ModuleEnableEffect.Size = dim_new(1,0,1,0)
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                      
-                     m_ModuleText = inst('TextBox')
+                     m_ModuleText = inst_new('TextBox')
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.ClearTextOnFocus = true
                      m_ModuleText.Font = font
-                     m_ModuleText.Position = dim2off(0, 0)
-                     m_ModuleText.Size = dim2(1, 0, 1, 0)
+                     m_ModuleText.Position = dim_off(0, 0)
+                     m_ModuleText.Size = dim_new(1, 0, 1, 0)
                      m_ModuleText.Text = text
                      m_ModuleText.TextColor3 = colors[16]
                      m_ModuleText.TextSize = 20
@@ -1191,13 +1197,13 @@ local ui = {} do
                      m_ModuleText.ZIndex = M_IndexOffset
                      m_ModuleText.Parent = m_ModuleBackground
                       
-                      m_ModulePadding = inst("UIPadding")
-                      m_ModulePadding.PaddingLeft = dim2off(5, 0).X
+                      m_ModulePadding = inst_new('UIPadding')
+                      m_ModulePadding.PaddingLeft = dim_off(5, 0).X
                       m_ModulePadding.Parent = m_ModuleText
                      
-                     m_ModuleIcon = inst('TextLabel')
-                     m_ModuleIcon.Size = dim2off(25, 25)
-                     m_ModuleIcon.Position = dim2sca(1,0)
+                     m_ModuleIcon = inst_new('TextLabel')
+                     m_ModuleIcon.Size = dim_off(25, 25)
+                     m_ModuleIcon.Position = dim_sca(1,0)
                      m_ModuleIcon.AnchorPoint = vec2(1,0)
                      m_ModuleIcon.BackgroundTransparency = 1
                      m_ModuleIcon.Font = font
@@ -1259,7 +1265,7 @@ local ui = {} do
                     m_ModuleText.Focused:Connect(function() 
                         pcall(M_Object.Flags.Focused)
                     end)
-                    m_ModuleText:GetPropertyChangedSignal("Text"):Connect(function() 
+                    m_ModuleText:GetPropertyChangedSignal('Text'):Connect(function() 
                         pcall(M_Object.Flags.TextChanged, m_ModuleText.Text)
                     end)
                 end
@@ -1275,34 +1281,34 @@ local ui = {} do
                   local m_ModuleIcon
 
                 do
-                    m_ModuleRoot = inst("Frame")
-                    m_ModuleRoot.Size = dim2(1, 0, 0, 25)
-                    m_ModuleRoot.AutomaticSize = "Y"
+                    m_ModuleRoot = inst_new('Frame')
+                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
+                    m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.BackgroundTransparency = 1
                     m_ModuleRoot.BorderSizePixel = 0
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst("Frame")
+                     m_ModuleBackground = inst_new('Frame')
                      m_ModuleBackground.BackgroundColor3 = colors[6]
                      m_ModuleBackground.BackgroundTransparency = trans[6]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim2(1,0,0,25)
+                     m_ModuleBackground.Size = dim_new(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
                      
-                      m_ModuleEnableEffect = inst("Frame")
+                      m_ModuleEnableEffect = inst_new('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = colors[16]
                       m_ModuleEnableEffect.BackgroundTransparency = 1
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim2(1,0,1,0)
+                      m_ModuleEnableEffect.Size = dim_new(1,0,1,0)
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                       
-                      m_Highlight = inst("Frame")
-                      m_Highlight.Size = dim2sca(1,1)
+                      m_Highlight = inst_new('Frame')
+                      m_Highlight.Size = dim_sca(1,1)
                       m_Highlight.BackgroundColor3 = colors[4]
                       m_Highlight.BackgroundTransparency = trans[4]
                       m_Highlight.Visible = false
@@ -1310,12 +1316,12 @@ local ui = {} do
                       m_Highlight.BorderSizePixel = 0
                       m_Highlight.Parent = m_ModuleBackground
                      
-                     m_ModuleText = inst('TextLabel')
+                     m_ModuleText = inst_new('TextLabel')
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.Font = font
-                     m_ModuleText.Position = dim2off(5, 0)
+                     m_ModuleText.Position = dim_off(5, 0)
                      m_ModuleText.RichText = true
-                     m_ModuleText.Size = dim2(1, -5, 1, 0)
+                     m_ModuleText.Size = dim_new(1, -5, 1, 0)
                      m_ModuleText.Text = text
                      m_ModuleText.TextColor3 = colors[16]
                      m_ModuleText.TextSize = 20
@@ -1325,9 +1331,9 @@ local ui = {} do
                      m_ModuleText.ZIndex = M_IndexOffset
                      m_ModuleText.Parent = m_ModuleBackground
                      
-                     m_ModuleIcon = inst('TextLabel')
-                     m_ModuleIcon.Size = dim2off(25, 25)
-                     m_ModuleIcon.Position = dim2sca(1,0)
+                     m_ModuleIcon = inst_new('TextLabel')
+                     m_ModuleIcon.Size = dim_off(25, 25)
+                     m_ModuleIcon.Position = dim_sca(1,0)
                      m_ModuleIcon.AnchorPoint = vec2(1,0)
                      m_ModuleIcon.BackgroundTransparency = 1
                      m_ModuleIcon.Font = font
@@ -1408,14 +1414,14 @@ local ui = {} do
             local t_Text
              local t_Padding
             do
-                t_Text = inst('TextLabel')
+                t_Text = inst_new('TextLabel')
                 t_Text.BackgroundColor3 = colors[7]
                 t_Text.BackgroundTransparency = trans[7]
                 t_Text.BorderSizePixel = 0
                 t_Text.Font = font
                 t_Text.Parent = self.Menu
                 t_Text.RichText = true
-                t_Text.Size = dim2(1, 0, 0, 25)
+                t_Text.Size = dim_new(1, 0, 0, 25)
                 t_Text.Text = text
                 t_Text.TextColor3 = colors[16]
                 t_Text.TextSize = 18
@@ -1426,8 +1432,8 @@ local ui = {} do
                 t_Text.TextYAlignment = 'Top'
                 t_Text.ZIndex = T_IndexOffset
                 
-                t_Padding = inst('UIPadding')
-                t_Padding.PaddingLeft = dim2off(10, 0).X
+                t_Padding = inst_new('UIPadding')
+                t_Padding.PaddingLeft = dim_off(10, 0).X
                 t_Padding.Parent = t_Text
             end
             
@@ -1435,7 +1441,7 @@ local ui = {} do
                 if (t_Text.TextFits) then
                     break
                 end
-                t_Text.Size += dim2off(0,25)
+                t_Text.Size += dim_off(0,25)
             end
                 
             local T_Object = {} do 
@@ -1478,17 +1484,17 @@ local ui = {} do
              local t_Text
             
             do
-                t_Toggle = inst("Frame")
+                t_Toggle = inst_new('Frame')
                 t_Toggle.BackgroundColor3 = colors[7]
                 t_Toggle.BackgroundTransparency = trans[7]
                 t_Toggle.BorderSizePixel = 0
-                t_Toggle.Size = dim2(1, 0, 0, 25)
+                t_Toggle.Size = dim_new(1, 0, 0, 25)
                 t_Toggle.ZIndex = T_IndexOffset
                 t_Toggle.Parent = self.Menu
                  
-                 t_Text = inst('TextLabel')
-                 t_Text.Size = dim2(1, -10, 1, 0)
-                 t_Text.Position = dim2off(10, 0)
+                 t_Text = inst_new('TextLabel')
+                 t_Text.Size = dim_new(1, -10, 1, 0)
+                 t_Text.Position = dim_off(10, 0)
                  t_Text.BackgroundTransparency = 1
                  t_Text.Font = font
                  t_Text.TextXAlignment = 'Left'
@@ -1500,21 +1506,21 @@ local ui = {} do
                  t_Text.ZIndex = T_IndexOffset
                  t_Text.Parent = t_Toggle
                  
-                 t_Box1 = inst('Frame')
+                 t_Box1 = inst_new('Frame')
                  t_Box1.AnchorPoint = vec2(1,0)
                  t_Box1.BackgroundColor3 = colors[14]
                  t_Box1.BackgroundTransparency = trans[14]
                  t_Box1.BorderSizePixel = 0
-                 t_Box1.Position = dim2(1,-5,0.5,-5)
-                 t_Box1.Size = dim2off(10, 10)
+                 t_Box1.Position = dim_new(1,-5,0.5,-5)
+                 t_Box1.Size = dim_off(10, 10)
                  t_Box1.ZIndex = T_IndexOffset
                  t_Box1.Parent = t_Toggle
                  
                  stroke(t_Box1)
                  
-                 t_Box2 = inst('Frame')
-                 t_Box2.Size = dim2off(8, 8)
-                 t_Box2.Position = dim2off(1,1)
+                 t_Box2 = inst_new('Frame')
+                 t_Box2.Size = dim_off(8, 8)
+                 t_Box2.Position = dim_off(1,1)
                  t_Box2.BackgroundTransparency = 1
                  t_Box2.BackgroundColor3 = colors[4]
                  t_Box2.BorderSizePixel = 0
@@ -1592,26 +1598,26 @@ local ui = {} do
                local d_MenuListLayout
             
             do
-                d_Root = inst("Frame")
-                d_Root.Size = dim2(1, 0, 0, 25)
-                d_Root.AutomaticSize = "Y"
+                d_Root = inst_new('Frame')
+                d_Root.Size = dim_new(1, 0, 0, 25)
+                d_Root.AutomaticSize = 'Y'
                 d_Root.BackgroundTransparency = 1
                 d_Root.BorderSizePixel = 0
                 d_Root.ZIndex = D_IndexOffset-1
                 d_Root.Parent = self.Menu
             
-                 d_Header = inst('Frame')
+                 d_Header = inst_new('Frame')
                  d_Header.Active = true
                  d_Header.BackgroundColor3 = colors[7]
                  d_Header.BackgroundTransparency = trans[7]
                  d_Header.BorderSizePixel = 0
-                 d_Header.Size = dim2(1, 0, 0, 25)
+                 d_Header.Size = dim_new(1, 0, 0, 25)
                  d_Header.ZIndex = D_IndexOffset+1
                  d_Header.Parent = d_Root
                  
-                  d_HeaderText = inst('TextLabel')
-                  d_HeaderText.Size = dim2(1, -10, 1, 0)
-                  d_HeaderText.Position = dim2off(10, 0)
+                  d_HeaderText = inst_new('TextLabel')
+                  d_HeaderText.Size = dim_new(1, -10, 1, 0)
+                  d_HeaderText.Position = dim_off(10, 0)
                   d_HeaderText.BackgroundTransparency = 1
                   d_HeaderText.Font = font
                   d_HeaderText.TextXAlignment = 'Left'
@@ -1623,9 +1629,9 @@ local ui = {} do
                   d_HeaderText.ZIndex = D_IndexOffset+1
                   d_HeaderText.Parent = d_Header
                   
-                  d_HeaderIcon = inst('ImageLabel')
-                  d_HeaderIcon.Size = dim2off(25, 25)
-                  d_HeaderIcon.Position = dim2sca(1,0)
+                  d_HeaderIcon = inst_new('ImageLabel')
+                  d_HeaderIcon.Size = dim_off(25, 25)
+                  d_HeaderIcon.Position = dim_sca(1,0)
                   d_HeaderIcon.AnchorPoint = vec2(1,0)
                   d_HeaderIcon.BackgroundTransparency = 1
                   d_HeaderIcon.ImageColor3 = colors[16]
@@ -1634,10 +1640,10 @@ local ui = {} do
                   d_HeaderIcon.ZIndex = D_IndexOffset+1
                   d_HeaderIcon.Parent = d_Header
                  
-                 d_Menu = inst('Frame')
-                 d_Menu.Size = dim2(1,0,0,0)
-                 d_Menu.AutomaticSize = "Y"
-                 d_Menu.Position = dim2off(0, 25)
+                 d_Menu = inst_new('Frame')
+                 d_Menu.Size = dim_new(1,0,0,0)
+                 d_Menu.AutomaticSize = 'Y'
+                 d_Menu.Position = dim_off(0, 25)
                  d_Menu.BackgroundColor3 = colors[8]
                  d_Menu.BackgroundTransparency = 1--trans[8]
                  d_Menu.BorderSizePixel = 0
@@ -1645,7 +1651,7 @@ local ui = {} do
                  d_Menu.Visible = false
                  d_Menu.Parent = d_Header
                  
-                  d_MenuListLayout = inst('UIListLayout')
+                  d_MenuListLayout = inst_new('UIListLayout')
                   d_MenuListLayout.FillDirection = 'Vertical'
                   d_MenuListLayout.HorizontalAlignment = 'Left'
                   d_MenuListLayout.VerticalAlignment = 'Top'
@@ -1720,17 +1726,17 @@ local ui = {} do
              local h_Text
             
             do
-                h_Hotkey = inst("Frame")
+                h_Hotkey = inst_new('Frame')
                 h_Hotkey.BackgroundColor3 = colors[7]
                 h_Hotkey.BackgroundTransparency = trans[7]
                 h_Hotkey.BorderSizePixel = 0
-                h_Hotkey.Size = dim2(1, 0, 0, 25)
+                h_Hotkey.Size = dim_new(1, 0, 0, 25)
                 h_Hotkey.ZIndex = H_IndexOffset
                 h_Hotkey.Parent = self.Menu
                  
-                 h_Text = inst('TextLabel')
-                 h_Text.Size = dim2(1, -10, 1, 0)
-                 h_Text.Position = dim2off(10, 0)
+                 h_Text = inst_new('TextLabel')
+                 h_Text.Size = dim_new(1, -10, 1, 0)
+                 h_Text.Position = dim_off(10, 0)
                  h_Text.BackgroundTransparency = 1
                  h_Text.Font = font
                  h_Text.TextXAlignment = 'Left'
@@ -1787,17 +1793,17 @@ local ui = {} do
              local h_Text
             
             do
-                h_Hotkey = inst("Frame")
+                h_Hotkey = inst_new('Frame')
                 h_Hotkey.BackgroundColor3 = colors[7]
                 h_Hotkey.BackgroundTransparency = trans[7]
                 h_Hotkey.BorderSizePixel = 0
-                h_Hotkey.Size = dim2(1, 0, 0, 25)
+                h_Hotkey.Size = dim_new(1, 0, 0, 25)
                 h_Hotkey.ZIndex = H_IndexOffset
                 h_Hotkey.Parent = self.Menu
                  
-                 h_Text = inst('TextLabel')
-                 h_Text.Size = dim2(1, -10, 1, 0)
-                 h_Text.Position = dim2off(10, 0)
+                 h_Text = inst_new('TextLabel')
+                 h_Text.Size = dim_new(1, -10, 1, 0)
+                 h_Text.Position = dim_off(10, 0)
                  h_Text.BackgroundTransparency = 1
                  h_Text.Font = font
                  h_Text.TextXAlignment = 'Left'
@@ -1869,16 +1875,17 @@ local ui = {} do
             args['step'] = args['step'] or 1
             
             
-            if (tostring(args['step']):match("e%-")) then
-                error(("%s failed; %s was too %s"):format('module_create_slider', 'args.step', 'small'))
+            if (tostring(args['step']):match('e%-')) then
+                error(('%s failed; %s was too %s'):format('module_create_slider', 'args.step', 'small'))
             end
-            if (tostring(args['step']):match("e%+")) then 
-                error(("%s failed; %s was too %s"):format('module_create_slider', 'args.step', 'large'))
+            if (tostring(args['step']):match('e%+')) then 
+                error(('%s failed; %s was too %s'):format('module_create_slider', 'args.step', 'large'))
             end
             
             local S_IndexOffset = self.ZIndex+1
             
             local s_Slider
+             local s_InputBox
              local s_Text
               local s_TextPad
              local s_Amount
@@ -1886,21 +1893,37 @@ local ui = {} do
               local s_SliderBar
               
             do
-                s_Slider = inst("Frame")
+                s_Slider = inst_new('Frame')
                 s_Slider.BackgroundColor3 = colors[7]
                 s_Slider.BackgroundTransparency = trans[7]
                 s_Slider.BorderSizePixel = 0
-                s_Slider.Size = dim2(1, 0, 0, 25)
+                s_Slider.Size = dim_new(1, 0, 0, 25)
                 s_Slider.ZIndex = S_IndexOffset
                 s_Slider.Parent = self.Menu
                  
-                 s_Text = inst('TextLabel')
+                 s_InputBox = inst_new('TextBox')
+                 s_InputBox.BackgroundColor3 = colors[7]
+                 s_InputBox.BackgroundTransparency = trans[7]
+                 s_InputBox.BorderSizePixel = 0
+                 s_InputBox.Font = font
+                 s_InputBox.Size = dim_new(1, 0, 1, 0)
+                 s_InputBox.Text = 'Enter value'
+                 s_InputBox.TextColor3 = colors[16]
+                 s_InputBox.TextSize = 18
+                 s_InputBox.TextStrokeColor3 = colors[18]
+                 s_InputBox.TextStrokeTransparency = 0
+                 s_InputBox.TextXAlignment = 'Center'
+                 s_InputBox.Visible = false
+                 s_InputBox.ZIndex = S_IndexOffset + 3
+                 s_InputBox.Parent = s_Slider
+                 
+                 s_Text = inst_new('TextLabel')
                  s_Text.BackgroundColor3 = colors[7]
                  s_Text.BackgroundTransparency = 0.6
                  s_Text.BorderSizePixel = 0
                  s_Text.Font = font
-                 s_Text.Position = dim2off(0, 0)
-                 s_Text.Size = dim2sca(1, 1)
+                 s_Text.Position = dim_off(0, 0)
+                 s_Text.Size = dim_sca(1, 1)
                  s_Text.Text = text
                  s_Text.TextColor3 = colors[16]
                  s_Text.TextSize = 18
@@ -1911,13 +1934,13 @@ local ui = {} do
                  s_Text.ZIndex = S_IndexOffset + 1
                  s_Text.Parent = s_Slider
                   
-                  s_TextPad = inst("UIPadding")
-                  s_TextPad.PaddingLeft = dim2off(10, 0).X
+                  s_TextPad = inst_new('UIPadding')
+                  s_TextPad.PaddingLeft = dim_off(10, 0).X
                   s_TextPad.Parent = s_Text 
                  
-                 s_Amount = inst('TextLabel')
-                 s_Amount.Size = dim2(0, 30, 1, 0)
-                 s_Amount.Position = dim2(1,-5,0,0)
+                 s_Amount = inst_new('TextLabel')
+                 s_Amount.Size = dim_new(0, 30, 1, 0)
+                 s_Amount.Position = dim_new(1,-5,0,0)
                  s_Amount.AnchorPoint = vec2(1,0)
                  s_Amount.BackgroundTransparency = 1
                  s_Amount.BorderSizePixel = 0
@@ -1931,19 +1954,19 @@ local ui = {} do
                  s_Amount.ZIndex = S_IndexOffset + 1 
                  s_Amount.Parent = s_Slider
                  
-                 s_SliderBarBg = inst("Frame")
+                 s_SliderBarBg = inst_new('Frame')
                  s_SliderBarBg.BackgroundColor3 = colors[14]
                  s_SliderBarBg.BackgroundTransparency = trans[14]
                  s_SliderBarBg.BorderSizePixel = 0
                  s_SliderBarBg.ClipsDescendants = true
-                 s_SliderBarBg.Position = dim2(0, 8, 0.5, -3)
-                 s_SliderBarBg.Size = dim2(1, -16, 0, 6)
+                 s_SliderBarBg.Position = dim_new(0, 8, 0.5, -3)
+                 s_SliderBarBg.Size = dim_new(1, -16, 0, 6)
                  s_SliderBarBg.ZIndex = S_IndexOffset
                  s_SliderBarBg.Parent = s_Slider
                  
-                  s_SliderBar = inst("Frame")
-                  s_SliderBar.Size = dim2sca(1, 1)
-                  s_SliderBar.Position = dim2(0,0)
+                  s_SliderBar = inst_new('Frame')
+                  s_SliderBar.Size = dim_sca(1, 1)
+                  s_SliderBar.Position = dim_new(0,0)
                   s_SliderBar.AnchorPoint = vec2(1, 0)
                   s_SliderBar.BackgroundColor3 = colors[13]
                   s_SliderBar.BackgroundTransparency = trans[13]
@@ -1953,8 +1976,8 @@ local ui = {} do
                  
             end
             
-            local StepFormat = #(tostring(args['step']):match("%.(%d+)") or '')
-            StepFormat = ("%."..StepFormat.."f")
+            local StepFormat = #(tostring(args['step']):match('%.(%d+)') or '')
+            StepFormat = ('%.'..StepFormat..'f')
             
             s_Amount.Text = StepFormat:format(args['cur'])
             
@@ -2003,7 +2026,7 @@ local ui = {} do
                     s_Slider.BackgroundColor3 = colors[11]
                     
                     twn(s_Text, {BackgroundTransparency = 1, TextTransparency = 1, TextStrokeTransparency = 1},true)
-                    twn(s_Amount, {Position = dim2(0.5,15,0,0)}, true)
+                    twn(s_Amount, {Position = dim_new(0.5,15,0,0)}, true)
                     
                     local tt = S_Object.Tooltip
                     if (tt) then
@@ -2016,7 +2039,7 @@ local ui = {} do
                 s_Slider.MouseLeave:Connect(function() 
                     s_Slider.BackgroundColor3 = colors[7]
                     twn(s_Text, {BackgroundTransparency = 0.2, TextTransparency = 0, TextStrokeTransparency = 0},true)
-                    twn(s_Amount, {Position = dim2(1,-5,0,0)}, true)
+                    twn(s_Amount, {Position = dim_new(1,-5,0,0)}, true)
                     
                     if (w_Tooltip.Text == S_Object.Tooltip) then
                         w_TooltipHeader.Visible = false
@@ -2024,20 +2047,41 @@ local ui = {} do
                 end)
                 
                 s_SliderBarBg.InputBegan:Connect(function(io) 
-                    if (io.UserInputType.Value == 0) then
+                    local v = io.UserInputType.Value
+                    if (v == 0) then
                         S_Object:SetValuePos(io.Position.X)
                         
-                        DragConn = serv_uis.InputChanged:Connect(function(io) 
+                        DragConn = serv_uinput.InputChanged:Connect(function(io) 
                             if (io.UserInputType.Value == 4) then
                                 S_Object:SetValuePos(io.Position.X)
                             end
                         end)
+                    elseif (v == 1) then
+                        s_InputBox.Visible = true
+                        s_InputBox.Text = 'Enter new value'
                     end
                 end)
                 
                 s_SliderBarBg.InputEnded:Connect(function(io) 
                     if (io.UserInputType.Value == 0) then
                         DragConn:Disconnect()
+                    end
+                end)
+                
+                s_InputBox.FocusLost:Connect(function(enter) 
+                    if not enter then return end
+                    
+                    local t = s_InputBox.Text
+                    local a = tonumber(t)
+                    if (a == nil) then
+                        if (t == '') then
+                            s_InputBox.Visible = false
+                        else
+                            s_InputBox.Text = 'Not a number'
+                        end
+                    else
+                        S_Object:SetValue(a)
+                        s_InputBox.Visible = false
                     end
                 end)
             end
@@ -2054,14 +2098,14 @@ local ui = {} do
             do
 
                 
-                i_Input = inst('TextBox')
+                i_Input = inst_new('TextBox')
                 i_Input.BackgroundColor3 = colors[7]
                 i_Input.BackgroundTransparency = trans[7]
                 i_Input.BorderSizePixel = 0 
                 i_Input.ClearTextOnFocus = true
                 i_Input.Font = font
-                i_Input.Position = dim2off(0, 0)
-                i_Input.Size = dim2(1, 0, 0, 25)
+                i_Input.Position = dim_off(0, 0)
+                i_Input.Size = dim_new(1, 0, 0, 25)
                 i_Input.Text = text
                 i_Input.TextColor3 = colors[16]
                 i_Input.TextSize = 18
@@ -2072,17 +2116,17 @@ local ui = {} do
                 i_Input.ZIndex = I_IndexOffset
                 i_Input.Parent = self.Menu
                  
-                 i_Padding = inst("UIPadding")
-                 i_Padding.PaddingLeft = dim2off(10, 0).X
+                 i_Padding = inst_new('UIPadding')
+                 i_Padding.PaddingLeft = dim_off(10, 0).X
                  i_Padding.Parent = i_Input
                 
-                i_Icon = inst('TextLabel')
+                i_Icon = inst_new('TextLabel')
                 i_Icon.AnchorPoint = vec2(1,0)
                 i_Icon.BackgroundTransparency = 1
                 i_Icon.Font = font
-                i_Icon.Position = dim2sca(1,0)
+                i_Icon.Position = dim_sca(1,0)
                 i_Icon.Rotation = 0
-                i_Icon.Size = dim2off(25, 25)
+                i_Icon.Size = dim_off(25, 25)
                 i_Icon.Text = '🅃'
                 i_Icon.TextColor3 = colors[16]
                 i_Icon.TextSize = 18
@@ -2138,7 +2182,7 @@ local ui = {} do
                 i_Input.Focused:Connect(function() 
                     pcall(I_Object.Flags.Focused)
                 end)
-                i_Input:GetPropertyChangedSignal("Text"):Connect(function() 
+                i_Input:GetPropertyChangedSignal('Text'):Connect(function() 
                     pcall(I_Object.Flags.TextChanged, i_Input.Text)
                 end)
             end
@@ -2156,28 +2200,28 @@ local ui = {} do
              local b_Icon
             
             do
-                b_Background = inst("Frame")
+                b_Background = inst_new('Frame')
                 b_Background.BackgroundColor3 = colors[7] 
                 b_Background.BackgroundTransparency = trans[7]
                 b_Background.BorderSizePixel = 0
-                b_Background.Size = dim2(1,0,0,25)
+                b_Background.Size = dim_new(1,0,0,25)
                 b_Background.ZIndex = B_IndexOffset
                 b_Background.Parent = self.Menu
                 
-                 b_EnableEffect = inst("Frame")
+                 b_EnableEffect = inst_new('Frame')
                  b_EnableEffect.BackgroundColor3 = colors[16]
                  b_EnableEffect.BackgroundTransparency = 1
                  b_EnableEffect.BorderSizePixel = 0
                  b_EnableEffect.ClipsDescendants = true
-                 b_EnableEffect.Size = dim2(1,0,1,0)
+                 b_EnableEffect.Size = dim_new(1,0,1,0)
                  b_EnableEffect.ZIndex = B_IndexOffset
                  b_EnableEffect.Parent = b_Background
                 
-                 b_Text = inst('TextLabel')
+                 b_Text = inst_new('TextLabel')
                  b_Text.BackgroundTransparency = 1
                  b_Text.Font = font
-                 b_Text.Position = dim2off(10, 0)
-                 b_Text.Size = dim2(1, -10, 1, 0)
+                 b_Text.Position = dim_off(10, 0)
+                 b_Text.Size = dim_new(1, -10, 1, 0)
                  b_Text.Text = text
                  b_Text.TextColor3 = colors[16]
                  b_Text.TextSize = 18
@@ -2187,13 +2231,13 @@ local ui = {} do
                  b_Text.ZIndex = B_IndexOffset
                  b_Text.Parent = b_Background
                  
-                 b_Icon = inst('TextLabel')
+                 b_Icon = inst_new('TextLabel')
                  b_Icon.AnchorPoint = vec2(1,0)
                  b_Icon.BackgroundTransparency = 1
                  b_Icon.Font = font
-                 b_Icon.Position = dim2sca(1,0)
+                 b_Icon.Position = dim_sca(1,0)
                  b_Icon.Rotation = 0
-                 b_Icon.Size = dim2off(25, 25)
+                 b_Icon.Size = dim_off(25, 25)
                  b_Icon.Text = '⦿'
                  b_Icon.TextColor3 = colors[16]
                  b_Icon.TextSize = 18
@@ -2269,19 +2313,19 @@ local ui = {} do
              local o_EnableEffect2
             
             do
-                o_Option = inst("Frame")
+                o_Option = inst_new('Frame')
                 o_Option.BackgroundColor3 = colors[8]
                 o_Option.BackgroundTransparency = trans[8]
                 o_Option.BorderSizePixel = 0
-                o_Option.Size = dim2(1, 0, 0, 25)
+                o_Option.Size = dim_new(1, 0, 0, 25)
                 o_Option.ZIndex = O_IndexOffset
                 o_Option.Parent = self.Menu
                  
-                 o_Text = inst('TextLabel')
+                 o_Text = inst_new('TextLabel')
                  o_Text.BackgroundTransparency = 1
                  o_Text.Font = font
-                 o_Text.Position = dim2off(15, 0)
-                 o_Text.Size = dim2(1, -15, 1, 0)
+                 o_Text.Position = dim_off(15, 0)
+                 o_Text.Size = dim_new(1, -15, 1, 0)
                  o_Text.Text = text
                  o_Text.TextColor3 = colors[16]
                  o_Text.TextSize = 18
@@ -2291,18 +2335,18 @@ local ui = {} do
                  o_Text.ZIndex = O_IndexOffset
                  o_Text.Parent = o_Option
                  
-                 o_EnableEffect = inst("Frame")
+                 o_EnableEffect = inst_new('Frame')
                  o_EnableEffect.BackgroundColor3 = colors[16]
                  o_EnableEffect.BackgroundTransparency = 0.96
                  o_EnableEffect.BorderSizePixel = 0
                  o_EnableEffect.ClipsDescendants = true
-                 o_EnableEffect.Size = dim2(0,0,1,0)
+                 o_EnableEffect.Size = dim_new(0,0,1,0)
                  o_EnableEffect.ZIndex = O_IndexOffset
                  o_EnableEffect.Parent = o_Option
                  
-                  o_EnableEffect2 = inst("Frame")
+                  o_EnableEffect2 = inst_new('Frame')
                   o_EnableEffect2.BackgroundColor3 = colors[4]
-                  o_EnableEffect2.Size = dim2(0,2,1,0)
+                  o_EnableEffect2.Size = dim_new(0,2,1,0)
                   o_EnableEffect2.BorderSizePixel = 0
                   o_EnableEffect2.ZIndex = O_IndexOffset
                   o_EnableEffect2.Parent = o_EnableEffect
@@ -2373,15 +2417,15 @@ local ui = {} do
          local m_Menu
           local m_MenuListLayout
         
-        m_Header = inst('ImageButton')
+        m_Header = inst_new('ImageButton')
         m_Header.Active = true
         m_Header.AutoButtonColor = false
         m_Header.BackgroundColor3 = colors[5]
         m_Header.BackgroundTransparency = trans[5]
         m_Header.BorderSizePixel = 0
         m_Header.ClipsDescendants = false
-        m_Header.Size = dim2off(250, 30)
-        m_Header.Position = dim2off(
+        m_Header.Size = dim_off(250, 30)
+        m_Header.Position = dim_off(
             (0.1*((M_Id-1)%6) * monitor_resolution.X)+(100*((M_Id-1)%6)+100), 
             0
         )
@@ -2395,22 +2439,22 @@ local ui = {} do
                 break
             end
         end
-        m_Header.Position += dim2off(0,y)
+        m_Header.Position += dim_off(0,y)
         m_Header.ZIndex = M_IndexOffset+2
         m_Header.Parent = w_Backframe
         
         
         
-         m_HeaderEnableEffect = inst("Frame")
+         m_HeaderEnableEffect = inst_new('Frame')
          m_HeaderEnableEffect.BackgroundColor3 = colors[4]
-         m_HeaderEnableEffect.Size = dim2(0,0,1,0)
+         m_HeaderEnableEffect.Size = dim_new(0,0,1,0)
          m_HeaderEnableEffect.BorderSizePixel = 0
          m_HeaderEnableEffect.ZIndex = M_IndexOffset+2
          m_HeaderEnableEffect.Parent = m_Header
         
-         m_HeaderText = inst('TextLabel')
-         m_HeaderText.Size = dim2(1, 0, 1, 0)
-         m_HeaderText.Position = dim2off(0, 0)
+         m_HeaderText = inst_new('TextLabel')
+         m_HeaderText.Size = dim_new(1, 0, 1, 0)
+         m_HeaderText.Position = dim_off(0, 0)
          m_HeaderText.BackgroundTransparency = 1
          m_HeaderText.Font = font
          m_HeaderText.TextXAlignment = 'Center'
@@ -2422,9 +2466,9 @@ local ui = {} do
          m_HeaderText.ZIndex = M_IndexOffset+2
          m_HeaderText.Parent = m_Header
          
-         m_HeaderIcon = inst('ImageLabel')
-         m_HeaderIcon.Size = dim2off(30, 30)
-         m_HeaderIcon.Position = dim2sca(1,0)
+         m_HeaderIcon = inst_new('ImageLabel')
+         m_HeaderIcon.Size = dim_off(30, 30)
+         m_HeaderIcon.Position = dim_sca(1,0)
          m_HeaderIcon.AnchorPoint = vec2(1,0)
          m_HeaderIcon.BackgroundTransparency = 1
          m_HeaderIcon.ImageColor3 = colors[16]
@@ -2433,18 +2477,18 @@ local ui = {} do
          m_HeaderIcon.ZIndex = M_IndexOffset+2
          m_HeaderIcon.Parent = m_Header
         
-        m_Menu = inst('Frame')
-        m_Menu.AutomaticSize = "Y"
+        m_Menu = inst_new('Frame')
+        m_Menu.AutomaticSize = 'Y'
         m_Menu.BackgroundColor3 = colors[6]
         m_Menu.BackgroundTransparency = 1--trans[6]
         m_Menu.BorderSizePixel = 0
-        m_Menu.Position = dim2off(0, 30)
-        m_Menu.Size = dim2(1,0,0,0)
+        m_Menu.Position = dim_off(0, 30)
+        m_Menu.Size = dim_new(1,0,0,0)
         m_Menu.Visible = false
         m_Menu.ZIndex = M_IndexOffset
         m_Menu.Parent = m_Header
         
-         m_MenuListLayout = inst('UIListLayout')
+         m_MenuListLayout = inst_new('UIListLayout')
          m_MenuListLayout.FillDirection = 'Vertical'
          m_MenuListLayout.HorizontalAlignment = 'Left'
          m_MenuListLayout.VerticalAlignment = 'Top'
@@ -2486,14 +2530,14 @@ local ui = {} do
                     local start_pos = io.Position
                     start_pos = vec2(start_pos.X, start_pos.Y)
                     
-                    ui_Connections['menu-'..M_Id] = serv_uis.InputChanged:Connect(function(io) 
+                    ui_Connections['menu-'..M_Id] = serv_uinput.InputChanged:Connect(function(io) 
                         if (io.UserInputType.Value == 4) then
                             local curr_pos = io.Position
                             curr_pos = vec2(curr_pos.X, curr_pos.Y)
                             
                             local destination = root_pos + (curr_pos - start_pos) + monitor_inset
                             
-                            twn(m_Header, {Position = dim2off(destination.X, destination.Y)})
+                            twn(m_Header, {Position = dim_off(destination.X, destination.Y)})
                         end
                     end)
                     return
@@ -2558,123 +2602,164 @@ local ui = {} do
         return w_Backframe
     end
     
-    local notifs = {}
-    local notifsounds = {'rbxassetid://8747340426','rbxassetid://8745692251','','rbxassetid://8811806856'}
-    function ui:Notify(title, text, duration, tone, warning) 
-        duration = mc(duration or 2, 0.1, 30)
+    do
+        local notifs = {}
+        local notifsounds = {
+            high = 'rbxassetid://8747340426',
+            low = 'rbxassetid://8745692251',
+            none = '',
+            warn = 'rbxassetid://8811806856'
+        }
         
         local m_Notif
-         local m_Description
-         local m_Header
-          local m_Icon
-          local m_Text
+        local m_Description
+        local m_Header
+        local m_Icon
+        local m_Text
         
-        local sound
+        local m_Sound
         do 
             
-            m_Notif = inst('Frame')
+            m_Notif = inst_new('Frame')
             m_Notif.AnchorPoint = vec2(1,1)
             m_Notif.BackgroundColor3 = colors[6]
             m_Notif.BackgroundTransparency = trans[6]
             m_Notif.BorderSizePixel = 0
-            m_Notif.Position = dim2(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
-            m_Notif.Size = dim2off(200, 125)
+            m_Notif.Position = dim_new(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
+            m_Notif.Size = dim_off(200, 125)
             m_Notif.ZIndex = 162
-            m_Notif.Parent = w_Screen
+            --m_Notif.Parent = w_Screen
             
             stroke(m_Notif)
             
-            sound = inst("Sound")
-            sound.Playing = true
-            sound.SoundId = notifsounds[tone or 3]
-            sound.Volume = 2
-            sound.Parent = m_Notif 
+            m_Sound = inst_new('Sound')
+            --m_Sound.Playing = true
+            --m_Sound.SoundId = notifsounds[tone or 3]
+            m_Sound.Volume = 2
+            --m_Sound.Parent = m_Notif 
             
-             m_Progress = inst("Frame")
-             m_Progress.BackgroundColor3 = colors[4]
-             m_Progress.BorderSizePixel = 0
-             m_Progress.Position = dim2off(0, 30)
-             m_Progress.Size = dim2(1,0,0,1)
-             m_Progress.ZIndex = 163
-             m_Progress.Parent = m_Notif
+            m_Progress = inst_new('Frame')
+            m_Progress.BackgroundColor3 = colors[4]
+            m_Progress.BorderSizePixel = 0
+            m_Progress.Position = dim_off(0, 30)
+            m_Progress.Size = dim_new(1,0,0,1)
+            m_Progress.ZIndex = 163
+            --m_Progress.Parent = m_Notif
             
-             m_Header = inst('Frame')
-             m_Header.BackgroundColor3 = colors[5]
-             m_Header.BackgroundTransparency = trans[5]
-             m_Header.BorderSizePixel = 0
-             m_Header.Size = dim2(1,0,0,30)
-             m_Header.ZIndex = 162
-             m_Header.Parent = m_Notif
-             
-              stroke(m_Header)
-             
-              m_Text = inst('TextLabel')
-              m_Text.BackgroundTransparency = 1
-              m_Text.Font = font
-              m_Text.Position = dim2off(32, 0)
-              m_Text.RichText = true
-              m_Text.Size = dim2(1, -32, 1, 0)
-              m_Text.Text = tostring(title)
-              m_Text.TextColor3 = colors[16]
-              m_Text.TextSize = 22
-              m_Text.TextStrokeColor3 = colors[18]
-              m_Text.TextStrokeTransparency = 0
-              m_Text.TextXAlignment = 'Left'
-              m_Text.ZIndex = 162
-              m_Text.Parent = m_Header
-              
-              m_Description = inst('TextLabel')
-              m_Description.BackgroundTransparency = 1
-              m_Description.Font = font
-              m_Description.Position = dim2off(4, 32)
-              m_Description.RichText = true
-              m_Description.Size = dim2(1, -4, 1, -32)
-              m_Description.Text = tostring(text)
-              m_Description.TextColor3 = colors[16]
-              m_Description.TextSize = 20
-              m_Description.TextStrokeColor3 = colors[18]
-              m_Description.TextStrokeTransparency = 0
-              m_Description.TextWrapped = true
-              m_Description.TextXAlignment = 'Left'
-              m_Description.TextYAlignment = 'Top'
-              m_Description.ZIndex = 162
-              m_Description.Parent = m_Notif
-              
-              m_Icon = inst('ImageLabel')
-              m_Icon.Size = dim2off(26, 26)
-              m_Icon.Position = dim2off(2,2)
-              m_Icon.BackgroundTransparency = 1
-              m_Icon.ImageColor3 = colors[4]
-              
-              m_Icon.Image = not warning and 'rbxassetid://8854459207' or 'rbxassetid://8854458547'
-              m_Icon.Rotation = 0
-              m_Icon.ZIndex = 162
-              m_Icon.Parent = m_Header
+            m_Header = inst_new('Frame')
+            m_Header.BackgroundColor3 = colors[5]
+            m_Header.BackgroundTransparency = trans[5]
+            m_Header.BorderSizePixel = 0
+            m_Header.Size = dim_new(1,0,0,30)
+            m_Header.ZIndex = 162
+            --m_Header.Parent = m_Notif
+            
+            stroke(m_Header)
+            
+            m_Text = inst_new('TextLabel')
+            m_Text.BackgroundTransparency = 1
+            m_Text.Font = font
+            m_Text.Position = dim_off(32, 0)
+            m_Text.RichText = true
+            m_Text.Size = dim_new(1, -32, 1, 0)
+            m_Text.Text = ''
+            m_Text.TextColor3 = colors[16]
+            m_Text.TextSize = 22
+            m_Text.TextStrokeColor3 = colors[18]
+            m_Text.TextStrokeTransparency = 0
+            m_Text.TextXAlignment = 'Left'
+            m_Text.ZIndex = 162
+            --m_Text.Parent = m_Header
+            
+            m_Description = inst_new('TextLabel')
+            m_Description.BackgroundTransparency = 1
+            m_Description.Font = font
+            m_Description.Position = dim_off(4, 32)
+            m_Description.RichText = true
+            m_Description.Size = dim_new(1, -4, 1, -32)
+            m_Description.Text = tostring(text)
+            m_Description.TextColor3 = colors[16]
+            m_Description.TextSize = 20
+            m_Description.TextStrokeColor3 = colors[18]
+            m_Description.TextStrokeTransparency = 0
+            m_Description.TextWrapped = true
+            m_Description.TextXAlignment = 'Left'
+            m_Description.TextYAlignment = 'Top'
+            m_Description.ZIndex = 162
+            --m_Description.Parent = m_Notif
+            
+            m_Icon = inst_new('ImageLabel')
+            m_Icon.Size = dim_off(26, 26)
+            m_Icon.Position = dim_off(2,2)
+            m_Icon.BackgroundTransparency = 1
+            m_Icon.ImageColor3 = colors[4]
+            
+            --m_Icon.Image = not warning and 'rbxassetid://8854459207' or 'rbxassetid://8854458547'
+            m_Icon.Rotation = 0
+            m_Icon.ZIndex = 162
+            --m_Icon.Parent = m_Header
         end
         
-        for i = 1, 25 do
-            if (m_Text.TextFits) then break end
-            m_Notif.Size += dim2off(25, 0)
+        
+        
+        
+        function ui:Notify(title, text, duration, tone, warning) 
+            duration = mc(duration or 2, 0.1, 30)
+            
+            local m_Notif = m_Notif:Clone()
+            local m_Description = m_Description:Clone()
+            local m_Header = m_Header:Clone()
+            local m_Progress = m_Progress:Clone()
+            local m_Icon = m_Icon:Clone()
+            local m_Text = m_Text:Clone()
+            local m_Sound = m_Sound:Clone()
+            
+            do
+                m_Description.Parent = m_Notif
+                m_Sound.Parent = m_Notif
+                m_Progress.Parent = m_Notif
+                m_Header.Parent = m_Notif
+                m_Icon.Parent = m_Header
+                m_Text.Parent = m_Header
+            end do
+                m_Text.Text = title
+                m_Description.Text = text
+            end
+            
+            m_Sound.SoundId = notifsounds[tone or 'none']
+            m_Sound.Playing = true
+            
+            m_Icon.Image = warning and 'rbxassetid://8854458547' or 'rbxassetid://8854459207'
+            
+            
+            
+            m_Notif.Parent = w_Screen
+            
+            for i = 1, 25 do
+                if (m_Text.TextFits) then break end
+                m_Notif.Size += dim_off(25, 0)
+            end
+            
+            
+            
+            ins(notifs, m_Notif)
+            twn(m_Notif, {Position = m_Notif.Position - dim_off(300,0)}, true)
+            local j = ctwn(m_Progress, {Size = dim_off(0, 1)}, duration)
+            j.Completed:Wait()
+            do
+                for i = 1, #notifs do 
+                    if (notifs[i] == m_Notif) then 
+                        rem(notifs, i) 
+                    end 
+                end
+                for i = 1, #notifs do 
+                    twn(notifs[i], {Position = dim_new(1, -25, 1, -(((i-1)*125)+(i*25)))}, true)
+                end
+                twn(m_Notif, {Position = dim_new(1, -25, 1, 200)}, true).Completed:Wait()
+                m_Notif:Destroy()
+            end
         end
-        
-        ins(notifs, m_Notif)
-        
-        twn(m_Notif, {Position = m_Notif.Position - dim2off(300,0)},true)
-        ctwn(m_Progress, {Size = dim2off(0, 1)}, duration)
-        delay(duration, function() 
-            for i = 1, #notifs do 
-                if (notifs[i] == m_Notif) then 
-                    rem(notifs, i) 
-                end 
-            end
-            for i = 1, #notifs do 
-                twn(notifs[i], {Position = dim2(1, -25, 1, -(((i-1)*125)+(i*25)))}, true)
-            end
-            twn(m_Notif, {Position = dim2(1, -25, 1, 200)}, true).Completed:Wait()
-            m_Notif:Destroy()
-        end)
     end
-    
     
     ui.Flags = {}
     ui.Flags.Destroying = true
@@ -2689,13 +2774,13 @@ local ui = {} do
             
             if (W_WindowOpen) then
                 w_Backframe.Visible = true
-                serv_uis.MouseIconEnabled = false
+                serv_uinput.MouseIconEnabled = false
                 twn(w_MouseCursor, {ImageTransparency = 0.1}, true)
-                twn(w_Backframe, {Position = dim2(0, 0, 0, 0)}, true)
+                twn(w_Backframe, {Position = dim_new(0, 0, 0, 0)}, true)
             else
-                serv_uis.MouseIconEnabled = true
+                serv_uinput.MouseIconEnabled = true
                 twn(w_MouseCursor, {ImageTransparency = 1}, true)
-                twn(w_Backframe, {Position = dim2(0, 0, -1, 0)}, true).Completed:Connect(function() w_Backframe.Visible = false end)
+                twn(w_Backframe, {Position = dim_new(0, 0, -1, 0)}, true).Completed:Connect(function() w_Backframe.Visible = false end)
             end
         end
     end,false,999999,Enum.KeyCode.RightShift)
@@ -2749,32 +2834,40 @@ local isexecclosure = is_synapse_function or
     isoxygenfunction
     
 -- Disable non exec cons
-local function ratio(signal) 
+
+local disabled_signals = {}
+local function dnec(signal, id)
+    if (disabled_signals[id]) then return end
+    
     local average = getconnections(signal)
     for i = 1, #average do 
         local connection = average[i]
         local confunc = connection.Function
         
-        if (type(confunc) == "function" and islclosure(confunc)) then
+        if (type(confunc) == 'function' and islclosure(confunc)) then
             if (not isexecclosure(confunc)) then
                 connection:Disable()
             end
         end
     end
+    
+    disabled_signals[id] = true
 end
 -- Reenable non exec cons
-local function unratio(signal)
+local function enec(signal, id)
     local average = getconnections(signal)
     for i = 1, #average do 
         local connection = average[i]
         local confunc = connection.Function
         
-        if (type(confunc) == "function" and islclosure(confunc)) then
+        if (type(confunc) == 'function' and islclosure(confunc)) then
             if (not isexecclosure(confunc)) then
                 connection:Enable()
             end
         end
     end
+    
+    disabled_signals[id] = nil
 end
 
 local cons = {}
@@ -2783,14 +2876,14 @@ local cons = {}
 local l_plr = serv_players.LocalPlayer
 local l_mouse = l_plr:GetMouse()
 local l_chr = l_plr.Character
-local l_hum = l_chr and l_chr:FindFirstChild("Humanoid")
-local l_humrp = l_chr and l_chr:FindFirstChild("HumanoidRootPart")
-local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass("Camera")
+local l_hum = l_chr and l_chr:FindFirstChild('Humanoid')
+local l_humrp = l_chr and l_chr:FindFirstChild('HumanoidRootPart')
+local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass('Camera')
 -- Character respawn handler
 cons['chr'] = l_plr.CharacterAdded:Connect(function(c) 
     l_chr = c
-    l_hum = c:WaitForChild("Humanoid",3)
-    l_humrp = c:WaitForChild("HumanoidRootPart",3)
+    l_hum = c:WaitForChild('Humanoid',3)
+    l_humrp = c:WaitForChild('HumanoidRootPart',3)
 end)
 
 
@@ -2817,16 +2910,16 @@ local function addplr(p)
         ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
             --printconsole('Character added, updating handler vars', 255, 255, 0)
             ptable['chr'] = c
-            ptable['hum'] = c:WaitForChild("Humanoid", 1.5)
-            ptable['rp'] = c:WaitForChild("HumanoidRootPart", 1.5)
+            ptable['hum'] = c:WaitForChild('Humanoid', 1.5)
+            ptable['rp'] = c:WaitForChild('HumanoidRootPart', 1.5)
             --printconsole('Updated', 0, 255, 0)
         end)
         --printconsole('Setup connections', 192, 192, 192)
         local chr = p.Character
         if (chr) then
             ptable['chr'] = chr
-            ptable['hum'] = chr:FindFirstChild("Humanoid")
-            ptable['rp'] = chr:FindFirstChild("HumanoidRootPart")
+            ptable['hum'] = chr:FindFirstChild('Humanoid')
+            ptable['rp'] = chr:FindFirstChild('HumanoidRootPart')
         end
         --printconsole('Localized character stuff', 192, 192, 192)
         --printconsole(('Setup ptable of %s'):format(PlayerName), 0, 255, 0)
@@ -2862,10 +2955,10 @@ end
 
 cons['p1'] = serv_players.PlayerAdded:Connect(addplr)
 cons['p2'] = serv_players.PlayerRemoving:Connect(remplr)
-cons['cam'] = workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function() 
+cons['cam'] = workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function() 
     local cc = workspace.CurrentCamera
     if not cc then
-        cc = workspace:FindFirstChildOfClass("Camera")
+        cc = workspace:FindFirstChildOfClass('Camera')
     end
     l_cam = cc
 end)
@@ -2877,105 +2970,105 @@ end
 
 
 local fakechar do 
-    fakechar = inst("Model")
+    fakechar = inst_new('Model')
     fakechar.Name = getnext()
 
 
-    local Head = inst("Part")
+    local Head = inst_new('Part')
     Head.Anchored = false
     Head.CanCollide = false
-    Head.Name = "Head"
+    Head.Name = 'Head'
     Head.Size = vec3(2, 1, 1)
     Head.Transparency = 0
     Head.Parent = fakechar
 
-    local Torso = inst("Part")
+    local Torso = inst_new('Part')
     Torso.Anchored = false
     Torso.CanCollide = false
-    Torso.Name = "Torso"
+    Torso.Name = 'Torso'
     Torso.Size = vec3(2, 2, 1)
     Torso.Parent = fakechar
 
-    local Left_Arm = inst("Part")
+    local Left_Arm = inst_new('Part')
     Left_Arm.Anchored = false
     Left_Arm.CanCollide = false
-    Left_Arm.Name = "Left Arm"
+    Left_Arm.Name = 'Left Arm'
     Left_Arm.Size = vec3(1, 2, 1)
     Left_Arm.Parent = fakechar
 
-    local Right_Arm = inst("Part")
+    local Right_Arm = inst_new('Part')
     Right_Arm.Anchored = false
     Right_Arm.CanCollide = false
-    Right_Arm.Name = "Right Arm"
+    Right_Arm.Name = 'Right Arm'
     Right_Arm.Size = vec3(1, 2, 1)
     Right_Arm.Parent = fakechar
 
-    local Left_Leg = inst("Part")
+    local Left_Leg = inst_new('Part')
     Left_Leg.Anchored = false
     Left_Leg.CanCollide = false
-    Left_Leg.Name = "Left Leg"
+    Left_Leg.Name = 'Left Leg'
     Left_Leg.Size = vec3(1, 2, 1)
     Left_Leg.Parent = fakechar
 
-    local Right_Leg = inst("Part")
+    local Right_Leg = inst_new('Part')
     Right_Leg.Anchored = false
     Right_Leg.CanCollide = false
-    Right_Leg.Name = "Right Leg"
+    Right_Leg.Name = 'Right Leg'
     Right_Leg.Size = vec3(1, 2, 1)
     Right_Leg.Parent = fakechar
 
-    local HumanoidRootPart = inst("Part")
+    local HumanoidRootPart = inst_new('Part')
     HumanoidRootPart.Anchored = true
     HumanoidRootPart.CanCollide = false
-    HumanoidRootPart.Name = "HumanoidRootPart"
+    HumanoidRootPart.Name = 'HumanoidRootPart'
     HumanoidRootPart.Size = vec3(2, 2, 1)
     HumanoidRootPart.Transparency = 1
     HumanoidRootPart.Parent = fakechar
 
-    local Right_Shoulder = inst("Motor6D")
+    local Right_Shoulder = inst_new('Motor6D')
     Right_Shoulder.C0 = cf(1, 0.5, 0)
     Right_Shoulder.C1 = cf(-0.5, 0.5, 0)
-    Right_Shoulder.Name = "Right Shoulder"
+    Right_Shoulder.Name = 'Right Shoulder'
     Right_Shoulder.Part0 = Torso
     Right_Shoulder.Part1 = Right_Arm
     Right_Shoulder.Parent = Torso
 
-    local Left_Shoulder = inst("Motor6D")
+    local Left_Shoulder = inst_new('Motor6D')
     Left_Shoulder.C0 = cf(-1, 0.5, 0)
     Left_Shoulder.C1 = cf(0.5, 0.5, 0)
-    Left_Shoulder.Name = "Left Shoulder"
+    Left_Shoulder.Name = 'Left Shoulder'
     Left_Shoulder.Part0 = Torso
     Left_Shoulder.Part1 = Left_Arm
     Left_Shoulder.Parent = Torso
 
-    local Right_Hip = inst("Motor6D")
+    local Right_Hip = inst_new('Motor6D')
     Right_Hip.C0 = cf(1, -1, 0)
     Right_Hip.C1 = cf(0.5, 1, 0)
-    Right_Hip.Name = "Right Hip"
+    Right_Hip.Name = 'Right Hip'
     Right_Hip.Part0 = Torso
     Right_Hip.Part1 = Right_Leg
     Right_Hip.Parent = Torso
 
-    local Left_Hip = inst("Motor6D")
+    local Left_Hip = inst_new('Motor6D')
     Left_Hip.C0 = cf(-1, -1, 0)
     Left_Hip.C1 = cf(-0.5, 1, 0)
-    Left_Hip.Name = "Left Hip"
+    Left_Hip.Name = 'Left Hip'
     Left_Hip.Part0 = Torso
     Left_Hip.Part1 = Left_Leg
     Left_Hip.Parent = Torso
 
-    local Neck = inst("Motor6D")
+    local Neck = inst_new('Motor6D')
     Neck.C0 = cf(0, 1, 0)
     Neck.C1 = cf(0, -0.5, 0)
-    Neck.Name = "Neck"
+    Neck.Name = 'Neck'
     Neck.Part0 = Torso
     Neck.Part1 = Head
     Neck.Parent = Torso
 
-    local RootJoint = inst("Motor6D")
+    local RootJoint = inst_new('Motor6D')
     RootJoint.C0 = cf(0, 0, 0)
     RootJoint.C1 = cf(0, 0, 0)
-    RootJoint.Name = "RootJoint"
+    RootJoint.Name = 'RootJoint'
     RootJoint.Part0 = HumanoidRootPart
     RootJoint.Part1 = Torso
     RootJoint.Parent = HumanoidRootPart
@@ -2984,11 +3077,11 @@ local fakechar do
         local _ = fakechar:GetChildren()
         for i = 1, #_ do
             local c = _[i]
-            if (not c:IsA("BasePart")) then continue end
+            if (not c:IsA('BasePart')) then continue end
             c.Material = 1584
-            c.Color = c3(0.52, 0.52, 0.55)
+            c.Color = c_new(0.52, 0.52, 0.55)
             
-            local _ = inst("BoxHandleAdornment")
+            local _ = inst_new('BoxHandleAdornment')
             _.Adornee = c
             _.AlwaysOnTop = true
             _.ZIndex = 10
@@ -3004,8 +3097,8 @@ local esplib = {} do
     local curtime = tick() 
     local offset2d = cf(2, 3, 0)
     local wfocused = true
-    local lowhealth = c3(1, 0, 0)
-    local maxhealth = c3(0, 1, 0)
+    local lowhealth = c_new(1, 0, 0)
+    local maxhealth = c_new(0, 1, 0)
     local b = {}
     b.objects = {}
     local l_cam = workspace.CurrentCamera
@@ -3032,7 +3125,7 @@ local esplib = {} do
     end
     do  
         local step = 0
-        local hsv = Color3.fromHSV
+        local c_hsv = Color3.fromHSV
         local speed = 0.15
         confuncs['rs'] = function(dt) 
             local objs = b.objects
@@ -3040,7 +3133,7 @@ local esplib = {} do
             if (len == 0) then return end
             step = (step > 1 and 0 or step + dt*speed)
             
-            local color = hsv(step,1,1)
+            local color = c_hsv(step,1,1)
             for i = 1, len do
                 objs[i]['box1']['Color'] = color
             end
@@ -3055,7 +3148,7 @@ local esplib = {} do
         confuncs['w2'] = function() 
             wfocused = true
             if (cons['rs']) then cons['rs']:Disconnect() end
-            cons['rs'] = serv_rs.RenderStepped:Connect(confuncs['rs'])
+            cons['rs'] = serv_run.RenderStepped:Connect(confuncs['rs'])
         end
     end
     b.setpar = function(self, parent) 
@@ -3106,46 +3199,46 @@ local esplib = {} do
     b.create_2d = function(parent, text, health) 
         local obj = {}
         do 
-            local _ = drawnew('Square')
+            local _ = draw_new('Square')
             _.Visible = true
             _.Thickness = 1
             _.ZIndex = 2
             obj['box1'] = _
         end
         do 
-            local _ = drawnew('Square')
+            local _ = draw_new('Square')
             _.Visible = true
             _.Thickness = 3
-            _.Color = c3(0,0,0)
+            _.Color = c_new(0,0,0)
             _.ZIndex = 1
             obj['box2'] = _
         end
         do 
-            local _ = drawnew('Text')
+            local _ = draw_new('Text')
             _.Font = 1
             _.Size = 20
             _.Outline = true
-            _.OutlineColor = c3(0,0,0)
+            _.OutlineColor = c_new(0,0,0)
             _.Visible = true
             _.ZIndex = 3
-            _.Color = c3(1,1,1)
+            _.Color = c_new(1,1,1)
             _.Center = true
             _.Text = tostring(text)
             obj['tex1'] = _
         end
         do 
             if (health and typeof(health) == 'Instance' and health.ClassName == 'Humanoid') then
-                local _ = drawnew('Square')
+                local _ = draw_new('Square')
                 _.Visible = true
                 _.Thickness = 1
-                _.Color = c3(0,1,0)
+                _.Color = c_new(0,1,0)
                 _.ZIndex = 2
                 obj['hea1'] = _
                 
-                local _ = drawnew('Square')
+                local _ = draw_new('Square')
                 _.Visible = true
                 _.Thickness = 3
-                _.Color = c3(0,0,0)
+                _.Color = c_new(0,0,0)
                 _.ZIndex = 1
                 obj['hea2'] = _
                 
@@ -3170,7 +3263,7 @@ local esplib = {} do
         -- Get the parent
         local parent = self.par
         -- Check if...
-        --   - The object is being destroyed (skip this update to not get "render object destroyed" errors)
+        --   - The object is being destroyed (skip this update to not get 'render object destroyed' errors)
         --   - If the object is on cooldown (skip this update for performance)
         --   - If the object doesn't have a parent (keep it alive so that it can be reparented later)
         -- If any of these conditions fail then dont update it
@@ -3236,7 +3329,7 @@ local esplib = {} do
         -- Get the parent
         local parent = self.par
         -- Check if...
-        --   - The object is being destroyed (skip this update to not get "render object destroyed" errors)
+        --   - The object is being destroyed (skip this update to not get 'render object destroyed' errors)
         --   - If the object is on cooldown (current time is less than resume time) (skip this update for performance)
         --   - If the object doesn't have a parent (keep it alive so that it can be reparented later)
         -- If any of these conditions fail then dont update it
@@ -3246,8 +3339,12 @@ local esplib = {} do
                 self['box1'].Visible = false
                 self['box2'].Visible = false
                 self['tex1'].Visible = false
-                self['hea1'].Visible = false
-                self['hea2'].Visible = false
+                
+                local a = self['hea1']
+                if (a) then
+                    a.Visible = false
+                    self['hea2'].Visible = false
+                end
             end
             return 
         end
@@ -3344,9 +3441,9 @@ local esplib = {} do
     end
     esplib.Ready = function() 
         
-        cons['w1'] = serv_uis.WindowFocusReleased:Connect(confuncs['w1'])
-        cons['w2'] = serv_uis.WindowFocused:Connect(confuncs['w2'])
-        cons['rs'] = serv_rs.RenderStepped:Connect(confuncs['rs'])
+        cons['w1'] = serv_uinput.WindowFocusReleased:Connect(confuncs['w1'])
+        cons['w2'] = serv_uinput.WindowFocused:Connect(confuncs['w2'])
+        cons['rs'] = serv_run.RenderStepped:Connect(confuncs['rs'])
         cons['c1'] = workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(confuncs['c1'])
         confuncs['c1']()
     end
@@ -3361,7 +3458,7 @@ end
 
 
 
-ui:Connect("Destroying", function() 
+ui:Connect('Destroying', function() 
     for i,v in pairs(cons) do v:Disconnect() end
     for i,v in ipairs(ui:GetModules()) do 
         if (v.Toggle and v:IsEnabled()) then
@@ -3386,7 +3483,7 @@ ui:Connect("Destroying", function()
     p_Names = nil
     p_RefKeys = nil
     
-    serv_uis.MouseIconEnabled = true
+    serv_uinput.MouseIconEnabled = true
     
     fakechar:Destroy()
     esplib.DestroyAll()
@@ -3394,10 +3491,9 @@ end)
 
 local betatxt = ' <font color="rgb(255,87,68)">[BETA]</font>'
 
-
-local m_combat = ui:CreateMenu('Combat') do 
+--[[local m_combat = ui:CreateMenu('Combat') do 
     local c_trigbot = m_combat:AddMod('Triggerbot'..betatxt)
-    --local c_hitbox = m_combat:AddMod('Hitboxes'..betatxt)
+    local c_hitbox = m_combat:AddMod('Hitboxes'..betatxt)
     
     -- Hitbox expander
     do 
@@ -3424,7 +3520,7 @@ local m_combat = ui:CreateMenu('Combat') do
         s_ScanMode:AddOption('Proximity'):SetTooltip('Checks if any players are close to your mouse')
         
         local wl
-        c_trigbot:Connect("Enabled",function() 
+        c_trigbot:Connect('Enabled',function() 
             ui:Notify('Triggerbot','Triggerbot is currently disabled while it is being remade. Please wait for it to be updated.',3,1)
             do return end 
             
@@ -3457,13 +3553,15 @@ local m_combat = ui:CreateMenu('Combat') do
             local CheckTeam
         end)
         
-        c_trigbot:Connect("Disabled",function() 
+        c_trigbot:Connect('Disabled',function() 
             wl = nil
         end)
         
         c_trigbot:SetTooltip('Automatically clicks when you mouse over a player')
     end
 end
+]]
+
 local m_player = ui:CreateMenu('Player') do 
     --local p_fancy       = m_player:AddMod('Fancy chat')
     --local p_ftools      = m_player:AddMod('Funky tools')
@@ -3523,7 +3621,7 @@ local m_player = ui:CreateMenu('Player') do
             end
             
             if (s_perframe:IsEnabled()) then
-                serv_rs:BindToRenderStep('RL-AnimSpeed',2356,function()
+                serv_run:BindToRenderStep('RL-AnimSpeed',2356,function()
                     local tracks = l_hum:GetPlayingAnimationTracks()
                     
                     for i = 1, #tracks do 
@@ -3549,7 +3647,7 @@ local m_player = ui:CreateMenu('Player') do
         p_animspeed:Connect('Disabled',function() 
             if (animcon) then animcon:Disconnect() animcon = nil end
             if (resetcon) then resetcon:Disconnect() resetcon = nil end
-            serv_rs:UnbindFromRenderStep('RL-AnimSpeed')
+            serv_run:UnbindFromRenderStep('RL-AnimSpeed')
         end)
         
     end
@@ -3568,9 +3666,9 @@ local m_player = ui:CreateMenu('Player') do
         
         local c
         local p = 'Standard'
-        p_antiafk:Connect("Enabled", function() 
+        p_antiafk:Connect('Enabled', function() 
             if (p == 'Standard') then
-                ratio(l_plr.Idled)
+                dnec(l_plr.Idled, 'plr_idled')
                 return 
             end
             if (p == 'Move on idle') then
@@ -3595,32 +3693,32 @@ local m_player = ui:CreateMenu('Player') do
                 return
             end
         end)
-        p_antiafk:Connect("Disabled", function()
-            unratio(l_plr.Idled)
+        p_antiafk:Connect('Disabled', function()
+            enec(l_plr.Idled, 'plr_idled')
             
             if (c) then
                 c:Disconnect()
                 c = nil
             end
         end)
-        p_afk_mode:Connect("SelectionChanged", function(v) 
+        p_afk_mode:Connect('SelectionChanged', function(v) 
             p = v
             p_antiafk:Reset()
         end)
     end
     -- Anticrash
     do 
-        local sc = game:GetService("ScriptContext")
+        local sc = game:GetService('ScriptContext')
         
         local amnt = p_anticrash:AddSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):SetTooltip('Anti-crash sensitivity. <b>Setting this too low may mess with your game. Leave it at the default if you don\'t know what this does.</b>')
         
-        amnt:Connect("ValueChanged",function(v) 
+        amnt:Connect('ValueChanged',function(v) 
             if (p_anticrash:IsEnabled()) then
                 sc:SetTimeout(v)
             end
         end)
         
-        p_anticrash:Connect("Toggled",function(t) 
+        p_anticrash:Connect('Toggled',function(t) 
             if t then
                 sc:SetTimeout(amnt:GetValue())
             else
@@ -3639,17 +3737,17 @@ local m_player = ui:CreateMenu('Player') do
         local distance = 25
 	    local pcon
         
-        p_antifling:AddSlider('Distance',{min=1,max=50,cur=25,step=0.1}):SetTooltip('How close a player has to be to you to trigger the antifling'):Connect("ValueChanged",function(v)distance=v;end)
+        p_antifling:AddSlider('Distance',{min=1,max=50,cur=25,step=0.1}):SetTooltip('How close a player has to be to you to trigger the antifling'):Connect('ValueChanged',function(v)distance=v;end)
         
         
-	    p_antifling:Connect("Enabled", function() 
+	    p_antifling:Connect('Enabled', function() 
             local m = mode:GetSelection()
-            ratio(l_humrp.Changed)
-            ratio(l_humrp:GetPropertyChangedSignal('CanCollide'))
-            ratio(l_humrp:GetPropertyChangedSignal('Anchored'))
+            dnec(l_humrp.Changed, 'rp_changed')
+            dnec(l_humrp:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
+            dnec(l_humrp:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
             
             if (m == 'Anchor') then
-                pcon = serv_rs.Heartbeat:Connect(function() 
+                pcon = serv_run.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
                     l_humrp.Anchored = false
                     for i = 1, #p_Names do 
@@ -3663,7 +3761,7 @@ local m_player = ui:CreateMenu('Player') do
                     end		
                 end)                
             elseif (m == 'Noclip') then
-                pcon = serv_rs.Heartbeat:Connect(function() 
+                pcon = serv_run.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
                     for i = 1, #p_Names do 
                         local plr = p_RefKeys[p_Names[i]]
@@ -3673,7 +3771,7 @@ local m_player = ui:CreateMenu('Player') do
                             local c = l_chr:GetChildren()
                             for i = 1, #c do 
                                 local v = c[i]
-                                if (v:IsA("BasePart")) then
+                                if (v:IsA('BasePart')) then
                                     v.CanCollide = false    
                                 end
                             end
@@ -3682,7 +3780,7 @@ local m_player = ui:CreateMenu('Player') do
                     end		
                 end)
             elseif (m == 'Teleport') then
-                pcon = serv_rs.Heartbeat:Connect(function() 
+                pcon = serv_run.Heartbeat:Connect(function() 
                     local self_pos = l_humrp.Position
                     for i = 1, #p_Names do 
                         local plr = p_RefKeys[p_Names[i]]
@@ -3696,17 +3794,17 @@ local m_player = ui:CreateMenu('Player') do
                 end)
             end
 	    end)
-	    p_antifling:Connect("Disabled", function() 
+	    p_antifling:Connect('Disabled', function() 
 	        if (pcon) then pcon:Disconnect() pcon = nil end		
             if (l_humrp.Anchored) then l_humrp.Anchored = false end
             
-            unratio(l_humrp.Changed)
-            unratio(l_humrp:GetPropertyChangedSignal('CanCollide'))
-            unratio(l_humrp:GetPropertyChangedSignal('Anchored'))
+            enec(l_humrp.Changed, 'rp_changed')
+            enec(l_humrp:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
+            enec(l_humrp:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
 	    end)
     
     
-	    mode:Connect("SelectionChanged", function()
+	    mode:Connect('SelectionChanged', function()
 	        p_antifling:Reset()
 	    end)
     
@@ -3714,92 +3812,155 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Antiwarp
     do 
-        local lerpslider = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How much you will be teleported back when antiwarp gets triggered')
-        local distslider = p_antiwarp:AddSlider('Distance',{min=1,max=150,cur=20,step=0.1}):SetTooltip('How far you\'d have to be teleported before it gets set off')
-        local lerp = 1
-        local dist = 20
+        local s_Lerp = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How much you will be teleported back when antiwarp gets triggered')
+        local s_Dist = p_antiwarp:AddSlider('Distance',{min=1,max=150,cur=20,step=0.1}):SetTooltip('How far you\'d have to be teleported before it gets set off')
+        local Lerp = s_Lerp:GetValue()
+        local Dist = s_Dist:GetValue()
         
-        lerpslider:Connect("ValueChanged",function(v)lerp=v;end)
-        distslider:Connect("ValueChanged",function(v)dist=v;end)
-        local con
-        local cf1 = l_humrp and l_humrp.CFrame or cf(0,0,0)
-        local cf2 = l_humrp and l_humrp.CFrame or cf(0,0,0)
-        p_antiwarp:Connect("Enabled",function() 
-            ratio(l_humrp.Changed)
-            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            cf2 = l_humrp.CFrame
-            con = serv_rs.Heartbeat:Connect(function() 
-                cf1 = l_humrp.CFrame 
-                if ((cf1.Position - cf2.Position).Magnitude > dist) then
-                    local _ = cf1:lerp(cf2, lerp)
-                    cf2 = _
+        s_Lerp:Connect('ValueChanged',function(v)Lerp=v;end)
+        s_Dist:Connect('ValueChanged',function(v)Dist=v;end)
+        
+        local AntiwarpStep
+        
+        local CurrentCFrame = l_humrp and l_humrp.CFrame or cf(0,0,0)
+        local PreviousCFrame = l_humrp and l_humrp.CFrame or cf(0,0,0)
+        
+        p_antiwarp:Connect('Enabled',function() 
+            dnec(l_humrp.Changed, 'rp_changed')
+            dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+            
+            
+            PreviousCFrame = l_humrp.CFrame
+            AntiwarpStep = serv_run.Heartbeat:Connect(function() 
+                CurrentCFrame = l_humrp.CFrame 
+                
+                if ((CurrentCFrame.Position - PreviousCFrame.Position).Magnitude > Dist) then
+                    local _ = CurrentCFrame:lerp(PreviousCFrame, Lerp)
+                    PreviousCFrame = _
                     l_humrp.CFrame = _
                 else
-                    cf2 = cf1
+                    PreviousCFrame = CurrentCFrame
                 end
             end)
         end)
-        p_antiwarp:Connect("Disabled",function() 
-            if (con) then con:Disconnect() con=nil end
+        p_antiwarp:Connect('Disabled',function() 
+            if (AntiwarpStep) then AntiwarpStep:Disconnect() AntiwarpStep = nil end
             
-            unratio(l_humrp.Changed)
-            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+            enec(l_humrp.Changed, 'rp_changed')
+            enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
         end)
     end
     -- Autoclick
     do 
-        local s_buttontype = p_autoclick:AddDropdown('Mouse key',true):SetTooltip('The key to click')
-        s_buttontype:AddOption('Mouse1'):SetTooltip('Clicks Mouse1 / left click'):Select()
-        s_buttontype:AddOption('Mouse2'):SetTooltip('Clicks Mouse2 / right click')      
+        local s_ButtonType = p_autoclick:AddDropdown('Mouse key',true):SetTooltip('The key to click')
+        local s_Shake = p_autoclick:AddToggle('Mouse shake'):SetTooltip('Shakes your mouse around to fake jitterclicking')
+        local s_ShakeAmount = p_autoclick:AddSlider('Shake amount',{min=1,max=15,step=1,cur=5}):SetTooltip('How much your mouse gets shooken <i>(shook? shaken? who knows)</i>')
+        local s_ClickRate = p_autoclick:AddSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):SetTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
+        local s_ClickAmount = p_autoclick:AddSlider('Click amount',{min=1,max=15,step=1,cur=1}):SetTooltip('How many clicks are done')
         
         
+        s_ButtonType:AddOption('Mouse1'):SetTooltip('Clicks Mouse1 / left click'):Select()
+        s_ButtonType:AddOption('Mouse2'):SetTooltip('Clicks Mouse2 / right click')
         
-        local s_clickrate = p_autoclick:AddSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):SetTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
         
+        local ButtonType   = s_ButtonType:GetSelection()
+        local ClickAmount  = s_ClickAmount:GetValue()
+        local ClickRate    = s_ClickRate:GetValue()
+        local Shake        = s_Shake:GetState()
+        local ShakeAmount  = s_ShakeAmount:GetValue()
         
-        local buttontype = 'Mouse1'
-        s_buttontype:Connect("SelectionChanged",function(v)
-            buttontype = v
+        s_ButtonType:Connect('SelectionChanged', function(v)
+            ButtonType = v
             p_autoclick:Reset()
         end)
-        local clickrate = s_clickrate:GetValue()
-        s_clickrate:Connect("ValueChanged",function(v)clickrate = v;
+        s_ClickRate:Connect('ValueChanged', function(v)
+            ClickRate = v
             if (v == 0) then
                 p_autoclick:Reset()
             end
         end)
+        s_Shake:Connect('Toggled', function(t) 
+            Shake = t;
+            if (ClickRate == 0) then 
+                p_autoclick:Reset()
+            end
+        end)
+        s_ClickAmount:Connect('ValueChanged', function(v) 
+            ClickAmount = v
+        end)
         
         
-        local ccon
-        local c
-        p_autoclick:Connect("Enabled",function() 
-            c = mr(1, 9999)
-            local _ = c
+        local ClickConnection
+        local ConnectionIdentifier
+        
+        p_autoclick:Connect('Enabled',function() 
+            ConnectionIdentifier = mr(1, 9999)
+            local _ = ConnectionIdentifier
             
-            if (clickrate == 0) then
-                local f = buttontype == 'Mouse1' and mouse1click or mouse2click
-                ccon = serv_rs.RenderStepped:Connect(function() 
-                    if (not W_WindowOpen) then
-                        f()
-                    end
-                end)
-            else
-                spawn(function() 
-                    local f = buttontype == 'Mouse1' and mouse1click or mouse2click
-                    while (p_autoclick:IsEnabled()) do 
-                        
+            
+            -- Handle shaking
+            spawn(function() 
+                if (Shake) then
+                    while (Shake and p_autoclick:IsEnabled()) do 
                         if (not W_WindowOpen) then
-                            f()
+                            mousemoverel(mr(-ShakeAmount, ShakeAmount),mr(-ShakeAmount, ShakeAmount))
+                        else
+                            wait(0.5)
                         end
-                        wait(clickrate)
-                        if (c ~= _) then warn'emergency broke' break end
+                        wait(0.02)
+                        if (ConnectionIdentifier ~= _) then break end
                     end
-                end)
+                end
+            end)
+            
+            -- Handle clicking
+            do
+                -- If clickrate is 0, then setup renderstepped connection
+                if (ClickRate == 0) then
+                    -- Get func
+                    local ClickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
+                    
+                    -- Try to click every frame
+                    ClickConnection = serv_run.RenderStepped:Connect(function() 
+                        -- If window is closed then
+                        if (not W_WindowOpen) then
+                            -- click the mouse button
+                            
+                            for i = 1, ClickAmount do 
+                                ClickFunc()
+                            end
+                        end
+                        -- otherwise do nothing
+                    end)               
+                else
+                    -- If the clickrate isn't 0 then spawn a loop
+                    spawn(function() 
+                        -- Get func
+                        local ClickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
+                        
+                        -- While autoclicking...
+                        while (p_autoclick:IsEnabled()) do 
+                            -- try to click
+                            if (not W_WindowOpen) then
+                                for i = 1, ClickAmount do 
+                                    ClickFunc()
+                                end
+                            end
+                            -- wait for click duration
+                            wait(ClickRate)
+                            -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
+                            if (ConnectionIdentifier ~= _) then break end
+                        end
+                    end)
+                end
             end
         end)
         
-        p_autoclick:Connect("Disabled",function() 
-            if (ccon) then ccon:Disconnect() ccon = nil end
+        p_autoclick:Connect('Disabled',function() 
+            if (ClickConnection) then 
+                ClickConnection:Disconnect() 
+                ClickConnection = nil 
+            end
         end)
     end 
     -- Fake lag
@@ -3812,26 +3973,26 @@ local m_player = ui:CreateMenu('Player') do
         local LagAmnt = s_LagAmnt:GetValue()
         local Method = s_Method:GetSelection()
         
-        s_LagAmnt:Connect("ValueChanged",function(v)LagAmnt=v;end)
-        s_Method:Connect("SelectionChanged",function(v)Method=v;p_flag:Reset()end)
+        s_LagAmnt:Connect('ValueChanged',function(v)LagAmnt=v;end)
+        s_Method:Connect('SelectionChanged',function(v)Method=v;p_flag:Reset()end)
         
         local seat
-        p_flag:Connect("Enabled",function() 
+        p_flag:Connect('Enabled',function() 
             local fakerp = fakechar.HumanoidRootPart
             
             if (Method == 'Fake') then
                 local s = Method 
                 
-                local cf = l_humrp.CFrame
+                local thej = l_humrp.CFrame
                 
-                seat = inst('Seat')
+                seat = inst_new('Seat')
                 seat.Transparency = 1
                 seat.CanTouch = false
                 seat.CanCollide = false
                 seat.Anchored = true
-                seat.CFrame = cf
+                seat.CFrame = thej
                 
-                local weld = inst('Weld')
+                local weld = inst_new('Weld')
                 weld.Part0 = seat
                 weld.Part1 = nil
                 weld.Parent = seat
@@ -3846,11 +4007,11 @@ local m_player = ui:CreateMenu('Player') do
                         
                         do
                             seat.Anchored = false
-                            local cf = l_humrp.CFrame
+                            local thej = l_humrp.CFrame
                             fakechar.Parent = workspace
-                            fakerp.CFrame = cf
+                            fakerp.CFrame = thej
                             
-                            seat.CFrame = cf
+                            seat.CFrame = thej
                             weld.Part1 = l_humrp
                         end
                         
@@ -3882,7 +4043,7 @@ local m_player = ui:CreateMenu('Player') do
             end 
         end)
         
-        p_flag:Connect("Disabled",function() 
+        p_flag:Connect('Disabled',function() 
             if (seat) then seat:Destroy() seat = nil end 
             
             fakechar.Parent = nil
@@ -3891,13 +4052,13 @@ local m_player = ui:CreateMenu('Player') do
     end
     -- Flashback
     do 
-        local flash_delay = p_flashback:AddSlider("Delay", {min=0,max=5,cur=0,step=0.1})
+        local flash_delay = p_flashback:AddSlider('Delay', {min=0,max=5,cur=0,step=0.1})
         flash_delay:SetTooltip('How long to wait before teleporting you back')
         
         local fb_con
         local resp_con
         
-        p_flashback:Connect("Enabled", function() 
+        p_flashback:Connect('Enabled', function() 
             
             local function bind(h) 
                 h.Died:Connect(function() 
@@ -3914,14 +4075,14 @@ local m_player = ui:CreateMenu('Player') do
             
             bind(l_hum)
         end)
-        p_flashback:Connect("Disabled", function() 
+        p_flashback:Connect('Disabled', function() 
             fb_con:Disconnect()
             resp_con:Disconnect()
         end)
     end
     -- Respawn
     do 
-        p_respawn:Connect("Enabled", function() 
+        p_respawn:Connect('Enabled', function() 
             l_hum:Destroy()
         end)
     end
@@ -3942,16 +4103,16 @@ local m_player = ui:CreateMenu('Player') do
             new[1] = text
             new[2] = l_humrp.CFrame
             
-            local a = inst("BillboardGui")
-            local b = inst("BoxHandleAdornment")
-            local c = inst("Part")
-            local d = inst("TextLabel")
+            local a = inst_new('BillboardGui')
+            local b = inst_new('BoxHandleAdornment')
+            local c = inst_new('Part')
+            local d = inst_new('TextLabel')
             
             
             c.Anchored = true
             c.CanCollide = false
             c.CanTouch = false
-            c.Color = c3(0,0,0)
+            c.Color = c_new(0,0,0)
             c.Name = getnext()
             c.Size = vec3(1, 1, 1)
             c.Position = new[2].Position
@@ -3960,12 +4121,12 @@ local m_player = ui:CreateMenu('Player') do
             a.Adornee = c
             a.AlwaysOnTop = true
             a.LightInfluence = 0.8
-            a.Size = dim2(1.5, 30, 0.75, 15)
+            a.Size = dim_new(1.5, 30, 0.75, 15)
             
             b.Adornee = c
             b.AlwaysOnTop = false
             b.ZIndex = 10
-            b.Color3 = c3(0,0,0)
+            b.Color3 = c_new(0,0,0)
             b.Size = vec3(1, 200, 1)
             b.SizeRelativeOffset = vec3(0, 200, 0)
             b.Transparency = 0.5
@@ -3975,7 +4136,7 @@ local m_player = ui:CreateMenu('Player') do
             d.BorderColor3 = colors[1]
             d.BorderSizePixel = 1
             d.Font = font
-            d.Size = dim2sca(1,1)
+            d.Size = dim_sca(1,1)
             d.Text = text
             d.TextColor3 = colors[16]
             d.TextScaled = true
@@ -4000,7 +4161,7 @@ local m_player = ui:CreateMenu('Player') do
         end
         
         
-        makewp:Connect("Unfocused",function(text) 
+        makewp:Connect('Unfocused',function(text) 
             if (not p_waypoints:IsEnabled()) then p_waypoints:Enable() end
             
             for i = 1, #waypoints do
@@ -4015,7 +4176,7 @@ local m_player = ui:CreateMenu('Player') do
             makewaypoint(text)
         end)
         
-        delewp:Connect("Unfocused",function(text) 
+        delewp:Connect('Unfocused',function(text) 
             for i = 1, #waypoints do
                 local wp = waypoints[i]
                 if (wp[1] == text) then
@@ -4026,20 +4187,22 @@ local m_player = ui:CreateMenu('Player') do
             end 
         end)
         
-        gotowp:Connect("Unfocused",function(text) 
+        gotowp:Connect('Unfocused',function(text) 
             for i = 1, #waypoints do
                 local wp = waypoints[i]
                 if (wp[1] == text) then
-                    ratio(l_humrp.Changed)
-                    ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                    dnec(l_humrp.Changed, 'rp_changed')
+                    dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    
                     l_humrp.CFrame = wp[2]
-                    unratio(l_humrp.Changed)
-                    unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                    
+                    enec(l_humrp.Changed, 'rp_changed')
+                    enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                 end
             end 
         end)
         
-        deleall:Connect("Clicked",function() 
+        deleall:Connect('Clicked',function() 
             for i = 1, #waypoints do
                 local wp = waypoints[i]
                 for i = 3, 5 do wp[i]:Destroy() end
@@ -4048,15 +4211,15 @@ local m_player = ui:CreateMenu('Player') do
             cle(waypoints)
         end)
         
-        p_waypoints:Connect("Enabled",function() 
+        p_waypoints:Connect('Enabled',function() 
             waypoints = {}
             
-            folder = inst("Folder")
+            folder = inst_new('Folder')
             folder.Name = getnext()
             folder.Parent = game.CoreGui
         end)
         
-        p_waypoints:Connect("Disabled",function() 
+        p_waypoints:Connect('Disabled',function() 
             folder:Destroy()
             
             
@@ -4079,12 +4242,12 @@ local m_player = ui:CreateMenu('Player') do
     p_anticrash:SetTooltip('Prevents game scripts from while true do end\'ing you')
     p_antifling:SetTooltip('Prevents skids from flinging you, has several modes and a sensitivity option')
     p_antiwarp:SetTooltip('Prevents you from being teleported. Has options for sensitivity and lerp')
-    p_autoclick:SetTooltip('Standard autoclicker')
+    p_autoclick:SetTooltip('Autoclicker with settings for mouse shake and button type')
     --p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
     p_flag:SetTooltip('Makes your character look laggy. Similar to blink')
     p_flashback:SetTooltip('Teleports you back after you die. Has options for delayed teleport')
     --p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
-    --p_gtweaks:SetTooltip('Lets you configure various misc "forceable" settings like 3rd person, chat, inventories, and more')
+    --p_gtweaks:SetTooltip('Lets you configure various misc 'forceable' settings like 3rd person, chat, inventories, and more')
     --p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
     --p_radar:SetTooltip('Radar that displays where other players are')
     p_respawn:SetTooltip('Better version of resetting, can fix some glitches with reanimations')
@@ -4099,7 +4262,7 @@ local m_movement = ui:CreateMenu('Movement') do
     --local m_highjump  = m_movement:AddMod('High jump')
     --local m_jesus     = m_movement:AddMod('Jesus')
     --local m_jetpack   = m_movement:AddMod('Jetpack')
-    --local m_noclip    = m_movement:AddMod('Noclip')
+    local m_noclip    = m_movement:AddMod('Noclip')
     local m_nofall    = m_movement:AddMod('Nofall')
     --local m_noslow    = m_movement:AddMod('Noslowdown')
     local m_parkour   = m_movement:AddMod('Parkour')
@@ -4119,18 +4282,18 @@ local m_movement = ui:CreateMenu('Movement') do
         local vel = 70
         local ajcon
         
-        velmount:Connect("ValueChanged",function(v)vel=v;end)
+        velmount:Connect('ValueChanged',function(v)vel=v;end)
         
-        m_airjump:Connect("Enabled", function() 
+        m_airjump:Connect('Enabled', function() 
             if (mode:GetSelection() == 'Jump') then
                 if gpe then return end
-                ajcon = serv_uis.InputBegan:Connect(function(io, gpe) 
+                ajcon = serv_uinput.InputBegan:Connect(function(io, gpe) 
                     if (io.KeyCode.Value == 32) then
                         l_hum:ChangeState(3)
                     end
                 end)
             else
-                ajcon = serv_uis.InputBegan:Connect(function(io, gpe) 
+                ajcon = serv_uinput.InputBegan:Connect(function(io, gpe) 
                     if gpe then return end 
                     if (io.KeyCode.Value == 32) then
                         l_humrp.Velocity = vec3(0, vel, 0)
@@ -4139,11 +4302,11 @@ local m_movement = ui:CreateMenu('Movement') do
             end
         end)
     
-        m_airjump:Connect("Disabled", function() 
+        m_airjump:Connect('Disabled', function() 
             ajcon:Disconnect()
         end)
         
-        mode:Connect("SelectionChanged",function() 
+        mode:Connect('SelectionChanged',function() 
             m_airjump:Reset()
         end)
         
@@ -4159,27 +4322,27 @@ local m_movement = ui:CreateMenu('Movement') do
         local weld
         local seat
         
-        m_blink:Connect("Enabled",function() 
-            local cf = l_humrp.CFrame
+        m_blink:Connect('Enabled',function() 
+            local thej = l_humrp.CFrame
             
-            seat = inst('Seat')
+            seat = inst_new('Seat')
             seat.Transparency = 1
             seat.CanTouch = false
             seat.CanCollide = false
-            seat.CFrame = cf
+            seat.CFrame = thej
             
-            weld = inst('Weld')
+            weld = inst_new('Weld')
             weld.Part0 = seat
             weld.Part1 = l_humrp
             weld.Parent = seat
             
             seat.Parent = workspace
             
-            fakechar.HumanoidRootPart.CFrame = cf
+            fakechar.HumanoidRootPart.CFrame = thej
             fakechar.Parent = workspace
         end)
         
-        m_blink:Connect("Disabled",function() 
+        m_blink:Connect('Disabled',function() 
             if (weld) then weld:Destroy() weld = nil end
             if (seat) then seat:Destroy() seat = nil end
             
@@ -4190,17 +4353,17 @@ local m_movement = ui:CreateMenu('Movement') do
     do 
         local k = m_clicktp:AddHotkey('Teleport key'):SetTooltip('The key you have to be pressing in order to TP')
         local key = Enum.KeyCode.LeftControl
-        k:Connect("HotkeySet",function(kc)key=kc;end)
+        k:Connect('HotkeySet',function(kc)key=kc;end)
         k:SetHotkey(Enum.KeyCode.LeftControl)
         
         local mc
         
-        m_clicktp:Connect("Toggled",function(t) 
+        m_clicktp:Connect('Toggled',function(t) 
             if (t) then
                 local offset = vec3(0, 3, 0)
                 mc = l_mouse.Button1Down:Connect(function() 
                     if (key) then
-                        if (serv_uis:IsKeyDown(key)) then
+                        if (serv_uinput:IsKeyDown(key)) then
                             local lv = l_humrp.CFrame.LookVector
                             local p = l_mouse.Hit.Position + offset
                             l_humrp.CFrame = cf(p, p+lv)
@@ -4223,7 +4386,7 @@ local m_movement = ui:CreateMenu('Movement') do
             local descend_h = m_flight:AddHotkey('Descend key')
             local mode = m_flight:AddDropdown('Method', true)
             local turndir = m_flight:AddDropdown('Turn direction')
-            local speedslider = m_flight:AddSlider('Speed',{min=0,max=150,step=0.01,cur=30})
+            local speedslider = m_flight:AddSlider('Speed',{min=0,max=250,step=0.01,cur=30})
             local camera = m_flight:AddToggle('Camera-based')
             
             
@@ -4237,8 +4400,8 @@ local m_movement = ui:CreateMenu('Movement') do
             turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
             turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
             
-            local fi1 -- flight inst 1 
-            local fi2 -- flight inst 2  
+            local fi1 -- flight inst_new 1 
+            local fi2 -- flight inst_new 2  
             local fcon -- flight connection
             
             
@@ -4255,27 +4418,27 @@ local m_movement = ui:CreateMenu('Movement') do
             local cambased = true 
             camera:Enable()
             
-            ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
-            descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
-            camera:Connect("Toggled",function(t)
+            ascend_h:Connect('HotkeySet',function(j)ask=j or 0;end)
+            descend_h:Connect('HotkeySet',function(k)dsk=k or 0;end)
+            camera:Connect('Toggled',function(t)
                 cambased=t;
                 m_flight:Reset()
             end)
-            turndir:Connect("SelectionChanged",function() 
+            turndir:Connect('SelectionChanged',function() 
                 m_flight:Reset()
             end)
-            mode:Connect("SelectionChanged",function() 
+            mode:Connect('SelectionChanged',function() 
                 m_flight:Reset()
             end)
-            speedslider:Connect("ValueChanged",function(v)speed=v;end)
+            speedslider:Connect('ValueChanged',function(v)speed=v;end)
             
-            m_flight:Connect("Enabled", function()
+            m_flight:Connect('Enabled', function()
                 clv = l_cam.CFrame.LookVector 
                 normclv = clv
                 
-                ratio(l_humrp.Changed)
-                ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-                ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+                dnec(l_humrp.Changed, 'rp_changed')
+                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
                 local curmod = mode:GetSelection()
                 local curturn = turndir:GetSelection()
@@ -4284,18 +4447,18 @@ local m_movement = ui:CreateMenu('Movement') do
                 
                 
                 if (curturn == 'XYZ') then 
-                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                    clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
                         normclv = l_cam.CFrame.LookVector
                         clv = normclv
                     end)
                 elseif (curturn == 'XZ') then
-                    clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                    clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
                         normclv = l_cam.CFrame.LookVector
                         clv = vec3(normclv.X, 0, normclv.Z)
                     end)
                 elseif (curturn == 'Up') then
                     if (cambased) then
-                        clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
                             normclv = l_cam.CFrame.LookVector
                         end)
                     end
@@ -4303,7 +4466,7 @@ local m_movement = ui:CreateMenu('Movement') do
                     clv = upp
                 elseif (curturn == 'Down') then
                     if (cambased) then
-                        clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+                        clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
                             normclv = l_cam.CFrame.LookVector
                         end)
                     end
@@ -4319,10 +4482,10 @@ local m_movement = ui:CreateMenu('Movement') do
                     
                     
                     if (cambased) then
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
-                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
+                            local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                             
                             l_hum:ChangeState(1)
                             l_humrp.Velocity = nonep
@@ -4335,9 +4498,9 @@ local m_movement = ui:CreateMenu('Movement') do
                             l_humrp.CFrame = cf(b, b + clv)
                         end)
                     else
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
                             
                             l_hum:ChangeState(1)
                             l_humrp.Velocity = nonep
@@ -4352,7 +4515,7 @@ local m_movement = ui:CreateMenu('Movement') do
                 elseif (curmod == 'Smooth') then
                     local base = l_humrp.CFrame
                     
-                    fi1 = inst("Part")
+                    fi1 = inst_new('Part')
                     fi1.CFrame = base
                     fi1.Transparency = 1
                     fi1.CanCollide = false
@@ -4361,23 +4524,23 @@ local m_movement = ui:CreateMenu('Movement') do
                     fi1.Size = vec3(1, 1, 1)
                     fi1.Parent = workspace
                     
-                    local pos = inst("BodyPosition")
+                    local pos = inst_new('BodyPosition')
                     pos.Position = base.Position
                     pos.D = 1900
                     pos.P = 125000
                     pos.MaxForce = vec3(9e9, 9e9, 9e9)
                     pos.Parent = fi1
-                    local gyro = inst("BodyGyro")
+                    local gyro = inst_new('BodyGyro')
                     gyro.D = 1900
                     gyro.P = 125000
                     gyro.MaxTorque = vec3(9e9, 9e9, 9e9)
                     gyro.Parent = fi1
                     
                     if (cambased) then
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
-                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
+                            local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                             
                             l_hum:ChangeState(1)
                             l_humrp.Velocity = nonep
@@ -4394,9 +4557,9 @@ local m_movement = ui:CreateMenu('Movement') do
                             l_humrp.CFrame = fi1.CFrame 
                         end)
                     else
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
                             
                             l_hum:ChangeState(1)
                             l_humrp.Velocity = nonep
@@ -4414,31 +4577,32 @@ local m_movement = ui:CreateMenu('Movement') do
                 elseif (curmod == 'Vehicle') then
                     local base = l_humrp.CFrame
                     
-                    ratio(l_humrp.ChildAdded)
-                    ratio(l_humrp.DescendantAdded)
+                    dnec(l_humrp.ChildAdded, 'rp_child')
+                    dnec(l_humrp.DescendantAdded, 'rp_desc')
+                    dnec(l_chr.DescendantAdded, 'chr_desc')
                     
-                    fi1 = inst("BodyPosition")
+                    fi1 = inst_new('BodyPosition')
                     fi1.Position = base.Position
                     fi1.D = 1900
                     fi1.P = 125000
                     fi1.MaxForce = vec3(9e9, 9e9, 9e9)
                     fi1.Parent = l_humrp
                     
-                    fi2 = inst("BodyGyro")
+                    fi2 = inst_new('BodyGyro')
                     fi2.D = 1900
                     fi2.P = 125000
                     fi2.MaxTorque = vec3(9e9, 9e9, 9e9)
                     fi2.Parent = l_humrp
                     
-                    cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                    cscon = l_cam:GetPropertyChangedSignal('CameraSubject'):Connect(function() 
                         l_cam.CameraSubject = l_hum
                     end)
                     
                     if (cambased) then
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
-                            local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
+                            local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                             
                             l_hum:ChangeState(1)
                             --l_humrp.Velocity = vec3(0,0,0)
@@ -4453,9 +4617,9 @@ local m_movement = ui:CreateMenu('Movement') do
                             fi2.CFrame = cf(b, b + clv)
                         end)
                     else
-                        fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                            local up = serv_uis:IsKeyDown(ask)
-                            local down = serv_uis:IsKeyDown(dsk)
+                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                            local up = serv_uinput:IsKeyDown(ask)
+                            local down = serv_uinput:IsKeyDown(dsk)
                             
                             l_hum:ChangeState(1)
                             --l_humrp.Velocity = vec3(0,0,0)
@@ -4471,7 +4635,7 @@ local m_movement = ui:CreateMenu('Movement') do
                 end
             end)
             
-            m_flight:Connect("Disabled",function() 
+            m_flight:Connect('Disabled',function() 
                 if (fcon) then fcon:Disconnect() fcon = nil end 
                 if (clvcon) then clvcon:Disconnect() clvcon = nil end
                 if (fi1) then fi1:Destroy() fi1 = nil end
@@ -4479,11 +4643,12 @@ local m_movement = ui:CreateMenu('Movement') do
                 if (cscon) then cscon:Destroy() cscon = nil end 
                 l_hum:ChangeState(8)
                 
-                unratio(l_humrp.Changed)
-                unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-                unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
-                unratio(l_humrp.ChildAdded)
-                unratio(l_humrp.DescendantAdded)
+                enec(l_humrp.Changed, 'rp_changed')
+                enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                enec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                enec(l_humrp.ChildAdded, 'rp_child')
+                enec(l_humrp.DescendantAdded, 'rp_desc')
+                enec(l_chr.DescendantAdded, 'chr_desc')
             end)
             
             
@@ -4503,9 +4668,9 @@ local m_movement = ui:CreateMenu('Movement') do
         local vel = m_float:AddSlider('Velocity',{min=-10,cur=0,max=10,step=0.1}):SetTooltip('The amount of velocity you\'ll have when floating')
         local amnt = 0
         
-        vel:Connect("ValueChanged",a)
+        vel:Connect('ValueChanged',a)
         
-        mode:Connect("SelectionChanged",function() 
+        mode:Connect('SelectionChanged',function() 
             m_float:Reset()
         end)
         
@@ -4517,38 +4682,172 @@ local m_movement = ui:CreateMenu('Movement') do
         
         
         
-        m_float:Connect("Enabled",function() 
+        m_float:Connect('Enabled',function() 
             local mode = mode:GetSelection()
             if (mode == 'Undetectable') then
-                fcon = serv_rs.Heartbeat:Connect(function() 
+                fcon = serv_run.Heartbeat:Connect(function() 
                     local vel = l_humrp.Velocity
                     
                     l_humrp.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
                 end)
             elseif (mode == 'Velocity') then
-                ratio(l_humrp.ChildAdded)
-                ratio(l_humrp.DescendantAdded)
+                dnec(l_humrp.ChildAdded, 'rp_child')
+                dnec(l_humrp.DescendantAdded, 'rp_desc')
+                dnec(l_chr.DescendantAdded, 'chr_desc')
                 
-                finst = inst("BodyVelocity")
+                finst = inst_new('BodyVelocity')
                 finst.MaxForce = vec3(0, 9e9, 0)
                 finst.Velocity = vec3(0, vel:GetValue(), 0)
                 finst.Parent = l_humrp
                 
-                vel:Connect("ValueChanged",b)
+                vel:Connect('ValueChanged',b)
             end
         end)
-        m_float:Connect("Disabled",function() 
+        m_float:Connect('Disabled',function() 
             if (finst) then finst:Destroy(); finst = nil end
             if (fcon) then fcon:Disconnect() fcon = nil end
             
-            vel:Connect("ValueChanged",a)
+            vel:Connect('ValueChanged',a)
             
-            unratio(l_humrp.ChildAdded)
-            unratio(l_humrp.DescendantAdded)
+            enec(l_humrp.ChildAdded, 'rp_child')
+            enec(l_humrp.DescendantAdded, 'rp_desc')
+            enec(l_chr.DescendantAdded, 'chr_desc')
         end)
         
+    end
+    -- Noclip
+    do 
+        local s_Mode = m_noclip:AddDropdown('Method', true):SetTooltip('The method Noclip uses')
+        s_Mode:AddOption('Standard'):SetTooltip('The average CanCollide noclip'):Select()
+        s_Mode:AddOption('Legacy'):SetTooltip('Emulates the older HumanoidState noclip (Just standard, but with a float effect)')
+        s_Mode:AddOption('Teleport'):SetTooltip('Teleports you through walls')
+        
+        local s_LookAhead = m_noclip:AddSlider('Lookahead',{min=1,cur=3,max=10,step=0.1}):SetTooltip('The amount of distance between a wall Teleport will consider noclipping')
+        
+        local LookAhead = s_LookAhead:GetValue()
+        s_LookAhead:Connect('ValueChanged',function(v) LookAhead = v end)
         
         
+        local Con_Respawn
+        local Con_Step
+        
+        local p = RaycastParams.new()
+        p.FilterDescendantsInstances = {l_chr}
+        p.FilterType = Enum.RaycastFilterType.Blacklist
+        
+        s_Mode:Connect('SelectionChanged',function()m_noclip:Reset()end)
+        
+        m_noclip:Connect('Enabled', function() 
+            
+            local mode = s_Mode:GetSelection()
+            
+            if (mode == 'Standard') then
+                local NoclipObjects = {}
+                
+                local c = l_chr:GetChildren()
+                for i = 1, #c do
+                    local obj = c[i]
+                    if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
+                    ins(NoclipObjects, obj)
+                end
+                
+                
+                Con_Respawn = l_plr.CharacterAdded:Connect(function(chr) 
+                    wait(0.15)
+                    
+                    cle(NoclipObjects)
+                    local c = l_chr:GetChildren()
+                    for i = 1, #c do
+                        local obj = c[i]
+                        if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
+                        ins(NoclipObjects, obj)
+                    end
+                end)
+                
+                Con_Step = serv_run.Stepped:Connect(function() 
+                    for i = 1, #NoclipObjects do 
+                        NoclipObjects[i].CanCollide = false 
+                    end
+                end)
+                
+            elseif (mode == 'Legacy') then
+                local NoclipObjects = {}
+                
+                local c = l_chr:GetChildren()
+                for i = 1, #c do
+                    local obj = c[i]
+                    if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
+                    ins(NoclipObjects, obj)
+                end
+                
+                
+                Con_Respawn = l_plr.CharacterAdded:Connect(function(chr) 
+                    wait(0.15)
+                    
+                    cle(NoclipObjects)
+                    local c = l_chr:GetChildren()
+                    for i = 1, #c do
+                        local obj = c[i]
+                        if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
+                        ins(NoclipObjects, obj)
+                    end
+                end)
+                
+                Con_Step = serv_run.Stepped:Connect(function() 
+                    local vel = l_humrp.Velocity
+                    l_humrp.Velocity = vec3(vel.X, 0.3, vel.Z)
+                    for i = 1, #NoclipObjects do 
+                        NoclipObjects[i].CanCollide = false 
+                    end
+                end)
+            
+            elseif (mode == 'Teleport') then
+                local p = RaycastParams.new()
+                p.FilterDescendantsInstances = {l_chr}
+                p.FilterType = Enum.RaycastFilterType.Blacklist
+                
+                Con_Respawn = l_plr.CharacterAdded:Connect(function(c) 
+                    p.FilterDescendantsInstances = {c}
+                end)
+                
+                dnec(l_humrp.Changed, 'rp_changed')
+                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                
+                Con_Respawn = l_plr.CharacterAdded:Connect(function() 
+                    m_noclip:Reset()
+                end)
+                
+                Con_Step = serv_run.Heartbeat:Connect(function() 
+                    local c = l_humrp.CFrame
+                    local lv = c.LookVector
+                    c = c.Position
+                    local m = l_hum.MoveDirection.Unit
+                    
+                    local j = workspace:Raycast(c, m*LookAhead, p)
+                    if (j) then
+                        local t = j.Position + (m * (j.Distance/2))
+                        
+                        l_humrp.CFrame = cf(t, t + lv)
+                    end
+                end)
+            end
+        end)
+        m_noclip:Connect('Disabled', function() 
+            if (Con_Respawn) then 
+                Con_Respawn:Disconnect() 
+                Con_Respawn = nil 
+            end
+            
+            if (Con_Step) then 
+                Con_Step:Disconnect() 
+                Con_Step = nil 
+            end
+            
+            if (disabled_signals['rp_changed']) then
+                enec(l_humrp.Changed, 'rp_changed')
+                enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')    
+            end
+        end)
         
     end
     -- Nofall
@@ -4563,13 +4862,13 @@ local m_movement = ui:CreateMenu('Movement') do
         local smarsens = -100
         local dropsens = 10
         
-        smarsens_slid:Connect("ValueChanged",function(v)smarsens=-v;end)
-        dropsens_slid:Connect("ValueChanged",function(v)dropsens=v;end)
+        smarsens_slid:Connect('ValueChanged',function(v)smarsens=-v;end)
+        dropsens_slid:Connect('ValueChanged',function(v)dropsens=v;end)
         
         local plrcon
         local rcon
         
-        m_nofall:Connect("Enabled",function() 
+        m_nofall:Connect('Enabled',function() 
             local down = vec3(0, -1000000, 0)
             local p = RaycastParams.new()
             p.FilterDescendantsInstances = {l_chr}
@@ -4580,7 +4879,7 @@ local m_movement = ui:CreateMenu('Movement') do
             end)
             
             if (modedd:GetSelection() == 'Drop') then
-                rcon = serv_rs.Heartbeat:Connect(function() 
+                rcon = serv_run.Heartbeat:Connect(function() 
                     local j = workspace:Raycast(l_humrp.Position, down, p)
                     if (j) then
                         if (j.Distance > dropsens) then
@@ -4595,7 +4894,7 @@ local m_movement = ui:CreateMenu('Movement') do
                 end)
             else
                 local holding = false
-                rcon = serv_rs.Heartbeat:Connect(function() 
+                rcon = serv_run.Heartbeat:Connect(function() 
                     local j = workspace:Raycast(l_humrp.Position, down, p)
                     if (j and j.Distance < 8) then
                         if (holding) then return end
@@ -4613,12 +4912,12 @@ local m_movement = ui:CreateMenu('Movement') do
             end
         end)
         
-        m_nofall:Connect("Disabled",function() 
+        m_nofall:Connect('Disabled',function() 
             if (rcon) then rcon:Disconnect() rcon = nil end
             if (plrcon) then plrcon:Disconnect() plrcon = nil end
         end)
         
-        modedd:Connect("SelectionChanged",function() 
+        modedd:Connect('SelectionChanged',function() 
             m_nofall:Reset()
         end)
     end
@@ -4628,12 +4927,12 @@ local m_movement = ui:CreateMenu('Movement') do
         local delay = 0
         local humcon
         
-        delayslid:Connect("ValueChanged",function(v)delay=v;end)
+        delayslid:Connect('ValueChanged',function(v)delay=v;end)
         
-        m_parkour:Connect("Toggled",function(t) 
+        m_parkour:Connect('Toggled',function(t) 
             if (t) then
                 local a = Enum.Material.Air
-                humcon = l_hum:GetPropertyChangedSignal("FloorMaterial"):Connect(function() 
+                humcon = l_hum:GetPropertyChangedSignal('FloorMaterial'):Connect(function() 
                     if (l_hum.FloorMaterial == a) then
                         if (delay == 0) then
                             if (l_hum.Jump) then return end
@@ -4658,44 +4957,42 @@ local m_movement = ui:CreateMenu('Movement') do
         mode:AddOption('Velocity'):SetTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
         mode:AddOption('Bhop'):SetTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
         mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
-        mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. There\'s no good reason to use this mode. Doesn\'t come with any protection. Use Standard instead.</b></font>')
+        mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. Use Standard instead.</b></font>')
         
         local speedslider = m_speed:AddSlider('Speed',{min=0,max=100,cur=30,step=0.01})
         local speed = 30
-        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        speedslider:Connect('ValueChanged',function(v)speed=v;end)
         local part
         local scon
-        
-        local ev = serv_rs.Heartbeat
-        
-        m_speed:Connect("Enabled",function() 
+                
+        m_speed:Connect('Enabled',function() 
             local mode = mode:GetSelection()
             
-            ratio(l_hum.Changed)
-            ratio(l_hum:GetPropertyChangedSignal("Jump"))
-            ratio(l_humrp.Changed)
-            ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            ratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            dnec(l_hum.Changed, 'hum_changed')
+            dnec(l_hum:GetPropertyChangedSignal('Jump'), 'hum_jump')
+            dnec(l_humrp.Changed, 'rp_changed')
+            dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+            dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
             
             if (scon) then scon:Disconnect() scon = nil end
             
             if (mode == 'Standard') then
-                scon = ev:Connect(function(dt) 
+                scon = serv_run.Heartbeat:Connect(function(dt) 
                     l_humrp.CFrame += l_hum.MoveDirection * (5 * dt * speed)
                 end)
             elseif (mode == 'Velocity') then
-                scon = ev:Connect(function(dt) 
+                scon = serv_run.Heartbeat:Connect(function(dt) 
                     l_humrp.Velocity += l_hum.MoveDirection * (5 * dt * speed)
                 end)
             elseif (mode == 'Bhop') then
-                scon = serv_rs.RenderStepped:Connect(function(dt) 
+                scon = serv_run.RenderStepped:Connect(function(dt) 
                     local md = l_hum.MoveDirection
                     
                     l_humrp.Velocity += md * (5 * dt * speed)
                     l_hum.Jump = not (md.Magnitude < 0.01 and true or false)
                 end)
             elseif (mode == 'Part') then
-                part = inst("Part")
+                part = inst_new('Part')
                 part.Transparency = 0.8
                 part.Size = vec3(4,4,1)
                 part.CanTouch = false
@@ -4713,24 +5010,33 @@ local m_movement = ui:CreateMenu('Movement') do
                     l_hum:ChangeState(8)
                 end)
             elseif (mode == 'WalkSpeed') then
-                scon = ev:Connect(function() 
+                dnec(l_hum:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
+                
+                scon = serv_run.Heartbeat:Connect(function() 
                     l_hum.WalkSpeed = speed
                 end)
             end
         end)
         
-        m_speed:Connect("Disabled",function() 
+        m_speed:Connect('Disabled',function() 
             if (scon) then scon:Disconnect() scon = nil end
             if (part) then part:Destroy() end
             
-            unratio(l_hum.Changed)
-            unratio(l_hum:GetPropertyChangedSignal("Jump"))
-            unratio(l_humrp.Changed)
-            unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-            unratio(l_humrp:GetPropertyChangedSignal("Velocity"))
+            enec(l_hum.Changed, 'hum_changed')
+            enec(l_hum:GetPropertyChangedSignal('Jump'), 'hum_jump')
+            
+            if (disabled_signals['hum_walk']) then 
+                enec(l_hum:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
+            end
+            
+            enec(l_humrp.Changed, 'rp_changed')
+            enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+            enec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+            
+            
         end)
         
-        mode:Connect("SelectionChanged",function() 
+        mode:Connect('SelectionChanged',function() 
             m_speed:Reset()
         end)
         
@@ -4745,13 +5051,13 @@ local m_movement = ui:CreateMenu('Movement') do
         
         local x,y,z = 20,20,20
         
-        xslider:Connect("ValueChanged",function(v)x=v;end)
-        yslider:Connect("ValueChanged",function(v)y=v;end)
-        zslider:Connect("ValueChanged",function(v)z=v;end)
+        xslider:Connect('ValueChanged',function(v)x=v;end)
+        yslider:Connect('ValueChanged',function(v)y=v;end)
+        zslider:Connect('ValueChanged',function(v)z=v;end)
         
         local velc
-        m_velocity:Connect("Enabled",function() 
-            velc = serv_rs.Stepped:Connect(function() 
+        m_velocity:Connect('Enabled',function() 
+            velc = serv_run.Stepped:Connect(function() 
                 local v = l_humrp.Velocity
                 l_humrp.Velocity = vec3(
                     mc(v.X,-x,x),
@@ -4761,7 +5067,7 @@ local m_movement = ui:CreateMenu('Movement') do
             end)
         end)
         
-        m_velocity:Connect("Disabled",function() 
+        m_velocity:Connect('Disabled',function() 
             if (velc) then velc:Disconnect() velc = nil end
         end)
     end
@@ -4837,23 +5143,23 @@ local m_render = ui:CreateMenu('Render') do
         local cambased = true 
         camera:Enable()
         
-        ascend_h:Connect("HotkeySet",function(j)ask=j or 0;end)
-        descend_h:Connect("HotkeySet",function(k)dsk=k or 0;end)
-        camera:Connect("Toggled",function(t)
+        ascend_h:Connect('HotkeySet',function(j)ask=j or 0;end)
+        descend_h:Connect('HotkeySet',function(k)dsk=k or 0;end)
+        camera:Connect('Toggled',function(t)
             cambased=t;
             r_freecam:Reset()
         end)
-        mode:Connect("SelectionChanged",function() 
+        mode:Connect('SelectionChanged',function() 
             r_freecam:Reset()
         end)
-        freezemode:Connect("SelectionChanged",function() 
+        freezemode:Connect('SelectionChanged',function() 
             r_freecam:Reset()
         end)
-        speedslider:Connect("ValueChanged",function(v)speed=v;end)
+        speedslider:Connect('ValueChanged',function(v)speed=v;end)
         
         local stuckcon, stuckcf, oldwalk
         
-        r_freecam:Connect("Enabled", function()
+        r_freecam:Connect('Enabled', function()
             
             local curmod = mode:GetSelection()        
             local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
@@ -4863,12 +5169,12 @@ local m_render = ui:CreateMenu('Render') do
             end
             
             local normclv = l_cam.CFrame.LookVector
-            clvcon = l_cam:GetPropertyChangedSignal("CFrame"):Connect(function() 
+            clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
                 normclv = l_cam.CFrame.LookVector
             end)
             
             if (curmod == 'Standard') then
-                campart = inst("Part")
+                campart = inst_new('Part')
                 campart.Position = fcampos
                 campart.Transparency = 1
                 campart.CanCollide = false
@@ -4878,17 +5184,17 @@ local m_render = ui:CreateMenu('Render') do
                 campart.Parent = workspace  
                 
                 l_cam.CameraSubject = campart
-                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                cscon = l_cam:GetPropertyChangedSignal('CameraSubject'):Connect(function() 
                     if (l_cam.CameraSubject ~= campart) then
                         l_cam.CameraSubject = campart
                     end
                 end)
                 
                 if (cambased) then
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
+                        local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                         
                         local multiply = (dt*3*speed)
                         
@@ -4899,9 +5205,9 @@ local m_render = ui:CreateMenu('Render') do
                         campart.Position = fcampos
                     end)
                 else
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
                         
                         fcampos += (l_hum.MoveDirection * dt * 3 * speed)
                         fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -4910,7 +5216,7 @@ local m_render = ui:CreateMenu('Render') do
                     end)
                 end
             elseif (curmod == 'Smooth') then
-                campart = inst("Part")
+                campart = inst_new('Part')
                 campart.Position = fcampos
                 campart.Transparency = 1
                 campart.CanCollide = false
@@ -4920,14 +5226,14 @@ local m_render = ui:CreateMenu('Render') do
                 campart.Parent = workspace  
                 
                 l_cam.CameraSubject = campart
-                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                cscon = l_cam:GetPropertyChangedSignal('CameraSubject'):Connect(function() 
                     if (l_cam.CameraSubject ~= campart) then
                         l_cam.CameraSubject = campart
                     end
                 end)
                 
                 
-                local pos = inst("BodyPosition")
+                local pos = inst_new('BodyPosition')
                 pos.Position = fcampos
                 pos.D = 1900
                 pos.P = 125000
@@ -4937,10 +5243,10 @@ local m_render = ui:CreateMenu('Render') do
                 campart.Anchored = false
                 
                 if (cambased) then
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
+                        local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                         
                         local mul = (dt*3*speed)
                         
@@ -4951,9 +5257,9 @@ local m_render = ui:CreateMenu('Render') do
                         pos.Position = fcampos
                     end)
                 else
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
                         
                         fcampos += (l_hum.MoveDirection * dt * 3 * speed)
                         fcampos += (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -4965,20 +5271,20 @@ local m_render = ui:CreateMenu('Render') do
             elseif (curmod == 'Bypass') then
                 
                 l_cam.CameraSubject = l_hum
-                cscon = l_cam:GetPropertyChangedSignal("CameraSubject"):Connect(function() 
+                cscon = l_cam:GetPropertyChangedSignal('CameraSubject'):Connect(function() 
                     if (l_cam.CameraSubject ~= l_hum) then
                         l_cam.CameraSubject = l_hum
                     end
                 end)
                 
                 if (cambased) then
-                    local cf = cf(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        l_humrp.CFrame = cf
+                    local thej = cf(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        l_humrp.CFrame = thej
                         
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
-                        local f,b = serv_uis:IsKeyDown(119), serv_uis:IsKeyDown(115)
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
+                        local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
                         
                         local movevec = (l_hum.MoveDirection * dt * 3 * speed)
                         local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -4988,17 +5294,17 @@ local m_render = ui:CreateMenu('Render') do
                         fcampos -= upvec
                         fcampos -= cupvec
                         
-                        local normalized = cf(fcampos):ToObjectSpace(cf)
+                        local normalized = cf(fcampos):ToObjectSpace(thej)
                         
                         l_hum.CameraOffset = (normalized).Position
                     end)
                 else
-                    local cf = cf(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
-                    fcon = serv_rs.Heartbeat:Connect(function(dt) 
-                        l_humrp.CFrame = cf
+                    local thej = cf(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
+                    fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        l_humrp.CFrame = thej
                         
-                        local up = serv_uis:IsKeyDown(ask)
-                        local down = serv_uis:IsKeyDown(dsk)
+                        local up = serv_uinput:IsKeyDown(ask)
+                        local down = serv_uinput:IsKeyDown(dsk)
                         
                         local movevec = (l_hum.MoveDirection * dt * 3 * speed)
                         local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
@@ -5006,7 +5312,7 @@ local m_render = ui:CreateMenu('Render') do
                         fcampos += movevec
                         fcampos -= upvec
                         
-                        local normalized = cf(fcampos):ToObjectSpace(cf)
+                        local normalized = cf(fcampos):ToObjectSpace(thej)
                         
                         l_hum.CameraOffset = (normalized).Position
                     end)
@@ -5026,15 +5332,15 @@ local m_render = ui:CreateMenu('Render') do
             elseif (fmode == 'Stuck') then
                 
                 stuckcf = l_humrp.CFrame
-                ratio(l_humrp.Changed)
-                ratio(l_humrp:GetPropertyChangedSignal("CFrame"))
-                stuckcon = serv_rs.Heartbeat:Connect(function() 
+                dnec(l_humrp.Changed, 'rp_changed')
+                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                stuckcon = serv_run.Heartbeat:Connect(function() 
                     l_humrp.CFrame = stuckcf
                 end)
             end
         end)
         
-        r_freecam:Connect("Disabled",function() 
+        r_freecam:Connect('Disabled',function() 
             
             if (fcon) then 
                 fcon:Disconnect() 
@@ -5065,19 +5371,19 @@ local m_render = ui:CreateMenu('Render') do
             if (stuckcon) then
                 stuckcon:Disconnect()
                 stuckcon = nil
-                unratio(l_humrp.Changed)
-                unratio(l_humrp:GetPropertyChangedSignal("CFrame"))
+                enec(l_humrp.Changed, 'rp_changed')
+                enec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
             end
         end)
         
-        gotocam:Connect("Clicked",function() 
+        gotocam:Connect('Clicked',function() 
             local pos = campart.Position
             local new = cf(pos, pos+l_humrp.CFrame.LookVector)
             stuckcf = new
             l_humrp.CFrame = new
         end)
         
-        resetcam:Connect("Clicked",function() 
+        resetcam:Connect('Clicked',function() 
             fcampos = l_humrp.Position
         end)
         
@@ -5105,9 +5411,7 @@ local m_render = ui:CreateMenu('Render') do
         )
     
         ):Select()
-        --s_EspType:AddOption('Quick'):SetTooltip('Faster version of Streamproof. May be slightly more accurate')
-        --s_EspType:AddOption('Chams'):SetTooltip('Uses the same method as Infinite Yield. Shows more detail than the other modes (save for hybrid)')
-        --s_EspType:AddOption('Hybrid'):SetTooltip('Quick and Chams combined. Looks the best, shouldn\'t lag much')
+        s_EspType:AddOption('Chams'):SetTooltip('Uses the same method as Infinite Yield. Shows more detail than the other modes')
         s_EspType:AddOption('Lines'):SetTooltip('Like chams, but with lines instead of boxes')
 
         
@@ -5115,11 +5419,11 @@ local m_render = ui:CreateMenu('Render') do
         local EspType       = s_EspType:GetSelection()
         local HealthToggled = s_HealthToggle:GetState()
         do
-            s_UpdateDelay:Connect("ValueChanged",function(v)UpdateDelay=v;end)
-            s_HealthToggle:Connect("Toggled",function(t)HealthToggled=t;
+            s_UpdateDelay:Connect('ValueChanged',function(v)UpdateDelay=v;end)
+            s_HealthToggle:Connect('Toggled',function(t)HealthToggled=t;
                 r_esp:Reset()
             end)
-            s_EspType:Connect("SelectionChanged",function(v)EspType=v;
+            s_EspType:Connect('SelectionChanged',function(v)EspType=v;
                 r_esp:Reset()
             end)
         end
@@ -5137,8 +5441,8 @@ local m_render = ui:CreateMenu('Render') do
         local PlrAdded
         local PlrRemoved
         
-        r_esp:Connect("Enabled",function()
-            EspFolder = inst('Folder')
+        r_esp:Connect('Enabled',function()
+            EspFolder = inst_new('Folder')
             EspFolder.Name = getnext()
             EspFolder.Parent = game.CoreGui
             
@@ -5194,7 +5498,7 @@ local m_render = ui:CreateMenu('Render') do
                 end)
 
                 if (UpdateDelay == 0) then 
-                    UpdateCon = serv_rs.RenderStepped:Connect(function()
+                    UpdateCon = serv_run.RenderStepped:Connect(function()
                         if (not esplib.IsWindowFocused()) then return end
 
                         esplib.UpdateTick()
@@ -5217,10 +5521,124 @@ local m_render = ui:CreateMenu('Render') do
                 end
                 
                 esplib.Ready()
-            elseif (EspType == 'Quick') then 
-                
+                  
             elseif (EspType == 'Hybrid') then
             elseif (EspType == 'Chams') then
+                local extrasize = vec3(0.02, 0.02, 0.02)
+                
+                local function hookplr(plr) 
+                    local PlayerName = plr.Name
+                    local PlayerObject = p_RefKeys[PlayerName]
+                    local PlayerInstance = PlayerObject.plr
+                    
+                    local EspObject = {}
+                    do 
+                        local root = PlayerObject.rp
+                        
+                        EspObject[1] = {}
+                        
+                        local c = PlayerObject.chr and PlayerObject.chr:GetChildren() or {}
+                        for i = 1, 30 do 
+                            local v = c[i]
+                            if (v and v:IsA('BasePart') == false) then continue end
+                            
+                            
+                            local outline = inst_new('BoxHandleAdornment')
+                            outline.Adornee = v
+                            outline.AlwaysOnTop = true
+                            outline.Size = v and v.Size + extrasize or vec3(1,1,1)
+                            outline.Transparency = 0.7
+                            outline.Visible = true
+                            outline.Parent = EspFolder
+                            
+                            ins(EspObject[1], outline)
+                        end
+                        
+                        local bbg = inst_new('BillboardGui')
+                        bbg.Adornee = root
+                        bbg.AlwaysOnTop = true
+                        bbg.Size = dim_new(4 + (#PlayerName * 0.3), 40, 1, 10)
+                        bbg.StudsOffsetWorldSpace = vec3(0, 4, 0)
+                        bbg.Parent = EspFolder
+                        
+                        local a = inst_new('TextLabel')
+                        a.BackgroundTransparency = 1
+                        a.Font = font
+                        a.Size = dim_sca(1, 1)
+                        a.Text = PlayerName
+                        a.TextColor3 = PlayerInstance.TeamColor.Color
+                        a.TextScaled = true
+                        a.TextStrokeColor3 = colors[18]
+                        a.TextStrokeTransparency = 0
+                        a.TextXAlignment = 'Center'
+                        a.Parent = bbg
+                        
+                        EspObject[2] = bbg
+                        EspObject[3] = a
+                    end
+                    
+                    EspObjsChams[PlayerName] = EspObject
+                    
+                    PlrCons[PlayerName] = {}
+                    PlrCons[PlayerName][1] = plr:GetPropertyChangedSignal('TeamColor'):Connect(function() 
+                        EspObjsChams[PlayerName][3].TextColor3 = plr.TeamColor.Color
+                    end)
+                    PlrCons[PlayerName][2] = plr.CharacterAdded:Connect(function(c)
+                        local root = c:WaitForChild('HumanoidRootPart',1)
+                        local obj = EspObjsChams[PlayerName]
+                        
+                        obj[2].Adornee = root
+                        wait(0.3)
+                        for i,v in ipairs(c:GetChildren()) do 
+                            if (v:IsA('BasePart') == false) then continue end
+                            local j = obj[1][i]
+                            if (j) then
+                                j.Adornee = v
+                                j.Size = v and v.Size + vec3(0.02, 0.02, 0.02) or vec3(1,1,1)
+                            else
+                                print('[REDLINE] Couldn\'t find valid part: idx:'..i..'; pname:'..v.Name)
+                            end
+                        end
+                    end)
+                end
+                
+                for i = 1, #p_Names do 
+                    hookplr(p_RefKeys[p_Names[i]].plr)
+                end
+
+                PlrAdded = serv_players.PlayerAdded:Connect(function(plr) 
+                    wait(0.1)
+                    hookplr(plr)
+                end)
+                
+                PlrRemoved = serv_players.PlayerRemoving:Connect(function(plr) 
+                    local PlayerName = plr.Name
+                    local obj = EspObjsChams[PlayerName]
+                    obj[2]:Destroy()
+                    
+                    local _ = obj[1]
+                    for i = 1, #_ do 
+                        _[i]:Destroy()
+                    end
+                    EspObjsChams[PlayerName] = nil
+                end)
+                
+                local time = 0
+                RGBCon = serv_run.RenderStepped:Connect(function(dt) 
+                    time = (time > 1 and 0 or time + dt*0.05)
+                    local color = c_hsv(time, 1, 1)
+                    for i = 1, #p_Names do 
+                        local PlayerName = p_Names[i]
+                        local objs = EspObjsChams[PlayerName]
+                        if (not objs) then continue end
+                        
+                        objs = objs[1]
+                        for i = 1, #objs do 
+                            objs[i].Color3 = color
+                        end
+                    end
+                end)
+                
             elseif (EspType == 'Lines') then
                 local function hookplr(plr) 
                     local PlayerName = plr.Name
@@ -5239,27 +5657,27 @@ local m_render = ui:CreateMenu('Render') do
                             if (v and v:IsA('BasePart') == false) then continue end
                             
                             
-                            local outline = inst("SelectionBox")
+                            local outline = inst_new('SelectionBox')
                             outline.Adornee = v
                             outline.LineThickness = 0.02
-                            outline.Color3 = c3(0.6, 0, 1)
+                            outline.Color3 = c_new(0.6, 0, 1)
                             outline.Visible = true
                             outline.Parent = EspFolder
                             
                             ins(EspObject[1], outline)
                         end
                         
-                        local bbg = inst('BillboardGui')
+                        local bbg = inst_new('BillboardGui')
                         bbg.Adornee = root
                         bbg.AlwaysOnTop = true
-                        bbg.Size = dim2(4 + (#PlayerName * 0.3), 40, 1, 10)
+                        bbg.Size = dim_new(4 + (#PlayerName * 0.3), 40, 1, 10)
                         bbg.StudsOffsetWorldSpace = vec3(0, 4, 0)
                         bbg.Parent = EspFolder
                         
-                        local a = inst('TextLabel')
+                        local a = inst_new('TextLabel')
                         a.BackgroundTransparency = 1
                         a.Font = font
-                        a.Size = dim2sca(1, 1)
+                        a.Size = dim_sca(1, 1)
                         a.Text = PlayerName
                         a.TextColor3 = PlayerInstance.TeamColor.Color
                         a.TextScaled = true
@@ -5318,9 +5736,9 @@ local m_render = ui:CreateMenu('Render') do
                 end)
                 
                 local time = 0
-                RGBCon = serv_rs.RenderStepped:Connect(function(dt) 
+                RGBCon = serv_run.RenderStepped:Connect(function(dt) 
                     time = (time > 1 and 0 or time + dt*0.05)
-                    local color = hsv(time, 1, 1)
+                    local color = c_hsv(time, 1, 1)
                     for i = 1, #p_Names do 
                         local PlayerName = p_Names[i]
                         local objs = EspObjsChams[PlayerName]
@@ -5333,7 +5751,7 @@ local m_render = ui:CreateMenu('Render') do
                 end)
             end
         end)
-        r_esp:Connect("Disabled",function() 
+        r_esp:Connect('Disabled',function() 
             if (UpdateCon) then UpdateCon:Disconnect() UpdateCon = nil end
             if (PlrAdded) then PlrAdded:Disconnect() PlrAdded = nil end
             if (PlrRemoved) then PlrRemoved:Disconnect() PlrRemoved = nil end
@@ -5361,8 +5779,6 @@ local m_render = ui:CreateMenu('Render') do
             
                 cle(EspObjs2D)
             end
-            
-            
         end)
     end
     -- Fullbright
@@ -5390,7 +5806,7 @@ local m_render = ui:CreateMenu('Render') do
             local mode = s_mode:GetSelection()
             
             local lighting = game.Lighting
-            ratio(lighting.Changed)
+            dnec(lighting.Changed)
             
             oldambient     = lighting.Ambient        
             oldoutambient  = lighting.OutdoorAmbient 
@@ -5400,33 +5816,33 @@ local m_render = ui:CreateMenu('Render') do
             oldfogstart    = lighting.FogStart
             
             if (mode == 'Standard') then
-                local c1 = c3(0.9, 0.9, 0.9)
+                local c1 = c_new(0.9, 0.9, 0.9)
+                local function fb() 
+                    lighting.Ambient = c1
+                    lighting.OutdoorAmbient = c1
+                    lighting.Brightness = 7
+                    lighting.FogEnd = 9e9
+                    lighting.FogStart = 9e9
+                end
+                
+                if (loop) then
+                    serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
+                else
+                    fb()   
+                end
+            elseif (mode == 'Bright') then
+                local c1 = c_new(1, 1, 1)
                 local function fb() 
                     lighting.Ambient = c1
                     lighting.OutdoorAmbient = c1
                     lighting.Brightness = 10
                     lighting.FogEnd = 9e9
                     lighting.FogStart = 9e9
-                end
-                
-                if (loop) then
-                    serv_rs:BindToRenderStep('RL-Fullbright',9999,fb) 
-                else
-                    fb()   
-                end
-            elseif (mode == 'Bright') then
-                local c1 = c3(1, 1, 1)
-                local function fb() 
-                    lighting.Ambient = c1
-                    lighting.OutdoorAmbient = c1
-                    lighting.Brightness = 12
-                    lighting.FogEnd = 9e9
-                    lighting.FogStart = 9e9
                     lighting.GlobalShadows = false
                 end
                 
                 if (loop) then
-                    serv_rs:BindToRenderStep('RL-Fullbright',9999,fb) 
+                    serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
                 else
                     fb()   
                 end
@@ -5437,22 +5853,22 @@ local m_render = ui:CreateMenu('Render') do
                 end
                 
                 if (loop) then
-                    serv_rs:BindToRenderStep('RL-Fullbright',9999,fb) 
+                    serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
                 else
                     fb()   
                 end
             elseif (mode == 'Soft') then
-                local c1 = c3(0.6, 0.6, 0.6)
+                local c1 = c_new(0.6, 0.6, 0.6)
                 local function fb() 
                     lighting.Ambient = c1
                     lighting.OutdoorAmbient = c1
-                    lighting.Brightness = 8
+                    lighting.Brightness = 4
                     lighting.FogEnd = 9e9
                     lighting.FogStart = 9e9
                 end
                 
                 if (loop) then
-                    serv_rs:BindToRenderStep('RL-Fullbright',9999,fb) 
+                    serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
                 else
                     fb()   
                 end
@@ -5460,7 +5876,7 @@ local m_render = ui:CreateMenu('Render') do
         end)
         
         r_fullbright:Connect('Disabled',function() 
-            serv_rs:UnbindFromRenderStep('RL-Fullbright')
+            serv_run:UnbindFromRenderStep('RL-Fullbright')
             
             local lighting = game.Lighting
             lighting.Ambient         = oldambient
@@ -5470,30 +5886,47 @@ local m_render = ui:CreateMenu('Render') do
             lighting.FogEnd          = oldfogend
             lighting.FogStart        = oldfogstart
             
-            unratio(lighting.Changed)
+            enec(lighting.Changed)
         end)
         
     end
     -- Zoom
     do 
         local slider = r_zoom:AddSlider('Zoom amount',{min=0,max=150,cur=30,step=0.1}):SetTooltip('The amount to zoom in by')
-                
-        r_zoom:Connect("Toggled",function(t) 
-            if (t) then
-                l_cam.FieldOfView = 70-(slider:GetValue()*.5)
-                slider:Connect("ValueChanged",function(v) 
-                    l_cam.FieldOfView = 70-(v*.5)
+        local looped = r_zoom:AddToggle('Looped'):SetTooltip('Loop changes FOV. Useful for some games that change it every frame')
+        
+        r_zoom:Connect('Enabled',function() 
+            
+            local v = 70 - (slider:GetValue()*.5)
+            
+            slider:Connect('ValueChanged',function(v) 
+                v = 70 - (v*.5)
+                l_cam.FieldOfView = v
+            end)
+            
+            
+            if (looped:IsEnabled()) then
+                rs:BindToRenderStep('RL-FOV',2000,function() 
+                    l_cam.FieldOfView = v
                 end)
             else
-                slider:Connect("ValueChanged",nil)
-                l_cam.FieldOfView = 70
+                l_cam.FieldOfView = v
             end
+        end)
+            
+            
+        r_zoom:Connect('Disabled',function()
+            slider:Connect('ValueChanged',nil)
+            serv_run:UnbindFromRenderStep('RL-FOV')
+            
+            l_cam.FieldOfView = 70
+            
         end)
 
     end
     
 	r_fullbright:SetTooltip('Fullbright with different modes that work on many different games')
-    --r_betterui:SetTooltip("Improves existing Roblox UIs, like the chat and inventory")
+    --r_betterui:SetTooltip('Improves existing Roblox UIs, like the chat and inventory')
     --r_bread:SetTooltip('Leaves a trail behind')
     --r_camtweaks:SetTooltip('Options for configuring the camera, like noclip-cam, maxzoom, smooth camera, etc. For 3rd person, use Game tweaks under Misc')
     --r_crosshair:SetTooltip('Crosshair configuration')
@@ -5514,17 +5947,17 @@ local m_ui = ui:CreateMenu('UI') do
     -- jeff 
     do 
         local _
-        u_jeff:Connect("Toggled", function(t) 
+        u_jeff:Connect('Toggled', function(t) 
             if (t) then
-                _ = inst("ImageLabel")
-                _.Size = dim2off(250, 250)
+                _ = inst_new('ImageLabel')
+                _.Size = dim_off(250, 250)
                 _.BackgroundTransparency = 1
-                _.Position = dim2(1, -250, 1, 0)
-                _.Image = "rbxassetid://8723094657"
+                _.Position = dim_new(1, -250, 1, 0)
+                _.Image = 'rbxassetid://8723094657'
                 _.ResampleMode = 'Pixelated'
                 _.Parent = ui:GetScreen()
                 
-                ctwn(_, {Position = dim2(1, -250, 1, -130)}, 25)
+                ctwn(_, {Position = dim_new(1, -250, 1, -130)}, 25)
             else
                 _:Destroy()
             end
@@ -5537,32 +5970,56 @@ local m_ui = ui:CreateMenu('UI') do
         local sound = u_plr:AddToggle('Play sound'):SetTooltip('Play the notif sound'):Enable()
         
         local h = true
-        sound:Connect("Toggled",function(t)h=t;end)
+        sound:Connect('Toggled',function(t)h=t;end)
         
         local join
         local leave 
         
-        u_plr:Connect("Enabled",function() 
+        u_plr:Connect('Enabled',function() 
             join = serv_players.PlayerAdded:Connect(function(p) 
-                if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend joined',p.Name..' has joined your server',2.5,h and 2 or 3)
-                else
-                    if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player joined',p.Name..' has joined the server',2.5,h and 2 or 3)
-                    end
+                local display, name = p.DisplayName, p.Name
+                
+                local title,msg,duration,sound do
+                    title = l_plr:IsFriendsWith(p.UserId) and 'Friend joined' or 'Player joined'
+                    msg = (display and display ~= name and 
+                        ('%s (%s) has joined the server'):format(display, name)) or 
+                        ('%s has joined the server'):format(name)
+                
+                    duration = 2.5
+                    sound = h and 'high' or 'none'
                 end
+                
+                ui:Notify(
+                    title,
+                    msg,
+                    duration,
+                    sound
+                )
+                
+                
             end)
             leave = serv_players.PlayerRemoving:Connect(function(p) 
-                if (l_plr:IsFriendsWith(p.UserId)) then
-                    ui:Notify('Friend left',p.Name..' has left your server',2.5,h and 1 or 3)
-                else
-                    if (not rfriends:IsEnabled()) then
-                        ui:Notify('Player left',p.Name..' has left the server',2.5,h and 1 or 3)
-                    end
+                local display, name = p.DisplayName, p.Name
+                
+                local title,msg,duration,sound do
+                    title = l_plr:IsFriendsWith(p.UserId) and 'Friend left' or 'Player left'
+                    msg = (display and display ~= name and 
+                        ('%s (%s) has left the server'):format(display, name)) or 
+                        ('%s has left the server'):format(name)
+                
+                    duration = 2.5
+                    sound = h and 'low' or 'none'
                 end
+                
+                ui:Notify(
+                    title,
+                    msg,
+                    duration,
+                    sound
+                )
             end)
         end)
-        u_plr:Connect("Disabled",function() 
+        u_plr:Connect('Disabled',function() 
             join:Disconnect()
             leave:Disconnect()
         end)
@@ -5581,16 +6038,16 @@ local m_ui = ui:CreateMenu('UI') do
         local uilist = _[2]
         local uititle = _[3]
         
-        corner:Connect("SelectionChanged",function() 
+        corner:Connect('SelectionChanged',function() 
             u_modlist:Reset()
         end)
         
-        u_modlist:Connect("Enabled",function() 
+        u_modlist:Connect('Enabled',function() 
             local s = corner:GetSelection()
             
             
             if (s == 'Top left') then
-                uiframe.Position = dim2sca(0, 0)
+                uiframe.Position = dim_sca(0, 0)
                 uiframe.AnchorPoint = vec2(0, 0)
                 
                 uilist.HorizontalAlignment = 'Left'
@@ -5599,7 +6056,7 @@ local m_ui = ui:CreateMenu('UI') do
                 ui:manageml(-100, 10, 'Left', 'PaddingLeft')
                 
             elseif (s == 'Top right') then
-                uiframe.Position = dim2sca(1, 0)
+                uiframe.Position = dim_sca(1, 0)
                 uiframe.AnchorPoint = vec2(1, 0)
                 
                 uilist.HorizontalAlignment = 'Right'
@@ -5607,7 +6064,7 @@ local m_ui = ui:CreateMenu('UI') do
                 
                 ui:manageml(-100, 10, 'Right', 'PaddingRight')
             elseif (s == 'Bottom left') then
-                uiframe.Position = dim2sca(0, 1)
+                uiframe.Position = dim_sca(0, 1)
                 uiframe.AnchorPoint = vec2(0, 1)
                 
                 uilist.HorizontalAlignment = 'Left'
@@ -5615,7 +6072,7 @@ local m_ui = ui:CreateMenu('UI') do
                 
                 ui:manageml(-100, 10, 'Left', 'PaddingLeft')
             elseif (s == 'Bottom right') then
-                uiframe.Position = dim2sca(1, 1)
+                uiframe.Position = dim_sca(1, 1)
                 uiframe.AnchorPoint = vec2(1, 1)
                 
                 uilist.HorizontalAlignment = 'Right'
@@ -5628,7 +6085,7 @@ local m_ui = ui:CreateMenu('UI') do
             uiframe.Visible = true
         end)
         
-        u_modlist:Connect("Disabled",function() 
+        u_modlist:Connect('Disabled',function() 
             uiframe.Visible = false
         end)
         
@@ -5640,169 +6097,25 @@ local m_ui = ui:CreateMenu('UI') do
     do 
         
         local s_theme = u_theme:AddDropdown('Theme'):SetTooltip('The preset theme to use. If you want to make your own then edit the config')
-        local s_save = u_theme:AddButton('Save'):SetTooltip('Saves the selected theme to the theme config. Loads the theme on restart')
-        local s_apply = u_theme:AddButton('Apply [RESTARTS]'):SetTooltip('Click this when you\'re ready to apply. Automatically restarts')
+        local s_save = u_theme:AddButton('Save'):SetTooltip('Saves the selected theme to the theme config. Requires a restart to load the theme')
+        local s_apply = u_theme:AddButton('Apply'):SetTooltip('Saves the selected theme to the theme config. Automatically restarts')
         
         local themedata 
         local colors,trans,font
         
-        
-        --[[
-        local shit = {}
-        shit['labels'] = {}
-        shit['images'] = {}
-        shit['mods'] = {}
-        shit['strokes'] = {}
-        
-        do 
-            
-            local _1,_2,_3,_4,_5,_6,_7,_8,_9,_10
-            
-            _1 = inst('Frame')
-            _1.BorderSizePixel = 0
-            _1.Position = dim2off(500, 500)
-            _1.Size = dim2off(250, 30)
-            _1.Visible = false
-            _1.ZIndex = 400
-            _1.Parent = ui:GetBackframe()
-                        
-            _2 = inst('TextLabel')
-            _2.BackgroundTransparency = 1
-            _2.Position = dim2off(0, 0)
-            _2.Size = dim2sca(1, 1)
-            _2.Text = 'Preview'
-            _2.TextSize = 22
-            _2.TextStrokeTransparency = 0
-            _2.TextXAlignment = 'Center'
-            _2.ZIndex = 402
-            _2.Parent = _1
-                         
-            _3 = inst('ImageLabel')
-            _3.AnchorPoint = vec2(1,0)
-            _3.BackgroundTransparency = 1
-            _3.Image = 'rbxassetid://7184113125'
-            _3.Position = dim2sca(1,0)
-            _3.Rotation = 0
-            _3.Size = dim2off(30, 30)
-            _3.ZIndex = 402
-            _3.Parent = _1
-            
-            _4 = inst("Frame")
-            _4.BorderSizePixel = 0
-            _4.Size = dim2(1,0,0,25)
-            _4.Position = dim2off(0, 30)
-            _4.ZIndex = 398
-            _4.Parent = _1
-             
-            _5 =  inst("Frame")
-            _5.BackgroundTransparency = 0.92
-            _5.BorderSizePixel = 0
-            _5.ClipsDescendants = true
-            _5.Size = dim2(1,0,1,0)
-            _5.ZIndex = 400
-            _5.Parent = _4
-            
-            _6 = inst("Frame")
-            _6.BorderSizePixel = 0
-            _6.Size = dim2(0,2,1,0)
-            _6.ZIndex = 400
-            _6.Parent = _5
-             
-            _7 = inst('TextLabel')
-            _7.BackgroundTransparency = 1
-            _7.Position = dim2off(5, 0)
-            _7.RichText = true
-            _7.Size = dim2(1, -5, 1, 0)
-            _7.Text = 'Module'
-            _7.TextSize = 20
-            _7.TextStrokeTransparency = 0
-            _7.TextXAlignment = 'Left'
-            _7.ZIndex = 400
-            _7.Parent = _4
-            
-            _8 = inst('TextLabel')
-            _8.AnchorPoint = vec2(1,0)
-            _8.BackgroundTransparency = 1
-            _8.Position = dim2sca(1,0)
-            _8.Rotation = 0
-            _8.Size = dim2off(25, 25)
-            _8.Text = '-'
-            _8.TextSize = 18
-            _8.TextStrokeTransparency = 0
-            _8.TextXAlignment = 'Center'
-            _8.ZIndex = 400
-            _8.Parent = _4
-            
-            _9 = stroke(_1)
-            _10 = stroke(_4)
-            
-            ins(shit['labels'], _2)
-            ins(shit['labels'], _7)
-            ins(shit['labels'], _8)
-            ins(shit['strokes'], _9)
-            ins(shit['strokes'], _10)
-            shit['enable1'] = _5
-            shit['enable2'] = _6
-            shit['image'] = _3
-            shit['menu'] = _1
-            shit['mod'] = _4
-            
-        end
-        ]]
-        
         s_theme:Connect('SelectionChanged', function(o) 
-            themedata,colordata = nil,nil
-                        
-            local worked = pcall(function()
-                themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.jsonc')
+            spawn(function()
+                themedata,colordata = nil,nil
+                            
+                local worked = pcall(function()
+                    themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.jsonc')
+                end)
                 
-                --colors, trans, font = DecodeThemeJson(themedata)
-            end)
-            
-            if (worked) then
-                --[[
-                print(pcall(function()
-                do 
-                    shit['enable1'].BackgroundColor3 = colors[16]
-                    shit['enable2'].BackgroundColor3 = colors[4]
-                    
-                    local _ = shit['menu'] do 
-                        _['BackgroundColor3'] = colors[5]
-                        _['BackgroundTransparency'] = trans[5]
-                    end
-                    local _ = shit['mod'] do 
-                        _['BackgroundColor3'] = colors[6]
-                        _['BackgroundTransparency'] = trans[6]
-                    end
-                    for i,v in ipairs(shit['strokes']) do
-                        v.Color = colors[1]
-                        v.Transparency = trans[1]
-                    end
-                    for i,v in ipairs(shit['labels']) do 
-                        v.Font = font
-                        v.TextColor3 = colors[16]
-                        v.TextStrokeColor3 = colors[18]
-                    end
-                    for i,v in ipairs(shit['images']) do 
-                        v.ImageColor3 = colors[16]
-                    end
-                    
-                    local pos = serv_uis:GetMouseLocation()
-                    pos = dim2off(pos.X + 200, pos.Y + 20)
-                    
-                    shit['menu'].Visible = true
-                    shit['menu'].Position = pos
+                if (not worked) then
+                    ui:Notify('Oops','Got an error while loading this theme. It may have been removed or modified.', 5, 'warn', true)
                 end
-            end))]]
-            else
-                ui:Notify('Oops','Got an error while loading this theme. It may have been removed or modified.', 5, 4, true)
-            end
+            end)
         end)
-        --[[
-        s_theme:Connect('Closed',function() 
-            shit['menu'].Visible = false
-        end)]]
-        
         
         s_save:Connect('Clicked',function()
             writefile('REDLINE/theme.jsonc',themedata)
@@ -5839,13 +6152,13 @@ local m_server = ui:CreateMenu('Server') do
     local s_rejoin = m_server:AddMod('Rejoin', 'Button')
     --local s_shop = m_server:AddMod('Serverhop', 'Button')
     --local s_viewer = m_server:AddMod('Server browser')
-    s_rejoin:Connect("Clicked",function() 
+    s_rejoin:Connect('Clicked',function() 
         if #serv_players:GetPlayers() <= 1 then
-        	l_plr:Kick("\nRejoining, one second...")
+        	l_plr:Kick('\nRejoining, one second...')
         	wait(0.3)
-        	serv_tp:Teleport(game.PlaceId, l_plr)
+        	serv_tps:Teleport(game.PlaceId, l_plr)
         else
-        	serv_tp:TeleportToPlaceInstance(game.PlaceId, game.JobId, l_plr)
+        	serv_tps:TeleportToPlaceInstance(game.PlaceId, game.JobId, l_plr)
         end
     end)
     
@@ -5854,6 +6167,7 @@ local m_server = ui:CreateMenu('Server') do
     --s_shop:SetTooltip('Server hops. <b>Don\'t hop too many times, or you\'ll get error 268</b>')
     --s_viewer:SetTooltip('Lets you view all the existing servers and hop to them')
 end
+--[[
 local m_integrations = ui:CreateMenu('Integrations') do 
     --local m_alt = m_integrations:AddMod('Alt manager')
     local m_rpc = m_integrations:AddMod('Discord Rich Presence')
@@ -5861,18 +6175,18 @@ local m_integrations = ui:CreateMenu('Integrations') do
     -- rpc
     do 
         m_rpc:AddLabel('Lost access to my disc account with the Redline app set up, will be added when I get it back')
-        m_rpc:Connect("Enabled",function() 
-            ui:Notify('Rich Presence failed', 'Currently unfinished', 3, 1)
+        m_rpc:Connect('Enabled',function() 
+            ui:Notify('Rich Presence failed', 'Currently unfinished', 3, 'low')
         end)
     end
     
     --m_alt:SetTooltip('Roblox Alt Manager integration. Requires the 3rd party Roblox Alt Manager program.')
     m_rpc:SetTooltip('Discord Rich Presence integration')
-end
+end]]
 local m_search = ui:CreateMenu('Search') do 
     local _ = m_search:AddMod('Enter module name', 'Textbox')
     _:SetTooltip('Search for a module')
-    _:Connect("Unfocused", function(t, t2)
+    _:Connect('Unfocused', function(t, t2)
         if (not t2) then return end 
         
         local mods = ui:GetModules()
@@ -5882,7 +6196,7 @@ local m_search = ui:CreateMenu('Search') do
         end
     end)
     
-    _:Connect("TextChanged", function(t) 
+    _:Connect('TextChanged', function(t) 
         local mods = ui:GetModules()
         for i = 1, #mods do 
             local mod = mods[i]
@@ -5898,67 +6212,6 @@ local m_search = ui:CreateMenu('Search') do
         end
     end)
 end
-local m_changelog = ui:CreateMenu('Changelog') do 
-    m_changelog:AddMod('Version 0.4.0',nil,true):AddLabel([[- Added a custom mouse cursor, good for games w/o mouse icons
-- Added another ESP mode (Lines)
-- Disabled Triggerbot while its being remade
-- Fixed slide animation not happening when the gui first gets toggled
-- Hopefully improved mem usage since a ton of player handler stuff was remade
-- Improved ESP's stability a ton
-- Players leaving / joining should cause less overhead now
-- Removed a bunch of comments & unused module shit, improving load times
-- Removed redundant calculations in freecam
-- Replaced notif icons
-- Replaced the logo at the top left
-- Updated Fakelag and Blink to be compatible with both R6 and R15]])
-
-
-    m_changelog:AddMod('Version 0.3.2.1',nil,true):AddLabel([[ - Fixed a bug with how sliders worked which affected the colors
-- Updated every theme to be compatible with these changes]])
-    m_changelog:AddMod('Version 0.3.2',nil,true):AddLabel([[- Added a cyan theme called Cold
-- Edited how the blue theme looks again
-- Lowered Speed's max value from 300 to 100
-- Removed the Gray theme since it sucks]])
-    
-    m_changelog:AddMod('Version 0.3.1',nil,true):AddLabel([[- Added Animspeed module that changes the speed of your animations
-- Added a few tooltips for mods like Autoclicker
-- Edited the blue theme to make it look better]])
-    
-    
-    m_changelog:AddMod('Version 0.3.0',nil,true):AddLabel([[- Added ESP module
-- Added Fullbright module w/ several modes and optional looping
-- Added a config file, only saves themes for now
-- Added ui theme module w/ several presets, preview hasn't been finished but there will be one
-- Almost finished 2d Box ESP, other modes are unfinished as of now 
-- Fixed antifling anchor keeping you anchored after disabling it when it was triggered
-- Fixed labels not having padding]])
-
-    m_changelog:AddMod('Version 0.2.0',nil,true):AddLabel([[ - Added a Mod list module (under UI)
-- Added a [BETA] tag for mods in beta
-- Added a startup animation + sound
-- Almost finished antiaim
-- Changed the enable color to be the classic Redline red
-- Dropdown options can now be selected with right click
-- Finished Autoclicker 
-- Hid all of the unfinished modules, hopefully it won't look weird with everything gone
-- Removed the [Done] tags
-- Slightly improved performance when switching modes while a mod was enabled]])
-
-    m_changelog:AddMod('Version 0.1.1',nil,true):AddLabel([[ - Finished Fakelag and Blink
-- Almost finished Triggerbot, team check and spam may have issues
-- Started work on Antiaim]]) 
-
-    m_changelog:AddMod('Version 0.1.0',nil,true):AddLabel([[ - Added Fakelag mod
-- Added Sound option to Player notifs
-- Added another notification sound
-- Added changelog menu, new changes will be documented here
-- Added server browser mod
-- Finished Parkour, Velocity, and Nofall
-- Made mouse unlock when the Redline window is open
-- Marked Jeff and Player notifs as done
-- Removed Logs since player logs aren't that important
-- Renamed Fastfall to Nofall]])
-end
 
 _G.RLLOADED = true
 
@@ -5967,35 +6220,35 @@ do
     wait(0.5)
     local screen = ui:GetScreen()
     local res = serv_gui:GetScreenResolution()
-    local max = res.Y - 200
+    local max = res.Y * 0.6
     
-    local clip = inst("Frame")
+    local clip = inst_new('Frame')
     clip.AnchorPoint = vec2(0.5, 0.5)
     clip.BackgroundTransparency = 1
     clip.ClipsDescendants = true
-    clip.Position = dim2sca(0.5, 0.5)
-    clip.Size = dim2off(max,max)
+    clip.Position = dim_sca(0.5, 0.5)
+    clip.Size = dim_off(max,max)
     clip.Parent = screen
     
-    local prism = inst("ImageLabel")
+    local prism = inst_new('ImageLabel')
     prism.AnchorPoint = vec2(0.5, 0.5)
     prism.BackgroundTransparency = 1
-    prism.Image = 'rbxassetid://8781210660'
+    prism.Image = 'rbxassetid://8950998020'--'rbxassetid://8781210660'
     prism.ImageColor3 = colors[16]
-    prism.Position = dim2sca(0.5, 0.5)
-    prism.Size = dim2off(0,0)
+    prism.Position = dim_sca(0.5, 0.5)
+    prism.Size = dim_off(0,0)
     prism.Parent = clip
     
-    local redline = inst("ImageLabel")
+    local redline = inst_new('ImageLabel')
     redline.BackgroundTransparency = 1
-    redline.Image = 'rbxassetid://8781211071'
+    redline.Image = 'rbxassetid://8950999035'
     redline.ImageColor3 = colors[4]
     redline.AnchorPoint = vec2(0.5, 0.5)
-    redline.Position = dim2sca(0.5, 0.5)
-    redline.Size = dim2sca(0.8, 0.8)
+    redline.Position = dim_sca(0.5, 0.5)
+    redline.Size = dim_sca(0.8, 0.8)
     redline.Parent = prism
     
-    local sound = inst("Sound")
+    local sound = inst_new('Sound')
     sound.SoundId = 'rbxassetid://8781250986'
     sound.Volume = 1
     sound.Parent = prism
@@ -6006,11 +6259,11 @@ do
     }, 1.5, 5, 1)
     ctwn(prism, {
         ImageColor3 = colors[4];
-        Size = dim2off(max, max);
+        Size = dim_off(max, max);
     }, 1.5, 5, 1).Completed:Wait()
     wait(0.5)
     ctwn(clip, {
-        Size = dim2off(0, 0);
+        Size = dim_off(0, 0);
     },0.5, 5, 1).Completed:Wait()
     
     do
@@ -6018,18 +6271,18 @@ do
         redline.Parent = bf
         prism.Parent = bf
         
-        
+        prism.Image = 'rbxassetid://8951023311'--'rbxassetid://8950998020'
         redline.AnchorPoint = vec2(0,0)
         prism.AnchorPoint = vec2(0,0)
         
-        redline.Size = dim2off(150, 150)
-        prism.Size = dim2off(100, 100) 
+        redline.Size = dim_off(150, 150)
+        prism.Size = dim_off(75, 75) 
         
-        prism.Position = dim2off(25, -250)
-        redline.Position = dim2off(105, -255)
+        prism.Position = dim_off(25, -105)
+        redline.Position = dim_off(105, -155)
         
-        twn(prism, {Position = dim2off(25, 25)},true)
-        twn(redline, {Position = dim2off(105, -5)},true)
+        twn(prism, {Position = dim_off(25, 35)},true)
+        twn(redline, {Position = dim_off(105, -5)},true)
     end
     
     
@@ -6040,7 +6293,7 @@ _G.RLTHEME = nil
 if (_G.RLLOADERROR ~= 0) then
     local err = _G.RLLOADERROR
     if (err == 1) then
-        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 4, true)
+        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
         print('(Error code 1)')
         print(
             'The JSON decoder recognized the config as invalid JSON.'..
@@ -6049,7 +6302,7 @@ if (_G.RLLOADERROR ~= 0) then
         )
         
     elseif (err == 2) then
-        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 4, true)
+        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
         print('(Error code 2)')
         print(
             'An unknown error occured while loading the theme config.'..
@@ -6059,7 +6312,7 @@ if (_G.RLLOADERROR ~= 0) then
     end
 else
     _G.RLLOADERROR = nil
-    ui:Notify('Redline ('..REDLINEVER..') loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 2)
+    ui:Notify('Redline ('..REDLINEVER..') loaded', 'Redline is now ready to use. Press RightShift to begin.', 5, 'high')
 end
 
 
@@ -6074,3 +6327,10 @@ if (pg and _G.RLQUEUED == false) then
     _G.RLQUEUED = true
     pg[[loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()]]
 end
+
+--[[
+TODO
+realtime theme changing - est v4.2
+hitbox expander - est v4.3
+triggerbot - est v4.4
+]]--
