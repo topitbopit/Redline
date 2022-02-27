@@ -1,4 +1,5 @@
-![](https://cdn.discordapp.com/attachments/917914099759849482/940857063733612584/banner.png)
+
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/banner1.png)
 
 ## Notice
 **This is in insanely early beta! Only like 12 things actually work (and some are still unfinished)**  
@@ -6,7 +7,7 @@
 ## What is Redline?
 Redline is a massive *universal* script designed for lots of customization, ease of use, and many unique features. 
 
-It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Entropy](https://entropy.club), and [Impact](https://impactclient.net/).   
+It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Aristois](https://aristois.net), and [Impact](https://impactclient.net/).   
 
 >**Note that this is not for Roblox Bedwars, Roblox Skywars, or other similar games.** This is a universal script intended to work across many / all games.
 
@@ -16,116 +17,157 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/ma
 ```
 
 ## Preview
-![](https://cdn.discordapp.com/attachments/917914099759849482/942695408575057940/themes.png)
+Classic theme  
+![](https://github.com/topitbopit/Redline/raw/main/assets/classic.png =600x)  
+Dark theme  
+![](https://github.com/topitbopit/Redline/raw/main/assets/dark.png =600x)  
+Blue theme  
+![](https://github.com/topitbopit/Redline/raw/main/assets/blue.png =600x)  
+Cold theme  
+![](https://github.com/topitbopit/Redline/raw/main/assets/cold.png =600x)  
 
-## Why use it?
+## Why use it?  
 - **Customizability.** Nearly every module has tons of settings to toy around with.  
-- **Features.** Redline has tons of features that you won't find anywhere else, such as Nofall.  
-- **Speed.** Redline is designed to be super fast and easy to use. No annoying menus to navigate, no textboxes to type in, and no clutter on your screen.  
 - **Optimization.** Every module is extremely optimized. Even on lower end hardware, Redline will still run quick.  
-- **Security.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline module is handled in a unique, hard-to-detect way. This is definitely safer than other universal scripts.  
->*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to use an alt*
+- **Built from scratch.** No code is copy pasted from anywhere, and everything is 100% original.  
+- **Security.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline mod is done in a unique, original way. This is definitely safer than other universal scripts.  
+>*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to test on an alt and use the standard methods if you're not*  
 
-## Q/A
-**This mod is detected in this game**   
-Open up an issue or DM me (jeffismyname#4316) and I'll check it out.  
-Note that game specific serverside anticheats are not gonna be bypassed. (ex. Jailbreak or Phantom forces)  
-**When will UI configuration be added?**    
-There is no ETA, but it will eventually be added in another window.   
-**Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling or triggerbot)?**  
-Although there is no menu to add friends yet, Redline does have internal support for a friends list and player whitelisting. It will be added soon.    
-**Can I use the ui library?**   
-Sure, but Redline's UI is lacking a lot of features (like color pickers) that likely won't be added. Also, read the question below.   
-**Can I copy / use some of the code?**   
-Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste anything.    
-If you want to instead just remake what I did but use the same methods (ex. flight, speed), then go ahead     
-**What does X module do**    
-Open up an issue or DM me if a module description isn't clear   
-**Why won't Redline execute?**  
-Make sure your executor is supported. Open up an issue / DM me the error you get.   
+## Q/A  
+- **A game I play detects a module, can you bypass it?**  
+Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I probably won't bypass game specific anticheats.  
+
+- **When will UI configuration be added?**  
+There is no ETA, but it will be added in another window meant for UI settings, themes, etc.  
+
+- **Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling)?**  
+Although there is no menu to add friends yet, Redline does have internal support for a friends list and player whitelisting.  
+
+- **Can I use the UI library?**  
+Sure, but Redline's UI is lacking a lot of features (like color pickers) most libraries have. It's also heavily tied into the script itself; you'll have to change how a lot of things work.  
+
+- **Can I copy / use some of the code?**  
+Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste anything.  
+
+- **Why won't Redline execute?**  
+Make sure your executor is supported. Open up an issue / DM me the error you get.  
+
+- **There's an issue with a module, when will you fix it?**  
+If it's a mod in beta like ESP then I'll likely fix it soon. If it's not a beta module, open up an issue or DM me and I'll fix it.  
 
 ## Supported executors  
-- Synapse X, fully tested   
-- Comet, fully tested  
-- Fluxus, fully tested  
-Others may work and will be tested soon.   
+- **Synapse X** - fully tested  
+- **Comet** - partially tested
+- **Fluxus** - fully tested  
+
+Other exploits will likely work, so if you're unsure still give it a try (and DM me if it works!).  
+
+## Mods (modules?)  
+Unfortunately the list of mods - along with their settings and descriptions - changes all the time and I don't want to update it here  
+
+## Planned features
+- More mods, such as  
+	- Discord rich presence integration  
+	- Roblox alt manager integration  
+	- Aimbot  
+	- Triggerbot  
+- Advanced UI Configuration  
+	- Customize and share themes with others as well as view them real-time  
+- Server browser  
+	- View other servers and sort by ping, player count, and more  
+- Command bar  
+	- Easily enable and disable mods, as well as run simple commands  
+- Plugins  
+	- Lets you add custom commands, modules, and more  
+
+## Changelog
+Current version: 0.4.1  
+Dates will follow MM/DD/YYYY  
+ 
+
+Version 0.4.1 (2/26/2022)  
+- Added a loop mode to Zoom   
+- Added mouse shake option to Autoclicker  
+- Added multiclick to Autoclicker  
+- Added noclip module  
+- Added ok button to notifications  
+- Changed fullbright a bit  
+- Fixed an issue with Freecam bypass breaking  
+- Hid combat menu (for now) since the only mod on it is unfinished  
+- Improved Player Notifs performance  
+- Improved anticheat bypass a bit, might take less memory (depends on your exploit)  
+- Improved antiwarp a bit  
+- Improved notification performance  
+- Included display names on Player Notifs  
+- Possibly fixed issues with Blink and Fakelag breaking  
+- Right clicking sliders now lets you enter a custom value  
+ 
+Version 0.4.0  
+- Added a custom mouse cursor, good for games w/o mouse icons  
+- Added another ESP mode (Lines)  
+- Disabled Triggerbot while its being remade  
+- Fixed slide animation not happening when the gui first gets toggled  
+- Hopefully improved mem usage since a ton of player handler stuff was remade  
+- Improved ESP's stability a ton  
+- Players leaving / joining should cause less overhead now  
+- Removed a bunch of comments & unused module shit, improving load times  
+- Removed Changelog from the script, its now located on the github
+- Removed redundant calculations in freecam  
+- Replaced notif icons  
+- Replaced the logo at the top left  
+- Updated Fakelag and Blink to be compatible with both R6 and R15  
+
+Version 0.3.2.1  
+- Fixed a bug with how sliders displayed, which affected the colors  
+- Updated every theme to be compatible with these changes  
+
+Version 0.3.2  
+- Added a cyan theme called Cold  
+- Edited how the blue theme looks again  
+- Lowered Speed's max value from 300 to 100  
+- Removed the Gray theme since it sucks  
+
+Version 0.3.1  
+- Added Animspeed module that changes the speed of your animations  
+- Added a few tooltips for mods like Autoclicker  
+- Edited the blue theme to make it look better  
+  
+Version 0.3.0  
+- Added ESP module  
+- Added Fullbright module w/ several modes and optional looping  
+- Added a config file, only saves themes for now  
+- Added ui theme module w/ several presets, preview hasn't been finished but there will be one  
+- Almost finished 2d Box ESP, other modes are unfinished as of now  
+- Fixed antifling anchor keeping you anchored after disabling it when it was triggered  
+- Fixed labels not having padding  
+
   
 
-## Modules   
-  
-### Combat
-**Triggerbot**  
-*Automatically clicks when you mouse over a player*  
+Version 0.2.0  
+- Added a Mod list module (under UI)  
+- Added a [BETA] tag for mods in beta  
+- Added a startup animation + sound  
+- Almost finished antiaim  
+- Changed the enable color to be the classic Redline red  
+- Dropdown options can now be selected with right click  
+- Finished Autoclicker  
+- Hid all of the unfinished modules, hopefully it won't look weird with everything gone  
+- Removed the [Done] tags  
+- Slightly improved performance when switching modes while a mod was enabled  
 
-### Player  
-**Anti-AFK**    
-*Prevents you from being disconnected for idling*  
-**Anti-fling**  
-*Prevents you from being flung by other players*  
-**Anti-warp**   
-*Prevents you from being teleported (as in a position change, not across places / games)*  
-**Autoclicker**   
-*Clicks for you*   
-**Fakelag**   
-*Makes you look laggy for other players. Don't combine with Blink*   
-**Flashback**    
-*Teleports you back to where you were before you died*  
-**Respawn**    
-*Force resets you. Can fix some glitches with reanimations*  
-**Waypoints**   
-*Lets you save positions and teleport back to them later*   
+Version 0.1.1  
+- Finished Fakelag and Blink  
+- Almost finished Triggerbot, team check and spam may have issues  
+- Started work on Antiaim  
 
-
-### Movement  
-**Air jump**     
-*Lets you jump in the air*   
-**Blink**   
-*Pseudo lagswitch. Doesn't actually choke packets*   
-**Click TP**     
-*Standard click TP*  
-**Flight**     
-*Standard fly with tons of options*  
-**Float**    
-*Low gravity or no gravity*  
-**Nofall**  
-*Makes you quickly fall or bounce before you hit the ground. Useful for bypassing fall damage mechanics in games like Natural Disaster Survival*  
-**Parkour**    
-*Automatically jumps when you reach the end of a block*  
-**Speedhack**      
-*Classic speedhack. Has plenty of modes*    
-**Velocity**     
-*Limits or disables your velocity*  
-  
-### Render   
-**Freecam**   
-*Flight but you control your camera*  
-**Zoom**  
-*Like Optifine zoom*  
-**Fullbright**   
-*Disables some lighting effects like fog and shadows. Can also be looped for games like LT2 or Rake*   
-  
-  
-### UI  
-**Jeff**   
-*I forgor what this does* :skull:  
-**Player alerts**  
-*Notifies you when a player joins or leaves*   
-**Mod list**     
-*Shows what mods are currently enabled*   
-**Themes**  
-*Lets you choose a theme and apply it to Redline*  
-**Widgets** [PLANNED]  
-*Lets you view stats, like mem usage, FPS, ping, velocity, position, etc.*  
-  
-
-### Server   
-**Rejoin**  
-*Rejoins the current server*   
-
-
-### Integrations  
-**Discord Rich Prescence**  [PLANNED]   
-*Show everyone else how cool you are for using Redline*  
-**Roblox Alt Manager**  [PLANNED]    
-*Lets you manage and use your alts. Requires the Roblox Alt Manager program.*  
-    
+Version 0.1.0  
+- Added Fakelag mod  
+- Added Sound option to Player notifs  
+- Added another notification sound  
+- Added changelog menu, new changes will be documented here  
+- Added server browser mod  
+- Finished Parkour, Velocity, and Nofall  
+- Made mouse unlock when the Redline window is open  
+- Marked Jeff and Player notifs as done  
+- Removed Logs since player logs aren't that important  
+- Renamed Fastfall to Nofall  
