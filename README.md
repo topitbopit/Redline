@@ -38,10 +38,10 @@ Cold theme
 Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I probably won't bypass game specific anticheats.  
 
 - **When will UI configuration be added?**  
-There is no ETA, but it will be added in another window meant for UI settings, themes, etc.  
+Idk  
 
 - **Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling)?**  
-Although there is no menu to add friends yet, Redline does have internal support for a friends list and player whitelisting.  
+You will be able to later  
 
 - **Can I use the UI library?**  
 Sure, but Redline's UI is lacking a lot of features (like color pickers) most libraries have. It's also heavily tied into the script itself; you'll have to change how a lot of things work.  
@@ -55,6 +55,9 @@ Make sure your executor is supported. Open up an issue / DM me the error you get
 - **There's an issue with a module, when will you fix it?**  
 If it's a mod in beta like ESP then I'll likely fix it soon. If it's not a beta module, open up an issue or DM me and I'll fix it.  
 
+- **Hi**  
+Hi  
+  
 ## Supported executors  
 - **Synapse X** - fully tested  
 - **Comet** - partially tested
