@@ -5,11 +5,11 @@
 **This is in insanely early beta! Only like 12 things actually work (and some are still unfinished)**  
 
 ## What is Redline?
-Redline is a massive *universal* script designed for lots of customization, ease of use, and unique features. 
+Redline is a massive *universal* script with lots of customization, unique features, and more. 
 
-It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Aristois](https://aristois.net), and [Impact](https://impactclient.net/).   
+It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Aristois](https://aristois.net), and [Impact](https://impactclient.net/).  
 
->**Note that this is not for Roblox Bedwars, Roblox Skywars, or other similar games.** This is a universal script intended to work across many / all games.
+>**Note that Redline is not a script for Roblox Bedwars, Roblox Skywars, or any other similar games.** It's a universal script, i.e. meant to be used in (almost) every game.
 
 ## Script
 ```lua
