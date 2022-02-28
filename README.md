@@ -5,7 +5,7 @@
 **This is in insanely early beta! Only like 12 things actually work (and some are still unfinished)**  
 
 ## What is Redline?
-Redline is a massive *universal* script designed for lots of customization, ease of use, and many unique features. 
+Redline is a massive *universal* script designed for lots of customization, ease of use, and unique features. 
 
 It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Aristois](https://aristois.net), and [Impact](https://impactclient.net/).   
 
