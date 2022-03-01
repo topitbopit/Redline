@@ -274,7 +274,7 @@ end
 
 
 
-local W_WindowOpen = false
+local W_WindowOpen = false or false
 -- { UI } --
 local ui = {} do 
     
