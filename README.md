@@ -60,7 +60,7 @@ Hi
   
 ## Supported executors  
 - **Synapse X** - fully tested  
-- **Comet** - partially tested
+- **WRD executors, such as Nihon** - mostly tested, 1-2 things aren't working
 - **Fluxus** - fully tested  
 
 Other exploits will likely work, so if you're unsure still give it a try (and DM me if it works!).  
