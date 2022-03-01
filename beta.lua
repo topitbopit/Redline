@@ -48,7 +48,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.4.1'
+local REDLINEVER = 'v0.4.1.1'
 
 
 -- { Wait for load } --
@@ -5406,7 +5406,7 @@ local m_render = ui:CreateMenu('Render') do
         s_EspType:AddOption('Streamproof'):SetTooltip('Box ESP, requires Drawing library. '..
         (
             (({ identifyexecutor and identifyexecutor() })[1] == 'Synapse X') and '<b>Detected Synapse: Streamproof not supported</b>' or
-            (type(fluxus == 'table') and fluxus.request) and '<b>Detected Fluxus: Streamproof supported</b>' or
+            (type(fluxus) == 'table' and fluxus.request) and '<b>Detected Fluxus: Streamproof supported</b>' or
             'Can be streamproof, depends on your exploit.'
         )
     
@@ -6327,6 +6327,7 @@ if (pg and _G.RLQUEUED == false) then
     _G.RLQUEUED = true
     pg[[loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()]]
 end
+
 
 --[[
 TODO
