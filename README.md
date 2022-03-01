@@ -84,9 +84,12 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog
-Current version: 0.4.1  
+Current version: 0.4.1.1   
 Dates will follow MM/DD/YYYY  
  
+Version 0.4.1.1 (2/28/2022)
+- Fixed bug where non fluxus and non synapse users couldn't execute. Sorry for any inconvenience  
+
 
 Version 0.4.1 (2/26/2022)  
 - Added a loop mode to Zoom   
