@@ -96,7 +96,6 @@ Version 0.4.1 (2/26/2022)
 - Added mouse shake option to Autoclicker  
 - Added multiclick to Autoclicker  
 - Added noclip module  
-- Added ok button to notifications  
 - Changed fullbright a bit  
 - Fixed an issue with Freecam bypass breaking  
 - Hid combat menu (for now) since the only mod on it is unfinished  
