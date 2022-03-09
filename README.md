@@ -2,80 +2,73 @@
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/banner1.png)
 
 ## Notice
-**This is in insanely early beta! Only like 12 things actually work (and some are still unfinished)**  
+**This is in insanely early beta! Only like 14 things actually work**  
 
 ## What is Redline?
-Redline is a massive *universal* script with lots of customization, unique features, and more. 
+Redline is a massive universal script based on many popular Minecraft hacked clients. It's meant to be customizable, easy to use, and packed with features.  
 
-It is designed after and inspired by the many popular hacked clients of Minecraft, such as [Meteor](https://meteorclient.com/), [Aristois](https://aristois.net), and [Impact](https://impactclient.net/).  
-
->**Note that Redline is not a script for Roblox Bedwars, Roblox Skywars, or any other similar games.** It's a universal script, i.e. meant to be used in (almost) every game.
-
-## Script
+## Loadstring  
 ```lua
 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty epic')()
 ```
 
-## Preview
-Classic theme  
+## Screenshots  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png)  
-Dark theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/dark.png)  
-Blue theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/blue.png)  
-Cold theme  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/cold.png)  
+## Showcases  
+- Haven't made any videos yet, check back later  
 
-## Why use it?  
-- **Customizability.** Nearly every module has tons of settings to toy around with.  
-- **Optimization.** Every module is extremely optimized. Even on lower end hardware, Redline will still run quick.  
-- **Built from scratch.** No code is copy pasted from anywhere, and everything is 100% original.  
-- **Security.** Many uncommon checks in local anticheats are bypassed, and nearly every Redline mod is done in a unique, original way. This is definitely safer than other universal scripts.  
->*Note that bypasses are universal and not a game per game basis, so certain anticheats may still detect you. Make sure to test on an alt and use the standard methods if you're not*  
+## Why use Redline?  
+- **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
+- **It's extremely optimized.** No extra bloat, no super laggy code. Redline leaves no traces when closed, unlike every other script out there.  
+- **It's built from scratch.** Everything you see in Redline was made, 100%, from the ground up.  
+- **It's secure.** Redline bypasses many common detections other scripts don't. (I'm looking at you, IY)  
+- **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
 
 ## Q/A  
 - **A game I play detects a module, can you bypass it?**  
 Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I probably won't bypass game specific anticheats.  
 
-- **When will UI configuration be added?**  
-Idk  
+- **When's the next update?**
+I don't have a regular update schedule, but I try to shoot for atleast 3 updates a month  
 
 - **Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling)?**  
 You will be able to later  
 
-- **Can I use the UI library?**  
-Sure, but Redline's UI is lacking a lot of features (like color pickers) most libraries have. It's also heavily tied into the script itself; you'll have to change how a lot of things work.  
-
 - **Can I copy / use some of the code?**  
-Yes. However, Redline is under the GPL 3 license. Make sure your project follows that license if you copy/paste anything.  
+Yes, but Redline is under the GPL 3 license. Make sure your project follows that license too if you copy / paste anything.  
 
 - **Why won't Redline execute?**  
-Make sure your executor is supported. Open up an issue / DM me the error you get.  
+Make sure your executor is supported. Open up an issue / DM me the error and I'll fix it fast.  
 
-- **There's an issue with a module, when will you fix it?**  
-If it's a mod in beta like ESP then I'll likely fix it soon. If it's not a beta module, open up an issue or DM me and I'll fix it.  
+- **Hey the inertia theme looks like dogshit**  
+Yeah i know  
+
+- **Why do you spend so much time on shitty features**  
+No clue  
+
+- **Can I make my own fork?**  
+Yes, good luck figuring out what my code does cause got damn it sucks  
 
 - **Hi**  
 Hi  
   
 ## Supported executors  
 - **Synapse X** - fully tested  
-- **WRD executors, such as Nihon** - mostly tested, 1-2 things aren't working
 - **Fluxus** - fully tested  
+- **WRD executors (Nihon, JJsploit, etc.)** - mostly tested, 1-2 things may not be working  
 
-Other exploits will likely work, so if you're unsure still give it a try (and DM me if it works!).  
+Other exploits will likely work, so if you're unsure still give it a try (and DM me if it works!)  
 
 ## Mods (modules?)  
 Unfortunately the list of mods - along with their settings and descriptions - changes all the time and I don't want to update it here  
 
 ## Planned features
 - More mods, such as  
-	- Discord rich presence integration  
-	- Roblox alt manager integration  
+	- Discord rich presence    
 	- Aimbot  
 	- Triggerbot  
 - Advanced UI Configuration  
-	- Customize and share themes with others as well as view them real-time  
+	- Customize themes in real-time and share them with others  
 - Server browser  
 	- View other servers and sort by ping, player count, and more  
 - Command bar  
