@@ -1,40 +1,42 @@
+<!-- banner -->
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/banner1.png)  
 
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/banner1.png)
-
-## Notice
+<!-- beta notice -->
+## Notice  
 **This is in insanely early beta! Only like 14 things actually work**  
 
-<!-- script -->
-
+<!-- script since nobody cares about the explanation -->
 ## Loadstring  
 ```lua
-loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty epic')()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()  
 ```
 
-## What is Redline?
+<!-- explanation -->
+## What is Redline?  
 Redline is a massive universal script based on many popular Minecraft hacked clients. It's customizable, easy to use, and packed with features.  
 
+## Why use Redline?  
+- **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
+- **It's extremely optimized.** No extra bloat, no super laggy code. Redline is very lightweight and doesn't leave any traces.  
+- **It's built from scratch.** Everything you see in Redline was made from the ground up.  
+- **It's secure.** Redline bypasses many common detections other scripts don't. (I'm looking at you, IY)  
+- **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
+
+<!-- showcases -->
 ## Screenshots  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png)  
 ## Showcases  
 - Haven't made any videos yet, check back later  
 
-## Why use Redline?  
-- **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
-- **It's extremely optimized.** No extra bloat, no super laggy code. Redline leaves no traces when closed, unlike every other script out there.  
-- **It's built from scratch.** Everything you see in Redline was made, 100%, from the ground up.  
-- **It's secure.** Redline bypasses many common detections other scripts don't. (I'm looking at you, IY)  
-- **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
-
 ## Q/A  
 - **A game I play detects a module, can you bypass it?**  
-Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I probably won't bypass game specific anticheats.  
+Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I won't bypass game specific anticheats.  
 
-- **When's the next update?**
-I don't have a regular update schedule, but I try to shoot for atleast 3 updates a month  
+- **When's the next update?**  
+I don't have a regular update schedule, but I try to shoot for atleast 3 updates a month.  
 
 - **Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling)?**  
-You will be able to later  
+You will be able to later.  
 
 - **Can I copy / use some of the code?**  
 Yes, but Redline is under the GPL 3 license. Make sure your project follows that license too if you copy / paste anything.  
@@ -48,8 +50,8 @@ Yeah i know
 - **Why do you spend so much time on shitty features**  
 No clue  
 
-- **Can I make my own fork?**  
-Yes, good luck figuring out what my code does cause got damn it sucks  
+- **Can I make my own fork / contribute?**  
+Yes, but good luck figuring out what my code does cause got damn it sucks  
 
 - **Hi**  
 Hi  
@@ -64,7 +66,7 @@ Other exploits will likely work, so if you're unsure still give it a try (and DM
 ## Mods (modules?)  
 Unfortunately the list of mods - along with their settings and descriptions - changes all the time and I don't want to update it here  
 
-## Planned features
+## Planned features  
 - More mods, such as  
 	- Discord rich presence    
 	- Aimbot  
@@ -78,11 +80,11 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 - Plugins  
 	- Lets you add custom commands, modules, and more  
 
-## Changelog
-Current version: 0.4.1.1   
-Dates will follow MM/DD/YYYY  
- 
-Version 0.4.1.1 (2/28/2022)
+## Changelog  
+Current version: 0.4.1.1  
+Dates will follow MM/DD/YYYY   
+
+Version 0.4.1.1 (2/28/2022)  
 - Fixed bug where non fluxus and non synapse users couldn't execute. Sorry for any inconvenience  
 
 
