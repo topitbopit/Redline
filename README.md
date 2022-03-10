@@ -4,13 +4,15 @@
 ## Notice
 **This is in insanely early beta! Only like 14 things actually work**  
 
-## What is Redline?
-Redline is a massive universal script based on many popular Minecraft hacked clients. It's meant to be customizable, easy to use, and packed with features.  
+<!-- script -->
 
 ## Loadstring  
 ```lua
 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'), 'redline is pretty epic')()
 ```
+
+## What is Redline?
+Redline is a massive universal script based on many popular Minecraft hacked clients. It's customizable, easy to use, and packed with features.  
 
 ## Screenshots  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png)  
