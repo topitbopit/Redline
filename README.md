@@ -24,7 +24,10 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 
 <!-- showcases -->
 ## Screenshots  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/classic.png)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/arsenal.png)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/scp_roleplay_1.png)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/scp_roleplay_2.png)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/3008.png)  
 ## Showcases  
 - Haven't made any videos yet, check back later  
 
