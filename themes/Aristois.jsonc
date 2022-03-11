@@ -1,4 +1,5 @@
 // Aristois inspired theme
+// This ones ok so im leaving it
 // Based off of this image: https://aristois.net/res/features.webp?v=2
 
 {"theme":{"Font":"Nunito","Generic_Outline":{"Color":[34,34,44],"Transparency":0.1},"Generic_Shadow":{"Color":[5,5,5],"Transparency":0.2},"Generic_Window":{"Color":[15,15,25],"Transparency":0.5},"Generic_Enabled":{"Color":[100,180,110],"Transparency":0},"Background_Menu":{"Color":[35,35,45],"Transparency":0.2},"Background_Module":{"Color":[30,30,40],"Transparency":0.2},"Background_Setting":{"Color":[25,25,35],"Transparency":0.2},"Background_Dropdown":{"Color":[20,20,30],"Transparency":0.2},"Hovering_Menu":{"Color":[50,50,60]},"Hovering_Module":{"Color":[40,40,50]},"Hovering_Setting":{"Color":[30,30,40]},"Hovering_Dropdown":{"Color":[20,20,30]},"Slider_Foreground":{"Color":[135,135,145],"Transparency":0},"Slider_Background":{"Color":[70,70,80],"Transparency":0},"Slider_Head":{"Color":[70,70,76]},"Text_Main":{"Color":[255,255,255]},"Text_Sub":{"Color":[170,170,255]},"Text_Outline":{"Color":[10,10,10]}}}
