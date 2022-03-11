@@ -1,4 +1,70 @@
-// Metor inspired theme
-// Based off of this image: https://user-images.githubusercontent.com/84537090/121789086-81517980-cb98-11eb-8eee-99df1fd8235f.png
+// Redline meteor theme
 
-{"theme":{"Font":"Code","Generic_Outline":{"Color":[0,0,0],"Transparency":1},"Generic_Shadow":{"Color":[5,5,5],"Transparency":0.2},"Generic_Window":{"Color":[0,0,0],"Transparency":0.4},"Generic_Enabled":{"Color":[136,0,255],"Transparency":0},"Background_Menu":{"Color":[136,0,255],"Transparency":0},"Background_Module":{"Color":[30,30,30],"Transparency":0.4},"Background_Setting":{"Color":[25,25,25],"Transparency":0.4},"Background_Dropdown":{"Color":[20,20,20],"Transparency":0.4},"Hovering_Menu":{"Color":[146,10,255]},"Hovering_Module":{"Color":[40,40,40]},"Hovering_Setting":{"Color":[35,35,35]},"Hovering_Dropdown":{"Color":[30,30,30]},"Slider_Foreground":{"Color":[135,15,255],"Transparency":0},"Slider_Background":{"Color":[70,70,70],"Transparency":0},"Slider_Head":{"Color":[135,135,135]},"Text_Main":{"Color":[255,255,255]},"Text_Sub":{"Color":[170,170,255]},"Text_Outline":{"Color":[0,0,0]}}}
+{
+    "theme": {
+        "Font": "RobotoMono",
+        
+        "Generic_Outline": {
+            "Color": [109,52,214],
+            "Transparency": 0
+        },
+        "Generic_Shadow": {
+            "Color": [5,5,10],
+            "Transparency": 0
+        },
+        "Generic_Window": {
+            "Color": [20,20,22],
+            "Transparency": 0.2
+        },
+        "Generic_Enabled": {
+            "Color": [109,52,214],
+            "Transparency": 0.4
+        },
+        
+        "Background_Menu": {
+            "Color": [26,26,28],
+            "Transparency": 0.02
+        },
+        "Background_Module": {
+            "Color": [22,22,24],
+            "Transparency": 0.04
+        },
+        "Background_Setting": {
+            "Color": [18,18,20],
+            "Transparency": 0.06
+        },
+        "Background_Dropdown": {
+            "Color": [14,14,16],
+            "Transparency": 0.08
+        },
+        
+        "Hovering_Menu": {
+            "Color": [36,36,38]
+        },
+        "Hovering_Module": {
+            "Color": [32,32,34]
+        },
+        "Hovering_Setting": {
+            "Color": [28,28,30]
+        },
+        "Hovering_Dropdown": {
+            "Color": [24,24,26]
+        },
+        
+        "Slider_Foreground": {
+            "Color": [109,52,214],
+            "Transparency": 0
+        },
+        "Slider_Background": {
+            "Color": [16,16,16],
+            "Transparency": 0
+        },
+        
+        "Text_Main" : {
+            "Color": [255,255,255]
+        },
+        "Text_Outline" : {
+            "Color": [10,10,15]
+        }
+    }
+}
