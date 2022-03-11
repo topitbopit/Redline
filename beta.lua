@@ -40,13 +40,19 @@ if (_G.RLLOADED) then
     end
 end
 
+if (Drawing == nil) then
+    warn('Unfortunately, your executor is missing the Drawing library and is not supported by Redline.')
+    warn('Consider upgrading to an exploit like Fluxus or KRNL')
+    return
+end
+
 -- { Make redline folder } --
 if (not isfile('REDLINE')) then
     makefolder('REDLINE')
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.5.0'
+local REDLINEVER = 'v0.5.1'
 
 
 -- { Wait for load } --
