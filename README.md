@@ -48,7 +48,7 @@ Yes, but Redline is under the GPL 3 license. Make sure your project follows that
 Make sure your executor is supported. Open up an issue / DM me the error and I'll fix it fast.  
 
 - **Hey the inertia theme looks like dogshit**  
-Yeah i know  
+Don't worry i deleted it  
 
 - **Why do you spend so much time on shitty features**  
 No clue  
@@ -71,8 +71,7 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 
 ## Planned features  
 - More mods, such as  
-	- Discord rich presence    
-	- Aimbot  
+	- Discord rich presence  
 	- Triggerbot  
 - Advanced UI Configuration  
 	- Customize themes in real-time and share them with others  
