@@ -83,10 +83,13 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.5
-Dates will follow MM/DD/YYYY   
+Current version: 0.5.1  
+Dates will follow MM/DD/YYYY  
 
-Version 0.5 (3/10/2022)
+Version 0.5.1 (3/11/2022)  
+- Added check for Drawing library  
+
+Version 0.5 (3/10/2022)  
 - Added Aimbot module  
 - Added Crosshair module, uses Drawing library  
 - Added Dash module  
