@@ -81,12 +81,42 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.4.1.1  
+Current version: 0.5
 Dates will follow MM/DD/YYYY   
+
+Version 0.5 (3/10/2022)
+- Added Aimbot module  
+- Added Crosshair module, uses Drawing library  
+- Added Dash module  
+- Added Safe Minimize module, anchors your character when Roblox loses focus  
+- Added back combat tab  
+- Added new Anti-fling mode (Anchor + Safemin)  
+- Added new Noclip mode (Bypass), doesn't do much yet  
+- Added new Nofall mode (Glide)  
+- Added potential forward support for customasset'ing fonts  
+- Added proper icons for textboxes and buttons  
+- Added tween option to Click TP  
+- Changed Respawn, now it's an actual toggleable module with functionality  
+- Changed how menu open animation worked, spamming rshift no longer breaks it  
+- Changed how mouse cursor animates  
+- Changed sliders, now they can now be interacted anywhere instead of just on the bar  
+- Changed sound effects and replaced them with newer ones  
+- Changed the speed of some tween animations  
+- Fixed notification bug where they wouldn't stack properly  
+- Fixed slider input boxes  
+- Fixed some stuff in \_G not clearing out  
+- Fixed toggle boxes looking jank depending on the theme  
+- Optimized nofall a bit more  
+- Remade intro to use Drawing library  
+- Remade menu dragging logic, way more optimized  
+- Remade some themes like Dark, removed others  
+- Removed extra RGB loops, most mods use the same one now  
+- Removed search temporarily, working on a new system better for features like these  
+- Reworked theme system a bit, themes no longer have unused colors and outlines can have gradients  
+- Updated how slider text displays to work with a new roblox change  
 
 Version 0.4.1.1 (2/28/2022)  
 - Fixed bug where non fluxus and non synapse users couldn't execute. Sorry for any inconvenience  
-
 
 Version 0.4.1 (2/26/2022)  
 - Added a loop mode to Zoom   
@@ -142,8 +172,6 @@ Version 0.3.0
 - Almost finished 2d Box ESP, other modes are unfinished as of now  
 - Fixed antifling anchor keeping you anchored after disabling it when it was triggered  
 - Fixed labels not having padding  
-
-  
 
 Version 0.2.0  
 - Added a Mod list module (under UI)  
