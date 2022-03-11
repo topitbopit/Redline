@@ -64,15 +64,9 @@
             "Color": [33,33,38],
             "Transparency": 0
         },
-        "Slider_Head": { // This is currently unused, but may be used in a future update. It would be used for a slider head
-            "Color": [28,28,33]
-        },
         
         "Text_Main" : { // Used for text, doesn't support transparency
             "Color": [255,255,255]
-        },
-        "Text_Sub": { // This is currently unused, but may be used in a future update
-            "Color": [170,170,255]
         },
         "Text_Outline" : { // Used for text strokes, doesn't support transparency
             "Color": [20,20,25]
