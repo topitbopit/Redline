@@ -1,4 +1,4 @@
-// Redline Blueline theme 
+// Redline blueline theme
 
 {
     "theme": {
@@ -19,7 +19,7 @@
             "Transparency": 0.2
         },
         "Generic_Enabled": {
-            "Color": [225,35,61],
+            "Color": [185,205,260],
             "Transparency": 0.4
         },
         
@@ -54,7 +54,7 @@
         },
         
         "Slider_Foreground": {
-            "Color": [225,75,80],
+            "Color": [185,205,260],
             "Transparency": 0
         },
         "Slider_Background": {
