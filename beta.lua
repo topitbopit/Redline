@@ -3135,8 +3135,8 @@ local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass('Camera
 -- Character respawn handler
 cons['chr'] = l_plr.CharacterAdded:Connect(function(c) 
     l_chr = c
-    l_hum = c:WaitForChild('Humanoid',0.3)
-    l_humrp = c:WaitForChild('HumanoidRootPart',0.3)
+    l_hum = c:WaitForChild('Humanoid',2)
+    l_humrp = c:WaitForChild('HumanoidRootPart',2)
 end)
 
 
