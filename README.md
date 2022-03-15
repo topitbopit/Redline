@@ -56,6 +56,9 @@ No clue
 - **Can I make my own fork / contribute?**  
 Yes, but good luck figuring out what my code does cause got damn it sucks  
 
+- **Why the fuck are your variable names so fucking dumb**  
+🗿  
+
 - **Hi**  
 Hi  
   
