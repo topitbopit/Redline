@@ -30,10 +30,9 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 
 <!-- showcases -->
 ## Screenshots  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/arsenal.png)  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/scp_roleplay_1.png)  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/scp_roleplay_2.png)  
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/3008.png)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/features.jpg)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/gamedemo1.jpg)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/gamedemo2.jpg)  
 ## Showcases  
 - Haven't made any videos yet, check back later  
 
@@ -53,17 +52,8 @@ Yes, but Redline is under the GPL 3 license. Make sure your project follows that
 - **Why won't Redline execute?**  
 Make sure your executor is supported. Open up an issue / DM me the error and I'll fix it fast.  
 
-- **Hey the inertia theme looks like dogshit**  
-Don't worry i deleted it  
-
-- **Why do you spend so much time on shitty features**  
-No clue  
-
 - **Can I make my own fork / contribute?**  
 Yes, but good luck figuring out what my code does cause got damn it sucks  
-
-- **Why the fuck are your variable names so fucking dumb**  
-🗿  
 
 - **Hi**  
 Hi  
@@ -92,8 +82,58 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.5.1  
+Current version: 0.6.0  
 Dates will follow MM/DD/YYYY  
+
+Version 0.6.0 (3/20/2022)
+- Added AutoHop mod  
+- Added AutoReconnect mod  
+- Added Glide mod  
+- Added High Jump mod  
+- Added Hitboxes mod  
+- Added Keystrokes mod  
+- Added NoTrip mod   
+- Added Private Server mod  
+- Added Serverhop mod   
+- Added Sprint mod  
+- Added Unfocused GPU mod   
+- Added popups for games with custom char systems, like PF and bad business  
+- Added support for the modlist mods to display a slider's value  
+- Fixed Vehicle fly kicking you out of seats when enabled (Thanks Artemlist!)  
+- Fixed redline watermark (top left) not showing up  
+- Fixed teleport queueing not working, changed to a filesystem method  
+- Improved input handler  
+- Improved mod dragging  
+- Improved mod placement on non 1920x1080 monitors  
+- Made beta text change color based off of the theme (Thanks Artemlist!)  
+- Remade a bunch of tooltips to be less retarded and more useful  
+- Remade and renamed a bunch of themes  
+- Removed a bunch of useless comments that bloated the file   
+- Removed bundled ESP library, may improve mem usage  
+- Removed redundant usage of getconnections  
+  
+*Mod specific changes *
+  
+- Air jump: fixed bug letting you jump while typing  
+- Dash: Added a debounce option (Thanks Artemlist!)  
+- Dash: Fixed bug where you would move less when your camera faced up or down  
+- ESP: Completely remade with 4 modes, tracers, nametags, and more  
+- Flashback: Now can flashback if you enable it while already dead  
+- Flight: Fixed bug where camera-based would work funky  
+- Flight: Remade a bunch of flight logic, way more optimized  
+- Freecam: Made camera subject change p/ frame, meaning the camera focus won't change  
+- Freecam: Remade a bunch of flight logic, way more optimized  
+- Fullbright: Fixed connection spoofing thing not working  
+- Fullbright: Hopefully improved loop mode  
+- Fullbright: Switched to GetService instead of indexing game.Lighting  
+- Nofall: Added new deceleration method  
+- Nofall: Removed glide mode in favor of the new mod  
+- Respawn: Now works if you were already dead  
+- Zoom: Added key to toggle zoom without needing to toggle the mod self (Thanks Artemlist!)  
+- Zoom: Fixed bug where looped mode wouldn't loop  
+- Zoom: Fixed zoom not resetting to the game's normal FOV properly  
+
+
 
 Version 0.5.1 (3/11/2022)  
 - Added check for Drawing library  
