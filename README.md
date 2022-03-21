@@ -134,7 +134,6 @@ Version 0.6.0 (3/20/2022)
 - Zoom: Fixed zoom not resetting to the game's normal FOV properly  
 
 
-
 Version 0.5.1 (3/11/2022)  
 - Added check for Drawing library  
 
