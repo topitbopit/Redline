@@ -1,0 +1,72 @@
+// Redline ocean theme
+
+{
+    "theme": {
+        "Font": "RobotoCondensed",
+        
+        "Generic_Outline": {
+            "Color": [33,255,199],
+            "Color2": [33,199,255],
+            "Gradient": true,
+            "Transparency": 0.2
+        },
+        "Generic_Shadow": {
+            "Color": [5,5,5],
+            "Transparency": 0
+        },
+        "Generic_Window": {
+            "Color": [22,22,25],
+            "Transparency": 0.2
+        },
+        "Generic_Enabled": {
+            "Color": [33,255,199],
+            "Transparency": 0.4
+        },
+        
+        "Background_Menu": {
+            "Color": [28,28,31],
+            "Transparency": 0.1
+        },
+        "Background_Module": {
+            "Color": [25,25,28],
+            "Transparency": 0.15
+        },
+        "Background_Setting": {
+            "Color": [22,22,25],
+            "Transparency": 0.2
+        },
+        "Background_Dropdown": {
+            "Color": [19,19,22],
+            "Transparency": 0.25
+        },
+        
+        "Hovering_Menu": {
+            "Color": [38,38,41]
+        },
+        "Hovering_Module": {
+            "Color": [35,35,38]
+        },
+        "Hovering_Setting": {
+            "Color": [32,32,35]
+        },
+        "Hovering_Dropdown": {
+            "Color": [29,29,32]
+        },
+        
+        "Slider_Foreground": {
+            "Color": [33,199,255],
+            "Transparency": 0
+        },
+        "Slider_Background": {
+            "Color": [26,26,29],
+            "Transparency": 0
+        },
+        
+        "Text_Main" : {
+            "Color": [255,255,255]
+        },
+        "Text_Outline" : {
+            "Color": [10,10,10]
+        }
+    }
+}
