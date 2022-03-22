@@ -52,7 +52,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.0'
+local REDLINEVER = 'v0.6.1'
 
 
 local IndentLevel1 = 8
@@ -3249,11 +3249,10 @@ local p_Names        = {} -- Player names (array)
 local function addplr(p)
     local PlayerName = p.Name
     if (p == l_plr or p_RLFriends[PlayerName]) then 
-        --printconsole(('Cancelled addition of %s'):format(PlayerName), 255, 0, 255)
         return 
     end
     
-    --printconsole(('Adding player %s, gotta do some shit'):format(PlayerName), 255, 0, 255)
+    
     local ptable = {} do
         ptable['plr'] = p
         ptable['chr'] = nil
@@ -3261,51 +3260,47 @@ local function addplr(p)
         ptable['rp'] = nil
         
         ptable['cons'] = {}
-        
         ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
-            --printconsole('Character added, updating handler vars', 255, 255, 0)
+            
             ptable['chr'] = c
             ptable['rp'] = c:WaitForChild('HumanoidRootPart', 0.5)
             ptable['hum'] = c:WaitForChild('Humanoid', 0.1)
-            --printconsole('Updated', 0, 255, 0)
+            
         end)
-        --printconsole('Setup connections', 192, 192, 192)
+        
         local chr = p.Character
         if (chr) then
             ptable['chr'] = chr
             ptable['hum'] = chr:FindFirstChild('Humanoid')
             ptable['rp'] = chr:FindFirstChild('HumanoidRootPart')
         end
-        --printconsole('Localized character stuff', 192, 192, 192)
-        --printconsole(('Setup ptable of %s'):format(PlayerName), 0, 255, 0)
     end
     
     p_RefKeys[PlayerName] = ptable
     tinsert(p_Names, PlayerName)
-    --printconsole(('Completed %s\'s player setup bullshit'):format(PlayerName), 0, 255, 0)
 end 
 
 local function remplr(p) 
     local PlayerName = p.Name
-    --printconsole(('Removing player %s, doing some shit'):format(PlayerName), 255, 0, 255)
+    
     do 
         local ref = p_RefKeys[PlayerName]
         if (ref == nil) then return end 
         local cons = ref.cons
         for i = 1, #cons do 
-            --printconsole(' - Disconnected a connection ('..i..')', 255, 255, 0)
+            
             cons[i]:Disconnect()
         end
         p_RefKeys[PlayerName].cons = nil -- just in case
-        --printconsole(' - Deleted cons table', 255, 255, 0)
+        
         p_RefKeys[PlayerName] = nil
-        --printconsole(' - Cleared player object from RefKeys, onto p_Names', 0, 255, 0)
+        
     end 
     do
-        --printconsole('Getting index of name in p_Names...', 192, 192, 192)
+        
         local idx = tfind(p_Names, PlayerName)
         tremove(p_Names, idx)
-        --printconsole('Probably got index ('..tostring(idx)..'), removing anyways', 255, 255, 0)
+        
     end
 end
 
@@ -3321,8 +3316,6 @@ end)
 for i,p in ipairs(serv_players:GetPlayers()) do 
     addplr(p)
 end
-
-
 
 
 local fakechar do 
@@ -5466,16 +5459,17 @@ do
             
             m_highjump:Connect('Enabled', function() 
                 if (s_Mode:GetSelection() == 'Velocity') then
-                    JumpCon = serv_uinput.InputBegan:Connect(function(io, gpe) 
-                        if (gpe == false and io.KeyCode.Value == 32) then
-                            if (l_hum.FloorMaterial.Value ~= 1792) then 
-                                l_humrp.Velocity += vec3(0, Amount, 0)
-                            end
+                    JumpCon = l_hum.StateChanged:Connect(function(old, new) 
+                        if (new.Value == 3) then
+                            l_humrp.Velocity += vec3(0, Amount, 0)
                         end
                     end)
                 else
                     OldJumpPow = l_hum.JumpPower
                     OldUseJP = l_hum.UseJumpPower
+                    
+                    dnec(l_hum:GetPropertyChangedSignal('JumpPower'), 'hum_jp')
+                    dnec(l_hum:GetPropertyChangedSignal('UseJumpPower'), 'hum_ujp')
                     
                     JumpCon = serv_run.Heartbeat:Connect(function() 
                         l_hum.UseJumpPower = true
@@ -5492,6 +5486,9 @@ do
                     OldJumpPow = nil
                     OldUseJP = nil
                 end
+                
+                enec('hum_jp')
+                enec('hum_ujp')
             end)
         end
         -- Noclip
@@ -7199,7 +7196,7 @@ do
                 local function hook_player(pName)
                     local PlayerName = pName
                     local PlayerObject = p_RefKeys[pName]
-                    if (not PlayerObject) then printconsole(('[%s] Didn\'t hook player, too early'):format(PlayerName), 255, 255, 0) return end 
+                    if (not PlayerObject) then warn'[REDLINE:ESP] This player hasn\'t finished joining the server! Couldn\'t hook, returning' return end 
                     
                     local PlayerInstance = PlayerObject.plr
                     
@@ -7240,8 +7237,6 @@ do
                     end)
                     
                     EspObjects[PlayerName] = EspObject
-                    
-                    printconsole(('[%s] Hooked'):format(PlayerName), 0, 255, 0)
                 end
                 
                 -- Hook stuff
@@ -7250,14 +7245,12 @@ do
                 
                     EspCons['PlrA'] = serv_players.PlayerAdded:Connect(function(p) 
                         local PlayerName = p.Name
-                        printconsole(('[%s] Player joined, hooking shit'):format(PlayerName), 0, 255, 0)
-                        wait(2)
+                        wait(2.5)
                         hook_player(PlayerName)
                     end)
                     EspCons['PlrR'] = serv_players.PlayerRemoving:Connect(function(p) 
                         local PlayerName = p.Name
                         
-                        printconsole(('[%s] Player left, disabling shit'):format(PlayerName), 0, 255, 0)
                         local _ = PlrCons[PlayerName] 
                         if (_) then 
                             for i,v in ipairs(_) do 
@@ -8252,9 +8245,6 @@ do
                         end
                     end)
                 end
-                
-                
-                printconsole(('Made esp loop'), 0, 255, 0)
             end))
             end)
             r_esp:Connect('Disabled',function() 
@@ -8264,7 +8254,6 @@ do
                 --if (EspFolder) then EspFolder:Destroy() EspFolder = nil end
                 
                 for i,v in ipairs(p_Names) do 
-                    printconsole(('[%s] Disabling shit'):format(v), 0, 255, 0)
                     local _ = PlrCons[v] 
                     if (_) then 
                         for i,v in ipairs(_) do 
@@ -8284,8 +8273,6 @@ do
                 end
                 tclear(PlrCons)
                 tclear(EspObjects)
-                
-
             end)
         end
         -- Fullbright
