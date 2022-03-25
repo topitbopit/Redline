@@ -5,7 +5,7 @@
 [![Issues](https://badgen.net/github/issues/topitbopit/Redline/)](https://GitHub.com/topitbopit/Redline/issues/)
 
 <!-- j -->
-![](https://github.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
+![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
 
 <!-- beta notice -->
 ## Notice  
