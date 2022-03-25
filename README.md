@@ -82,8 +82,11 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.6.1  
+Current version: 0.6.2  
 Dates will follow MM/DD/YYYY  
+
+Version 0.6.2 (3/25/2022)
+ - Fixed queue_on_teleport not being triggered if a certain file was missing (i.e. queueing works now)
 
 Version 0.6.1 (3/21/2022)  
  - ESP: Fixed not working on executors other than synapse. Thanks to TemporalTech for letting me know  
