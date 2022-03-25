@@ -4,8 +4,8 @@
 [![Stars](https://badgen.net/github/stars/topitbopit/Redline)](https://github.com/topitbopit/Redline/stargazers)
 [![Issues](https://badgen.net/github/issues/topitbopit/Redline/)](https://GitHub.com/topitbopit/Redline/issues/)
 
-<!-- banner -->
-![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/banner1.png)  
+<!-- j -->
+![](https://github.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
 
 <!-- beta notice -->
 ## Notice  
