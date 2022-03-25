@@ -52,7 +52,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.1'
+local REDLINEVER = 'v0.6.2'
 
 
 local IndentLevel1 = 8
@@ -9464,8 +9464,7 @@ end
 if (isfile('REDLINE/Queued.txt')) then
     _G.RLQUEUED = readfile('REDLINE/Queued.txt'):match('true') ~= nil
 else
-    _G.RLQUEUED = true
-    writefile('REDLINE/Queued.txt', 'true')
+    _G.RLQUEUED = false
 end
 
 if (pg and _G.RLQUEUED == false) then
