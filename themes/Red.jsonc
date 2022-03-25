@@ -5,8 +5,8 @@
         "Font": "SourceSans",
         
         "Generic_Outline": {
-            "Color": [255,32,64],
-            "Color2": [238,10,17],
+            "Color": [236,39,82],
+            "Color2": [244,41,31],
             "Gradient": true,
             "Transparency": 0
         },
@@ -19,7 +19,7 @@
             "Transparency": 0.2
         },
         "Generic_Enabled": {
-            "Color": [255,10,17],
+            "Color": [237,39,74],
             "Transparency": 0.4
         },
         
@@ -54,7 +54,7 @@
         },
         
         "Slider_Foreground": {
-            "Color": [255,10,7],
+            "Color": [237,39,74],
             "Transparency": 0
         },
         "Slider_Background": {
