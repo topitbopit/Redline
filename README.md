@@ -10,6 +10,8 @@
 <!-- beta notice -->
 ## Notice  
 **This is in insanely early beta! Only like 14 things actually work**  
+**Want to join the discord?**
+Probably not but here it is discord.gg/qndPn4yYpV
 
 <!-- script since nobody cares about the explanation -->
 ## Loadstring  
