@@ -34,9 +34,9 @@
 
 
 if (_G.RLLOADED) then
-    if (--printconsole) then 
-        --printconsole('Already loaded Redline', 255, 64, 64)
-        --printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
+    if (printconsole) then 
+        printconsole('Already loaded Redline', 255, 64, 64)
+        printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
         return
     else
         warn('Already loaded Redline\nDestroy the current script by pressing [End]')
