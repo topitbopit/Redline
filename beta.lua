@@ -26,8 +26,12 @@
 ]]--
 
 
----@diagnostic disable:undefined-global
----@diagnostic disable:undefined-field
+
+-- redline rewrite will possibly be done in 20 years 
+-- because half of this code is absolute shit :money_Mouth:
+
+
+
 
 if (_G.RLLOADED) then
     if (printconsole) then 
@@ -52,7 +56,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.2'
+local REDLINEVER = 'v0.6.3'
 
 
 local IndentLevel1 = 8
@@ -66,36 +70,36 @@ if not game:IsLoaded() then game.Loaded:Wait() end
 -- { Microops } --
 
 -- Services
-local serv_ctx     = game:GetService('ContextActionService')
-local serv_gui     = game:GetService('GuiService')
-local serv_http    = game:GetService('HttpService')
-local serv_net     = game:GetService('NetworkClient')
-local serv_players = game:GetService('Players')
-local serv_run     = game:GetService('RunService')
-local serv_tps     = game:GetService('TeleportService')
-local serv_twn     = game:GetService('TweenService')
-local serv_uinput  = game:GetService('UserInputService')
-local serv_vim     = game:GetService('VirtualInputManager')
+local servContext   = game:GetService('ContextActionService')
+local servGui       = game:GetService('GuiService')
+local servHttp      = game:GetService('HttpService')
+local servNetwork   = game:GetService('NetworkClient')
+local servPlayers   = game:GetService('Players')
+local servRun       = game:GetService('RunService')
+local servTeleport  = game:GetService('TeleportService')
+local servTween     = game:GetService('TweenService')
+local servInput     = game:GetService('UserInputService')
+local servVim       = game:GetService('VirtualInputManager')
 
 -- Colors
-local c_rgb,c_hsv,c_new = Color3.fromRGB, Color3.fromHSV, Color3.new
+local colRgb,colHsv,colNew = Color3.fromRGB, Color3.fromHSV, Color3.new
 -- UDim2
-local dim_off, dim_sca, dim_new = UDim2.fromOffset, UDim2.fromScale, UDim2.new
+local dimOffset, dimScale, dimNew = UDim2.fromOffset, UDim2.fromScale, UDim2.new
 -- Instances
-local inst_new = Instance.new
-local draw_new = Drawing.new
+local instNew = Instance.new
+local drawNew = Drawing.new
 -- Vectors
 local vec3, vec2 = Vector3.new, Vector2.new
 -- CFrames
-local cfnew = CFrame.new
+local cfrNew = CFrame.new
 -- Task
 local wait, delay, spawn = task.wait, task.delay, task.spawn
 -- Math
-local mrandom = math.random
-local mfloor = math.floor
-local mclamp = math.clamp
+local mathRand = math.random
+local mathFloor = math.floor
+local mathClamp = math.clamp
 -- Table
-local tinsert,tremove,tclear,tfind = table.insert, table.remove, table.clear, table.find
+local tabInsert,tabRemove,tabClear,tabFind = table.insert, table.remove, table.clear, table.find
 -- Os
 local date = os.date
 local tick = tick
@@ -109,10 +113,10 @@ local isrbxactive = isrbxactive
 if (isrbxactive == nil) then
     
     local active = true
-    serv_uinput.WindowFocused:Connect(function() 
+    servInput.WindowFocused:Connect(function() 
         active = true 
     end)
-    serv_uinput.WindowFocusReleased:Connect(function() 
+    servInput.WindowFocusReleased:Connect(function() 
         active = false
     end)
     getgenv().isrbxactive = function() 
@@ -129,7 +133,7 @@ local function DecodeThemeJson(json)
     -- Strip away comments
     json = json:gsub('//[^\n]+','')
     -- Convert JSON to lua
-    local stuff = serv_http:JSONDecode(json)
+    local stuff = servHttp:JSONDecode(json)
     -- Get the theme data
     local theme = stuff['theme']
     
@@ -173,10 +177,10 @@ local function DecodeThemeJson(json)
             
             -- Add to RLTHEME
             local _ = {
-                c_rgb(Color1[1],Color1[2],Color1[3]);
+                colRgb(Color1[1],Color1[2],Color1[3]);
                 Transpar;
                 IsGradient;
-                Color2 and c_rgb(Color2[1],Color2[2],Color2[3]);
+                Color2 and colRgb(Color2[1],Color2[2],Color2[3]);
                 
                 
             }
@@ -265,26 +269,26 @@ local RLTHEMEDATA, RLTHEMEFONT do
     -- so many fucking tables my god
     do 
         -- generic
-        RLTHEMEDATA['go'][1]   = RLTHEMEDATA['go'][1]  or c_rgb(075, 075, 080); -- outline color
-        RLTHEMEDATA['gs'][1]   = RLTHEMEDATA['gs'][1]  or c_rgb(005, 005, 010); -- shadow
-        RLTHEMEDATA['gw'][1]   = RLTHEMEDATA['gw'][1]  or c_rgb(023, 022, 027); -- window background
-        RLTHEMEDATA['ge'][1]   = RLTHEMEDATA['ge'][1]  or c_rgb(225, 035, 061); -- enabled
+        RLTHEMEDATA['go'][1]   = RLTHEMEDATA['go'][1]  or colRgb(075, 075, 080); -- outline color
+        RLTHEMEDATA['gs'][1]   = RLTHEMEDATA['gs'][1]  or colRgb(005, 005, 010); -- shadow
+        RLTHEMEDATA['gw'][1]   = RLTHEMEDATA['gw'][1]  or colRgb(023, 022, 027); -- window background
+        RLTHEMEDATA['ge'][1]   = RLTHEMEDATA['ge'][1]  or colRgb(225, 035, 061); -- enabled
         -- backgrounds
-        RLTHEMEDATA['bm'][1]   = RLTHEMEDATA['bm'][1]  or c_rgb(035, 035, 040); -- header background
-        RLTHEMEDATA['bo'][1]   = RLTHEMEDATA['bo'][1]  or c_rgb(030, 030, 035); -- object background
-        RLTHEMEDATA['bs'][1]   = RLTHEMEDATA['bs'][1]  or c_rgb(025, 025, 030); -- setting background
-        RLTHEMEDATA['bd'][1]   = RLTHEMEDATA['bd'][1]  or c_rgb(020, 020, 025); -- dropdown background
+        RLTHEMEDATA['bm'][1]   = RLTHEMEDATA['bm'][1]  or colRgb(035, 035, 040); -- header background
+        RLTHEMEDATA['bo'][1]   = RLTHEMEDATA['bo'][1]  or colRgb(030, 030, 035); -- object background
+        RLTHEMEDATA['bs'][1]   = RLTHEMEDATA['bs'][1]  or colRgb(025, 025, 030); -- setting background
+        RLTHEMEDATA['bd'][1]   = RLTHEMEDATA['bd'][1]  or colRgb(020, 020, 025); -- dropdown background
         -- backgrounds selected
-        RLTHEMEDATA['hm'][1]   = RLTHEMEDATA['hm'][1]  or c_rgb(038, 038, 043); -- header hovering
-        RLTHEMEDATA['ho'][1]   = RLTHEMEDATA['ho'][1] or c_rgb(033, 033, 038); -- object hovering
-        RLTHEMEDATA['hs'][1]   = RLTHEMEDATA['hs'][1] or c_rgb(028, 028, 033); -- setting hovering
-        RLTHEMEDATA['hd'][1]   = RLTHEMEDATA['hd'][1] or c_rgb(023, 023, 028); -- dropdown hovering
+        RLTHEMEDATA['hm'][1]   = RLTHEMEDATA['hm'][1]  or colRgb(038, 038, 043); -- header hovering
+        RLTHEMEDATA['ho'][1]   = RLTHEMEDATA['ho'][1] or colRgb(033, 033, 038); -- object hovering
+        RLTHEMEDATA['hs'][1]   = RLTHEMEDATA['hs'][1] or colRgb(028, 028, 033); -- setting hovering
+        RLTHEMEDATA['hd'][1]   = RLTHEMEDATA['hd'][1] or colRgb(023, 023, 028); -- dropdown hovering
         -- slider 
-        RLTHEMEDATA['sf'][1]   = RLTHEMEDATA['sf'][1] or c_rgb(225, 075, 080); -- slider foreground
-        RLTHEMEDATA['sb'][1]   = RLTHEMEDATA['sb'][1] or c_rgb(033, 033, 038); -- slider background
+        RLTHEMEDATA['sf'][1]   = RLTHEMEDATA['sf'][1] or colRgb(225, 075, 080); -- slider foreground
+        RLTHEMEDATA['sb'][1]   = RLTHEMEDATA['sb'][1] or colRgb(033, 033, 038); -- slider background
         -- text   
-        RLTHEMEDATA['tm'][1]   = RLTHEMEDATA['tm'][1] or c_rgb(255, 255, 255); -- main text
-        RLTHEMEDATA['to'][1]   = RLTHEMEDATA['to'][1] or c_rgb(020, 020, 025); -- outline
+        RLTHEMEDATA['tm'][1]   = RLTHEMEDATA['tm'][1] or colRgb(255, 255, 255); -- main text
+        RLTHEMEDATA['to'][1]   = RLTHEMEDATA['to'][1] or colRgb(020, 020, 025); -- outline
     end
     do 
         RLTHEMEDATA['go'][2]   = RLTHEMEDATA['go'][2]  or 0;
@@ -322,7 +326,7 @@ do
             }
         end
         gradient = function(parent)
-            local _ = inst_new('UIGradient')
+            local _ = instNew('UIGradient')
             _.Rotation = 45
             --_.Transparency = parent.Transparency
             _.Color = g1
@@ -332,7 +336,7 @@ do
         end
     end
     stroke = function(parent,mode, trans) 
-        local _ = inst_new('UIStroke')
+        local _ = instNew('UIStroke')
         _.ApplyStrokeMode = mode or 'Contextual'
         _.Thickness = 1
         
@@ -340,7 +344,7 @@ do
         
         if (RLTHEMEDATA['go'][3]) then
             gradient(_) 
-            _.Color = c_new(1,1,1)
+            _.Color = colNew(1,1,1)
         else
             _.Color = RLTHEMEDATA['go'][1]
         end
@@ -351,7 +355,7 @@ do
     
     local info1, info2 = TweenInfo.new(0.1,10,1), TweenInfo.new(0.3,10,1)
     function twn(twn_target, twn_settings, twn_long) 
-        local tween = serv_twn:Create(
+        local tween = servTween:Create(
             twn_target,
             twn_long and info2 or info1,
             twn_settings
@@ -360,7 +364,7 @@ do
         return tween
     end
     function ctwn(twn_target, twn_settings, twn_dur, twn_style, twn_dir) 
-        local tween = serv_twn:Create(
+        local tween = servTween:Create(
             twn_target,
             TweenInfo.new(twn_dur,twn_style or 10,twn_dir or 1),
             twn_settings
@@ -370,11 +374,11 @@ do
     end
     function getnext() 
         local a = ''
-        for i = 1, 5 do a = a .. utf8.char(mrandom(50,2000)) end 
+        for i = 1, 5 do a = a .. utf8.char(mathRand(50,2000)) end 
         return a 
     end
     function round(num, place) 
-        return mfloor(((num+(place*.5)) / place)) * place
+        return mathFloor(((num+(place*.5)) / place)) * place
     end
     function uierror(func, prop, type) 
         error(('%s failed; %s is not of type %s'):format(func,prop,type), 3)
@@ -396,11 +400,11 @@ local ui = {} do
     
     local rgbinsts = {}
     
-    local monitor_resolution = serv_gui:GetScreenResolution()
-    local monitor_inset = serv_gui:GetGuiInset()
+    local monitor_resolution = servGui:GetScreenResolution()
+    local monitor_inset = servGui:GetGuiInset()
     
     -- connections
-    ui_Connections['i'] = serv_uinput.InputBegan:Connect(function(io, gpe) 
+    ui_Connections['i'] = servInput.InputBegan:Connect(function(io, gpe) 
         if (gpe == false and io.UserInputType.Value == 8) then
             local kcv = io.KeyCode.Value
             for i = 1, #ui_Hotkeys do 
@@ -414,11 +418,11 @@ local ui = {} do
     do
         local rgbtime = 0
         
-        ui_Connections['r'] = serv_run.RenderStepped:Connect(function(dt) 
+        ui_Connections['r'] = servRun.RenderStepped:Connect(function(dt) 
             if (not isrbxactive()) then return end
             
             rgbtime = (rgbtime > 1 and 0 or rgbtime)+(dt*0.1)
-            RGBCOLOR = c_hsv(rgbtime,0.8,1)
+            RGBCOLOR = colHsv(rgbtime,0.8,1)
             for i = 1, #rgbinsts do 
                 local v = rgbinsts[i]
                 v[1][v[2]] = RGBCOLOR
@@ -431,8 +435,13 @@ local ui = {} do
      local w_TooltipHeader
       local w_Tooltip
     local w_Backframe
-     local w_Help
-     local w_Modal
+     local w_CreditFrame
+     local w_FriendsFrame
+     local w_ModFrame
+      local w_Help
+      local w_Modal
+     local w_ProfileFrame
+     local w_SettingsFrame
     local w_ModList
      local w_ModListLayout
      local w_ModListTitle
@@ -440,14 +449,14 @@ local ui = {} do
     
     
     local ModlistPadding = {
-        dim_off(-100, 0).X;
-        dim_off(8, 0).X;
+        dimOffset(-100, 0).X;
+        dimOffset(8, 0).X;
         Enum.TextXAlignment.Left;
         'PaddingLeft';
     } 
     
     do 
-        w_Screen = inst_new('ScreenGui')
+        w_Screen = instNew('ScreenGui')
         w_Screen.IgnoreGuiInset = true
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
         w_Screen.Name = getnext()
@@ -457,32 +466,75 @@ local ui = {} do
         w_Screen.DisplayOrder = 939393
         w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
         
-        
-        w_Backframe = inst_new('Frame')
+        w_Backframe = instNew('Frame')
         w_Backframe.BackgroundColor3 = RLTHEMEDATA['gw'][1]
         w_Backframe.BackgroundTransparency = RLTHEMEDATA['gw'][2]
         w_Backframe.BorderSizePixel = 0
         w_Backframe.ClipsDescendants = true
-        w_Backframe.Position = dim_new(0, 0, -1, 0)
-        w_Backframe.Size = dim_sca(1,1)
+        w_Backframe.Position = dimNew(0, 0, 0, 0)
+        w_Backframe.Size = dimScale(1,1)
         w_Backframe.Visible = false
         w_Backframe.Parent = w_Screen
         
-        w_Modal = inst_new('TextButton')
+        w_ModFrame = instNew('Frame')
+        w_ModFrame.BackgroundTransparency = 1
+        w_ModFrame.BorderSizePixel = 0
+        w_ModFrame.ClipsDescendants = false
+        w_ModFrame.Size = dimScale(1,1)
+        w_ModFrame.Visible = true
+        w_ModFrame.Parent = w_Backframe
+        
+        w_FriendsFrame = instNew('Frame')
+        w_FriendsFrame.BackgroundTransparency = 1
+        w_FriendsFrame.BorderSizePixel = 0
+        w_FriendsFrame.ClipsDescendants = false
+        w_FriendsFrame.Size = dimScale(1,1)
+        w_FriendsFrame.Visible = false
+        w_FriendsFrame.Parent = w_Backframe
+        
+        w_ProfileFrame = instNew('Frame')
+        w_ProfileFrame.BackgroundTransparency = 1
+        w_ProfileFrame.BorderSizePixel = 0
+        w_ProfileFrame.ClipsDescendants = false
+        w_ProfileFrame.Size = dimScale(1,1)
+        w_ProfileFrame.Visible = false
+        w_ProfileFrame.Parent = w_Backframe
+        
+        w_SettingsFrame = instNew('Frame')
+        w_SettingsFrame.BackgroundTransparency = 1
+        w_SettingsFrame.BorderSizePixel = 0
+        w_SettingsFrame.ClipsDescendants = false
+        w_SettingsFrame.Size = dimScale(1,1)
+        w_SettingsFrame.Visible = false
+        w_SettingsFrame.Parent = w_Backframe
+        
+        w_CreditFrame = instNew('Frame')
+        w_CreditFrame.BackgroundTransparency = 1
+        w_CreditFrame.BorderSizePixel = 0
+        w_CreditFrame.ClipsDescendants = false
+        w_CreditFrame.Size = dimScale(1,1)
+        w_CreditFrame.Visible = false
+        w_CreditFrame.Parent = w_Backframe
+        
+        do 
+            
+        end
+        
+        w_Modal = instNew('TextButton')
         w_Modal.Active = false
         w_Modal.BackgroundTransparency = 1
         w_Modal.Modal = true
-        w_Modal.Size = dim_off(1,1)
+        w_Modal.Size = dimOffset(1,1)
         w_Modal.Text = ''
-        w_Modal.Parent = w_Backframe
+        w_Modal.Parent = w_ModFrame
         
-        w_Help = inst_new('TextLabel')
+        w_Help = instNew('TextLabel')
         w_Help.AnchorPoint = vec2(1,1)
         w_Help.BackgroundTransparency = 1
         w_Help.Font = RLTHEMEFONT
-        w_Help.Position = dim_sca(1,1)
+        w_Help.Position = dimScale(1,1)
         w_Help.RichText = true
-        w_Help.Size = dim_off(300,300)
+        w_Help.Size = dimOffset(300,300)
         w_Help.Text = ''
         w_Help.TextColor3 = RLTHEMEDATA['tm'][1]
         w_Help.TextSize = 20
@@ -492,31 +544,31 @@ local ui = {} do
         w_Help.TextYAlignment = 'Top'
         w_Help.Visible = false
         w_Help.ZIndex = 1
-        w_Help.Parent = w_Backframe
+        w_Help.Parent = w_ModFrame
         
-        w_ModList = inst_new('Frame')
+        w_ModList = instNew('Frame')
         w_ModList.AnchorPoint = vec2(0, 1)
         w_ModList.BackgroundColor3 = RLTHEMEDATA['gw'][1]
         w_ModList.BackgroundTransparency = 1
         w_ModList.BorderColor3 = RLTHEMEDATA['gs'][1]
         w_ModList.BorderMode = 'Inset'
         w_ModList.BorderSizePixel = 1
-        w_ModList.Position = dim_sca(0,1)
-        w_ModList.Size = dim_new(0,200,0.3,0)
+        w_ModList.Position = dimScale(0,1)
+        w_ModList.Size = dimNew(0,200,0.3,0)
         w_ModList.Visible = false
         w_ModList.Parent = w_Screen
         
-        w_ModListLayout = inst_new('UIListLayout')
+        w_ModListLayout = instNew('UIListLayout')
         w_ModListLayout.FillDirection = 'Vertical'
         w_ModListLayout.HorizontalAlignment = 'Left'
         w_ModListLayout.VerticalAlignment = 'Bottom'
         w_ModListLayout.Parent = w_ModList
         
-        w_ModListTitle = inst_new('TextLabel')
+        w_ModListTitle = instNew('TextLabel')
         w_ModListTitle.BackgroundTransparency = 1
         w_ModListTitle.Font = RLTHEMEFONT
         w_ModListTitle.LayoutOrder = 939
-        w_ModListTitle.Size = dim_new(1, 0, 0, 30)
+        w_ModListTitle.Size = dimNew(1, 0, 0, 30)
         w_ModListTitle.Text = ' '..'Redline '..REDLINEVER..' '
         w_ModListTitle.TextColor3 = RLTHEMEDATA['tm'][1]
         w_ModListTitle.TextSize = 24
@@ -527,13 +579,13 @@ local ui = {} do
         w_ModListTitle.ZIndex = 5
         w_ModListTitle.Parent = w_ModList
         
-        w_TooltipHeader = inst_new('TextLabel')
+        w_TooltipHeader = instNew('TextLabel')
         w_TooltipHeader.BackgroundColor3 = RLTHEMEDATA['bm'][1]
         w_TooltipHeader.BackgroundTransparency = RLTHEMEDATA['bm'][2]
         w_TooltipHeader.BorderSizePixel = 0
         w_TooltipHeader.Font = RLTHEMEFONT
         w_TooltipHeader.RichText = true
-        w_TooltipHeader.Size = dim_off(175,20)
+        w_TooltipHeader.Size = dimOffset(175,20)
         w_TooltipHeader.Text = 'Hi'
         w_TooltipHeader.TextColor3 = RLTHEMEDATA['tm'][1]
         w_TooltipHeader.TextSize = 19
@@ -546,14 +598,14 @@ local ui = {} do
         
         stroke(w_TooltipHeader, 'Border')
         
-        w_Tooltip = inst_new('TextLabel')
+        w_Tooltip = instNew('TextLabel')
         w_Tooltip.BackgroundColor3 = RLTHEMEDATA['gw'][1]
         w_Tooltip.BackgroundTransparency = RLTHEMEDATA['gw'][2]
         w_Tooltip.BorderSizePixel = 0
         w_Tooltip.Font = RLTHEMEFONT
-        w_Tooltip.Position = dim_off(0, 21)
+        w_Tooltip.Position = dimOffset(0, 21)
         w_Tooltip.RichText = true
-        w_Tooltip.Size = dim_off(175,25)
+        w_Tooltip.Size = dimOffset(175,25)
         w_Tooltip.Text = ''
         w_Tooltip.TextColor3 = RLTHEMEDATA['tm'][1]
         w_Tooltip.TextSize = 17
@@ -568,14 +620,14 @@ local ui = {} do
         
         stroke(w_Tooltip, 'Border')
         
-        local __ = inst_new('UIPadding')
-        __.PaddingLeft = dim_off(5, 0).X
-        --__.PaddingTop = dim_off(0, 5).Y
+        local __ = instNew('UIPadding')
+        __.PaddingLeft = dimOffset(5, 0).X
+        --__.PaddingTop = dimOffset(0, 5).Y
         __.Parent = w_Tooltip
         
         w_Tooltip:GetPropertyChangedSignal('Text'):Connect(function() 
-            w_Tooltip.Size = dim_off(175,25)
-            local n = dim_off(0,5)
+            w_Tooltip.Size = dimOffset(175,25)
+            local n = dimOffset(0,5)
             for i = 1, 25 do 
                 w_Tooltip.Size += n
                 if (w_Tooltip.TextFits) then break end
@@ -583,29 +635,30 @@ local ui = {} do
             w_Tooltip.Size += n
         end)
         
-        w_MouseCursor = inst_new('ImageLabel')
+        w_MouseCursor = instNew('ImageLabel')
         w_MouseCursor.BackgroundTransparency = 1
         w_MouseCursor.Image = 'rbxassetid://8845749987'
         w_MouseCursor.ImageColor3 = RLTHEMEDATA['ge'][1]
         w_MouseCursor.ImageTransparency = 1
-        w_MouseCursor.Position = dim_off(150, 150)
-        w_MouseCursor.Size = dim_off(24, 24)
+        w_MouseCursor.Position = dimOffset(150, 150)
+        w_MouseCursor.Size = dimOffset(24, 24)
         w_MouseCursor.Visible = true
         w_MouseCursor.ZIndex = 1500
         w_MouseCursor.Parent = w_Screen
     end
     
     function ui:manageml(x1,x2,align,paddir) 
-        ModlistPadding[1] = x1 and dim_off(x1, 0).X or ModlistPadding[1]
-        ModlistPadding[2] = x2 and dim_off(x2, 0).X or ModlistPadding[2]
+        ModlistPadding[1] = x1 and dimOffset(x1, 0).X or ModlistPadding[1]
+        ModlistPadding[2] = x2 and dimOffset(x2, 0).X or ModlistPadding[2]
         ModlistPadding[4] = paddir or ModlistPadding[4]
         
         if (align and align ~= ModlistPadding[3]) then
+            -- :troll
             local c = w_ModList:GetChildren()
             local _ = ModlistPadding[2]
             local __ = ModlistPadding[4]
             local ___ = __ == 'PaddingLeft' and 'PaddingRight' or __
-            local ____ = dim_off(0,0).X
+            local ____ = dimOffset(0,0).X
             for i = 1, #c do
                 local v = c[i]
                 if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
@@ -629,11 +682,11 @@ local ui = {} do
     
     
     
-    ui_Connections['t'] = serv_run.RenderStepped:Connect(function() 
-        local pos = serv_uinput:GetMouseLocation()
+    ui_Connections['t'] = servRun.RenderStepped:Connect(function() 
+        local pos = servInput:GetMouseLocation()
         local x,y = pos.X, pos.Y
-        w_TooltipHeader.Position = dim_off(x+15, y+15)
-        w_MouseCursor.Position = dim_off(x-4, y)
+        w_TooltipHeader.Position = dimOffset(x+15, y+15)
+        w_MouseCursor.Position = dimOffset(x-4, y)
     end)
     
     
@@ -647,14 +700,14 @@ local ui = {} do
             b.TextXAlignment = ModlistPadding[3]
             b.Parent = w_ModList
             twn(b.P, {[ModlistPadding[4]] = ModlistPadding[2]},true)
-            twn(b, {Size = dim_new(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
+            twn(b, {Size = dimNew(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
         end
         
         ModListDisable = function(name)
             local b = mods_instance[name]
             
             twn(b.P, {[ModlistPadding[4]] = ModlistPadding[1]},true)
-            twn(b, {Size = dim_new(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
+            twn(b, {Size = dimNew(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
         end
         
         ModListModify = function(name, new) 
@@ -662,8 +715,8 @@ local ui = {} do
         end
         
         ModListInit = function(name) 
-            local _ = inst_new('TextLabel')
-            _.Size = dim_new(0, 0, 0, 0)
+            local _ = instNew('TextLabel')
+            _.Size = dimNew(0, 0, 0, 0)
             _.BackgroundTransparency = 1
             _.Font = RLTHEMEFONT
             _.TextXAlignment = ModlistPadding[3]
@@ -679,10 +732,10 @@ local ui = {} do
             
             mods_instance[name] = _
             
-            tinsert(rgbinsts, {_,'TextColor3'})
+            tabInsert(rgbinsts, {_,'TextColor3'})
             
             
-            local __ = inst_new('UIPadding')
+            local __ = instNew('UIPadding')
             __.Name = 'P'
             __[ModlistPadding[4]] = ModlistPadding[1]
             __.Parent = _
@@ -691,7 +744,7 @@ local ui = {} do
     
     -- Base class for stuff
     local base_class = {} do 
-        local s1,s2 = dim_new(1,0,1,0), dim_new(0,0,1,0)
+        local s1,s2 = dimNew(1,0,1,0), dimNew(0,0,1,0)
         
         
         
@@ -850,7 +903,7 @@ local ui = {} do
                 
                 wait(0.01);
                 local c;
-                c = serv_uinput.InputBegan:Connect(function(io,gpe)
+                c = servInput.InputBegan:Connect(function(io,gpe)
                     
                     local kcv = io.KeyCode.Value
                     if (kcv ~= 0) then
@@ -864,11 +917,11 @@ local ui = {} do
                             local n = self.Parent.Name
                             for i = 1, #ui_Hotkeys do 
                                 if ui_Hotkeys[i][3] == n then
-                                    tremove(ui_Hotkeys, i)
+                                    tabRemove(ui_Hotkeys, i)
                                     break
                                 end
                             end
-                            tinsert(ui_Hotkeys, {kcv, function() 
+                            tabInsert(ui_Hotkeys, {kcv, function() 
                                 self.Parent:Toggle()
                             end, n})
                         end)
@@ -879,7 +932,7 @@ local ui = {} do
                         local n = self.Parent.Name
                         for i = 1, #ui_Hotkeys do 
                             if ui_Hotkeys[i][3] == n then
-                                tremove(ui_Hotkeys, i)
+                                tabRemove(ui_Hotkeys, i)
                                 break
                             end
                         end
@@ -899,7 +952,7 @@ local ui = {} do
                 
                 wait(0.01);
                 local c;
-                c = serv_uinput.InputBegan:Connect(function(io,gpe)
+                c = servInput.InputBegan:Connect(function(io,gpe)
                     local kc = io.KeyCode
                     local kcv = kc.Value
                     if (kcv ~= 0) then
@@ -984,13 +1037,13 @@ local ui = {} do
                 local pval = self.PreviousVal
 
                 
-                cval = round(mclamp(nval, min, self.Max), self.Step)
+                cval = round(mathClamp(nval, min, self.Max), self.Step)
                 
                 if (pval ~= cval) then
                     pval = cval
                     local form = self.StepFormat
                     
-                    self.SliderFill.Position = dim_off(mfloor((cval - min) * self.Ratio), 0)
+                    self.SliderFill.Position = dimOffset(mathFloor((cval - min) * self.Ratio), 0)
                     self.SliderAmnt.Text = form:format(cval)
                     
                     if (self.Primary) then
@@ -1008,7 +1061,7 @@ local ui = {} do
                 local cval = self.CurrentVal
                 local pval = self.PreviousVal
                 
-                local pos_normalized = mclamp(xval - self.SliderBg.AbsolutePosition.X, 0, self.SliderSize)
+                local pos_normalized = mathClamp(xval - self.SliderBg.AbsolutePosition.X, 0, self.SliderSize)
                 
                 cval = round((pos_normalized * self.RatioInverse)+min, self.Step)
                 
@@ -1016,7 +1069,7 @@ local ui = {} do
                     pval = cval
                     local form = self.StepFormat
                     
-                    self.SliderFill.Position = dim_off(mfloor((cval - min)*self.Ratio), 0)
+                    self.SliderFill.Position = dimOffset(mathFloor((cval - min)*self.Ratio), 0)
                     self.SliderAmnt.Text = form:format(cval)
                     
                     self.CurrentVal = cval
@@ -1040,7 +1093,7 @@ local ui = {} do
             if not value then uierror('slider_setval','value','number') end
             
             local m1,m2,m3 = self.min, self.max, self.step
-            value = mclamp(round(value, m3),m1,m2)
+            value = mathClamp(round(value, m3),m1,m2)
             
             self.setval_internal(value)
         end
@@ -1096,8 +1149,8 @@ local ui = {} do
                   local m_MenuListLayout
                 
                 do
-                    m_ModuleRoot = inst_new('ImageButton')
-                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
+                    m_ModuleRoot = instNew('ImageButton')
+                    m_ModuleRoot.Size = dimNew(1, 0, 0, 25)
                     m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.ClipsDescendants = false
                     m_ModuleRoot.BackgroundTransparency = 1
@@ -1105,46 +1158,46 @@ local ui = {} do
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst_new('Frame')
+                     m_ModuleBackground = instNew('Frame')
                      m_ModuleBackground.BackgroundColor3 = RLTHEMEDATA['bo'][1]
                      m_ModuleBackground.BackgroundTransparency = RLTHEMEDATA['bo'][2]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim_new(1,0,0,25)
+                     m_ModuleBackground.Size = dimNew(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
-                      m_Highlight = inst_new('Frame')
+                      m_Highlight = instNew('Frame')
                       m_Highlight.Active = false
                       m_Highlight.BackgroundColor3 = RLTHEMEDATA['ge'][1]
                       m_Highlight.BackgroundTransparency = 0.9
                       m_Highlight.BorderSizePixel = 0
-                      m_Highlight.Size = dim_sca(1,1)
+                      m_Highlight.Size = dimScale(1,1)
                       m_Highlight.Visible = false
                       m_Highlight.ZIndex = M_IndexOffset
                       m_Highlight.Parent = m_ModuleBackground
                       
-                      m_ModuleEnableEffect = inst_new('Frame')
+                      m_ModuleEnableEffect = instNew('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = RLTHEMEDATA['tm'][1]
                       m_ModuleEnableEffect.BackgroundTransparency = 0.92
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim_new(0,0,1,0)
+                      m_ModuleEnableEffect.Size = dimNew(0,0,1,0)
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                       
-                       m_ModuleEnableEffect2 = inst_new('Frame')
+                       m_ModuleEnableEffect2 = instNew('Frame')
                        m_ModuleEnableEffect2.BackgroundColor3 = RLTHEMEDATA['ge'][1]
                        m_ModuleEnableEffect2.BorderSizePixel = 0
-                       m_ModuleEnableEffect2.Size = dim_new(0,2,1,0)
+                       m_ModuleEnableEffect2.Size = dimNew(0,2,1,0)
                        m_ModuleEnableEffect2.ZIndex = M_IndexOffset
                        m_ModuleEnableEffect2.Parent = m_ModuleEnableEffect
                       
-                      m_ModuleText = inst_new('TextLabel')
+                      m_ModuleText = instNew('TextLabel')
                       m_ModuleText.BackgroundTransparency = 1
                       m_ModuleText.Font = RLTHEMEFONT
-                      m_ModuleText.Position = dim_off(0, 0)
+                      m_ModuleText.Position = dimOffset(0, 0)
                       m_ModuleText.RichText = true
-                      m_ModuleText.Size = dim_sca(1, 1)
+                      m_ModuleText.Size = dimScale(1, 1)
                       m_ModuleText.Text = text
                       m_ModuleText.TextColor3 = RLTHEMEDATA['tm'][1]
                       m_ModuleText.TextSize = 20
@@ -1154,17 +1207,17 @@ local ui = {} do
                       m_ModuleText.ZIndex = M_IndexOffset
                       m_ModuleText.Parent = m_ModuleBackground
                       
-                       m_TextPadding = inst_new('UIPadding')
-                       m_TextPadding.PaddingLeft = dim_off(IndentLevel1, 0).X -- LEFT PADDING 1
+                       m_TextPadding = instNew('UIPadding')
+                       m_TextPadding.PaddingLeft = dimOffset(IndentLevel1, 0).X -- LEFT PADDING 1
                        m_TextPadding.Parent = m_ModuleText
                       
-                      m_ModuleIcon = inst_new('TextLabel')
+                      m_ModuleIcon = instNew('TextLabel')
                       m_ModuleIcon.AnchorPoint = vec2(1,0)
                       m_ModuleIcon.BackgroundTransparency = 1
                       m_ModuleIcon.Font = RLTHEMEFONT
-                      m_ModuleIcon.Position = dim_sca(1,0)
+                      m_ModuleIcon.Position = dimScale(1,0)
                       m_ModuleIcon.Rotation = 0
-                      m_ModuleIcon.Size = dim_off(25, 25)
+                      m_ModuleIcon.Size = dimOffset(25, 25)
                       m_ModuleIcon.Text = '+'
                       m_ModuleIcon.TextColor3 = RLTHEMEDATA['tm'][1]
                       m_ModuleIcon.TextSize = 18
@@ -1174,17 +1227,17 @@ local ui = {} do
                       m_ModuleIcon.ZIndex = M_IndexOffset
                       m_ModuleIcon.Parent = m_ModuleBackground
                     
-                    m_Menu = inst_new('Frame')
+                    m_Menu = instNew('Frame')
                     m_Menu.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                     m_Menu.BackgroundTransparency = 1
                     m_Menu.BorderSizePixel = 0
-                    m_Menu.Position = dim_off(0,25)
-                    m_Menu.Size = dim_new(1,0,0,0)
+                    m_Menu.Position = dimOffset(0,25)
+                    m_Menu.Size = dimNew(1,0,0,0)
                     m_Menu.Visible = false
                     m_Menu.ZIndex = M_IndexOffset-1
                     m_Menu.Parent = m_ModuleRoot
                     
-                     m_MenuListLayout = inst_new('UIListLayout')
+                     m_MenuListLayout = instNew('UIListLayout')
                      m_MenuListLayout.FillDirection = 'Vertical'
                      m_MenuListLayout.SortOrder = 2
                      m_MenuListLayout.HorizontalAlignment = 'Left'
@@ -1216,12 +1269,12 @@ local ui = {} do
                     M_Object.Parent = self
                     M_Object.Root = m_ModuleRoot
                     
-                    M_Object.AddToggle = base_class.module_create_toggle
+                    M_Object.addToggle = base_class.module_create_toggle
                     M_Object.AddLabel = base_class.module_create_label
-                    M_Object.AddDropdown = base_class.module_create_dropdown
-                    M_Object.AddModHotkey = base_class.module_create_modhotkey
+                    M_Object.addDropdown = base_class.module_create_dropdown
+                    M_Object.addModHotkey = base_class.module_create_modhotkey
                     M_Object.AddHotkey = base_class.module_create_hotkey
-                    M_Object.AddSlider = base_class.module_create_slider
+                    M_Object.addSlider = base_class.module_create_slider
                     M_Object.AddInput = base_class.module_create_input
                     M_Object.AddButton = base_class.module_create_button
                     
@@ -1233,12 +1286,12 @@ local ui = {} do
                     M_Object.Reset = base_class.module_toggle_reset
                     
                     M_Object.ToggleMenu = base_class.module_toggle_menu
-                    M_Object.GetState = base_class.module_getstate_self
-                    M_Object.IsEnabled = base_class.module_getstate_self
+                    M_Object.getState = base_class.module_getstate_self
+                    M_Object.isEnabled = base_class.module_getstate_self
                     M_Object.GetMenuState = base_class.module_getstate_menu
                     
                     M_Object.Connect = base_class.generic_connect
-                    M_Object.SetTooltip = base_class.generic_tooltip
+                    M_Object.setTooltip = base_class.generic_tooltip
                 end
                 
                 do
@@ -1276,9 +1329,9 @@ local ui = {} do
                     end)
                 end
                 
-                if (not nohotkey) then M_Object:AddModHotkey() end
+                if (not nohotkey) then M_Object:addModHotkey() end
                 
-                tinsert(ui_Modules, M_Object)
+                tabInsert(ui_Modules, M_Object)
                 return M_Object
             elseif (Type == 'Textbox') then
                 local m_ModuleRoot
@@ -1289,36 +1342,36 @@ local ui = {} do
                   local m_ModuleIcon
 
                 do
-                    m_ModuleRoot = inst_new('Frame')
+                    m_ModuleRoot = instNew('Frame')
                     m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.BackgroundTransparency = 1
                     m_ModuleRoot.BorderSizePixel = 0
-                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
+                    m_ModuleRoot.Size = dimNew(1, 0, 0, 25)
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst_new('Frame')
+                     m_ModuleBackground = instNew('Frame')
                      m_ModuleBackground.BackgroundColor3 = RLTHEMEDATA['bo'][1]
                      m_ModuleBackground.BackgroundTransparency = RLTHEMEDATA['bo'][2]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim_new(1,0,0,25)
+                     m_ModuleBackground.Size = dimNew(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
-                      m_ModuleEnableEffect = inst_new('Frame')
+                      m_ModuleEnableEffect = instNew('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = RLTHEMEDATA['tm'][1]
                       m_ModuleEnableEffect.BackgroundTransparency = 1
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim_new(1,0,1,0)
+                      m_ModuleEnableEffect.Size = dimNew(1,0,1,0)
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                      
-                     m_ModuleText = inst_new('TextBox')
+                     m_ModuleText = instNew('TextBox')
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.ClearTextOnFocus = not nohotkey
                      m_ModuleText.Font = RLTHEMEFONT
-                     m_ModuleText.Size = dim_sca(1, 1)
+                     m_ModuleText.Size = dimScale(1, 1)
                      m_ModuleText.Text = text
                      m_ModuleText.TextColor3 = RLTHEMEDATA['tm'][1]
                      m_ModuleText.TextSize = 20
@@ -1329,13 +1382,13 @@ local ui = {} do
                      m_ModuleText.ZIndex = M_IndexOffset
                      m_ModuleText.Parent = m_ModuleBackground
                       
-                      m_ModulePadding = inst_new('UIPadding')
-                      m_ModulePadding.PaddingLeft = dim_off(IndentLevel1, 0).X
+                      m_ModulePadding = instNew('UIPadding')
+                      m_ModulePadding.PaddingLeft = dimOffset(IndentLevel1, 0).X
                       m_ModulePadding.Parent = m_ModuleText
                      
-                     m_ModuleIcon = inst_new('TextLabel')
-                     m_ModuleIcon.Size = dim_off(25, 25)
-                     m_ModuleIcon.Position = dim_sca(1,0)
+                     m_ModuleIcon = instNew('TextLabel')
+                     m_ModuleIcon.Size = dimOffset(25, 25)
+                     m_ModuleIcon.Position = dimScale(1,0)
                      m_ModuleIcon.AnchorPoint = vec2(1,0)
                      m_ModuleIcon.BackgroundTransparency = 1
                      m_ModuleIcon.Font = RLTHEMEFONT
@@ -1366,7 +1419,7 @@ local ui = {} do
                     M_Object.ZIndex = M_IndexOffset
                                         
                     M_Object.Connect = base_class.generic_connect
-                    M_Object.SetTooltip = base_class.generic_tooltip
+                    M_Object.setTooltip = base_class.generic_tooltip
                 end
                 
                 do
@@ -1404,7 +1457,7 @@ local ui = {} do
                     end)
                 end
                 
-                tinsert(ui_Modules, M_Object)
+                tabInsert(ui_Modules, M_Object)
                 return M_Object
             elseif (Type == 'Button') then
                 local m_ModuleRoot
@@ -1416,34 +1469,34 @@ local ui = {} do
                   local m_ModuleIcon
 
                 do
-                    m_ModuleRoot = inst_new('Frame')
-                    m_ModuleRoot.Size = dim_new(1, 0, 0, 25)
+                    m_ModuleRoot = instNew('Frame')
+                    m_ModuleRoot.Size = dimNew(1, 0, 0, 25)
                     m_ModuleRoot.AutomaticSize = 'Y'
                     m_ModuleRoot.BackgroundTransparency = 1
                     m_ModuleRoot.BorderSizePixel = 0
                     m_ModuleRoot.ZIndex = M_IndexOffset-1
                     m_ModuleRoot.Parent = self.Menu
                     
-                     m_ModuleBackground = inst_new('Frame')
+                     m_ModuleBackground = instNew('Frame')
                      m_ModuleBackground.BackgroundColor3 = RLTHEMEDATA['bo'][1]
                      m_ModuleBackground.BackgroundTransparency = RLTHEMEDATA['bo'][2]
                      m_ModuleBackground.BorderSizePixel = 0
-                     m_ModuleBackground.Size = dim_new(1,0,0,25)
+                     m_ModuleBackground.Size = dimNew(1,0,0,25)
                      m_ModuleBackground.ZIndex = M_IndexOffset
                      m_ModuleBackground.Parent = m_ModuleRoot
                      
                      
-                      m_ModuleEnableEffect = inst_new('Frame')
+                      m_ModuleEnableEffect = instNew('Frame')
                       m_ModuleEnableEffect.BackgroundColor3 = RLTHEMEDATA['tm'][1]
                       m_ModuleEnableEffect.BackgroundTransparency = 1
                       m_ModuleEnableEffect.ClipsDescendants = true
-                      m_ModuleEnableEffect.Size = dim_new(1,0,1,0)
+                      m_ModuleEnableEffect.Size = dimNew(1,0,1,0)
                       m_ModuleEnableEffect.BorderSizePixel = 0
                       m_ModuleEnableEffect.ZIndex = M_IndexOffset
                       m_ModuleEnableEffect.Parent = m_ModuleBackground
                       
-                      m_Highlight = inst_new('Frame')
-                      m_Highlight.Size = dim_sca(1,1)
+                      m_Highlight = instNew('Frame')
+                      m_Highlight.Size = dimScale(1,1)
                       m_Highlight.BackgroundColor3 = RLTHEMEDATA['ge'][1]
                       m_Highlight.BackgroundTransparency = 0.9
                       m_Highlight.Visible = false
@@ -1451,12 +1504,12 @@ local ui = {} do
                       m_Highlight.BorderSizePixel = 0
                       m_Highlight.Parent = m_ModuleBackground
                      
-                     m_ModuleText = inst_new('TextLabel')
+                     m_ModuleText = instNew('TextLabel')
                      m_ModuleText.BackgroundTransparency = 1
                      m_ModuleText.Font = RLTHEMEFONT
-                     m_ModuleText.Position = dim_off(0, 0)
+                     m_ModuleText.Position = dimOffset(0, 0)
                      m_ModuleText.RichText = true
-                     m_ModuleText.Size = dim_new(1, 0, 1, 0)
+                     m_ModuleText.Size = dimNew(1, 0, 1, 0)
                      m_ModuleText.Text = text
                      m_ModuleText.TextColor3 = RLTHEMEDATA['tm'][1]
                      m_ModuleText.TextSize = 20
@@ -1466,16 +1519,16 @@ local ui = {} do
                      m_ModuleText.ZIndex = M_IndexOffset
                      m_ModuleText.Parent = m_ModuleBackground
                      
-                     m_ModulePadding = inst_new('UIPadding')
-                     m_ModulePadding.PaddingLeft = dim_off(IndentLevel1, 0).X
+                     m_ModulePadding = instNew('UIPadding')
+                     m_ModulePadding.PaddingLeft = dimOffset(IndentLevel1, 0).X
                      m_ModulePadding.Parent = m_ModuleText
                      
-                     m_ModuleIcon = inst_new('ImageLabel')
+                     m_ModuleIcon = instNew('ImageLabel')
                      m_ModuleIcon.AnchorPoint = vec2(1,0.5)
                      m_ModuleIcon.BackgroundTransparency = 1
-                     m_ModuleIcon.Position = dim_new(1,-6, 0.5, 0)
+                     m_ModuleIcon.Position = dimNew(1,-6, 0.5, 0)
                      m_ModuleIcon.Rotation = 0
-                     m_ModuleIcon.Size = dim_off(12, 12)
+                     m_ModuleIcon.Size = dimOffset(12, 12)
                      m_ModuleIcon.Image = 'rbxassetid://8997446977'
                      m_ModuleIcon.ImageColor3 = RLTHEMEDATA['tm'][1]
                      m_ModuleIcon.ZIndex = M_IndexOffset
@@ -1504,7 +1557,7 @@ local ui = {} do
                     M_Object.Click = base_class.module_click_self
                     
                     M_Object.Connect = base_class.generic_connect
-                    M_Object.SetTooltip = base_class.generic_tooltip
+                    M_Object.setTooltip = base_class.generic_tooltip
                 end
                 
                 do
@@ -1537,7 +1590,7 @@ local ui = {} do
                     end)
                 end
                 
-                tinsert(ui_Modules, M_Object)
+                tabInsert(ui_Modules, M_Object)
                 return M_Object
             end
         end
@@ -1548,14 +1601,14 @@ local ui = {} do
             local t_Text
              local t_Padding
             do
-                t_Text = inst_new('TextLabel')
+                t_Text = instNew('TextLabel')
                 t_Text.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 t_Text.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 t_Text.BorderSizePixel = 0
                 t_Text.Font = RLTHEMEFONT
                 t_Text.Parent = self.Menu
                 t_Text.RichText = true
-                t_Text.Size = dim_new(1, 0, 0, 25)
+                t_Text.Size = dimNew(1, 0, 0, 25)
                 t_Text.Text = text
                 t_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                 t_Text.TextSize = 18
@@ -1566,8 +1619,8 @@ local ui = {} do
                 t_Text.TextYAlignment = 'Center'
                 t_Text.ZIndex = T_IndexOffset
                 
-                t_Padding = inst_new('UIPadding')
-                t_Padding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                t_Padding = instNew('UIPadding')
+                t_Padding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                 t_Padding.Parent = t_Text
             end
             
@@ -1575,7 +1628,7 @@ local ui = {} do
                 if (t_Text.TextFits) then
                     break
                 end
-                t_Text.Size += dim_off(0,25)
+                t_Text.Size += dimOffset(0,25)
             end
                 
             local T_Object = {} do 
@@ -1583,7 +1636,7 @@ local ui = {} do
                 T_Object.Toggled = false
                 
                 T_Object.Name = text
-                T_Object.SetTooltip = base_class.generic_tooltip
+                T_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -1619,16 +1672,16 @@ local ui = {} do
               local t_TextPadding
             
             do
-                t_Toggle = inst_new('Frame')
+                t_Toggle = instNew('Frame')
                 t_Toggle.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 t_Toggle.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 t_Toggle.BorderSizePixel = 0
-                t_Toggle.Size = dim_new(1, 0, 0, 25)
+                t_Toggle.Size = dimNew(1, 0, 0, 25)
                 t_Toggle.ZIndex = T_IndexOffset
                 t_Toggle.Parent = self.Menu
                  
-                 t_Text = inst_new('TextLabel')
-                 t_Text.Size = dim_sca(1, 1)
+                 t_Text = instNew('TextLabel')
+                 t_Text.Size = dimScale(1, 1)
                  t_Text.BackgroundTransparency = 1
                  t_Text.Font = RLTHEMEFONT
                  t_Text.TextXAlignment = 'Left'
@@ -1640,25 +1693,25 @@ local ui = {} do
                  t_Text.ZIndex = T_IndexOffset
                  t_Text.Parent = t_Toggle
                  
-                  t_TextPadding = inst_new('UIPadding')
-                  t_TextPadding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                  t_TextPadding = instNew('UIPadding')
+                  t_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                   t_TextPadding.Parent = t_Text
                  
-                 t_Box1 = inst_new('Frame')
+                 t_Box1 = instNew('Frame')
                  t_Box1.AnchorPoint = vec2(1,0)
                  t_Box1.BackgroundColor3 = RLTHEMEDATA['sf'][1]
                  t_Box1.BackgroundTransparency = 1
                  t_Box1.BorderSizePixel = 0
-                 t_Box1.Position = dim_new(1,-RightIndent,0.5,-5) -- RIGHT PADDING
-                 t_Box1.Size = dim_off(10, 10)
+                 t_Box1.Position = dimNew(1,-RightIndent,0.5,-5) -- RIGHT PADDING
+                 t_Box1.Size = dimOffset(10, 10)
                  t_Box1.ZIndex = T_IndexOffset
                  t_Box1.Parent = t_Toggle
                  
                  stroke(t_Box1)
                  
-                 t_Box2 = inst_new('Frame')
-                 t_Box2.Size = dim_off(8, 8)
-                 t_Box2.Position = dim_off(1,1)
+                 t_Box2 = instNew('Frame')
+                 t_Box2.Size = dimOffset(8, 8)
+                 t_Box2.Position = dimOffset(1,1)
                  t_Box2.BackgroundTransparency = 1
                  t_Box2.BackgroundColor3 = RLTHEMEDATA['ge'][1]
                  t_Box2.BorderSizePixel = 0
@@ -1683,12 +1736,12 @@ local ui = {} do
                 T_Object.Disable = base_class.s_toggle_disable
                 T_Object.Enable = base_class.s_toggle_enable
                 T_Object.Reset = base_class.s_toggle_reset
-                T_Object.GetState = base_class.s_toggle_getstate
-                T_Object.GetValue = base_class.s_toggle_getstate
-                T_Object.IsEnabled = base_class.s_toggle_getstate
+                T_Object.getState = base_class.s_toggle_getstate
+                T_Object.getValue = base_class.s_toggle_getstate
+                T_Object.isEnabled = base_class.s_toggle_getstate
                 
                 T_Object.Connect = base_class.generic_connect
-                T_Object.SetTooltip = base_class.generic_tooltip
+                T_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -1739,25 +1792,25 @@ local ui = {} do
                local d_MenuListLayout
             
             do
-                d_Root = inst_new('Frame')
-                d_Root.Size = dim_new(1, 0, 0, 25)
+                d_Root = instNew('Frame')
+                d_Root.Size = dimNew(1, 0, 0, 25)
                 d_Root.AutomaticSize = 'Y'
                 d_Root.BackgroundTransparency = 1
                 d_Root.BorderSizePixel = 0
                 d_Root.ZIndex = D_IndexOffset-1
                 d_Root.Parent = self.Menu
             
-                 d_Header = inst_new('Frame')
+                 d_Header = instNew('Frame')
                  d_Header.Active = true
                  d_Header.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                  d_Header.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                  d_Header.BorderSizePixel = 0
-                 d_Header.Size = dim_new(1, 0, 0, 25)
+                 d_Header.Size = dimNew(1, 0, 0, 25)
                  d_Header.ZIndex = D_IndexOffset+1
                  d_Header.Parent = d_Root
                  
-                  d_HeaderText = inst_new('TextLabel')
-                  d_HeaderText.Size = dim_sca(1, 1)
+                  d_HeaderText = instNew('TextLabel')
+                  d_HeaderText.Size = dimScale(1, 1)
                   d_HeaderText.BackgroundTransparency = 1
                   d_HeaderText.Font = RLTHEMEFONT
                   d_HeaderText.TextXAlignment = 'Left'
@@ -1769,13 +1822,13 @@ local ui = {} do
                   d_HeaderText.ZIndex = D_IndexOffset+1
                   d_HeaderText.Parent = d_Header
                   
-                   d_TextPadding = inst_new('UIPadding')
-                   d_TextPadding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                   d_TextPadding = instNew('UIPadding')
+                   d_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                    d_TextPadding.Parent = d_HeaderText
                   
-                  d_HeaderIcon = inst_new('ImageLabel')
-                  d_HeaderIcon.Size = dim_off(25, 25)
-                  d_HeaderIcon.Position = dim_new(1,-RightIndent +10, 0, 0) -- RIGHT PADDING
+                  d_HeaderIcon = instNew('ImageLabel')
+                  d_HeaderIcon.Size = dimOffset(25, 25)
+                  d_HeaderIcon.Position = dimNew(1,-RightIndent +10, 0, 0) -- RIGHT PADDING
                   d_HeaderIcon.AnchorPoint = vec2(1,0)
                   d_HeaderIcon.BackgroundTransparency = 1
                   d_HeaderIcon.ImageColor3 = RLTHEMEDATA['tm'][1]
@@ -1784,10 +1837,10 @@ local ui = {} do
                   d_HeaderIcon.ZIndex = D_IndexOffset+1
                   d_HeaderIcon.Parent = d_Header
                  
-                 d_Menu = inst_new('Frame')
-                 d_Menu.Size = dim_new(1,0,0,0)
+                 d_Menu = instNew('Frame')
+                 d_Menu.Size = dimNew(1,0,0,0)
                  d_Menu.AutomaticSize = 'Y'
-                 d_Menu.Position = dim_off(0, 25)
+                 d_Menu.Position = dimOffset(0, 25)
                  d_Menu.BackgroundColor3 = RLTHEMEDATA['bd'][1]
                  d_Menu.BackgroundTransparency = 1
                  d_Menu.BorderSizePixel = 0
@@ -1795,7 +1848,7 @@ local ui = {} do
                  d_Menu.Visible = false
                  d_Menu.Parent = d_Header
                  
-                  d_MenuListLayout = inst_new('UIListLayout')
+                  d_MenuListLayout = instNew('UIListLayout')
                   d_MenuListLayout.FillDirection = 'Vertical'
                   d_MenuListLayout.HorizontalAlignment = 'Left'
                   d_MenuListLayout.VerticalAlignment = 'Top'
@@ -1826,12 +1879,12 @@ local ui = {} do
                 
                 D_Object.Toggle = base_class.s_dropdown_toggle
                 D_Object.GetSelection = base_class.s_dropdown_getselection
-                D_Object.GetValue = base_class.s_dropdown_getselection
+                D_Object.getValue = base_class.s_dropdown_getselection
 
                 
                 D_Object.Connect = base_class.generic_connect
-                D_Object.SetTooltip = base_class.generic_tooltip
-                D_Object.AddOption = base_class.dropdown_create_option
+                D_Object.setTooltip = base_class.generic_tooltip
+                D_Object.addOption = base_class.dropdown_create_option
             end
             
             do
@@ -1873,16 +1926,16 @@ local ui = {} do
               local h_TextPadding
             
             do
-                h_Hotkey = inst_new('Frame')
+                h_Hotkey = instNew('Frame')
                 h_Hotkey.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 h_Hotkey.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 h_Hotkey.BorderSizePixel = 0
-                h_Hotkey.Size = dim_new(1, 0, 0, 25)
+                h_Hotkey.Size = dimNew(1, 0, 0, 25)
                 h_Hotkey.ZIndex = H_IndexOffset
                 h_Hotkey.Parent = self.Menu
                  
-                 h_Text = inst_new('TextLabel')
-                 h_Text.Size = dim_sca(1, 1)
+                 h_Text = instNew('TextLabel')
+                 h_Text.Size = dimScale(1, 1)
                  h_Text.BackgroundTransparency = 1
                  h_Text.Font = RLTHEMEFONT
                  h_Text.TextXAlignment = 'Left'
@@ -1894,8 +1947,8 @@ local ui = {} do
                  h_Text.ZIndex = H_IndexOffset
                  h_Text.Parent = h_Hotkey
                  
-                  h_TextPadding = inst_new('UIPadding')
-                  h_TextPadding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                  h_TextPadding = instNew('UIPadding')
+                  h_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                   h_TextPadding.Parent = h_Text
                     
             end
@@ -1910,19 +1963,19 @@ local ui = {} do
                 H_Object.Flags = {}
                 H_Object.Flags['HotkeySet'] = true
                 
-                H_Object.SetHotkey = base_class.s_modhotkey_sethotkey
+                H_Object.setHotkey = base_class.s_modhotkey_sethotkey
                 H_Object.GetHotkey = base_class.s_modhotkey_gethotkey
-                H_Object.GetValue = base_class.s_modhotkey_gethotkey
+                H_Object.getValue = base_class.s_modhotkey_gethotkey
                 
                 H_Object.Connect = base_class.generic_connect
-                H_Object.SetTooltip = base_class.generic_tooltip
+                H_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
                 h_Hotkey.InputBegan:Connect(function(io) 
                     local uitv = io.UserInputType.Value
                     if (uitv == 0) then
-                        H_Object:SetHotkey()
+                        H_Object:setHotkey()
                         return
                     end
                 end)
@@ -1946,16 +1999,16 @@ local ui = {} do
               local h_TextPadding
             
             do
-                h_Hotkey = inst_new('Frame')
+                h_Hotkey = instNew('Frame')
                 h_Hotkey.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 h_Hotkey.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 h_Hotkey.BorderSizePixel = 0
-                h_Hotkey.Size = dim_new(1, 0, 0, 25)
+                h_Hotkey.Size = dimNew(1, 0, 0, 25)
                 h_Hotkey.ZIndex = H_IndexOffset
                 h_Hotkey.Parent = self.Menu
                  
-                 h_Text = inst_new('TextLabel')
-                 h_Text.Size = dim_sca(1, 1)
+                 h_Text = instNew('TextLabel')
+                 h_Text.Size = dimScale(1, 1)
                  h_Text.BackgroundTransparency = 1
                  h_Text.Font = RLTHEMEFONT
                  h_Text.TextXAlignment = 'Left'
@@ -1967,8 +2020,8 @@ local ui = {} do
                  h_Text.ZIndex = H_IndexOffset
                  h_Text.Parent = h_Hotkey
                  
-                 h_TextPadding = inst_new('UIPadding')
-                 h_TextPadding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                 h_TextPadding = instNew('UIPadding')
+                 h_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                  h_TextPadding.Parent = h_Text
             end
                 
@@ -1984,12 +2037,12 @@ local ui = {} do
                 H_Object.Flags['HotkeySet'] = true
                 
                 H_Object.bind = base_class.s_hotkey_sethotkey
-                H_Object.SetHotkey = base_class.s_hotkey_sethotkeyexplicit
+                H_Object.setHotkey = base_class.s_hotkey_sethotkeyexplicit
                 H_Object.GetHotkey = base_class.s_hotkey_gethotkey
-                H_Object.GetValue = base_class.s_hotkey_gethotkey
+                H_Object.getValue = base_class.s_hotkey_gethotkey
                 
                 H_Object.Connect = base_class.generic_connect
-                H_Object.SetTooltip = base_class.generic_tooltip
+                H_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -2043,20 +2096,20 @@ local ui = {} do
               local s_SliderBar
               
             do
-                s_Slider = inst_new('Frame')
+                s_Slider = instNew('Frame')
                 s_Slider.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 s_Slider.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 s_Slider.BorderSizePixel = 0
-                s_Slider.Size = dim_new(1, 0, 0, 25)
+                s_Slider.Size = dimNew(1, 0, 0, 25)
                 s_Slider.ZIndex = S_IndexOffset
                 s_Slider.Parent = self.Menu
                  
-                 s_InputBox = inst_new('TextBox')
+                 s_InputBox = instNew('TextBox')
                  s_InputBox.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                  s_InputBox.BackgroundTransparency = 0.1--RLTHEMEDATA['bs'][2]
                  s_InputBox.BorderSizePixel = 0
                  s_InputBox.Font = RLTHEMEFONT
-                 s_InputBox.Size = dim_new(1, 0, 1, 0)
+                 s_InputBox.Size = dimNew(1, 0, 1, 0)
                  s_InputBox.PlaceholderText = 'Enter new value'
                  s_InputBox.TextColor3 = RLTHEMEDATA['tm'][1]
                  s_InputBox.TextSize = 18
@@ -2067,12 +2120,12 @@ local ui = {} do
                  s_InputBox.ZIndex = S_IndexOffset + 3
                  s_InputBox.Parent = s_Slider
                  
-                 s_Text = inst_new('TextLabel')
+                 s_Text = instNew('TextLabel')
                  s_Text.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                  s_Text.BackgroundTransparency = 0.2
                  s_Text.BorderSizePixel = 0
                  s_Text.Font = RLTHEMEFONT
-                 s_Text.Size = dim_sca(1, 1)
+                 s_Text.Size = dimScale(1, 1)
                  s_Text.Text = text
                  s_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                  s_Text.TextSize = 18
@@ -2083,13 +2136,13 @@ local ui = {} do
                  s_Text.ZIndex = S_IndexOffset + 1
                  s_Text.Parent = s_Slider
                   
-                  s_TextPad = inst_new('UIPadding')
-                  s_TextPad.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                  s_TextPad = instNew('UIPadding')
+                  s_TextPad.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                   s_TextPad.Parent = s_Text 
                  
-                 s_Amount = inst_new('TextLabel')
-                 s_Amount.Size = dim_new(0, 30, 1, 0)
-                 s_Amount.Position = dim_new(1,-RightIndent, 0, 0) -- RIGHT PADDING
+                 s_Amount = instNew('TextLabel')
+                 s_Amount.Size = dimNew(0, 30, 1, 0)
+                 s_Amount.Position = dimNew(1,-RightIndent, 0, 0) -- RIGHT PADDING
                  s_Amount.AnchorPoint = vec2(1,0)
                  s_Amount.BackgroundTransparency = 1
                  s_Amount.BorderSizePixel = 0
@@ -2103,19 +2156,19 @@ local ui = {} do
                  s_Amount.ZIndex = S_IndexOffset + 1 
                  s_Amount.Parent = s_Slider
                  
-                 s_SliderBarBg = inst_new('Frame')
+                 s_SliderBarBg = instNew('Frame')
                  s_SliderBarBg.BackgroundColor3 = RLTHEMEDATA['sb'][1]
                  s_SliderBarBg.BackgroundTransparency = RLTHEMEDATA['sb'][2]
                  s_SliderBarBg.BorderSizePixel = 0
                  s_SliderBarBg.ClipsDescendants = true
-                 s_SliderBarBg.Position = dim_new(0, 8, 0.5, -3)
-                 s_SliderBarBg.Size = dim_new(1, -16, 0, 6)
+                 s_SliderBarBg.Position = dimNew(0, 8, 0.5, -3)
+                 s_SliderBarBg.Size = dimNew(1, -16, 0, 6)
                  s_SliderBarBg.ZIndex = S_IndexOffset
                  s_SliderBarBg.Parent = s_Slider
                  
-                  s_SliderBar = inst_new('Frame')
-                  s_SliderBar.Size = dim_sca(1, 1)
-                  s_SliderBar.Position = dim_new(0,0)
+                  s_SliderBar = instNew('Frame')
+                  s_SliderBar.Size = dimScale(1, 1)
+                  s_SliderBar.Position = dimNew(0,0)
                   s_SliderBar.AnchorPoint = vec2(1, 0)
                   s_SliderBar.BackgroundColor3 = RLTHEMEDATA['sf'][1]
                   s_SliderBar.BackgroundTransparency = RLTHEMEDATA['sf'][2]
@@ -2180,12 +2233,12 @@ local ui = {} do
                 S_Object.Flags = {}
                 S_Object.Flags['Changed'] = true
                 
-                S_Object.GetValue = base_class.s_slider_getval
+                S_Object.getValue = base_class.s_slider_getval
                 S_Object.SetValue = base_class.s_slider_setvalnum
                 S_Object.SetValuePos = base_class.s_slider_setvalpos
                 
                 S_Object.Connect = base_class.generic_connect
-                S_Object.SetTooltip = base_class.generic_tooltip
+                S_Object.setTooltip = base_class.generic_tooltip
             end
             
             S_Object:SetValue(args['cur'])
@@ -2196,7 +2249,7 @@ local ui = {} do
                     
                     s_Amount.TextXAlignment = 'Center'
                     twn(s_Text, {BackgroundTransparency = 1, TextTransparency = 1, TextStrokeTransparency = 1},true)
-                    twn(s_Amount, {Position = dim_new(0.5,IndentLevel2,0,0)}, true) -- LEFT PADDING 2
+                    twn(s_Amount, {Position = dimNew(0.5,IndentLevel2,0,0)}, true) -- LEFT PADDING 2
                     
                     local tt = S_Object.Tooltip
                     if (tt) then
@@ -2211,7 +2264,7 @@ local ui = {} do
                     -- deez nuts
                     s_Amount.TextXAlignment = 'Right'
                     twn(s_Text, {BackgroundTransparency = 0.2, TextTransparency = 0, TextStrokeTransparency = 0},true)
-                    twn(s_Amount, {Position = dim_new(1,-RightIndent,0,0)}, true) -- RIGHT PADDING
+                    twn(s_Amount, {Position = dimNew(1,-RightIndent,0,0)}, true) -- RIGHT PADDING
                     
                     if (w_Tooltip.Text == S_Object.Tooltip) then
                         w_TooltipHeader.Visible = false
@@ -2223,7 +2276,7 @@ local ui = {} do
                     if (v == 0) then
                         S_Object:SetValuePos(io.Position.X)
                         
-                        DragConn = serv_uinput.InputChanged:Connect(function(io) 
+                        DragConn = servInput.InputChanged:Connect(function(io) 
                             if (io.UserInputType.Value == 4) then
                                 S_Object:SetValuePos(io.Position.X)
                             end
@@ -2271,13 +2324,13 @@ local ui = {} do
             do
 
                 
-                i_Input = inst_new('TextBox')
+                i_Input = instNew('TextBox')
                 i_Input.BackgroundColor3 = RLTHEMEDATA['bs'][1]
                 i_Input.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 i_Input.BorderSizePixel = 0 
                 i_Input.ClearTextOnFocus = true
                 i_Input.Font = RLTHEMEFONT
-                i_Input.Size = dim_new(1, 0, 0, 25)
+                i_Input.Size = dimNew(1, 0, 0, 25)
                 i_Input.Text = text
                 i_Input.TextColor3 = RLTHEMEDATA['tm'][1]
                 i_Input.TextSize = 18
@@ -2288,17 +2341,17 @@ local ui = {} do
                 i_Input.ZIndex = I_IndexOffset
                 i_Input.Parent = self.Menu
                  
-                 i_TextPad = inst_new('UIPadding')
-                 i_TextPad.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                 i_TextPad = instNew('UIPadding')
+                 i_TextPad.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                  i_TextPad.Parent = i_Input
                 
-                i_Icon = inst_new('ImageLabel')
+                i_Icon = instNew('ImageLabel')
                 i_Icon.AnchorPoint = vec2(1,0.5)
-                i_Icon.Position = dim_new(1,-4, 0.5, 0)                
+                i_Icon.Position = dimNew(1,-4, 0.5, 0)                
                 i_Icon.BackgroundTransparency = 1
                 i_Icon.Image = 'rbxassetid://8997447289'
                 i_Icon.Rotation = 0
-                i_Icon.Size = dim_off(12, 12)
+                i_Icon.Size = dimOffset(12, 12)
                 i_Icon.ZIndex = I_IndexOffset
                 i_Icon.Parent = i_Input
             end
@@ -2317,7 +2370,7 @@ local ui = {} do
                 I_Object.ZIndex = I_IndexOffset
                 
                 I_Object.Connect = base_class.generic_connect
-                I_Object.SetTooltip = base_class.generic_tooltip
+                I_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -2367,28 +2420,28 @@ local ui = {} do
              local b_Icon
             
             do
-                b_Background = inst_new('Frame')
+                b_Background = instNew('Frame')
                 b_Background.BackgroundColor3 = RLTHEMEDATA['bs'][1] 
                 b_Background.BackgroundTransparency = RLTHEMEDATA['bs'][2]
                 b_Background.BorderSizePixel = 0
-                b_Background.Size = dim_new(1,0,0,25)
+                b_Background.Size = dimNew(1,0,0,25)
                 b_Background.ZIndex = B_IndexOffset
                 b_Background.Parent = self.Menu
                 
-                 b_EnableEffect = inst_new('Frame')
+                 b_EnableEffect = instNew('Frame')
                  b_EnableEffect.BackgroundColor3 = RLTHEMEDATA['tm'][1]
                  b_EnableEffect.BackgroundTransparency = 1
                  b_EnableEffect.BorderSizePixel = 0
                  b_EnableEffect.ClipsDescendants = true
-                 b_EnableEffect.Size = dim_new(1,0,1,0)
+                 b_EnableEffect.Size = dimNew(1,0,1,0)
                  b_EnableEffect.ZIndex = B_IndexOffset
                  b_EnableEffect.Parent = b_Background
                 
-                 b_Text = inst_new('TextLabel')
+                 b_Text = instNew('TextLabel')
                  b_Text.BackgroundTransparency = 1
                  b_Text.Font = RLTHEMEFONT
-                 b_Text.Position = dim_off(10, 0)
-                 b_Text.Size = dim_new(1, -10, 1, 0)
+                 b_Text.Position = dimOffset(10, 0)
+                 b_Text.Size = dimNew(1, -10, 1, 0)
                  b_Text.Text = text
                  b_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                  b_Text.TextSize = 18
@@ -2398,17 +2451,17 @@ local ui = {} do
                  b_Text.ZIndex = B_IndexOffset
                  b_Text.Parent = b_Background
                  
-                  b_TextPadding = inst_new('UIPadding')
-                  b_TextPadding.PaddingLeft = dim_off(IndentLevel2, 0).X -- LEFT PADDING 2
+                  b_TextPadding = instNew('UIPadding')
+                  b_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
                   b_TextPadding.Parent = b_Text
                     
                  
-                 b_Icon = inst_new('ImageLabel')
+                 b_Icon = instNew('ImageLabel')
                  b_Icon.AnchorPoint = vec2(1,0.5)
                  b_Icon.BackgroundTransparency = 1
-                 b_Icon.Position = dim_new(1,-4, 0.5, 0)
+                 b_Icon.Position = dimNew(1,-4, 0.5, 0)
                  b_Icon.Rotation = 0
-                 b_Icon.Size = dim_off(12, 12)
+                 b_Icon.Size = dimOffset(12, 12)
                  b_Icon.Image = 'rbxassetid://8997446977'
                  b_Icon.ImageColor3 = RLTHEMEDATA['tm'][1]
                  b_Icon.ZIndex = B_IndexOffset
@@ -2431,7 +2484,7 @@ local ui = {} do
                 B_Object.Click = base_class.module_click_self
                 
                 B_Object.Connect = base_class.generic_connect
-                B_Object.SetTooltip = base_class.generic_tooltip
+                B_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -2478,18 +2531,18 @@ local ui = {} do
              local o_EnableEffect2
             
             do
-                o_Option = inst_new('Frame')
+                o_Option = instNew('Frame')
                 o_Option.BackgroundColor3 = RLTHEMEDATA['bd'][1]
                 o_Option.BackgroundTransparency = RLTHEMEDATA['bd'][2]
                 o_Option.BorderSizePixel = 0
-                o_Option.Size = dim_new(1, 0, 0, 25)
+                o_Option.Size = dimNew(1, 0, 0, 25)
                 o_Option.ZIndex = O_IndexOffset
                 o_Option.Parent = self.Menu
                  
-                 o_Text = inst_new('TextLabel')
+                 o_Text = instNew('TextLabel')
                  o_Text.BackgroundTransparency = 1
                  o_Text.Font = RLTHEMEFONT
-                 o_Text.Size = dim_sca(1,1)
+                 o_Text.Size = dimScale(1,1)
                  o_Text.Text = text
                  o_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                  o_Text.TextSize = 18
@@ -2499,22 +2552,22 @@ local ui = {} do
                  o_Text.ZIndex = O_IndexOffset
                  o_Text.Parent = o_Option
                  
-                 o_TextPadding = inst_new('UIPadding')
-                 o_TextPadding.PaddingLeft = dim_off(IndentLevel3, 0).X -- LEFT PADDING 3
+                 o_TextPadding = instNew('UIPadding')
+                 o_TextPadding.PaddingLeft = dimOffset(IndentLevel3, 0).X -- LEFT PADDING 3
                  o_TextPadding.Parent = o_Text
                  
-                 o_EnableEffect = inst_new('Frame')
+                 o_EnableEffect = instNew('Frame')
                  o_EnableEffect.BackgroundColor3 = RLTHEMEDATA['tm'][1]
                  o_EnableEffect.BackgroundTransparency = 0.96
                  o_EnableEffect.BorderSizePixel = 0
                  o_EnableEffect.ClipsDescendants = true
-                 o_EnableEffect.Size = dim_new(0,0,1,0)
+                 o_EnableEffect.Size = dimNew(0,0,1,0)
                  o_EnableEffect.ZIndex = O_IndexOffset
                  o_EnableEffect.Parent = o_Option
                  
-                  o_EnableEffect2 = inst_new('Frame')
+                  o_EnableEffect2 = instNew('Frame')
                   o_EnableEffect2.BackgroundColor3 = RLTHEMEDATA['ge'][1]
-                  o_EnableEffect2.Size = dim_new(0,2,1,0)
+                  o_EnableEffect2.Size = dimNew(0,2,1,0)
                   o_EnableEffect2.BorderSizePixel = 0
                   o_EnableEffect2.ZIndex = O_IndexOffset
                   o_EnableEffect2.Parent = o_EnableEffect
@@ -2532,10 +2585,10 @@ local ui = {} do
                 O_Object.Select = base_class.s_ddoption_select_self
                 O_Object.Deselect = base_class.s_ddoption_deselect_self
                 
-                O_Object.GetState = base_class.s_ddoption_selected_getstate
+                O_Object.getState = base_class.s_ddoption_selected_getstate
                 O_Object.IsSelected = base_class.s_ddoption_selected_getstate
                 
-                O_Object.SetTooltip = base_class.generic_tooltip
+                O_Object.setTooltip = base_class.generic_tooltip
             end
             
             do
@@ -2567,12 +2620,12 @@ local ui = {} do
                 end)
             end
             
-            tinsert(self.Objects, O_Object)
+            tabInsert(self.Objects, O_Object)
             return O_Object
         end
         
         base_class.widget_create_label = function(self, text) 
-            local WidgetLabel = inst_new('TextLabel')
+            local WidgetLabel = instNew('TextLabel')
             WidgetLabel.BackgroundTransparency = 1
             WidgetLabel.Font = RLTHEMEFONT
             WidgetLabel.RichText = true
@@ -2616,7 +2669,7 @@ local ui = {} do
     end
     
     -- UI functions
-    function ui:CreateMenu(text) 
+    function ui:newMenu(text) 
         local M_Id = #ui_Menus+1
         local M_IndexOffset = 50+(M_Id * 15)
         
@@ -2628,18 +2681,18 @@ local ui = {} do
          local m_Menu
           local m_MenuListLayout
         
-        m_Header = inst_new('ImageButton')
+        m_Header = instNew('ImageButton')
         m_Header.Active = true
         m_Header.AutoButtonColor = false
         m_Header.BackgroundColor3 = RLTHEMEDATA['bm'][1]
         m_Header.BackgroundTransparency = RLTHEMEDATA['bm'][2]
         m_Header.BorderSizePixel = 0
         m_Header.ClipsDescendants = false
-        m_Header.Size = dim_off(monitor_resolution.X < 1600 and 200 or 250, 30)
+        m_Header.Size = dimOffset(monitor_resolution.X < 1600 and 200 or 250, 30)
         
         local FinalPosition do 
-            local MenusPerRow = mfloor(((monitor_resolution.X-400) / 300))
-            FinalPosition = dim_off(200+(((M_Id-1)%MenusPerRow)*(300)), 200+150*(mfloor((M_Id-1)/MenusPerRow)))
+            local MenusPerRow = mathFloor(((monitor_resolution.X-400) / 300))
+            FinalPosition = dimOffset(200+(((M_Id-1)%MenusPerRow)*(300)), 200+150*(mathFloor((M_Id-1)/MenusPerRow)))
         end
         
         
@@ -2647,22 +2700,22 @@ local ui = {} do
             
         
         
-        --dim_off((0.1*((M_Id-1)%6) * monitor_resolution.X)+(100*((M_Id-1)%6)+100), 0)
+        --dimOffset((0.1*((M_Id-1)%6) * monitor_resolution.X)+(100*((M_Id-1)%6)+100), 0)
         m_Header.ZIndex = M_IndexOffset+2
-        m_Header.Parent = w_Backframe
+        m_Header.Parent = w_ModFrame
         
         
         
-         m_HeaderEnableEffect = inst_new('Frame')
+         m_HeaderEnableEffect = instNew('Frame')
          m_HeaderEnableEffect.BackgroundColor3 = RLTHEMEDATA['ge'][1]
-         m_HeaderEnableEffect.Size = dim_new(0,0,1,0)
+         m_HeaderEnableEffect.Size = dimNew(0,0,1,0)
          m_HeaderEnableEffect.BorderSizePixel = 0
          m_HeaderEnableEffect.ZIndex = M_IndexOffset+2
          m_HeaderEnableEffect.Parent = m_Header
         
-         m_HeaderText = inst_new('TextLabel')
-         m_HeaderText.Size = dim_new(1, 0, 1, 0)
-         m_HeaderText.Position = dim_off(0, 0)
+         m_HeaderText = instNew('TextLabel')
+         m_HeaderText.Size = dimNew(1, 0, 1, 0)
+         m_HeaderText.Position = dimOffset(0, 0)
          m_HeaderText.BackgroundTransparency = 1
          m_HeaderText.Font = RLTHEMEFONT
          m_HeaderText.TextXAlignment = 'Center'
@@ -2674,9 +2727,9 @@ local ui = {} do
          m_HeaderText.ZIndex = M_IndexOffset+2
          m_HeaderText.Parent = m_Header
          
-         m_HeaderIcon = inst_new('ImageLabel')
-         m_HeaderIcon.Size = dim_off(30, 30)
-         m_HeaderIcon.Position = dim_sca(1,0)
+         m_HeaderIcon = instNew('ImageLabel')
+         m_HeaderIcon.Size = dimOffset(30, 30)
+         m_HeaderIcon.Position = dimScale(1,0)
          m_HeaderIcon.AnchorPoint = vec2(1,0)
          m_HeaderIcon.BackgroundTransparency = 1
          m_HeaderIcon.ImageColor3 = RLTHEMEDATA['tm'][1]
@@ -2685,18 +2738,18 @@ local ui = {} do
          m_HeaderIcon.ZIndex = M_IndexOffset+2
          m_HeaderIcon.Parent = m_Header
 
-        m_Menu = inst_new('Frame')
+        m_Menu = instNew('Frame')
         m_Menu.AutomaticSize = 'Y'
         m_Menu.BackgroundColor3 = RLTHEMEDATA['bo'][1]
         m_Menu.BackgroundTransparency = 1--RLTHEMEDATA['bo'][2]
         m_Menu.BorderSizePixel = 0
-        m_Menu.Position = dim_off(0, 30)
-        m_Menu.Size = dim_new(1,0,0,0)
+        m_Menu.Position = dimOffset(0, 30)
+        m_Menu.Size = dimNew(1,0,0,0)
         m_Menu.Visible = false
         m_Menu.ZIndex = M_IndexOffset
         m_Menu.Parent = m_Header
         
-         m_MenuListLayout = inst_new('UIListLayout')
+         m_MenuListLayout = instNew('UIListLayout')
          m_MenuListLayout.FillDirection = 'Vertical'
          m_MenuListLayout.HorizontalAlignment = 'Left'
          m_MenuListLayout.VerticalAlignment = 'Top'
@@ -2716,13 +2769,13 @@ local ui = {} do
             M_Object.ZIndex = M_IndexOffset
             M_Object.Enabled = m_HeaderEnableEffect
             
-            M_Object.AddMod = base_class.menu_create_module
+            M_Object.addMod = base_class.menu_create_module
             
             
             M_Object.Enable = base_class.menu_enable
             M_Object.Disable = base_class.menu_disable
             M_Object.Toggle = base_class.menu_toggle
-            M_Object.GetState = base_class.menu_getstate
+            M_Object.getState = base_class.menu_getstate
         end
         
         do
@@ -2750,13 +2803,13 @@ local ui = {} do
                     
                     local destination = vec2(root_pos.X, root_pos.Y) + monitor_inset -- Get the wanted destination; this will be used for custom tweening
                     -- (normal roblox tweening works fine, but i believe custom is more performant)
-                    serv_run:BindToRenderStep(M_Id, 2000, function(dt) -- "Tween" code
-                        m_Header.Position = m_Header.Position:lerp(dim_off(destination.X, destination.Y), 1 - 1e-9^(dt)) -- Lerp the position
+                    servRun:BindToRenderStep(M_Id, 2000, function(dt) -- "Tween" code
+                        m_Header.Position = m_Header.Position:lerp(dimOffset(destination.X, destination.Y), 1 - 1e-9^(dt)) -- Lerp the position
                         
                         -- value = lerp(target, value, exp2(-rate*deltaTime))
                     end)
                     -- Connect to mouse movement
-                    ui_Connections[id] = serv_uinput.InputChanged:Connect(function(io) 
+                    ui_Connections[id] = servInput.InputChanged:Connect(function(io) 
                         -- Check if the input is a mouse movement
                         if (io.UserInputType.Value == 4) then
                             -- If so then get the mouse position
@@ -2766,7 +2819,7 @@ local ui = {} do
                             -- Get the new destination (original position + input delta + inset)
                             destination = root_pos + (curr_pos - start_pos) + monitor_inset
                             
-                            --twn(m_Header, {Position = dim_off(destination.X, destination.Y)})
+                            --twn(m_Header, {Position = dimOffset(destination.X, destination.Y)})
                         end
                     end)
                     
@@ -2780,7 +2833,7 @@ local ui = {} do
                 if (io.UserInputType.Value == 0) then
                     local a = ui_Connections[id]
                     if (a) then a:Disconnect() end
-                    serv_run:UnbindFromRenderStep(M_Id)
+                    servRun:UnbindFromRenderStep(M_Id)
                 end
             end)
             
@@ -2795,7 +2848,7 @@ local ui = {} do
         
         
         
-        tinsert(ui_Menus, M_Object)
+        tabInsert(ui_Menus, M_Object)
         return M_Object
     end
     function ui:CreateWidget(Name, Position, Size, InRedlineWindow) 
@@ -2806,14 +2859,14 @@ local ui = {} do
         local w_Header
         local w_Main
         
-        w_Header = inst_new('TextLabel')
+        w_Header = instNew('TextLabel')
         w_Header.BackgroundColor3 = RLTHEMEDATA['bm'][1]
         w_Header.BackgroundTransparency = RLTHEMEDATA['bm'][2]
         w_Header.BorderSizePixel = 0
         w_Header.Font = RLTHEMEFONT
         w_Header.Position = Position
         w_Header.RichText = true
-        w_Header.Size = dim_off(Size.X, 21)
+        w_Header.Size = dimOffset(Size.X, 21)
         w_Header.Text = Name
         w_Header.TextColor3 = RLTHEMEDATA['tm'][1]
         w_Header.TextSize = 19
@@ -2822,16 +2875,16 @@ local ui = {} do
         w_Header.TextXAlignment = 'Center'
         w_Header.Visible = true 
         w_Header.ZIndex = W_IndexOffset
-        w_Header.Parent = InRedlineWindow and w_Backframe or w_Main
+        w_Header.Parent = InRedlineWindow and w_ModFrame or w_Main
         
         stroke(w_Header, 'Border')
         
-        w_Main = inst_new('Frame')
+        w_Main = instNew('Frame')
         w_Main.BackgroundColor3 = RLTHEMEDATA['gw'][1]
         w_Main.BackgroundTransparency = RLTHEMEDATA['gw'][2]
         w_Main.BorderSizePixel = 0
-        w_Main.Position = dim_off(0, 21)
-        w_Main.Size = dim_new(1, 0, 1, Size.Y-21)
+        w_Main.Position = dimOffset(0, 21)
+        w_Main.Size = dimNew(1, 0, 1, Size.Y-21)
         w_Main.Visible = true 
         w_Main.ZIndex = W_IndexOffset
         w_Main.Parent = w_Header
@@ -2866,11 +2919,11 @@ local ui = {} do
                     
                     local destination = vec2(root_pos.X, root_pos.Y) + monitor_inset -- Get the wanted destination; this will be used for custom tweening
                     -- (normal roblox tweening works fine, but i believe custom is more performant)
-                    serv_run:BindToRenderStep(W_Id, 2000, function() -- "Tween" code
-                        w_Header.Position = w_Header.Position:lerp(dim_off(destination.X, destination.Y), 0.3) -- Lerp the position
+                    servRun:BindToRenderStep(W_Id, 2000, function() -- "Tween" code
+                        w_Header.Position = w_Header.Position:lerp(dimOffset(destination.X, destination.Y), 0.3) -- Lerp the position
                     end)
                     -- Connect to mouse movement
-                    ui_Connections[id] = serv_uinput.InputChanged:Connect(function(io) 
+                    ui_Connections[id] = servInput.InputChanged:Connect(function(io) 
                         -- Check if the input is a mouse movement
                         if (io.UserInputType.Value == 4) then
                             -- If so then get the mouse position
@@ -2887,7 +2940,7 @@ local ui = {} do
                 if (io.UserInputType.Value == 0) then
                     local a = ui_Connections[id]
                     if (a) then a:Disconnect() end
-                    serv_run:UnbindFromRenderStep(W_Id)
+                    servRun:UnbindFromRenderStep(W_Id)
                 end
             end)
         
@@ -2904,8 +2957,8 @@ local ui = {} do
         w_Screen:Destroy()
         
         -- Unbinds
-        serv_ctx:UnbindAction('RL-ToggleMenu')
-        serv_ctx:UnbindAction('RL-Destroy')
+        servContext:UnbindAction('RL-ToggleMenu')
+        servContext:UnbindAction('RL-Destroy')
         
         -- Disconnections
         
@@ -2925,7 +2978,7 @@ local ui = {} do
         
         writefile('REDLINE/Queued.txt','')
         
-        local sound = inst_new('Sound')
+        local sound = instNew('Sound')
         sound.SoundId = 'rbxassetid://9009668475'
         sound.Volume = 1
         sound.TimePosition = 0.02
@@ -2942,8 +2995,8 @@ local ui = {} do
     function ui:GetScreen() 
         return w_Screen 
     end
-    function ui:GetBackframe() 
-        return w_Backframe
+    function ui:GetModframe() 
+        return w_ModFrame
     end
     
     do
@@ -2964,49 +3017,49 @@ local ui = {} do
         local m_Sound
         do 
             
-            m_Notif = inst_new('Frame')
+            m_Notif = instNew('Frame')
             m_Notif.AnchorPoint = vec2(1,1)
             m_Notif.BackgroundColor3 = RLTHEMEDATA['bo'][1]
             m_Notif.BackgroundTransparency = RLTHEMEDATA['bo'][2]
             m_Notif.BorderSizePixel = 0
-            m_Notif.Position = dim_new(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
-            m_Notif.Size = dim_off(200, 125)
+            m_Notif.Position = dimNew(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
+            m_Notif.Size = dimOffset(200, 125)
             m_Notif.ZIndex = 162
             --m_Notif.Parent = w_Screen
             
             stroke(m_Notif)
             
-            m_Sound = inst_new('Sound')
+            m_Sound = instNew('Sound')
             --m_Sound.Playing = true
             --m_Sound.SoundId =notifsounds[tone or 3]
             m_Sound.Volume = 1
             m_Sound.TimePosition = 0.1
             --m_Sound.Parent = m_Notif 
             
-            m_Progress = inst_new('Frame')
+            m_Progress = instNew('Frame')
             m_Progress.BackgroundColor3 = RLTHEMEDATA['ge'][1]
             m_Progress.BorderSizePixel = 0
-            m_Progress.Position = dim_off(0, 30)
-            m_Progress.Size = dim_new(1,0,0,1)
+            m_Progress.Position = dimOffset(0, 30)
+            m_Progress.Size = dimNew(1,0,0,1)
             m_Progress.ZIndex = 163
             --m_Progress.Parent = m_Notif
             
-            m_Header = inst_new('Frame')
+            m_Header = instNew('Frame')
             m_Header.BackgroundColor3 = RLTHEMEDATA['bm'][1]
             m_Header.BackgroundTransparency = RLTHEMEDATA['bm'][2]
             m_Header.BorderSizePixel = 0
-            m_Header.Size = dim_new(1,0,0,30)
+            m_Header.Size = dimNew(1,0,0,30)
             m_Header.ZIndex = 162
             --m_Header.Parent = m_Notif
             
             stroke(m_Header)
             
-            m_Text = inst_new('TextLabel')
+            m_Text = instNew('TextLabel')
             m_Text.BackgroundTransparency = 1
             m_Text.Font = RLTHEMEFONT
-            m_Text.Position = dim_off(32, 0)
+            m_Text.Position = dimOffset(32, 0)
             m_Text.RichText = true
-            m_Text.Size = dim_new(1, -32, 1, 0)
+            m_Text.Size = dimNew(1, -32, 1, 0)
             m_Text.Text = ''
             m_Text.TextColor3 = RLTHEMEDATA['tm'][1]
             m_Text.TextSize = 22
@@ -3016,12 +3069,12 @@ local ui = {} do
             m_Text.ZIndex = 162
             --m_Text.Parent = m_Header
             
-            m_Description = inst_new('TextLabel')
+            m_Description = instNew('TextLabel')
             m_Description.BackgroundTransparency = 1
             m_Description.Font = RLTHEMEFONT
-            m_Description.Position = dim_off(4, 32)
+            m_Description.Position = dimOffset(4, 32)
             m_Description.RichText = true
-            m_Description.Size = dim_new(1, -4, 1, -32)
+            m_Description.Size = dimNew(1, -4, 1, -32)
             m_Description.Text = tostring(text)
             m_Description.TextColor3 = RLTHEMEDATA['tm'][1]
             m_Description.TextSize = 20
@@ -3033,9 +3086,9 @@ local ui = {} do
             m_Description.ZIndex = 162
             --m_Description.Parent = m_Notif
             
-            m_Icon = inst_new('ImageLabel')
-            m_Icon.Size = dim_off(26, 26)
-            m_Icon.Position = dim_off(2,2)
+            m_Icon = instNew('ImageLabel')
+            m_Icon.Size = dimOffset(26, 26)
+            m_Icon.Position = dimOffset(2,2)
             m_Icon.BackgroundTransparency = 1
             m_Icon.ImageColor3 = RLTHEMEDATA['ge'][1]
             
@@ -3049,7 +3102,7 @@ local ui = {} do
         
         
         function ui:Notify(title, text, duration, tone, warning) 
-            duration = mclamp(duration or 2, 0.1, 30)
+            duration = mathClamp(duration or 2, 0.1, 30)
             
             local m_Notif = m_Notif:Clone()
             local m_Description = m_Description:Clone()
@@ -3077,30 +3130,30 @@ local ui = {} do
             m_Icon.Image = warning and 'rbxassetid://8854458547' or 'rbxassetid://8854459207'
             
             
-            m_Notif.Position = dim_new(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
+            m_Notif.Position = dimNew(1, 275, 1, -((#notifs*125)+((#notifs+1)*25)))
             m_Notif.Parent = w_Screen
             
             for i = 1, 25 do
                 if (m_Text.TextFits) then break end
-                m_Notif.Size += dim_off(25, 0)
+                m_Notif.Size += dimOffset(25, 0)
             end
             
             
             
-            tinsert(notifs, m_Notif)
-            twn(m_Notif, {Position = m_Notif.Position - dim_off(300,0)}, true)
-            local j = ctwn(m_Progress, {Size = dim_off(0, 1)}, duration)
+            tabInsert(notifs, m_Notif)
+            twn(m_Notif, {Position = m_Notif.Position - dimOffset(300,0)}, true)
+            local j = ctwn(m_Progress, {Size = dimOffset(0, 1)}, duration)
             j.Completed:Connect(function()
                 do
                     for i = 1, #notifs do 
                         if (notifs[i] == m_Notif) then 
-                            tremove(notifs, i) 
+                            tabRemove(notifs, i) 
                         end 
                     end
                     for i = 1, #notifs do 
-                        twn(notifs[i], {Position = dim_new(1, -25, 1, -(((i-1)*125)+(i*25)))}, true)
+                        twn(notifs[i], {Position = dimNew(1, -25, 1, -(((i-1)*125)+(i*25)))}, true)
                     end
-                    twn(m_Notif, {Position = dim_new(1, -25, 1, 200)}, true).Completed:Wait()
+                    twn(m_Notif, {Position = dimNew(1, -25, 1, 200)}, true).Completed:Wait()
                     m_Notif:Destroy()
                 end
             end)
@@ -3113,24 +3166,24 @@ local ui = {} do
     
     
     -- Gui binds
-    local OldIconEnabled = serv_uinput.MouseIconEnabled
-    serv_ctx:BindActionAtPriority('RL-ToggleMenu',function(_,uis) 
+    local OldIconEnabled = servInput.MouseIconEnabled
+    servContext:BindActionAtPriority('RL-ToggleMenu',function(_,uis) 
         
         if (uis.Value == 0) then
             W_WindowOpen = not W_WindowOpen
             
             if (W_WindowOpen) then
-                serv_uinput.MouseIconEnabled = false
+                servInput.MouseIconEnabled = false
                 w_MouseCursor.ImageTransparency = 0
                 
                 w_Backframe.Visible = true
-                twn(w_Backframe, {Position = dim_new(0, 0, 0, 0)}, true)
+                twn(w_Backframe, {Size = dimScale(1, 1)}, true)
             else
-                serv_uinput.MouseIconEnabled = OldIconEnabled
+                servInput.MouseIconEnabled = OldIconEnabled
                 w_MouseCursor.ImageTransparency = 1
                 
                 
-                local j = twn(w_Backframe, {Position = dim_new(0, 0, -1, 0)}, true)
+                local j = twn(w_Backframe, {Size = dimScale(1, 0)}, true)
                 j.Completed:Wait()
                 if j.PlaybackState == 4 then
                     w_Backframe.Visible = false
@@ -3139,7 +3192,7 @@ local ui = {} do
         end
     end,false,999999,Enum.KeyCode.RightShift)
     
-    serv_ctx:BindActionAtPriority('RL-Destroy',function(_,uis) 
+    servContext:BindActionAtPriority('RL-Destroy',function(_,uis) 
         if (uis.Value == 0) then
             ui:Destroy()
         end
@@ -3201,7 +3254,7 @@ local function dnec(signal, id)
         local confunc = connection.Function
                 
         if (type(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc)) then
-            tinsert(disabled_signals[id], connection)
+            tabInsert(disabled_signals[id], connection)
             connection:Disable()
         end
     end
@@ -3222,108 +3275,162 @@ local function enec(id)
         end
     end
     
-    tclear(disabled_signals[id])
+    tabClear(disabled_signals[id])
 end
 
-local cons = {}
+local scriptCons = {}
 
 -- Locals
-local l_plr = serv_players.LocalPlayer
-local l_mouse = l_plr:GetMouse()
-local l_chr = l_plr.Character
-local l_hum = l_chr and l_chr:FindFirstChild('Humanoid')
-local l_humrp = l_chr and l_chr:FindFirstChild('HumanoidRootPart')
-local l_cam = workspace.CurrentCamera or workspace:FindFirstChildOfClass('Camera')
--- Character respawn handler
-cons['chr'] = l_plr.CharacterAdded:Connect(function(c) 
-    l_chr = c
-    l_hum = c:WaitForChild('Humanoid',2)
-    l_humrp = c:WaitForChild('HumanoidRootPart',2)
-end)
 
 
-local p_RLFriends    = {} -- Redline friends
-local p_RefKeys      = {} -- Player references (hashmap)
-local p_Names        = {} -- Player names (array)
+local clientPlayer = servPlayers.LocalPlayer
+local clientMouse = clientPlayer:GetMouse()
+local clientChar = clientPlayer.Character
+local clientRoot, clientHumanoid do 
+    scriptCons.charRespawn = clientPlayer.CharacterAdded:Connect(function(newChar) 
+        clientChar = newChar
+        clientRoot = newChar:WaitForChild('HumanoidRootPart', 10)
+        clientHumanoid = newChar:WaitForChild('Humanoid', 10)
+        
+    end)
+    
+    if (clientChar) then 
+        clientRoot = clientChar:FindFirstChild('HumanoidRootPart')
+        clientHumanoid = clientChar:FindFirstChild('Humanoid')
+    end
+end
+local clientCamera do 
+    clientCamera = workspace.CurrentCamera or workspace:FindFirstChildOfClass('Camera')
+    scriptCons.cameraUpdate = workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function() 
+        clientCamera = workspace.CurrentCamera or workspace:FindFirstChildOfClass('Camera')
+        
+    end)
+end
 
-local function addplr(p)
-    local PlayerName = p.Name
-    if (p == l_plr or p_RLFriends[PlayerName]) then 
-        return 
+local playerNames = {}
+local playerExisting = {}
+local playerManagers = {}
+local playerCons = {} 
+
+
+-- PlayerRemoving and PlayerAdded
+do 
+    local function removePlayer(player) 
+        local thisName = player.Name
+        local thisManager = playerManagers[thisName]
+        local thisPlayerCons = playerCons[thisName]
+                
+        if (thisManager.onLeave) then 
+            thisManager.onLeave()
+        end
+        
+        for _, con in pairs(thisPlayerCons) do
+            con:Disconnect()
+        end
+        
+        thisManager.onDeath = nil
+        thisManager.onLeave = nil
+        thisManager.onRemoval = nil
+        thisManager.onRespawn = nil
+        
+        
+        playerExisting[thisName] = nil
+        playerCons[thisName] = nil 
+        playerManagers[thisName] = nil 
+        
+        table.remove(playerNames, table.find(playerNames, thisName))
+        
+        printconsole(('disconnected %s; left'):format(thisName), 255, 255, 0)
     end
     
     
-    local ptable = {} do
-        ptable['plr'] = p
-        ptable['chr'] = nil
-        ptable['hum'] = nil
-        ptable['rp'] = nil
+    local function readyPlayer(player) 
+        -- init some variables
+        local thisName = player.Name
+        local thisManager = {}
+        local thisPlayerCons = {}
         
-        ptable['cons'] = {}
-        ptable['cons'][1] = p.CharacterAdded:Connect(function(c) 
+        playerExisting[thisName] = true 
+        table.insert(playerNames, thisName)
+        
+        -- setup connections
+        thisPlayerCons['chr-add'] = player.CharacterAdded:Connect(function(newChar) 
+            local RootPart = newChar:WaitForChild('HumanoidRootPart', 3)
+            local Humanoid = newChar:WaitForChild('Humanoid', 3)
             
-            ptable['chr'] = c
-            ptable['rp'] = c:WaitForChild('HumanoidRootPart', 0.5)
-            ptable['hum'] = c:WaitForChild('Humanoid', 0.1)
+            if (thisManager.onRespawn) then
+                thisManager.onRespawn(newChar, RootPart, Humanoid)
+            end
+            thisManager.Character = newChar
+            thisManager.RootPart = RootPart
+            thisManager.Humanoid = Humanoid
             
+            
+            thisPlayerCons['chr-die'] = Humanoid.Died:Connect(function() 
+                if (thisManager.onDeath) then
+                    thisManager.onDeath()
+                end
+            end)
+            
+            printconsole(('updated %s character'):format(thisName), 128, 128, 255)
+        end)
+        thisPlayerCons['chr-rem'] = player.CharacterRemoving:Connect(function() 
+            if (thisManager.onRemoval) then
+                thisManager.onRemoval()
+            end
+            thisManager.Character = nil
+            thisManager.RootPart = nil
+            thisManager.Humanoid = nil 
+            
+            printconsole(('removed %s character'):format(thisName), 128, 128, 255)
+        end)
+        thisPlayerCons['team'] = player:GetPropertyChangedSignal('Team'):Connect(function() 
+            thisManager.Team = player.Team
+            
+            printconsole(('updated %s team'):format(thisName), 128, 128, 255)
         end)
         
-        local chr = p.Character
-        if (chr) then
-            ptable['chr'] = chr
-            ptable['hum'] = chr:FindFirstChild('Humanoid')
-            ptable['rp'] = chr:FindFirstChild('HumanoidRootPart')
-        end
-    end
-    
-    p_RefKeys[PlayerName] = ptable
-    tinsert(p_Names, PlayerName)
-end 
-
-local function remplr(p) 
-    local PlayerName = p.Name
-    
-    do 
-        local ref = p_RefKeys[PlayerName]
-        if (ref == nil) then return end 
-        local cons = ref.cons
-        for i = 1, #cons do 
+        if (player.Character) then
+            local Character = player.Character
+            local Humanoid = Character:FindFirstChild('Humanoid')
+            local RootPart = Character:FindFirstChild('HumanoidRootPart')
+            thisManager.Character = Character
+            thisManager.RootPart = RootPart
+            thisManager.Humanoid = Humanoid 
             
-            cons[i]:Disconnect()
+            printconsole(('init %s character'):format(thisName), 128, 128, 255)
         end
-        p_RefKeys[PlayerName].cons = nil -- just in case
+        thisManager.Team = player.Team
+        thisManager.Player = player
         
-        p_RefKeys[PlayerName] = nil
         
-    end 
-    do
+        -- finalize shit
+        playerManagers[thisName] = thisManager
+        playerCons[thisName] = thisPlayerCons
         
-        local idx = tfind(p_Names, PlayerName)
-        tremove(p_Names, idx)
-        
+        printconsole(('readied %s'):format(thisName), 0, 255, 0)
     end
+    
+    for _, player in ipairs(servPlayers:GetPlayers()) do
+        if (player ~= clientPlayer) then
+            readyPlayer(player)
+        end
+    end
+    scriptCons.pm_playerAdd = servPlayers.PlayerAdded:Connect(readyPlayer)
+    scriptCons.pm_playerRemove = servPlayers.PlayerRemoving:Connect(removePlayer)
+    
 end
 
-cons['p1'] = serv_players.PlayerAdded:Connect(addplr)
-cons['p2'] = serv_players.PlayerRemoving:Connect(remplr)
-cons['cam'] = workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function() 
-    local cc = workspace.CurrentCamera
-    if not cc then
-        cc = workspace:FindFirstChildOfClass('Camera')
-    end
-    l_cam = cc
-end)
-for i,p in ipairs(serv_players:GetPlayers()) do 
-    addplr(p)
-end
+
+
 
 
 local fakechar do 
-    fakechar = inst_new('Model')
+    fakechar = instNew('Model')
     fakechar.Name = getnext()
 
 
-    local Head = inst_new('Part')
+    local Head = instNew('Part')
     Head.Anchored = false
     Head.CanCollide = false
     Head.Name = 'Head'
@@ -3331,42 +3438,42 @@ local fakechar do
     Head.Transparency = 0
     Head.Parent = fakechar
 
-    local Torso = inst_new('Part')
+    local Torso = instNew('Part')
     Torso.Anchored = false
     Torso.CanCollide = false
     Torso.Name = 'Torso'
     Torso.Size = vec3(2, 2, 1)
     Torso.Parent = fakechar
 
-    local Left_Arm = inst_new('Part')
+    local Left_Arm = instNew('Part')
     Left_Arm.Anchored = false
     Left_Arm.CanCollide = false
     Left_Arm.Name = 'Left Arm'
     Left_Arm.Size = vec3(1, 2, 1)
     Left_Arm.Parent = fakechar
 
-    local Right_Arm = inst_new('Part')
+    local Right_Arm = instNew('Part')
     Right_Arm.Anchored = false
     Right_Arm.CanCollide = false
     Right_Arm.Name = 'Right Arm'
     Right_Arm.Size = vec3(1, 2, 1)
     Right_Arm.Parent = fakechar
 
-    local Left_Leg = inst_new('Part')
+    local Left_Leg = instNew('Part')
     Left_Leg.Anchored = false
     Left_Leg.CanCollide = false
     Left_Leg.Name = 'Left Leg'
     Left_Leg.Size = vec3(1, 2, 1)
     Left_Leg.Parent = fakechar
 
-    local Right_Leg = inst_new('Part')
+    local Right_Leg = instNew('Part')
     Right_Leg.Anchored = false
     Right_Leg.CanCollide = false
     Right_Leg.Name = 'Right Leg'
     Right_Leg.Size = vec3(1, 2, 1)
     Right_Leg.Parent = fakechar
 
-    local HumanoidRootPart = inst_new('Part')
+    local HumanoidRootPart = instNew('Part')
     HumanoidRootPart.Anchored = true
     HumanoidRootPart.CanCollide = false
     HumanoidRootPart.Name = 'HumanoidRootPart'
@@ -3374,49 +3481,49 @@ local fakechar do
     HumanoidRootPart.Transparency = 1
     HumanoidRootPart.Parent = fakechar
 
-    local Right_Shoulder = inst_new('Motor6D')
-    Right_Shoulder.C0 = cfnew(1, 0.5, 0)
-    Right_Shoulder.C1 = cfnew(-0.5, 0.5, 0)
+    local Right_Shoulder = instNew('Motor6D')
+    Right_Shoulder.C0 = cfrNew(1, 0.5, 0)
+    Right_Shoulder.C1 = cfrNew(-0.5, 0.5, 0)
     Right_Shoulder.Name = 'Right Shoulder'
     Right_Shoulder.Part0 = Torso
     Right_Shoulder.Part1 = Right_Arm
     Right_Shoulder.Parent = Torso
 
-    local Left_Shoulder = inst_new('Motor6D')
-    Left_Shoulder.C0 = cfnew(-1, 0.5, 0)
-    Left_Shoulder.C1 = cfnew(0.5, 0.5, 0)
+    local Left_Shoulder = instNew('Motor6D')
+    Left_Shoulder.C0 = cfrNew(-1, 0.5, 0)
+    Left_Shoulder.C1 = cfrNew(0.5, 0.5, 0)
     Left_Shoulder.Name = 'Left Shoulder'
     Left_Shoulder.Part0 = Torso
     Left_Shoulder.Part1 = Left_Arm
     Left_Shoulder.Parent = Torso
 
-    local Right_Hip = inst_new('Motor6D')
-    Right_Hip.C0 = cfnew(1, -1, 0)
-    Right_Hip.C1 = cfnew(0.5, 1, 0)
+    local Right_Hip = instNew('Motor6D')
+    Right_Hip.C0 = cfrNew(1, -1, 0)
+    Right_Hip.C1 = cfrNew(0.5, 1, 0)
     Right_Hip.Name = 'Right Hip'
     Right_Hip.Part0 = Torso
     Right_Hip.Part1 = Right_Leg
     Right_Hip.Parent = Torso
 
-    local Left_Hip = inst_new('Motor6D')
-    Left_Hip.C0 = cfnew(-1, -1, 0)
-    Left_Hip.C1 = cfnew(-0.5, 1, 0)
+    local Left_Hip = instNew('Motor6D')
+    Left_Hip.C0 = cfrNew(-1, -1, 0)
+    Left_Hip.C1 = cfrNew(-0.5, 1, 0)
     Left_Hip.Name = 'Left Hip'
     Left_Hip.Part0 = Torso
     Left_Hip.Part1 = Left_Leg
     Left_Hip.Parent = Torso
 
-    local Neck = inst_new('Motor6D')
-    Neck.C0 = cfnew(0, 1, 0)
-    Neck.C1 = cfnew(0, -0.5, 0)
+    local Neck = instNew('Motor6D')
+    Neck.C0 = cfrNew(0, 1, 0)
+    Neck.C1 = cfrNew(0, -0.5, 0)
     Neck.Name = 'Neck'
     Neck.Part0 = Torso
     Neck.Part1 = Head
     Neck.Parent = Torso
 
-    local RootJoint = inst_new('Motor6D')
-    RootJoint.C0 = cfnew(0, 0, 0)
-    RootJoint.C1 = cfnew(0, 0, 0)
+    local RootJoint = instNew('Motor6D')
+    RootJoint.C0 = cfrNew(0, 0, 0)
+    RootJoint.C1 = cfrNew(0, 0, 0)
     RootJoint.Name = 'RootJoint'
     RootJoint.Part0 = HumanoidRootPart
     RootJoint.Part1 = Torso
@@ -3428,9 +3535,9 @@ local fakechar do
             local c = _[i]
             if (not c:IsA('BasePart')) then continue end
             c.Material = 1584
-            c.Color = c_new(0.52, 0.52, 0.55)
+            c.Color = colNew(0.52, 0.52, 0.55)
             
-            local _ = inst_new('BoxHandleAdornment')
+            local _ = instNew('BoxHandleAdornment')
             _.Adornee = c
             _.AlwaysOnTop = true
             _.ZIndex = 10
@@ -3445,31 +3552,28 @@ end
 
 
 ui:Connect('Destroying', function() 
-    for i,v in pairs(cons) do v:Disconnect() end
+    for i,v in pairs(scriptCons) do v:Disconnect() end
     for i,v in ipairs(ui:GetModules()) do 
-        if (v.Toggle and v:IsEnabled()) then
+        if (v.Toggle and v:isEnabled()) then
             v:Toggle()
         end
     end
 
-    for i = 1, #p_Names do 
-        local PlayerName = p_Names[i]
+    for i = 1, #playerNames do 
+        local playerName = playerNames[i]
         
         do 
-            local ref = p_RefKeys[PlayerName]
-            local cons = ref.cons
-            for i = 1, #cons do 
-                cons[i]:Disconnect()
+            for i,v in pairs(playerCons[playerName]) do
+                v:Disconnect()
             end
-            p_RefKeys[PlayerName].cons = nil -- just in case
-            p_RefKeys[PlayerName] = nil
+            playerManagers[PlayerName] = nil
         end 
-        p_Names[i] = nil
+        playerNames[i] = nil
     end
-    p_Names = nil
-    p_RefKeys = nil
+    playerNames = nil
+    playerManagers = nil
     
-    serv_uinput.MouseIconEnabled = true
+    servInput.MouseIconEnabled = true
     
     fakechar:Destroy()
 end)
@@ -3484,58 +3588,57 @@ do
     local AimbotTarget
     local AimbotStatus = ''
 
-    local m_combat = ui:CreateMenu('Combat') do 
+    local m_combat = ui:newMenu('Combat') do 
         -- Aimbot
-        local c_aimbot = m_combat:AddMod('Aimbot')
+        local c_aimbot = m_combat:addMod('Aimbot')
         do 
-            -- warning to any da hood skids:
-            -- please fuck off
-            -- (and also have fun remaking my code)
+            local s_SafetyKey = c_aimbot:AddHotkey('Aimbot key'):setTooltip('Only aims if this key is held. If no key is set mouse2 is checked for instead')
             
-            local s_SafetyKey = c_aimbot:AddHotkey('Aimbot key'):SetTooltip('Only aimbots if this key is held. If no key is set, aimbot checks for mouse2 instead')
+            local s_AliveCheck = c_aimbot:addToggle('Alive check'):setTooltip('Skips over targets that are dead')
+            local s_DistanceCheck = c_aimbot:addToggle('Distance check'):setTooltip('Skips over targets that are too far away from your character')
+            local s_FovCheck = c_aimbot:addToggle('FOV check'):setTooltip('Skips over the target if they are not within the set FOV')
+            local s_TeamCheck = c_aimbot:addToggle('Team check'):setTooltip('Skips over the target if they are on your team')
+            local s_VisibilityCheck = c_aimbot:addToggle('Visibility check'):setTooltip('Skips over the target if they are not visible')
             
-            local s_AliveCheck = c_aimbot:AddToggle('Alive check'):SetTooltip('Checks if the target is alive')
-            local s_DistanceCheck = c_aimbot:AddToggle('Distance check'):SetTooltip('Checks if the target is within a set distance')
-            local s_FovCheck = c_aimbot:AddToggle('FOV check'):SetTooltip('Checks if the target is in a set FOV')
-            local s_TeamCheck = c_aimbot:AddToggle('Team check'):SetTooltip('Disables aimbot for your teammates')
-            local s_VisibilityCheck = c_aimbot:AddToggle('Visibility check'):SetTooltip('Checks if the target is visible')
-            
-            local s_DeltaTime = c_aimbot:AddToggle('Deltatime safe'):SetTooltip('Accounts for deltatime. Makes mouse movement stable across different frame rates, but makes it smoother')
-            local s_LockOn = c_aimbot:AddToggle('Lock on'):SetTooltip('Locks onto a target and doesn\'t change until you release Aimbot or they lose focus')
-            local s_Prediction = c_aimbot:AddToggle('Prediction'):SetTooltip('Predicts where the opponent will move')
+            local s_DeltaTime = c_aimbot:addToggle('Deltatime safe'):setTooltip('Makes mouse movement more consistent across different frame rates, but ends up decreasing aim precision')
+            local s_LockOn = c_aimbot:addToggle('Lock on'):setTooltip('Locks onto a target until aiming is disabled or the target loses focus')
+            local s_Prediction = c_aimbot:addToggle('Prediction'):setTooltip('Aims at the position ahead of the target')
             
             
-            local s_DistanceSlider = c_aimbot:AddSlider('Distance',{min=100,max=10000,cur=2000}):SetTooltip('Targets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
-            local s_FovSlider = c_aimbot:AddSlider('FOV',{min=50,max=500,cur=150,step=1}):SetTooltip('Size of the FOV. Needs <b>FOV check</b> to be enabled')
-            local s_PredictionSlider = c_aimbot:AddSlider('Prediction',{min=0.1,max=1,cur=0,step=0.1}):SetTooltip('How much prediction affects the aimbot')
-            local s_SmoothnessSlider = c_aimbot:AddSlider('Smoothness',{min=0,max=1,cur=0.5,step=0.01}):SetTooltip('How smooth the aimbot is')
-            local s_VerticalOffset = c_aimbot:AddSlider('Y Offset (Studs)',{min=-2,max=2,step=-0.1,cur=0}):SetTooltip('Optional Y offset. <b>Works in studs</b>')
-            --local s_VerticalPxOffset = c_aimbot:AddSlider('Y Offset (Px)',{min=-200,max=200,step=1,cur=0}):SetTooltip('Optional Y offset. <b>Works in pixels</b>')
-            --local s_HorizontalOffset = c_aimbot:AddSlider('X Offset (Px)',{min=-200,max=200,step=1,cur=0}):SetTooltip('Optional X offset. <b>Works in pixels</b>')
             
-            local s_AimbotMethod = c_aimbot:AddDropdown('Aimbot method',true):SetTooltip('The method Aimbot uses')
-            s_AimbotMethod:AddOption('Mouse'):SetTooltip('Fakes moving your mouse with input functions'):Select()
-            s_AimbotMethod:AddOption('Camera'):SetTooltip('Usually better results than Mouse. How good it works depends on the game')
+            local s_DistanceSlider = c_aimbot:addSlider('Distance',{min=100,max=10000,cur=2000}):setTooltip('Targets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
+            local s_FovSlider = c_aimbot:addSlider('FOV',{min=50,max=500,cur=150,step=1}):setTooltip('The size of the FOV. Requires <b>FOV check</b> to be enabled')
+            local s_PredictionSlider = c_aimbot:addSlider('Prediction',{min=0.1,max=1,cur=0,step=0.1}):setTooltip('How far prediction looks ahead. Requires <b>Prediction</b> to be enabled')
+            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0,max=1,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
+            local s_VerticalOffset = c_aimbot:addSlider('Y Offset (Studs)',{min=-2,max=2,step=-0.1,cur=0}):setTooltip('Optional Y offset. <b>Works in studs</b>')
+            --local s_VerticalPxOffset = c_aimbot:addSlider('Y Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional Y offset. <b>Works in pixels</b>')
+            --local s_HorizontalOffset = c_aimbot:addSlider('X Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional X offset. <b>Works in pixels</b>')
             
+            local s_AimbotMethod = c_aimbot:addDropdown('Aimbot method',true):setTooltip('The way aimbot makes you look at someone')
+            s_AimbotMethod:addOption('Mouse'):setTooltip('Uses input functions to move your mouse. Works well for nearly every game'):Select()
+            s_AimbotMethod:addOption('Camera'):setTooltip('Usually has better results than Mouse but may fuck shit up in some games')
             
-            local AliveCheck = s_AliveCheck:GetValue()
-            local DistanceCheck = s_DistanceCheck:GetValue()
-            local FovCheck = s_FovCheck:GetValue()
-            local TeamCheck = s_TeamCheck:GetValue()
-            local VisibilityCheck = s_VisibilityCheck:GetValue()
+            local s_CursorMove = c_aimbot:addToggle('Move crosshair'):setTooltip('Moves the crosshair over the target, even when not aiming. <b>Requires the Crosshair module to be enabled.</b>')
             
-            local LockOn = s_LockOn:GetValue()
-            local SafetyKey = s_SafetyKey:GetValue()
-            local Prediction = s_Prediction:GetValue()
-            local Deltatime = s_DeltaTime:GetValue()
+            local AliveCheck = s_AliveCheck:getValue()
+            local DistanceCheck = s_DistanceCheck:getValue()
+            local FovCheck = s_FovCheck:getValue()
+            local TeamCheck = s_TeamCheck:getValue()
+            local VisibilityCheck = s_VisibilityCheck:getValue()
             
-            local Fov = 9999--s_FovSlider:GetValue()
-            local Distance = s_DistanceSlider:GetValue()
-            local Smoothness = s_SmoothnessSlider:GetValue()
-            local PredictionValue = s_PredictionSlider:GetValue()
-            local VerticalOffset = s_VerticalOffset:GetValue()
-            --local VerticalPxOffset = s_VerticalPxOffset:GetValue()
-            --local HorizontalOffset = s_HorizontalOffset:GetValue()
+            local LockOn = s_LockOn:getValue()
+            local SafetyKey = s_SafetyKey:getValue()
+            local Prediction = s_Prediction:getValue()
+            local Deltatime = s_DeltaTime:getValue()
+            
+            local Fov = 9999--s_FovSlider:getValue()
+            local Distance = s_DistanceSlider:getValue()
+            local Smoothness = s_SmoothnessSlider:getValue()
+            local PredictionValue = s_PredictionSlider:getValue()
+            local VerticalOffset = s_VerticalOffset:getValue()
+            local CursorMove = s_CursorMove:getValue()
+            --local VerticalPxOffset = s_VerticalPxOffset:getValue()
+            --local HorizontalOffset = s_HorizontalOffset:getValue()
             
             local AimbotMethod = s_AimbotMethod:GetSelection()
             
@@ -3553,9 +3656,8 @@ do
                 s_FovCheck:Connect('Toggled', function(t) 
                     FovCheck = t
                     
-                    Fov = FovCheck and s_FovSlider:GetValue() or 9999
+                    Fov = FovCheck and s_FovSlider:getValue() or 9999
                     c_aimbot:Reset() -- no clue why the hell this is needed but oh well
-                    
                 end)
                 s_TeamCheck:Connect('Toggled', function(t) 
                     TeamCheck = t
@@ -3575,16 +3677,61 @@ do
                 s_DeltaTime:Connect('Toggled', function(t) 
                     Deltatime = t
                 end)
-                
-                
-                
-                s_FovSlider:Connect('Changed', function(v)
-                    Fov = v;
-                    if (FovCircle) then 
-                        FovCircle.Radius = Fov 
-                        FovCircleOutline.Radius = Fov
-                    end
+                s_CursorMove:Connect('Toggled', function(t) 
+                    CursorMove = t
                 end)
+                
+                
+                do
+                    local tempCircle = false
+                    local last = tick()
+                    s_FovSlider:Connect('Changed', function(v)
+                        Fov = v;
+                        last = tick()
+                        if (FovCircle) then 
+                            FovCircle.Radius = Fov 
+                            FovCircleOutline.Radius = Fov
+                        else
+                            tempCircle = true
+                            FovCircle = drawNew('Circle')
+                            FovCircle.NumSides = 40
+                            FovCircle.Thickness = 2
+                            FovCircle.Visible = true
+                            FovCircle.Radius = Fov
+                            FovCircle.ZIndex = 2
+                                            
+                            FovCircleOutline = drawNew('Circle')
+                            FovCircleOutline.NumSides = 40
+                            FovCircleOutline.Thickness = 4
+                            FovCircleOutline.Visible = true
+                            FovCircleOutline.Radius = Fov
+                            FovCircleOutline.ZIndex = 1
+                            servRun:BindToRenderStep('RL-fovanim',2000,function() 
+                                local mp = servInput:GetMouseLocation()
+                                FovCircle.Position = mp
+                                FovCircleOutline.Position = mp
+                                FovCircle.Color = RGBCOLOR
+                            end)
+                            
+                            spawn(function()
+                                
+                                while tick() - last < 0.2 do
+                                    wait() 
+                                end
+                                servRun:UnbindFromRenderStep('RL-fovanim')
+                                if (tempCircle) then
+                                    tempCircle = false
+                                    FovCircle:Remove()
+                                    FovCircleOutline:Remove()
+                                    FovCircle = nil
+                                    FovCircleOutline = nil 
+                                end
+                            end)
+                        end
+                    end)
+                end
+                
+                
                 s_DistanceSlider:Connect('Changed', function(v)Distance = v;end)
                 s_SmoothnessSlider:Connect('Changed', function(v)Smoothness = v;end)
                 s_PredictionSlider:Connect('Changed', function(v)PredictionValue = v;end)
@@ -3606,14 +3753,14 @@ do
             c_aimbot:Connect('Enabled', function()
                 local GetClosestPlayerToCursor
                 
-                FovCircle = draw_new('Circle')
+                FovCircle = drawNew('Circle')
                 FovCircle.NumSides = 40
                 FovCircle.Thickness = 2
                 FovCircle.Visible = FovCheck
                 FovCircle.Radius = Fov
                 FovCircle.ZIndex = 2
                 
-                FovCircleOutline = draw_new('Circle')
+                FovCircleOutline = drawNew('Circle')
                 FovCircleOutline.NumSides = 40
                 FovCircleOutline.Thickness = 4
                 FovCircleOutline.Visible = FovCheck
@@ -3640,9 +3787,9 @@ do
                         end
                     end
                     
-                    local function team(plr) 
+                    local function team(team) 
                         if (TeamCheck) then
-                            return (plr.Team ~= l_plr.Team)
+                            return (team ~= clientPlayer.Team)
                         else
                             return true
                         end
@@ -3650,7 +3797,7 @@ do
                     
                     local function vis(root) 
                         if (VisibilityCheck) then
-                            local clear = l_cam:GetPartsObscuringTarget({root.Position}, {l_chr})
+                            local clear = clientCamera:GetPartsObscuringTarget({root.Position}, {clientChar})
                             return (#clear == 0)
                         else
                             return true 
@@ -3680,19 +3827,19 @@ do
                     if (AimbotMethod == 'Mouse') then 
                         NextTarget = function(mp) 
                             local FinalTarget, FinalVec2, FinalMag = nil, nil, Fov
-                            local MousePosition = mp or vec2(l_mouse.X, l_mouse.Y)
+                            local MousePosition = mp or vec2(clientMouse.X, clientMouse.Y)
                             
-                            local CameraPos = l_cam.CFrame.Position
+                            local CameraPos = clientCamera.CFrame.Position
                             
                             AimbotTarget = nil 
-                            for i = 1, #p_Names do 
-                                local PlrObj = p_RefKeys[p_Names[i]]
-                                local Root, Humanoid = PlrObj.rp, PlrObj.hum
+                            for i = 1, #playerNames do 
+                                local plrObject = playerManagers[playerNames[i]]
+                                local Root, Humanoid = plrObject.RootPart, plrObject.Humanoid
                                 
                                 local CurVec3 = predic(Root)
                                 -- the funny if statement 🗿
-                                if (CurVec3 and lock(Root) and team(PlrObj.plr) and alive(Humanoid) and dist(CameraPos, CurVec3) and vis(Root)) then
-                                    local CurVec2, CurVis = l_cam:WorldToViewportPoint(CurVec3)
+                                if (CurVec3 and lock(Root) and team(plrObject.Team) and alive(Humanoid) and dist(CameraPos, CurVec3) and vis(Root)) then
+                                    local CurVec2, CurVis = clientCamera:WorldToViewportPoint(CurVec3)
                                     
                                     
                                     if (CurVis) then
@@ -3712,19 +3859,19 @@ do
                         NextTarget = function(mp) 
                             local FinalTarget, FinalVec3, FinalVec2
                             local FinalMag = Fov
-                            local MousePosition = mp or vec2(l_mouse.X, l_mouse.Y)
+                            local MousePosition = mp or vec2(clientMouse.X, clientMouse.Y)
                             
-                            local CameraPos = l_cam.CFrame.Position
+                            local CameraPos = clientCamera.CFrame.Position
                             
                             AimbotTarget = nil 
-                            for i = 1, #p_Names do 
-                                local PlrObj = p_RefKeys[p_Names[i]]
-                                local Root, Humanoid = PlrObj.rp, PlrObj.hum
+                            for i = 1, #playerNames do 
+                                local plrObject = playerManagers[playerNames[i]]
+                                local Root, Humanoid = plrObject.RootPart, plrObject.Humanoid
                                 
                                 local CurVec3 = predic(Root)
                                 -- the funny if statement 🗿
-                                if (CurVec3 and lock(Root) and team(PlrObj.plr) and alive(Humanoid) and dist(CameraPos, CurVec3) and vis(Root)) then
-                                    local CurVec2, CurVis = l_cam:WorldToViewportPoint(CurVec3)
+                                if (CurVec3 and lock(Root) and team(plrObject.Team) and alive(Humanoid) and dist(CameraPos, CurVec3) and vis(Root)) then
+                                    local CurVec2, CurVis = clientCamera:WorldToViewportPoint(CurVec3)
                                     
                                     
                                     if (CurVis) then
@@ -3747,45 +3894,47 @@ do
                 end
                 
                 if (AimbotMethod == 'Camera') then
-                    AimbotConnection = serv_run.RenderStepped:Connect(function() 
-                        if (W_WindowOpen) then return end 
+                    AimbotConnection = servRun.RenderStepped:Connect(function() 
                         
-                        local mp = serv_uinput:GetMouseLocation()--+vec2(HorizontalOffset, VerticalPxOffset)
+                        
+                        local mp = servInput:GetMouseLocation()--+vec2(HorizontalOffset, VerticalPxOffset)
                         FovCircle.Position = mp
                         FovCircleOutline.Position = mp
                         FovCircle.Color = RGBCOLOR
                         
                         FovCircle.Visible = FovCheck
                         FovCircleOutline.Visible = FovCheck
+                        
+                        local target, position, dist = NextTarget(mp)
                         if (SafetyKey) then
-                            if (not serv_uinput:IsKeyDown(SafetyKey)) then
+                            if (not servInput:IsKeyDown(SafetyKey)) then
                                 AimbotStatus = 'aimbot off'
                                 PreviousTarget = nil
-                                AimbotTarget = nil
+                                if (not CursorMove) then AimbotTarget = nil end
                                 return
                             end
                         else
-                            if (not serv_uinput:IsMouseButtonPressed(1)) then
+                            if (not servInput:IsMouseButtonPressed(1)) then
                                 AimbotStatus = 'aimbot off'
                                 PreviousTarget = nil
-                                AimbotTarget = nil
+                                if (not CursorMove) then AimbotTarget = nil end
                                 return 
                             end
                         end
                         
                         
-                        local target, position, dist = NextTarget(mp)
+                        if (W_WindowOpen) then return end 
                         AimbotStatus = target and 'aiming' or 'no target'
                         PreviousTarget = target
                         
                         if (position) then
-                            local _ = l_cam.CFrame
-                            l_cam.CFrame = cfnew(_.Position, position):lerp(_, Smoothness)
+                            local _ = clientCamera.CFrame
+                            clientCamera.CFrame = cfrNew(_.Position, position):lerp(_, Smoothness)
                         end
                     end)
                 elseif (AimbotMethod == 'Mouse') then
-                    AimbotConnection = serv_run.RenderStepped:Connect(function(dt) 
-                        local mp = serv_uinput:GetMouseLocation()--+vec2(HorizontalOffset, VerticalPxOffset)
+                    AimbotConnection = servRun.RenderStepped:Connect(function(dt) 
+                        local mp = servInput:GetMouseLocation()--+vec2(HorizontalOffset, VerticalPxOffset)
                         FovCircle.Position = mp
                         FovCircleOutline.Position = mp
                         FovCircle.Color = RGBCOLOR
@@ -3793,25 +3942,28 @@ do
                         FovCircle.Visible = FovCheck
                         FovCircleOutline.Visible = FovCheck
                         
+                        local target, position, dist = NextTarget(mp)
                         if (SafetyKey) then
-                            if (not serv_uinput:IsKeyDown(SafetyKey)) then
+                            if (not servInput:IsKeyDown(SafetyKey)) then
                                 AimbotStatus = 'aimbot off'
                                 PreviousTarget = nil
-                                AimbotTarget = nil
+                                if (not CursorMove) then AimbotTarget = nil end
                                 return
                             end
                         else
-                            if (not serv_uinput:IsMouseButtonPressed(1)) then
+                            if (not servInput:IsMouseButtonPressed(1)) then
                                 AimbotStatus = 'aimbot off'
                                 PreviousTarget = nil
-                                AimbotTarget = nil
+                                if (not CursorMove) then AimbotTarget = nil end
                                 return 
                             end
                         end
                         
-                        local target, position, dist = NextTarget(mp)
-                        AimbotStatus = target and 'aiming' or 'no target'
+                        --local target, position, dist = NextTarget(mp)
+                        if (W_WindowOpen) then return end 
                         PreviousTarget = target
+                        AimbotStatus = target and 'aiming' or 'no target'
+                        
                         
                         if (position) then
                             local delta = position - mp
@@ -3844,21 +3996,21 @@ do
         end
         
         -- Hitboxes
-        local c_hitbox = m_combat:AddMod('Hitboxes')
+        local c_hitbox = m_combat:addMod('Hitboxes')
         do 
-            local s_HitboxSize = c_hitbox:AddSlider('Size',{min=2,max=50,step=0.1,value=5}):SetTooltip('How large (in studs) the hitboxes are')
-            local s_Transparency = c_hitbox:AddSlider('Transparency',{min=0,max=1,step=0.01,value=0.5}):SetTooltip('How transparent the hitboxes are')
+            local s_HitboxSize = c_hitbox:addSlider('Size',{min=2,max=50,step=0.1,value=5}):setTooltip('How large (in studs) the hitboxes are')
+            local s_Transparency = c_hitbox:addSlider('Transparency',{min=0,max=1,step=0.01,value=0.5}):setTooltip('How transparent the hitboxes are')
             
-            local s_RGB = c_hitbox:AddToggle('RGB'):SetTooltip('Makes hitboxes RGB instead of gray')
-            local s_TeamCheck = c_hitbox:AddToggle('Team check'):SetTooltip('Disables hbe for teammates')
-            local s_XZOnly = c_hitbox:AddToggle('XZ only'):SetTooltip('Disables expansion on the Y axis, used for certain games that may break with this disabled')        
+            local s_RGB = c_hitbox:addToggle('RGB'):setTooltip('Makes hitboxes RGB instead of gray')
+            local s_TeamCheck = c_hitbox:addToggle('Team check'):setTooltip('Disables hbe for teammates')
+            local s_XZOnly = c_hitbox:addToggle('XZ only'):setTooltip('Disables expansion on the Y axis, used for certain games that may break with this disabled')        
             
-            local HitboxSize = s_HitboxSize:GetValue()
-            local Transparency = s_Transparency:GetValue()
+            local HitboxSize = s_HitboxSize:getValue()
+            local Transparency = s_Transparency:getValue()
             
-            local RGB = s_RGB:GetValue()
-            local TeamCheck = s_TeamCheck:GetValue()
-            local XZOnly = s_XZOnly:GetValue()
+            local RGB = s_RGB:getValue()
+            local TeamCheck = s_TeamCheck:getValue()
+            local XZOnly = s_XZOnly:getValue()
             
             s_HitboxSize:Connect('Changed',function(v)HitboxSize=v;end)
             s_Transparency:Connect('Changed',function(v)Transparency=v;end)
@@ -3872,19 +4024,19 @@ do
             local old_size 
 
             c_hitbox:Connect('Enabled',function() 
-                old_color = l_humrp.Color 
-                old_size = l_humrp.Size
+                old_color = clientRoot.Color 
+                old_size = clientRoot.Size
                 
                 if (TeamCheck) then
                     
-                    HitboxConnection = serv_run.RenderStepped:Connect(function() 
+                    HitboxConnection = servRun.RenderStepped:Connect(function() 
                         local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
-                        local lteam = l_plr.Team
+                        local lteam = clientPlayer.Team
                         
-                        for i = 1, #p_Names do 
-                            local pobj = p_RefKeys[p_Names[i]]
-                            if (pobj.plr.Team == lteam) then continue end
-                            local humrp = pobj.rp
+                        for i = 1, #playerNames do 
+                            local pobj = playerManagers[playerNames[i]]
+                            if (pobj.Player.Team == lteam) then continue end
+                            local humrp = pobj.RootPart
                             
                             if (humrp) then
                                 humrp.Size = size
@@ -3894,11 +4046,11 @@ do
                         end
                     end)
                 else 
-                    HitboxConnection = serv_run.RenderStepped:Connect(function() 
+                    HitboxConnection = servRun.RenderStepped:Connect(function() 
                         local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
-                        for i = 1, #p_Names do 
-                            local pobj = p_RefKeys[p_Names[i]]
-                            local humrp = pobj.rp
+                        for i = 1, #playerNames do 
+                            local pobj = playerManagers[playerNames[i]]
+                            local humrp = pobj.RootPart
                             
                             if (humrp) then
                                 humrp.Size = size
@@ -3913,9 +4065,9 @@ do
                 if (HitboxConnection) then 
                     HitboxConnection:Disconnect() HitboxConnection = nil
                 end
-                for i = 1, #p_Names do 
-                    local pobj = p_RefKeys[p_Names[i]]
-                    local rp = pobj.rp
+                for i = 1, #playerNames do 
+                    local pobj = playerManagers[playerNames[i]]
+                    local rp = pobj.RootPart
                     if (rp) then
                         rp.Transparency = 1
                         rp.Color = old_color
@@ -3930,23 +4082,33 @@ do
         
         --[[
         do 
-            local s_MouseButton = c_trigbot:AddDropdown('Mouse button'):SetTooltip('The mouse button that gets clicked')
-            local s_ShootMode   = c_trigbot:AddDropdown('Shoot mode'):SetTooltip('The way triggerbot shoots when it finds someone')
-            local s_ScanMode    = c_trigbot:AddDropdown('Scan mode'):SetTooltip('The way triggerbot finds a target. Leave this on default if you don\'t know what this does')
+            local s_MouseButton = c_trigbot:addDropdown('Mouse button'):setTooltip('The mouse button that gets clicked')
+            local s_ShootMode   = c_trigbot:addDropdown('Shoot mode'):setTooltip('The way it\'ll shoot. Different modes work better for different guns')
+            local s_ScanMode    = c_trigbot:addDropdown('Scan mode'):setTooltip('The way triggerbot finds the target')
             
-            local s_SafetyKey   = c_trigbot:AddHotkey('Safety key'):SetTooltip('Will only shoot if this key is held')
-            local s_CheckRate   = c_trigbot:AddSlider('Check rate',{min=0,max=0.1,step=0.01,cur=0.03}):SetTooltip('How often targets are checked for')
-            local s_ClickSpeed  = c_trigbot:AddSlider('Click speed',{min=0,max=0.5,step=0.01,cur=0}):SetTooltip('The delay between clicks when Spam mode is enabled')
-            local s_Teamcheck   = c_trigbot:AddToggle('Team check'):SetTooltip('Disables Triggerbot for your teammates')
+            local s_SafetyKey   = c_trigbot:AddHotkey('Safety key'):setTooltip('Will only shoot if this key is held')
+            local s_CheckRate   = c_trigbot:addSlider('Check rate',{min=0,max=0.1,step=0.01,cur=0}):setTooltip('How often targets are checked for')
+            local s_ClickSpeed  = c_trigbot:addSlider('Spam speed',{min=0,max=0.5,step=0.01,cur=0}):setTooltip('The delay between clicks. Only for Spam')
+            local s_Teamcheck   = c_trigbot:addToggle('Team check'):setTooltip('Disables Triggerbot for your teammates')
+            local s_Delay       = c_trigbot:addSlider('Delay',{min=0,max=0.1,step=0.01,cur=0}):setTooltip('Optional delay after a target\'s detected')
             
-            s_MouseButton:AddOption('Mouse1'):SetTooltip('Clicks MouseButton1 (left click)'):Select()
-            s_MouseButton:AddOption('Mouse2'):SetTooltip('Clicks MouseButton2 (right click')
+            s_MouseButton:addOption('Mouse1'):setTooltip('Uses Mouse1 (left click)'):Select()
+            s_MouseButton:addOption('Mouse2'):setTooltip('Uses Mouse2 (right click')
             
-            s_ShootMode:AddOption('Spam'):SetTooltip('Spams button down while there\'s a target'):Select()
-            s_ShootMode:AddOption('Hold'):SetTooltip('Holds button down while there\'s a target')
+            s_ShootMode:addOption('Spam'):setTooltip('Spam clicks button while there\'s a target. Use for semi-auto weapons'):Select()
+            s_ShootMode:addOption('Hold'):setTooltip('Holds button down while there\'s a target. Use for automatic weapons')
+            s_ShootMode:addOption('Single'):setTooltip('Clicks button once when there\'s a target. Use for semi-auto / snipers'):Select()
             
-            s_ScanMode:AddOption('Raycast'):SetTooltip('Raycasts directly and checks if the target is valid. Works for players and NPCs')
-            s_ScanMode:AddOption('Proximity'):SetTooltip('Checks if any players are close to your mouse')
+            s_ScanMode:addOption('Raycast'):setTooltip('Raycasts and checks if the target is valid. Can work for both players and NPCs; heavily game dependant')
+            s_ScanMode:addOption('Proximity'):setTooltip('Checks if any player characters are close to your mouse.')
+            
+            local l_MouseButton = s_MouseButton:getValue()
+            local l_ShootMode   = s_ShootMode:getValue()
+            
+            
+            
+            
+            
             
             local wl
             c_trigbot:Connect('Enabled',function() 
@@ -3986,40 +4148,40 @@ do
                 wl = nil
             end)
             
-            c_trigbot:SetTooltip('Automatically clicks when you mouse over a player')
+            c_trigbot:setTooltip('Automatically clicks when you mouse over a player')
         end
         ]]
         
-        c_aimbot:SetTooltip('Locks your aim onto other players. Works in a variety of games, and has a ton of settings')
-        c_hitbox:SetTooltip('Expand other players\' hitboxes. Depending on the game, this lets you hit them easier. <b>Note that this mod is detectable - always test on an alt and never use your main!</b>')
+        c_aimbot:setTooltip('Locks your aim onto other players. Works in a variety of games, and has a ton of settings')
+        c_hitbox:setTooltip('Expand other players\' hitboxes. Depending on the game, this lets you hit them easier. <b>Note that this mod is detectable - always test on an alt and never use your main!</b>')
     end
-    local m_player = ui:CreateMenu('Player') do 
-        local p_animspeed   = m_player:AddMod('Animspeed')
-        local p_antiafk     = m_player:AddMod('Anti-AFK')
-        local p_anticrash   = m_player:AddMod('Anti-crash')
-        local p_antifling   = m_player:AddMod('Anti-fling')
-        local p_antiwarp    = m_player:AddMod('Anti-warp')
-        local p_autoclick   = m_player:AddMod('Auto clicker')
-        local p_flag        = m_player:AddMod('Fakelag')
-        local p_flashback   = m_player:AddMod('Flashback')
-        local p_respawn     = m_player:AddMod('Respawn', 'Toggle')
-        local p_safemin     = m_player:AddMod('Safe minimize')
-        local p_waypoints   = m_player:AddMod('Waypoints')
+    local m_player = ui:newMenu('Player') do 
+        local p_animspeed   = m_player:addMod('Animspeed')
+        local p_antiafk     = m_player:addMod('Anti-AFK')
+        local p_anticrash   = m_player:addMod('Anti-crash')
+        local p_antifling   = m_player:addMod('Anti-fling')
+        local p_antiwarp    = m_player:addMod('Anti-warp')
+        local p_autoclick   = m_player:addMod('Auto clicker')
+        local p_flag        = m_player:addMod('Fakelag')
+        local p_flashback   = m_player:addMod('Flashback')
+        local p_respawn     = m_player:addMod('Respawn', 'Toggle')
+        local p_safemin     = m_player:addMod('Safe minimize')
+        local p_waypoints   = m_player:addMod('Waypoints')
         
         -- Anim speed
         do 
-            local s_mode = p_animspeed:AddDropdown('Mode',true):SetTooltip('The way animation speed gets modified')
-            local s_max = p_animspeed:AddToggle('Max speed'):SetTooltip('Sets speed to the highest it possibly can')
-            local s_perframe = p_animspeed:AddToggle('Per frame'):SetTooltip('Updates animation speeds per frame')
-            local s_percent = p_animspeed:AddSlider('Speed (Percent)',{min=0,max=500,cur=100}):SetTooltip('Multiplies every animation\'s speed by this percent value')
-            local s_speed = p_animspeed:AddSlider('Speed (Absolute)',{min=0,max=100,cur=1,step=0.01}):SetTooltip('Sets every animation\'s speed to this value')
-            s_mode:AddOption('Absolute'):SetTooltip('Sets the animation speeds to this value'):Select()
-            s_mode:AddOption('Percent'):SetTooltip('Multiplies the animation speeds by this percent')
+            local s_mode = p_animspeed:addDropdown('Mode',true):setTooltip('The way animation speed gets modified')
+            local s_max = p_animspeed:addToggle('Max speed'):setTooltip('Sets speed to the highest it possibly can')
+            local s_perframe = p_animspeed:addToggle('Per frame'):setTooltip('Updates animation speeds per frame')
+            local s_percent = p_animspeed:addSlider('Speed (Percent)',{min=0,max=500,cur=100}):setTooltip('Multiplies every animation\'s speed by this percent value')
+            local s_speed = p_animspeed:addSlider('Speed (Absolute)',{min=0,max=100,cur=1,step=0.01}):setTooltip('Sets every animation\'s speed to this value')
+            s_mode:addOption('Absolute'):setTooltip('Sets the animation speeds to this value'):Select()
+            s_mode:addOption('Percent'):setTooltip('Multiplies the animation speeds by this percent')
             
             
-            local max = s_max:IsEnabled()
-            local speed = s_speed:GetValue()
-            local percent = s_percent:GetValue()
+            local max = s_max:isEnabled()
+            local speed = s_speed:getValue()
+            local percent = s_percent:getValue()
             local mode = s_mode:GetSelection()
             
             s_max:Connect('Toggled',function(t)max=t;end)
@@ -4047,25 +4209,25 @@ do
                     end
                 end
                 
-                if (s_perframe:IsEnabled()) then
-                    serv_run:BindToRenderStep('RL-AnimSpeed',2356,function()
-                        local tracks = l_hum:GetPlayingAnimationTracks()
+                if (s_perframe:isEnabled()) then
+                    servRun:BindToRenderStep('RL-AnimSpeed',2356,function()
+                        local tracks = clientHumanoid:GetPlayingAnimationTracks()
                         
                         for i = 1, #tracks do 
                             noob(tracks[i])
                         end
                     end)
                 else
-                    animcon = l_hum.AnimationPlayed:Connect(noob)
+                    animcon = clientHumanoid.AnimationPlayed:Connect(noob)
                 
-                    local tracks = l_hum:GetPlayingAnimationTracks()
+                    local tracks = clientHumanoid:GetPlayingAnimationTracks()
                     
                     for i = 1, #tracks do 
                         noob(tracks[i])
                     end
                 end
                 
-                resetcon = l_plr.CharacterAdded:Connect(function() 
+                resetcon = clientPlayer.CharacterAdded:Connect(function() 
                     wait()
                     p_animspeed:Reset()
                 end)
@@ -4074,20 +4236,20 @@ do
             p_animspeed:Connect('Disabled',function() 
                 if (animcon) then animcon:Disconnect() animcon = nil end
                 if (resetcon) then resetcon:Disconnect() resetcon = nil end
-                serv_run:UnbindFromRenderStep('RL-AnimSpeed')
+                servRun:UnbindFromRenderStep('RL-AnimSpeed')
             end)
             
         end
         -- Anti afk
         do 
-            local p_afk_mode   = p_antiafk:AddDropdown('Mode', true)
+            local p_afk_mode   = p_antiafk:addDropdown('Mode', true)
             do 
-                local _ = p_afk_mode:AddOption('Standard')
+                local _ = p_afk_mode:addOption('Standard')
                 :Select()
-                :SetTooltip('Disables connections related to player idling. Impossible to detect, has no side-effects');
+                :setTooltip('Disables connections related to player idling. Impossible to detect, has no side-effects');
                 
-                p_afk_mode:AddOption('Move on idle'):SetTooltip('Automatically moves your character when the client idles')
-                p_afk_mode:AddOption('Walk around'):SetTooltip('Randomly moves your character around. Useful for games with more afk checks than the default roblox ones')
+                p_afk_mode:addOption('Move on idle'):setTooltip('Automatically moves your character when the client idles')
+                p_afk_mode:addOption('Walk around'):setTooltip('Randomly moves your character around. Useful for games with more afk checks than the default roblox ones')
             end
             
             
@@ -4095,25 +4257,25 @@ do
             local p = 'Standard'
             p_antiafk:Connect('Enabled', function() 
                 if (p == 'Standard') then
-                    dnec(l_plr.Idled, 'plr_idled')
+                    dnec(clientPlayer.Idled, 'plr_idled')
                     return 
                 end
                 if (p == 'Move on idle') then
-                    c = l_plr.Idled:Connect(function() 
-                        l_hum:MoveTo(l_humrp.Position + vec3(0, 0, 2))
+                    c = clientPlayer.Idled:Connect(function() 
+                        clientHumanoid:MoveTo(clientRoot.Position + vec3(0, 0, 2))
                     end)
                     return 
                 end
             
                 if (p == 'Walk around') then
                     spawn(function() 
-                        local base = l_humrp.Position
-                        while (p_antiafk:IsEnabled()) do 
-                            wait(mrandom()*8)
-                            l_hum:MoveTo(base + vec3(
-                                (mrandom()-.5)*15,
+                        local base = clientRoot.Position
+                        while (p_antiafk:isEnabled()) do 
+                            wait(mathRand()*8)
+                            clientHumanoid:MoveTo(base + vec3(
+                                (mathRand()-.5)*15,
                                 0,
-                                (mrandom()-.5)*15)
+                                (mathRand()-.5)*15)
                             )
                         end
                     end)
@@ -4135,85 +4297,85 @@ do
         end
         -- Anticrash
         do 
-            local sc = game:GetService('ScriptContext')
+            local scriptCtx = game:GetService('ScriptContext')
             
-            local amnt = p_anticrash:AddSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):SetTooltip('Anti-crash sensitivity. <b>Setting this too low may mess with your game. Leave it at the default if you don\'t know what this does.</b>')
+            local s_antiDelay = p_anticrash:addSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):setTooltip('Anti-crash sensitivity. <b>Setting this too low may mess with your game. Leave it at the default if you don\'t know what this does.</b>')
             
-            amnt:Connect('Changed',function(v) 
-                if (p_anticrash:IsEnabled()) then
-                    sc:SetTimeout(v)
+            s_antiDelay:Connect('Changed',function(v) 
+                if (p_anticrash:isEnabled()) then
+                    scriptCtx:SetTimeout(v)
                 end
             end)
             
             p_anticrash:Connect('Toggled',function(t) 
                 if t then
-                    sc:SetTimeout(amnt:GetValue())
+                    scriptCtx:SetTimeout(s_antiDelay:getValue())
                 else
-                    sc:SetTimeout(99)
+                    scriptCtx:SetTimeout(99)
                 end
             end)
         end
         -- Antifling
         do 
-            local s_FreezeMethod = p_antifling:AddDropdown('Method', true):SetTooltip('The method Antifling uses')
+            local s_FreezeMethod = p_antifling:addDropdown('Method', true):setTooltip('The method Antifling uses')
             do 
-                s_FreezeMethod:AddOption('Anchor'):Select():SetTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
-                s_FreezeMethod:AddOption('Anchor + Safemin'):SetTooltip('Combines Anchor and Safemin; anchors when either the screen is out of focus or someones closed to you')
-                s_FreezeMethod:AddOption('Noclip'):SetTooltip('Activates noclip when someones near you. You\'ll still be slightly pushed around')
-                s_FreezeMethod:AddOption('Teleport'):SetTooltip('Teleports you away from them. Funny to use but you may be flung')
+                s_FreezeMethod:addOption('Anchor'):Select():setTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
+                s_FreezeMethod:addOption('Anchor + Safemin'):setTooltip('Combines Anchor and Safemin; anchors when either the screen is out of focus or someones closed to you')
+                s_FreezeMethod:addOption('Noclip'):setTooltip('Activates noclip when someones near you. You\'ll still be slightly pushed around')
+                s_FreezeMethod:addOption('Teleport'):setTooltip('Teleports you away from them. Funny to use but you may be flung')
             end
             local distance = 25
             local pcon
             
-            p_antifling:AddSlider('Distance',{min=1,max=50,cur=25,step=0.1}):SetTooltip('How close a player has to be to you to trigger the antifling'):Connect('Changed',function(v)distance=v;end)
+            p_antifling:addSlider('Distance',{min=1,max=50,cur=25,step=0.1}):setTooltip('How close a player has to be to you to trigger the antifling'):Connect('Changed',function(v)distance=v;end)
             
             
             p_antifling:Connect('Enabled', function() 
                 local m = s_FreezeMethod:GetSelection()
-                dnec(l_humrp.Changed, 'rp_changed')
-                dnec(l_humrp:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
-                dnec(l_humrp:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
+                dnec(clientRoot.Changed, 'rp_changed')
+                dnec(clientRoot:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
+                dnec(clientRoot:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
                 
                 if (m == 'Anchor') then
-                    pcon = serv_run.Heartbeat:Connect(function() 
-                        local self_pos = l_humrp.Position
-                        l_humrp.Anchored = false
-                        for i = 1, #p_Names do 
-                            local rp = p_RefKeys[p_Names[i]].rp
+                    pcon = servRun.Heartbeat:Connect(function() 
+                        local self_pos = clientRoot.Position
+                        clientRoot.Anchored = false
+                        for i = 1, #playerNames do 
+                            local rootPart = playerManagers[playerNames[i]].RootPart
                             
-                            if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
-                                l_humrp.Anchored = true
+                            if (rootPart and ((rootPart.Position - self_pos).Magnitude) < distance) then
+                                clientRoot.Anchored = true
                                 break
                             end
                         end		
                     end)
                 elseif (m == 'Anchor + Safemin') then
                     
-                    pcon = serv_run.Heartbeat:Connect(function()
+                    pcon = servRun.Heartbeat:Connect(function()
                         if (isrbxactive() == false) then
-                            l_humrp.Anchored = true
+                            clientRoot.Anchored = true
                             return
                         end
                         
-                        local self_pos = l_humrp.Position
-                        l_humrp.Anchored = false
-                        for i = 1, #p_Names do 
-                            local rp = p_RefKeys[p_Names[i]].rp
+                        local self_pos = clientRoot.Position
+                        clientRoot.Anchored = false
+                        for i = 1, #playerNames do 
+                            local rootPart = playerManagers[playerNames[i]].RootPart
                             
-                            if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
-                                l_humrp.Anchored = true
+                            if (rootPart and ((rootPart.Position - self_pos).Magnitude) < distance) then
+                                clientRoot.Anchored = true
                                 break
                             end
                         end		
                     end)              
                 elseif (m == 'Noclip') then
-                    pcon = serv_run.Heartbeat:Connect(function() 
-                        local self_pos = l_humrp.Position
-                        for i = 1, #p_Names do 
-                            local rp = p_RefKeys[p_Names[i]].rp
+                    pcon = servRun.Heartbeat:Connect(function() 
+                        local self_pos = clientRoot.Position
+                        for i = 1, #playerNames do 
+                            local rootPart = playerManagers[playerNames[i]].RootPart
                             
-                            if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
-                                local c = l_chr:GetChildren()
+                            if (rootPart and ((rootPart.Position - self_pos).Magnitude) < distance) then
+                                local c = clientChar:GetChildren()
                                 for i = 1, #c do 
                                     local v = c[i]
                                     if (v:IsA('BasePart')) then
@@ -4225,13 +4387,13 @@ do
                         end		
                     end)
                 elseif (m == 'Teleport') then
-                    pcon = serv_run.Heartbeat:Connect(function() 
-                        local self_pos = l_humrp.Position
-                        for i = 1, #p_Names do 
-                            local rp = p_RefKeys[p_Names[i]].rp
+                    pcon = servRun.Heartbeat:Connect(function() 
+                        local self_pos = clientRoot.Position
+                        for i = 1, #playerNames do 
+                            local rootPart = playerManagers[playerNames[i]].RootPart
                             
-                            if (rp and ((rp.Position - self_pos).Magnitude) < distance) then
-                                l_humrp.CFrame += vec3(mrandom(-100,100)*.1,mrandom(0,20)*.1,mrandom(-100,100)*.1)
+                            if (rootPart and ((rootPart.Position - self_pos).Magnitude) < distance) then
+                                clientRoot.CFrame += vec3(mathRand(-100,100)*.1,mathRand(0,20)*.1,mathRand(-100,100)*.1)
                                 break
                             end
                         end		
@@ -4240,7 +4402,7 @@ do
             end)
             p_antifling:Connect('Disabled', function() 
                 if (pcon) then pcon:Disconnect() pcon = nil end		
-                if (l_humrp.Anchored) then l_humrp.Anchored = false end
+                if (clientRoot.Anchored) then clientRoot.Anchored = false end
                 
                 enec('rp_changed')
                 enec('rp_cancollide')
@@ -4251,40 +4413,35 @@ do
             s_FreezeMethod:Connect('Changed', function()
                 p_antifling:Reset()
             end)
-            
-            if (game.PlaceId == 4483381587) then
-                wait(0.2)
-                p_antifling:Enable() 
-            end
         end
         -- Antiwarp
         do 
-            local s_Lerp = p_antiwarp:AddSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):SetTooltip('How much you will be teleported back when antiwarp gets triggered')
-            local s_Dist = p_antiwarp:AddSlider('Distance',{min=1,max=150,cur=20,step=0.1}):SetTooltip('How far you\'d have to be teleported before it gets set off')
-            local Lerp = s_Lerp:GetValue()
-            local Dist = s_Dist:GetValue()
+            local s_Lerp = p_antiwarp:addSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):setTooltip('How much you will be teleported back when antiwarp gets triggered')
+            local s_Dist = p_antiwarp:addSlider('Distance',{min=1,max=150,cur=20,step=0.1}):setTooltip('How far you\'d have to be teleported before it gets set off')
+            local Lerp = s_Lerp:getValue()
+            local Dist = s_Dist:getValue()
             
             s_Lerp:Connect('Changed',function(v)Lerp=v;end)
             s_Dist:Connect('Changed',function(v)Dist=v;end)
             
             local AntiwarpStep
             
-            local CurrentCFrame = l_humrp and l_humrp.CFrame or cfnew(0,0,0)
-            local PreviousCFrame = l_humrp and l_humrp.CFrame or cfnew(0,0,0)
+            local CurrentCFrame = clientRoot and clientRoot.CFrame or cfrNew(0,0,0)
+            local PreviousCFrame = clientRoot and clientRoot.CFrame or cfrNew(0,0,0)
             
             p_antiwarp:Connect('Enabled',function() 
-                dnec(l_humrp.Changed, 'rp_changed')
-                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                dnec(clientRoot.Changed, 'rp_changed')
+                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                 
                 
-                PreviousCFrame = l_humrp.CFrame
-                AntiwarpStep = serv_run.Heartbeat:Connect(function() 
-                    CurrentCFrame = l_humrp.CFrame 
+                PreviousCFrame = clientRoot.CFrame
+                AntiwarpStep = servRun.Heartbeat:Connect(function() 
+                    CurrentCFrame = clientRoot.CFrame 
                     
                     if ((CurrentCFrame.Position - PreviousCFrame.Position).Magnitude > Dist) then
                         local _ = CurrentCFrame:lerp(PreviousCFrame, Lerp)
                         PreviousCFrame = _
-                        l_humrp.CFrame = _
+                        clientRoot.CFrame = _
                     else
                         PreviousCFrame = CurrentCFrame
                     end
@@ -4299,22 +4456,22 @@ do
         end
         -- Autoclick
         do 
-            local s_ButtonType = p_autoclick:AddDropdown('Mouse key',true):SetTooltip('The key to click')
-            local s_Shake = p_autoclick:AddToggle('Mouse shake'):SetTooltip('Shakes your mouse around to fake jitterclicking')
-            local s_ShakeAmount = p_autoclick:AddSlider('Shake amount',{min=1,max=15,step=1,cur=5}):SetTooltip('How much your mouse gets shooken <i>(shook? shaken? who knows)</i>')
-            local s_ClickRate = p_autoclick:AddSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):SetTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
-            local s_ClickAmount = p_autoclick:AddSlider('Click amount',{min=1,max=15,step=1,cur=1}):SetTooltip('How many clicks are done')
+            local s_ButtonType = p_autoclick:addDropdown('Mouse key',true):setTooltip('The key to click')
+            local s_Shake = p_autoclick:addToggle('Mouse shake'):setTooltip('Shakes your mouse around to fake jitterclicking')
+            local s_ShakeAmount = p_autoclick:addSlider('Shake amount',{min=1,max=15,step=1,cur=5}):setTooltip('How much your mouse gets shooken <i>(shook? shaken? who knows)</i>')
+            local s_ClickRate = p_autoclick:addSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):setTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
+            local s_ClickAmount = p_autoclick:addSlider('Click amount',{min=1,max=15,step=1,cur=1}):setTooltip('How many clicks are done')
+            local s_clickVisual = p_autoclick:addToggle('Click indicator'):setTooltip('Displays a little indicator on your mouse when it clicks')
             
-            
-            s_ButtonType:AddOption('Mouse1'):SetTooltip('Clicks Mouse1 / left click'):Select()
-            s_ButtonType:AddOption('Mouse2'):SetTooltip('Clicks Mouse2 / right click')
+            s_ButtonType:addOption('Mouse1'):setTooltip('Clicks Mouse1 (left click)'):Select()
+            s_ButtonType:addOption('Mouse2'):setTooltip('Clicks Mouse2 (right click)')
             
             
             local ButtonType   = s_ButtonType:GetSelection()
-            local ClickAmount  = s_ClickAmount:GetValue()
-            local ClickRate    = s_ClickRate:GetValue()
-            local Shake        = s_Shake:GetValue()
-            local ShakeAmount  = s_ShakeAmount:GetValue()
+            local ClickAmount  = s_ClickAmount:getValue()
+            local ClickRate    = s_ClickRate:getValue()
+            local Shake        = s_Shake:getValue()
+            local ShakeAmount  = s_ShakeAmount:getValue()
             
             s_ButtonType:Connect('Changed', function(v)
                 ButtonType = v
@@ -4335,22 +4492,26 @@ do
             s_ClickAmount:Connect('Changed', function(v) 
                 ClickAmount = v
             end)
+            s_clickVisual:Connect('Toggled', function(t) 
+                p_autoclick:Reset()
+            end)
             
             
             local ClickConnection
             local ConnectionIdentifier
+            local visualCircle
             
             p_autoclick:Connect('Enabled',function() 
-                ConnectionIdentifier = mrandom(1, 9999)
+                ConnectionIdentifier = mathRand(1, 9999)
                 local _ = ConnectionIdentifier
                 
                 
                 -- Handle shaking
                 spawn(function() 
                     if (Shake) then
-                        while (Shake and p_autoclick:IsEnabled()) do 
+                        while (Shake and p_autoclick:isEnabled()) do 
                             if (not W_WindowOpen) then
-                                mousemoverel(mrandom(-ShakeAmount, ShakeAmount),mrandom(-ShakeAmount, ShakeAmount))
+                                mousemoverel(mathRand(-ShakeAmount, ShakeAmount),mathRand(-ShakeAmount, ShakeAmount))
                             else
                                 wait(0.5)
                             end
@@ -4365,38 +4526,99 @@ do
                     -- If clickrate is 0, then setup renderstepped connection
                     if (ClickRate == 0) then
                         -- Get func
-                        local ClickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
+                        local clickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
                         
                         -- Try to click every frame
-                        ClickConnection = serv_run.RenderStepped:Connect(function() 
-                            -- If window is closed then
-                            if (not W_WindowOpen) then
-                                -- click the mouse button
-                                
-                                for i = 1, ClickAmount do 
-                                    ClickFunc()
+                        if (s_clickVisual:isEnabled()) then
+                            
+                            -- click visual
+                            
+                            visualCircle = drawNew('Circle')
+                            visualCircle.NumSides = 20
+                            visualCircle.Radius = 13
+                            visualCircle.Color = RLTHEMEDATA['ge'][1]
+                            visualCircle.Filled = true
+                            visualCircle.Transparency = 0.8
+                            visualCircle.Visible = true 
+                            
+                            ClickConnection = servRun.RenderStepped:Connect(function(dt)
+                                visualCircle.Transparency -= dt*5
+                                visualCircle.Position = servInput:GetMouseLocation()
+                                -- If window is closed then
+                                if (not W_WindowOpen) then
+                                    -- click the mouse button
+                                    
+                                    for i = 1, ClickAmount do 
+                                        clickFunc()
+                                    end
+                                    visualCircle.Transparency = 0.8
                                 end
-                            end
-                            -- otherwise do nothing
-                        end)               
+                                -- otherwise do nothing
+                            end)
+                        else
+                            ClickConnection = servRun.RenderStepped:Connect(function() 
+                                -- If window is closed then
+                                if (not W_WindowOpen) then
+                                    -- click the mouse button
+                                    
+                                    for i = 1, ClickAmount do 
+                                        clickFunc()
+                                    end
+                                end
+                                -- otherwise do nothing
+                            end)
+                        end
                     else
                         -- If the clickrate isn't 0 then spawn a loop
                         spawn(function() 
                             -- Get func
-                            local ClickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
+                            local clickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
                             
-                            -- While autoclicking...
-                            while (p_autoclick:IsEnabled()) do 
-                                -- try to click
-                                if (not W_WindowOpen) then
-                                    for i = 1, ClickAmount do 
-                                        ClickFunc()
+                            if (s_clickVisual:isEnabled()) then
+                                
+                                visualCircle = drawNew('Circle')
+                                visualCircle.NumSides = 20
+                                visualCircle.Radius = 13
+                                visualCircle.Color = RLTHEMEDATA['ge'][1]
+                                visualCircle.Filled = true
+                                visualCircle.Transparency = 0.8
+                                visualCircle.Visible = true 
+                                
+                                
+                                ClickConnection = servRun.RenderStepped:Connect(function(dt)
+                                    visualCircle.Transparency -= dt*5
+                                    visualCircle.Position = servInput:GetMouseLocation()
+                                end)
+                                
+                                
+                                -- While autoclicking...
+                                while (p_autoclick:isEnabled()) do 
+                                    -- try to click
+                                    if (not W_WindowOpen) then
+                                        for i = 1, ClickAmount do 
+                                            clickFunc()
+                                        end
+                                        visualCircle.Transparency = 0.8
                                     end
+                                    -- wait for click duration
+                                    wait(ClickRate)
+                                    -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
+                                    if (ConnectionIdentifier ~= _) then break end
                                 end
-                                -- wait for click duration
-                                wait(ClickRate)
-                                -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
-                                if (ConnectionIdentifier ~= _) then break end
+                            else
+                                -- While autoclicking...
+                                while (p_autoclick:isEnabled()) do 
+                                    -- try to click
+                                    if (not W_WindowOpen) then
+                                        for i = 1, ClickAmount do 
+                                            clickFunc()
+                                        end
+                                    end
+                                    -- wait for click duration
+                                    wait(ClickRate)
+                                    -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
+                                    if (ConnectionIdentifier ~= _) then break end
+                                end
                             end
                         end)
                     end
@@ -4408,16 +4630,20 @@ do
                     ClickConnection:Disconnect() 
                     ClickConnection = nil 
                 end
+                if (visualCircle) then
+                    visualCircle:Remove()
+                    visualCircle = nil
+                end
             end)
         end 
         -- Fake lag
         do 
-            local s_Method = p_flag:AddDropdown('Method',true)
-            s_Method:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
-            s_Method:AddOption('Real'):SetTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
+            local s_Method = p_flag:addDropdown('Method',true)
+            s_Method:addOption('Fake'):setTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
+            s_Method:addOption('Real'):setTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
             
-            local s_LagAmnt = p_flag:AddSlider('Amount',{min=1,max=10,step=0.1,cur=3}):SetTooltip('Lag amount. The larger the number, the more lag you have')
-            local LagAmnt = s_LagAmnt:GetValue()
+            local s_LagAmnt = p_flag:addSlider('Amount',{min=1,max=10,step=0.1,cur=3}):setTooltip('Lag amount. The larger the number, the more lag you have')
+            local LagAmnt = s_LagAmnt:getValue()
             local Method = s_Method:GetSelection()
             
             s_LagAmnt:Connect('Changed',function(v)LagAmnt=v;end)
@@ -4430,16 +4656,16 @@ do
                 if (Method == 'Fake') then
                     local s = Method 
                     
-                    local thej = l_humrp.CFrame
+                    local thej = clientRoot.CFrame
                     
-                    seat = inst_new('Seat')
+                    seat = instNew('Seat')
                     seat.Transparency = 1
                     seat.CanTouch = false
                     seat.CanCollide = false
                     seat.Anchored = true
                     seat.CFrame = thej
                     
-                    local weld = inst_new('Weld')
+                    local weld = instNew('Weld')
                     weld.Part0 = seat
                     weld.Part1 = nil
                     weld.Parent = seat
@@ -4448,21 +4674,21 @@ do
                     
                     spawn(function() 
                         while true do 
-                            if (not p_flag:IsEnabled() or Method ~= s) then break end
-                            wait((mrandom(20,40)*.1) / LagAmnt)
-                            if (not p_flag:IsEnabled() or Method ~= s) then break end
+                            if (not p_flag:isEnabled() or Method ~= s) then break end
+                            wait((mathRand(20,40)*.1) / LagAmnt)
+                            if (not p_flag:isEnabled() or Method ~= s) then break end
                             
                             do
                                 seat.Anchored = false
-                                local thej = l_humrp.CFrame
+                                local thej = clientRoot.CFrame
                                 fakechar.Parent = workspace
                                 fakerp.CFrame = thej
                                 
                                 seat.CFrame = thej
-                                weld.Part1 = l_humrp
+                                weld.Part1 = clientRoot
                             end
                             
-                            wait(mrandom(1,LagAmnt)*.1)
+                            wait(mathRand(1,LagAmnt)*.1)
                             fakechar.Parent = nil
                             weld.Part1 = nil
                             seat.Anchored = true
@@ -4472,19 +4698,19 @@ do
                     spawn(function() 
                         local s = Method
                         while true do 
-                            if (not p_flag:IsEnabled() or Method ~= s) then break end
+                            if (not p_flag:isEnabled() or Method ~= s) then break end
                             wait(5 / LagAmnt)
-                            if (not p_flag:IsEnabled() or Method ~= s) then break end
+                            if (not p_flag:isEnabled() or Method ~= s) then break end
                             
                             
                             fakechar.Parent = workspace
-                            fakerp.CFrame = l_humrp.CFrame
+                            fakerp.CFrame = clientRoot.CFrame
                             
-                            serv_net:SetOutgoingKBPSLimit(1)
+                            servNetwork:SetOutgoingKBPSLimit(1)
                             
-                            wait(mrandom(1,LagAmnt)*.1)
+                            wait(mathRand(1,LagAmnt)*.1)
                             fakechar.Parent = nil
-                            serv_net:SetOutgoingKBPSLimit(9e9)
+                            servNetwork:SetOutgoingKBPSLimit(9e9)
                         end 
                     end)
                 end 
@@ -4494,35 +4720,35 @@ do
                 if (seat) then seat:Destroy() seat = nil end 
                 
                 fakechar.Parent = nil
-                serv_net:SetOutgoingKBPSLimit(9e9)
+                servNetwork:SetOutgoingKBPSLimit(9e9)
             end)
         end
         -- Flashback
         do 
-            local flash_delay = p_flashback:AddSlider('Delay', {min=0,max=5,cur=0,step=0.1},true)
-            flash_delay:SetTooltip('How long to wait before teleporting you back')
+            local flash_delay = p_flashback:addSlider('Delay', {min=0,max=5,cur=0,step=0.1},true)
+            flash_delay:setTooltip('How long to wait before teleporting you back')
             
             local fb_con
             local resp_con
             
             p_flashback:Connect('Enabled', function() 
                 
-                local pos = l_humrp and l_humrp.CFrame
+                local pos = clientRoot and clientRoot.CFrame
                 
                 local function bind(h) 
                     h.Died:Connect(function() 
-                        pos = l_humrp.CFrame
-                        l_plr.CharacterAdded:Wait()
-                        delay(flash_delay:GetValue(), function() l_humrp.CFrame = pos end)
+                        pos = clientRoot.CFrame
+                        clientPlayer.CharacterAdded:Wait()
+                        delay(flash_delay:getValue(), function() clientRoot.CFrame = pos end)
                     end)
                 end
                 
-                resp_con = l_plr.CharacterAdded:Connect(function() 
+                resp_con = clientPlayer.CharacterAdded:Connect(function() 
                     wait(0.03)
-                    bind(l_hum)
+                    bind(clientHumanoid)
                 end)
                 
-                bind(l_hum)
+                bind(clientHumanoid)
             end)
             p_flashback:Connect('Disabled', function() 
                 fb_con:Disconnect()
@@ -4540,16 +4766,16 @@ do
                     end)
                 end
                 
-                bind(l_hum)
-                resp_con = l_plr.CharacterAdded:Connect(function(c) 
+                bind(clientHumanoid)
+                resp_con = clientPlayer.CharacterAdded:Connect(function(c) 
                     local h = c:WaitForChild('Humanoid',0.5)
                     if (h) then
                         bind(h) 
                     end
                 end)
                 
-                if (l_hum.Health == 0) then
-                    l_hum:Destroy()
+                if (clientHumanoid.Health == 0) then
+                    clientHumanoid:Destroy()
                 end
             end)
             p_respawn:Connect('Disabled',function() 
@@ -4559,9 +4785,9 @@ do
         end
         -- Safe min
         do 
-            local s_DetectMode = p_safemin:AddDropdown('Detection mode',true):SetTooltip('The method used to detect tabbing out. Leave on default unless detection stops working')
-            s_DetectMode:AddOption('Default'):SetTooltip('Uses UserInputService to detect window minimizing. Some scripts may mess with this event!'):Select()
-            s_DetectMode:AddOption('Backup'):SetTooltip('Uses isrbxactive to detect window minimizing. May not be compatible with every exploit')
+            local s_DetectMode = p_safemin:addDropdown('Detection mode',true):setTooltip('The method used to detect tabbing out. Leave on default unless detection stops working')
+            s_DetectMode:addOption('Default'):setTooltip('Uses UserInputService to detect window minimizing. Some scripts may mess with this event!'):Select()
+            s_DetectMode:addOption('Backup'):setTooltip('Uses isrbxactive to detect window minimizing. May not be compatible with every exploit')
             
             s_DetectMode:Connect('Changed',function()p_safemin:Reset();end)
             
@@ -4574,24 +4800,24 @@ do
                 
                 if (mode == 'Default') then 
                     local focused = true 
-                    wincon1 = serv_uinput.WindowFocused:Connect(function() 
+                    wincon1 = servInput.WindowFocused:Connect(function() 
                         focused = true
                     end)
-                    wincon2 = serv_uinput.WindowFocusReleased:Connect(function() 
+                    wincon2 = servInput.WindowFocusReleased:Connect(function() 
                         focused = false
                     end)
                     
-                    con = serv_run.Heartbeat:Connect(function() 
-                        l_humrp.Anchored = false
+                    con = servRun.Heartbeat:Connect(function() 
+                        clientRoot.Anchored = false
                         if (not focused) then 
-                            l_humrp.Anchored = true
+                            clientRoot.Anchored = true
                         end
                     end)
                 elseif (mode == 'Backup') then 
-                    con = serv_run.Heartbeat:Connect(function() 
-                        l_humrp.Anchored = false
+                    con = servRun.Heartbeat:Connect(function() 
+                        clientRoot.Anchored = false
                         if (not isrbxactive()) then 
-                            l_humrp.Anchored = true
+                            clientRoot.Anchored = true
                         end
                     end)
                 end
@@ -4626,18 +4852,18 @@ do
             local function makewaypoint(text) 
                 local new = {}
                 new[1] = text
-                new[2] = l_humrp.CFrame
+                new[2] = clientRoot.CFrame
                 
-                local a = inst_new('BillboardGui')
-                local b = inst_new('BoxHandleAdornment')
-                local c = inst_new('Part')
-                local d = inst_new('TextLabel')
+                local a = instNew('BillboardGui')
+                local b = instNew('BoxHandleAdornment')
+                local c = instNew('Part')
+                local d = instNew('TextLabel')
                 
                 
                 c.Anchored = true
                 c.CanCollide = false
                 c.CanTouch = false
-                c.Color = c_new(0,0,0)
+                c.Color = colNew(0,0,0)
                 c.Name = getnext()
                 c.Size = vec3(1, 1, 1)
                 c.Position = new[2].Position
@@ -4646,12 +4872,12 @@ do
                 a.Adornee = c
                 a.AlwaysOnTop = true
                 a.LightInfluence = 0.8
-                a.Size = dim_new(1.5, 30, 0.75, 15)
+                a.Size = dimNew(1.5, 30, 0.75, 15)
                 
                 b.Adornee = c
                 b.AlwaysOnTop = false
                 b.ZIndex = 10
-                b.Color3 = c_new(0,0,0)
+                b.Color3 = colNew(0,0,0)
                 b.Size = vec3(1, 200, 1)
                 b.SizeRelativeOffset = vec3(0, 200, 0)
                 b.Transparency = 0.5
@@ -4661,7 +4887,7 @@ do
                 d.BorderColor3 = RLTHEMEDATA['bm'][1]
                 d.BorderSizePixel = 1
                 d.Font = RLTHEMEFONT
-                d.Size = dim_sca(1,1)
+                d.Size = dimScale(1,1)
                 d.Text = text
                 d.TextColor3 = RLTHEMEDATA['tm'][1]
                 d.TextScaled = true
@@ -4682,18 +4908,18 @@ do
                 new[5] = c
                 new[6] = d
                 
-                tinsert(waypoints, new)
+                tabInsert(waypoints, new)
             end
             
             
             makewp:Connect('Unfocused',function(text) 
-                if (not p_waypoints:IsEnabled()) then p_waypoints:Enable() end
+                if (not p_waypoints:isEnabled()) then p_waypoints:Enable() end
                 
                 for i = 1, #waypoints do
                     local wp = waypoints[i]
                     if (wp[1] == text) then
                         for i = 3, 5 do wp[i]:Destroy() end
-                        tremove(waypoints, i)
+                        tabRemove(waypoints, i)
                         break
                     end
                 end 
@@ -4706,7 +4932,7 @@ do
                     local wp = waypoints[i]
                     if (wp[1] == text) then
                         for i = 3, 5 do wp[i]:Destroy() end
-                        tremove(waypoints, i)
+                        tabRemove(waypoints, i)
                         break
                     end
                 end 
@@ -4716,10 +4942,10 @@ do
                 for i = 1, #waypoints do
                     local wp = waypoints[i]
                     if (wp[1] == text) then
-                        dnec(l_humrp.Changed, 'rp_changed')
-                        dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                        dnec(clientRoot.Changed, 'rp_changed')
+                        dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                         
-                        l_humrp.CFrame = wp[2]
+                        clientRoot.CFrame = wp[2]
                         
                         enec('rp_changed')
                         enec('rp_cframe')
@@ -4733,13 +4959,13 @@ do
                     for i = 3, 5 do wp[i]:Destroy() end
                     waypoints[i] = nil
                 end
-                tclear(waypoints)
+                tabClear(waypoints)
             end)
             
             p_waypoints:Connect('Enabled',function() 
                 waypoints = {}
                 
-                folder = inst_new('Folder')
+                folder = instNew('Folder')
                 folder.Name = getnext()
                 folder.Parent = game.CoreGui
             end)
@@ -4757,49 +4983,49 @@ do
                 
             end)
             
-            deleall:SetTooltip('Deletes all waypoints. Preferable over untoggling and retoggling')
-            makewp:SetTooltip('Makes a waypoint at your position with the name you type in')
-            delewp:SetTooltip('Deletes all waypoints matching the name you type in')
+            deleall:setTooltip('Deletes all waypoints. Preferable over untoggling and retoggling')
+            makewp:setTooltip('Makes a waypoint at your position with the name you type in')
+            delewp:setTooltip('Deletes all waypoints matching the name you type in')
         end
         
-        --p_fancy:SetTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
-        --p_ftools:SetTooltip('Lets you equip and unequip multiple tools at once')
-        --p_gtweaks:SetTooltip('Lets you configure various misc 'forceable' settings like 3rd person, chat, inventories, and more')
-        --p_pathfind:SetTooltip('Pathfinder. Kinda like Baritone')
-        --p_radar:SetTooltip('Radar that displays where other players are')
-        p_animspeed:SetTooltip('Increases the speed of your character animations. May mess with game logic')
-        p_antiafk:SetTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
-        p_anticrash:SetTooltip('Prevents game scripts from while true do end\'ing you. Lets you bypass some clientside anticheats. <i>Doesn\'t work for certain uncommon methods</i>')
-        p_antifling:SetTooltip('Prevents skids from flinging you. Only works on players, not other things like NPCs or in game objects / parts. <i>Doesn\'t work well for some reanimations yet</i>')
-        p_antiwarp:SetTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
-        p_autoclick:SetTooltip('Automatically clicks for you. Can get up to around 2160 CPS (144 fps * 15 clicks p/ frame)')
-        p_flag:SetTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
-        p_flashback:SetTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
-        p_respawn:SetTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
-        p_safemin:SetTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
-        p_waypoints:SetTooltip('Lets you save positions and teleport back to them later')
+        --p_fancy:setTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
+        --p_ftools:setTooltip('Lets you equip and unequip multiple tools at once')
+        --p_gtweaks:setTooltip('Lets you configure various misc 'forceable' settings like 3rd person, chat, inventories, and more')
+        --p_pathfind:setTooltip('Pathfinder. Kinda like Baritone')
+        --p_radar:setTooltip('Radar that displays where other players are')
+        p_animspeed:setTooltip('Increases the speed of your character animations. May mess with game logic')
+        p_antiafk:setTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
+        p_anticrash:setTooltip('Prevents game scripts from while true do end\'ing you. Lets you bypass some clientside anticheats. <i>Doesn\'t work for certain uncommon methods</i>')
+        p_antifling:setTooltip('Prevents skids from flinging you. Only works on players, not other things like NPCs or in game objects / parts. <i>Doesn\'t work well for some reanimations yet</i>')
+        p_antiwarp:setTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
+        p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 2160 CPS (144 fps * 15 clicks p/ frame)')
+        p_flag:setTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
+        p_flashback:setTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
+        p_respawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
+        p_safemin:setTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
+        p_waypoints:setTooltip('Lets you save positions and teleport back to them later')
     end
-    local m_movement = ui:CreateMenu('Movement') do 
-        local m_airjump   = m_movement:AddMod('Air jump')
-        local m_blink     = m_movement:AddMod('Blink')
-        local m_clicktp   = m_movement:AddMod('Click TP')
-        local m_dash      = m_movement:AddMod('Dash')
-        local m_flight    = m_movement:AddMod('Flight')
-        local m_float     = m_movement:AddMod('Float')
-        local m_glide     = m_movement:AddMod('Glide')
-        local m_highjump  = m_movement:AddMod('High jump')
-        local m_noclip    = m_movement:AddMod('Noclip')
-        local m_nofall    = m_movement:AddMod('Nofall')
-        local m_notrip    = m_movement:AddMod('Notrip')
-        local m_parkour   = m_movement:AddMod('Parkour')
-        local m_speed     = m_movement:AddMod('Speed')
-        local m_velocity  = m_movement:AddMod('Velocity')
+    local m_movement = ui:newMenu('Movement') do 
+        local m_airjump   = m_movement:addMod('Air jump')
+        local m_blink     = m_movement:addMod('Blink')
+        local m_clicktp   = m_movement:addMod('Click TP')
+        local m_dash      = m_movement:addMod('Dash')
+        local m_flight    = m_movement:addMod('Flight')
+        local m_float     = m_movement:addMod('Float')
+        local m_glide     = m_movement:addMod('Glide')
+        local m_highjump  = m_movement:addMod('High jump')
+        local m_noclip    = m_movement:addMod('Noclip')
+        local m_nofall    = m_movement:addMod('Nofall')
+        local m_notrip    = m_movement:addMod('Notrip')
+        local m_parkour   = m_movement:addMod('Parkour')
+        local m_speed     = m_movement:addMod('Speed')
+        local m_velocity  = m_movement:addMod('Velocity')
         -- Airjump
         do 
-            local mode = m_airjump:AddDropdown('Mode',true)
-            mode:AddOption('Jump'):SetTooltip('Simply just jumps. If the game has something to prevent jumps, this will not work'):Select()
-            mode:AddOption('Velocity'):SetTooltip('Changes your velocity. Bypasses jump prevention, but this is not as realistic as actually jumping')
-            local velmount = m_airjump:AddSlider('Velocity amount', {min=-100,max=300,cur=70})
+            local mode = m_airjump:addDropdown('Mode',true)
+            mode:addOption('Jump'):setTooltip('Forces a jump. If the game has something to prevent you from jumping, this won\'t work'):Select()
+            mode:addOption('Velocity'):setTooltip('Changes your velocity. Can bypass jump prevention')
+            local velmount = m_airjump:addSlider('Velocity amount', {min=-100,max=300,cur=70})
             
             local vel = 70
             local ajcon
@@ -4808,15 +5034,15 @@ do
             
             m_airjump:Connect('Enabled', function() 
                 if (mode:GetSelection() == 'Jump') then
-                    ajcon = serv_uinput.InputBegan:Connect(function(io, gpe) 
+                    ajcon = servInput.InputBegan:Connect(function(io, gpe) 
                         if (gpe == false and io.KeyCode.Value == 32) then
-                            l_hum:ChangeState(3)
+                            clientHumanoid:ChangeState(3)
                         end
                     end)
                 else
-                    ajcon = serv_uinput.InputBegan:Connect(function(io, gpe) 
+                    ajcon = servInput.InputBegan:Connect(function(io, gpe) 
                         if (gpe == false and io.KeyCode.Value == 32) then
-                            l_humrp.Velocity = vec3(0, vel, 0)
+                            clientRoot.Velocity = vec3(0, vel, 0)
                         end
                     end)
                 end
@@ -4830,34 +5056,28 @@ do
                 m_airjump:Reset()
             end)
             
-            mode:SetTooltip('Mode for Airjump to use')
-            velmount:SetTooltip('What your velocity gets set to when you jump (Velocity mode)')
+            mode:setTooltip('Mode for Airjump to use')
+            velmount:setTooltip('What your velocity gets set to when you jump (Velocity mode)')
         end
         -- Blink
         do 
-            --local methoddd = m_blink:AddDropdown('Method',true)
-            --methoddd:AddOption('Fake'):SetTooltip('Doesn\'t affect your network usage. Simply exploits a roblox glitch to freeze your character'):Select()
-            --methoddd:AddOption('Network'):SetTooltip('Limits your actual network usage. Lags more than just your movement')
-            
-            
-            
             -- Not my method, don't know the original creator
             
             local weld
             local seat
             
             m_blink:Connect('Enabled',function() 
-                local thej = l_humrp.CFrame
+                local thej = clientRoot.CFrame
                 
-                seat = inst_new('Seat')
+                seat = instNew('Seat')
                 seat.Transparency = 1
                 seat.CanTouch = false
                 seat.CanCollide = false
                 seat.CFrame = thej
                 
-                weld = inst_new('Weld')
+                weld = instNew('Weld')
                 weld.Part0 = seat
-                weld.Part1 = l_humrp
+                weld.Part1 = clientRoot
                 weld.Parent = seat
                 
                 seat.Parent = workspace
@@ -4875,43 +5095,43 @@ do
         end
         -- Click tp
         do 
-            local s_TPKey = m_clicktp:AddHotkey('Teleport key'):SetTooltip('The key you have to be holding in order to teleport')
-            local s_Tween = m_clicktp:AddToggle('Tween'):SetTooltip('Tweens you to your mouse instead of teleporting')
-            local s_TweenSpeed = m_clicktp:AddSlider('Tween speed', {min=0,max=50,cur=20,step=0.1}):SetTooltip('Speed of the tween')
+            local s_TPKey = m_clicktp:AddHotkey('Teleport key'):setTooltip('The key you have to be holding in order to teleport')
+            local s_Tween = m_clicktp:addToggle('Tween'):setTooltip('Tweens you to your mouse instead of teleporting')
+            local s_TweenSpeed = m_clicktp:addSlider('Tween speed', {min=0,max=50,cur=20,step=0.1}):setTooltip('Speed of the tween')
             
-            local Tween = s_Tween:GetValue()
-            local TweenSpeed = (s_TweenSpeed:GetValue()*8)+50
-            local TPKey = s_TPKey:GetValue()
+            local Tween = s_Tween:getValue()
+            local TweenSpeed = (s_TweenSpeed:getValue()*9)+50
+            local TPKey = s_TPKey:getValue()
             s_TPKey:Connect('HotkeySet',function(k)
                 TPKey=k;
-                m_clicktp:SetTooltip(('Teleports you to your mouse when you press %s Mouse1'):format(k and k.Name..' + ' or ''))
+                m_clicktp:setTooltip(('Teleports you to your mouse when you press %s Mouse1'):format(k and k.Name..' + ' or ''))
             end)
             s_Tween:Connect('Toggled',function(t)Tween=t;end)
-            s_TweenSpeed:Connect('Changed',function(v)TweenSpeed=(v*8)+50;end)
+            s_TweenSpeed:Connect('Changed',function(v)TweenSpeed=(v*9)+50;end)
             
             
-            s_TPKey:SetHotkey(Enum.KeyCode.LeftControl)
+            s_TPKey:setHotkey(Enum.KeyCode.LeftControl)
             local MouseConnection
             m_clicktp:Connect('Enabled',function() 
                 local offset = vec3(0, 3, 0)
                 
                 local function tp() 
-                    local lv = l_humrp.CFrame.LookVector
-                    local p = l_mouse.Hit.Position + offset
+                    local lv = clientRoot.CFrame.LookVector
+                    local p = clientMouse.Hit.Position + offset
                     
-                    local c = cfnew(p, p+lv)
+                    local c = cfrNew(p, p+lv)
                     if (Tween) then
-                        local dist = (l_humrp.Position - c.Position).Magnitude
-                        ctwn(l_humrp, {CFrame = c}, dist / TweenSpeed, 0, 1)
+                        local dist = (clientRoot.Position - c.Position).Magnitude
+                        ctwn(clientRoot, {CFrame = c}, dist / TweenSpeed, 0, 1)
                     else
-                        l_humrp.CFrame = c
+                        clientRoot.CFrame = c
                     end
                 end
                 
-                MouseConnection = l_mouse.Button1Down:Connect(function() 
+                MouseConnection = clientMouse.Button1Down:Connect(function() 
                     
                     if (TPKey) then
-                        if (serv_uinput:IsKeyDown(TPKey)) then
+                        if (servInput:IsKeyDown(TPKey)) then
                             tp()
                         end
                     else
@@ -4926,17 +5146,17 @@ do
         end
         -- Dash
         do 
-            local s_DashSpeed = m_dash:AddSlider('Speed', {min=100,max=300,cur=150,step=0.1},true):SetTooltip('How much you get boosted')
-            local s_DashSensitivity = m_dash:AddSlider('Tap sensitivity', {min=0.1,max=0.3,cur=0.22,step=0.01}):SetTooltip('The amount of time between button presses that\'s considered a dash')
-            local s_Boost = m_dash:AddToggle('Boost'):SetTooltip('Boosts you up a bit when you dash, lets you go farther without needing to jump')
-            local s_IncludeY = m_dash:AddToggle('Include Y'):SetTooltip('Includes the up axis when dashing, allows you to boost upwards when you look up')
-            local s_Debounce = m_dash:AddToggle('Debounce'):SetTooltip('Adds a delay between dashes, stopping you from going too fast')
+            local s_DashSpeed = m_dash:addSlider('Speed', {min=100,max=300,cur=150,step=0.1},true):setTooltip('How much you get boosted')
+            local s_DashSensitivity = m_dash:addSlider('Tap sensitivity', {min=0.1,max=0.3,cur=0.22,step=0.01}):setTooltip('The amount of time between button presses that\'s considered a dash')
+            local s_Boost = m_dash:addToggle('Boost'):setTooltip('Boosts you up a bit when you dash, lets you go farther without needing to jump')
+            local s_IncludeY = m_dash:addToggle('Include Y'):setTooltip('Includes the up axis when dashing, allows you to boost upwards when you look up')
+            local s_Debounce = m_dash:addToggle('Debounce'):setTooltip('Adds a delay between dashes, stopping you from going too fast')
             
-            local DashSpeed = s_DashSpeed:GetValue()
-            local DashSensitivity = s_DashSensitivity:GetValue()
-            local IncludeY = s_IncludeY:GetValue()
-            local Boost = s_Boost:GetValue()
-            local Debounce = s_Debounce:GetValue()
+            local DashSpeed = s_DashSpeed:getValue()
+            local DashSensitivity = s_DashSensitivity:getValue()
+            local IncludeY = s_IncludeY:getValue()
+            local Boost = s_Boost:getValue()
+            local Debounce = s_Debounce:getValue()
             
             s_DashSpeed:Connect('Changed',function(v)DashSpeed=v;end)
             s_DashSensitivity:Connect('Changed',function(v)DashSensitivity=v;end)
@@ -4971,18 +5191,18 @@ do
                         dbtime = new
                         
                         
-                        local lv = l_cam.CFrame.LookVector.Unit
-                        local rv = l_cam.CFrame.RightVector.Unit
+                        local lv = clientCamera.CFrame.LookVector.Unit
+                        local rv = clientCamera.CFrame.RightVector.Unit
                         
                         local v = ((k == 'W' and lv) or (k == 'S' and -lv) or (k == 'A' and -rv) or (k == 'D' and rv))
                         v = (IncludeY and v or vec3(v.X, 0, v.Z).Unit)
                         v = (Boost and vec3(v.X, v.Y+0.15, v.Z) or v)
                         
-                        l_humrp.Velocity += (v*DashSpeed)
+                        clientRoot.Velocity += (v*DashSpeed)
                     end
                     
                     
-                    input_con = serv_uinput.InputBegan:Connect(function(io, gpe) 
+                    input_con = servInput.InputBegan:Connect(function(io, gpe) 
                         if (gpe) then return end
                         io = io.KeyCode
                         
@@ -5012,24 +5232,24 @@ do
         do 
             local ascend_h = m_flight:AddHotkey('Ascend key')
             local descend_h = m_flight:AddHotkey('Descend key')
-            local mode = m_flight:AddDropdown('Method', true)
-            local turndir = m_flight:AddDropdown('Turn direction')
-            local speedslider = m_flight:AddSlider('Speed',{min=0,max=250,step=0.01,cur=30})
-            local camera = m_flight:AddToggle('Camera-based')
+            local mode = m_flight:addDropdown('Method', true)
+            local turndir = m_flight:addDropdown('Turn direction')
+            local speedslider = m_flight:addSlider('Speed',{min=0,max=250,step=0.01,cur=30})
+            local camera = m_flight:addToggle('Camera-based')
             
             
-            mode:AddOption('Standard'):SetTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
-            mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')
-            mode:AddOption('Vehicle'):SetTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
+            mode:addOption('Standard'):setTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
+            mode:addOption('Smooth'):setTooltip('Just like Standard, but smooth')
+            mode:addOption('Vehicle'):setTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
             
             
-            turndir:AddOption('XYZ'):SetTooltip('Follows the camera\'s direction exactly. <b>This is the normal option you\'d see used for other scripts</b>'):Select()
-            turndir:AddOption('XZ'):SetTooltip('Follows the camera\'s direction on all axes but Y')
-            turndir:AddOption('Up'):SetTooltip('Faces straight up, useful for carrying players')
-            turndir:AddOption('Down'):SetTooltip('I really hope you can figure this one out')
+            turndir:addOption('XYZ'):setTooltip('Follows the camera\'s direction exactly. <b>This is the normal option you\'d see used for other scripts</b>'):Select()
+            turndir:addOption('XZ'):setTooltip('Follows the camera\'s direction on all axes but Y')
+            turndir:addOption('Up'):setTooltip('Faces straight up, useful for carrying players')
+            turndir:addOption('Down'):setTooltip('I really hope you can figure this one out')
             
-            local fi1 -- flight inst_new 1 
-            local fi2 -- flight inst_new 2  
+            local fi1 -- flight instNew 1 
+            local fi2 -- flight instNew 2  
             local fcon -- flight connection
             
             
@@ -5061,12 +5281,12 @@ do
             
             
             m_flight:Connect('Enabled', function()
-                clv = l_cam.CFrame.LookVector 
+                clv = clientCamera.CFrame.LookVector 
                 normclv = clv
                 
-                dnec(l_humrp.Changed, 'rp_changed')
-                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
-                dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                dnec(clientRoot.Changed, 'rp_changed')
+                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
                 local curmod = mode:GetSelection()
                 local curturn = turndir:GetSelection()
@@ -5075,27 +5295,27 @@ do
                 
                 
                 if (curturn == 'XYZ') then 
-                    clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
-                        normclv = l_cam.CFrame.LookVector
+                    clvcon = clientCamera:GetPropertyChangedSignal('CFrame'):Connect(function() 
+                        normclv = clientCamera.CFrame.LookVector
                         clv = normclv
                     end)
                 elseif (curturn == 'XZ') then
-                    clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
-                        normclv = l_cam.CFrame.LookVector
+                    clvcon = clientCamera:GetPropertyChangedSignal('CFrame'):Connect(function() 
+                        normclv = clientCamera.CFrame.LookVector
                         clv = vec3(normclv.X, 0, normclv.Z)
                     end)
                 elseif (curturn == 'Up') then
                     if (cambased) then
-                        clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
-                            normclv = l_cam.CFrame.LookVector
+                        clvcon = clientCamera:GetPropertyChangedSignal('CFrame'):Connect(function() 
+                            normclv = clientCamera.CFrame.LookVector
                         end)
                     end
                     
                     clv = upp
                 elseif (curturn == 'Down') then
                     if (cambased) then
-                        clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
-                            normclv = l_cam.CFrame.LookVector
+                        clvcon = clientCamera:GetPropertyChangedSignal('CFrame'):Connect(function() 
+                            normclv = clientCamera.CFrame.LookVector
                         end)
                     end
                     
@@ -5103,26 +5323,26 @@ do
                 end
                 
                 if (curmod == 'Standard') then
-                    local base = l_humrp.CFrame
+                    local base = clientRoot.CFrame
                     
                     
                     if (cambased) then
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
-                            local IsForwardPressed = serv_uinput:IsKeyDown(119)
-                            local IsBackwardPressed = serv_uinput:IsKeyDown(115)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
+                            local IsForwardPressed = servInput:IsKeyDown(119)
+                            local IsBackwardPressed = servInput:IsKeyDown(115)
                             
                             -- Keep character frozen
-                            l_hum:ChangeState(1)
-                            l_humrp.Velocity = nonep
+                            clientHumanoid:ChangeState(1)
+                            clientRoot.Velocity = nonep
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
@@ -5134,23 +5354,23 @@ do
                             base += Vector
                             
                             local Position = base.Position
-                            l_humrp.CFrame = cfnew(Position, Position + clv)
+                            clientRoot.CFrame = cfrNew(Position, Position + clv)
                         end)
                     else
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
                             
                             -- Keep character frozen
-                            l_hum:ChangeState(1)
-                            l_humrp.Velocity = nonep
+                            clientHumanoid:ChangeState(1)
+                            clientRoot.Velocity = nonep
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = (
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) -- If down is presed
@@ -5159,13 +5379,13 @@ do
                             base += Vector
                             
                             local Position = base.Position
-                            l_humrp.CFrame = cfnew(Position, Position + clv)
+                            clientRoot.CFrame = cfrNew(Position, Position + clv)
                         end)
                     end
                 elseif (curmod == 'Smooth') then
-                    local base = l_humrp.CFrame
+                    local base = clientRoot.CFrame
                     
-                    fi1 = inst_new('Part')
+                    fi1 = instNew('Part')
                     fi1.CFrame = base
                     fi1.Transparency = 1
                     fi1.CanCollide = false
@@ -5174,35 +5394,35 @@ do
                     fi1.Size = vec3(1, 1, 1)
                     fi1.Parent = workspace
                     
-                    local pos = inst_new('BodyPosition')
+                    local pos = instNew('BodyPosition')
                     pos.Position = base.Position
                     pos.D = 1900
                     pos.P = 125000
                     pos.MaxForce = vec3(9e9, 9e9, 9e9)
                     pos.Parent = fi1
-                    local gyro = inst_new('BodyGyro')
+                    local gyro = instNew('BodyGyro')
                     gyro.D = 1900
                     gyro.P = 125000
                     gyro.MaxTorque = vec3(9e9, 9e9, 9e9)
                     gyro.Parent = fi1
                     
                     if (cambased) then
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
-                            local IsForwardPressed = serv_uinput:IsKeyDown(119)
-                            local IsBackwardPressed = serv_uinput:IsKeyDown(115)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
+                            local IsForwardPressed = servInput:IsKeyDown(119)
+                            local IsBackwardPressed = servInput:IsKeyDown(115)
                             
                             -- Keep character frozen
-                            l_hum:ChangeState(1)
-                            l_humrp.Velocity = nonep
+                            clientHumanoid:ChangeState(1)
+                            clientRoot.Velocity = nonep
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
@@ -5215,24 +5435,24 @@ do
                             
                             local Position = base.Position
                             pos.Position = Position
-                            gyro.CFrame = cfnew(Position, Position + clv)
-                            l_humrp.CFrame = fi1.CFrame   
+                            gyro.CFrame = cfrNew(Position, Position + clv)
+                            clientRoot.CFrame = fi1.CFrame   
                         end)
                     else
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
                             
                             -- Keep character frozen
-                            l_hum:ChangeState(1)
-                            l_humrp.Velocity = nonep
+                            clientHumanoid:ChangeState(1)
+                            clientRoot.Velocity = nonep
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = (
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) -- If down is presed
@@ -5242,45 +5462,45 @@ do
                             
                             local Position = base.Position
                             pos.Position = Position
-                            gyro.CFrame = cfnew(Position, Position + clv)
-                            l_humrp.CFrame = fi1.CFrame                   
+                            gyro.CFrame = cfrNew(Position, Position + clv)
+                            clientRoot.CFrame = fi1.CFrame                   
                         end)
                     end
                 elseif (curmod == 'Vehicle') then
-                    local base = l_humrp.CFrame
+                    local base = clientRoot.CFrame
                     
-                    dnec(l_humrp.ChildAdded, 'rp_child')
-                    dnec(l_humrp.DescendantAdded, 'rp_desc')
-                    dnec(l_chr.DescendantAdded, 'chr_desc')
+                    dnec(clientRoot.ChildAdded, 'rp_child')
+                    dnec(clientRoot.DescendantAdded, 'rp_desc')
+                    dnec(clientChar.DescendantAdded, 'chr_desc')
                     
-                    fi1 = inst_new('BodyPosition')
+                    fi1 = instNew('BodyPosition')
                     fi1.Position = base.Position
                     fi1.D = 1900
                     fi1.P = 125000
                     fi1.MaxForce = vec3(9e9, 9e9, 9e9)
-                    fi1.Parent = l_humrp
+                    fi1.Parent = clientRoot
                     
-                    fi2 = inst_new('BodyGyro')
+                    fi2 = instNew('BodyGyro')
                     fi2.D = 1900
                     fi2.P = 125000
                     fi2.MaxTorque = vec3(9e9, 9e9, 9e9)
-                    fi2.Parent = l_humrp
+                    fi2.Parent = clientRoot
                     
                     
                     if (cambased) then
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
-                            local IsForwardPressed = serv_uinput:IsKeyDown(119)
-                            local IsBackwardPressed = serv_uinput:IsKeyDown(115)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
+                            local IsForwardPressed = servInput:IsKeyDown(119)
+                            local IsBackwardPressed = servInput:IsKeyDown(115)
                             
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
@@ -5293,22 +5513,22 @@ do
                             
                             local Position = base.Position
                             fi1.Position = Position
-                            fi2.CFrame = cfnew(Position, Position + clv)
+                            fi2.CFrame = cfrNew(Position, Position + clv)
                             
-                            l_cam.CameraSubject = l_hum
+                            clientCamera.CameraSubject = clientHumanoid
                         end)
                     else
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
                             
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) -- If down is pressed
@@ -5318,9 +5538,9 @@ do
                             
                             local Position = base.Position
                             fi1.Position = Position
-                            fi2.CFrame = cfnew(Position, Position + clv)      
+                            fi2.CFrame = cfrNew(Position, Position + clv)      
                             
-                            l_cam.CameraSubject = l_hum
+                            clientCamera.CameraSubject = clientHumanoid
                         end)
                     end
                 end
@@ -5332,13 +5552,13 @@ do
                 if (fi1) then fi1:Destroy() fi1 = nil end
                 if (fi2) then 
                     if (fi2.ClassName ~= 'BodyGyro') then
-                        l_hum:ChangeState(8)
+                        clientHumanoid:ChangeState(8)
                     end
                     
                     fi2:Destroy() 
                     fi2 = nil 
                 else
-                    l_hum:ChangeState(8)
+                    clientHumanoid:ChangeState(8)
                 end
                 
                 
@@ -5352,20 +5572,20 @@ do
             end)
             
             
-            ascend_h:SetTooltip('When pressed you vertically ascend (move up)'):SetHotkey(Enum.KeyCode.E)
-            descend_h:SetTooltip('When pressed you vertically descend (move down)'):SetHotkey(Enum.KeyCode.Q)
-            mode:SetTooltip('The method Flight uses')
-            speedslider:SetTooltip('The speed of your flight')
-            camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>This is the normal option you\'d see used for other scripts</b>')
-            turndir:SetTooltip('The direction your character faces')
+            ascend_h:setTooltip('When pressed you vertically ascend (move up)'):setHotkey(Enum.KeyCode.E)
+            descend_h:setTooltip('When pressed you vertically descend (move down)'):setHotkey(Enum.KeyCode.Q)
+            mode:setTooltip('The method Flight uses')
+            speedslider:setTooltip('The speed of your flight')
+            camera:setTooltip('When enabled, the direction of your camera affects your Y movement. <b>This is the normal option you\'d see used for other scripts</b>')
+            turndir:setTooltip('The direction your character faces')
         end
         -- Float
         do 
-            local mode = m_float:AddDropdown('Mode'):SetTooltip('What method Float will use')
-            mode:AddOption('Undetectable'):SetTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s undetectable'):Select()
-            mode:AddOption('Velocity'):SetTooltip('Uses a bodymover. Has better results, but is easier to detect')
+            local mode = m_float:addDropdown('Mode'):setTooltip('What method Float will use')
+            mode:addOption('Undetectable'):setTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s undetectable'):Select()
+            mode:addOption('Velocity'):setTooltip('Uses a bodymover. Has better results, but is easier to detect')
             
-            local vel = m_float:AddSlider('Velocity',{min=-10,cur=0,max=10,step=0.1}):SetTooltip('The amount of velocity you\'ll have when floating')
+            local vel = m_float:addSlider('Velocity',{min=-10,cur=0,max=10,step=0.1}):setTooltip('The amount of velocity you\'ll have when floating')
             local amnt = 0
             
             vel:Connect('Changed',a)
@@ -5385,20 +5605,20 @@ do
             m_float:Connect('Enabled',function() 
                 local mode = mode:GetSelection()
                 if (mode == 'Undetectable') then
-                    fcon = serv_run.Heartbeat:Connect(function() 
-                        local vel = l_humrp.Velocity
+                    fcon = servRun.Heartbeat:Connect(function() 
+                        local vel = clientRoot.Velocity
                         
-                        l_humrp.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
+                        clientRoot.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
                     end)
                 elseif (mode == 'Velocity') then
-                    dnec(l_humrp.ChildAdded, 'rp_child')
-                    dnec(l_humrp.DescendantAdded, 'rp_desc')
-                    dnec(l_chr.DescendantAdded, 'chr_desc')
+                    dnec(clientRoot.ChildAdded, 'rp_child')
+                    dnec(clientRoot.DescendantAdded, 'rp_desc')
+                    dnec(clientChar.DescendantAdded, 'chr_desc')
                     
-                    finst = inst_new('BodyVelocity')
+                    finst = instNew('BodyVelocity')
                     finst.MaxForce = vec3(0, 9e9, 0)
-                    finst.Velocity = vec3(0, vel:GetValue(), 0)
-                    finst.Parent = l_humrp
+                    finst.Velocity = vec3(0, vel:getValue(), 0)
+                    finst.Parent = clientRoot
                     
                     vel:Connect('Changed',b)
                 end
@@ -5417,20 +5637,20 @@ do
         end
         -- Glide
         do 
-            local s_Amount = m_glide:AddSlider('Glide amount',{min=-25,max=-1,step=0.1,cur=-5},true):SetTooltip('How much your downwards velocity gets limited to')
-            local Amount = s_Amount:GetValue()
+            local s_Amount = m_glide:addSlider('Glide amount',{min=-25,max=-1,step=0.1,cur=-5},true):setTooltip('How much your downwards velocity gets limited to')
+            local Amount = s_Amount:getValue()
             
             s_Amount:Connect('Changed',function(v)Amount=v;end)
             
             
             local GlideCon
             m_glide:Connect('Enabled',function() 
-                dnec(l_humrp.Changed, 'rp_changed')
-                dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                dnec(clientRoot.Changed, 'rp_changed')
+                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
-                GlideCon = serv_run.Heartbeat:Connect(function() 
-                    local vel = l_humrp.Velocity
-                    l_humrp.Velocity = vec3(vel.X, mclamp(vel.Y, Amount, 9e9), vel.Z)
+                GlideCon = servRun.Heartbeat:Connect(function() 
+                    local vel = clientRoot.Velocity
+                    clientRoot.Velocity = vec3(vel.X, mathClamp(vel.Y, Amount, 9e9), vel.Z)
                 end)
             end)
             m_glide:Connect('Disabled',function() 
@@ -5442,13 +5662,13 @@ do
         end
         -- High jump
         do 
-            local s_Mode = m_highjump:AddDropdown('Method',true):SetTooltip('The method Highjump uses')
-            s_Mode:AddOption('Velocity'):SetTooltip('Increases your vertical velocity when you jump'):Select()
-            s_Mode:AddOption('JumpPower'):SetTooltip('Changes your characters JumpPower property. Is easily detectable, so don\'t use this unless you know what you\'re doing') 
+            local s_Mode = m_highjump:addDropdown('Method',true):setTooltip('The method Highjump uses')
+            s_Mode:addOption('Velocity'):setTooltip('Increases your vertical velocity when you jump'):Select()
+            s_Mode:addOption('JumpPower'):setTooltip('Changes your characters JumpPower property. Is easily detectable, so don\'t use this unless you know what you\'re doing') 
             
-            local s_Amount = m_highjump:AddSlider('Amount',{min=50,max=300,cur=75,step=0.1},true):SetTooltip('How much your jumps get boosted')
+            local s_Amount = m_highjump:addSlider('Amount',{min=50,max=300,cur=75,step=0.1},true):setTooltip('How much your jumps get boosted')
             
-            local Amount = s_Amount:GetValue()
+            local Amount = s_Amount:getValue()
             
             s_Mode:Connect('Changed',function()m_highjump:Reset()end)
             s_Amount:Connect('Changed',function(v)Amount=v;end)
@@ -5459,21 +5679,21 @@ do
             
             m_highjump:Connect('Enabled', function() 
                 if (s_Mode:GetSelection() == 'Velocity') then
-                    JumpCon = l_hum.StateChanged:Connect(function(old, new) 
+                    JumpCon = clientHumanoid.StateChanged:Connect(function(old, new) 
                         if (new.Value == 3) then
-                            l_humrp.Velocity += vec3(0, Amount, 0)
+                            clientRoot.Velocity += vec3(0, Amount, 0)
                         end
                     end)
                 else
-                    OldJumpPow = l_hum.JumpPower
-                    OldUseJP = l_hum.UseJumpPower
+                    OldJumpPow = clientHumanoid.JumpPower
+                    OldUseJP = clientHumanoid.UseJumpPower
                     
-                    dnec(l_hum:GetPropertyChangedSignal('JumpPower'), 'hum_jp')
-                    dnec(l_hum:GetPropertyChangedSignal('UseJumpPower'), 'hum_ujp')
+                    dnec(clientHumanoid:GetPropertyChangedSignal('JumpPower'), 'hum_jp')
+                    dnec(clientHumanoid:GetPropertyChangedSignal('UseJumpPower'), 'hum_ujp')
                     
-                    JumpCon = serv_run.Heartbeat:Connect(function() 
-                        l_hum.UseJumpPower = true
-                        l_hum.JumpPower = Amount
+                    JumpCon = servRun.Heartbeat:Connect(function() 
+                        clientHumanoid.UseJumpPower = true
+                        clientHumanoid.JumpPower = Amount
                     end)
                 end
             end)
@@ -5481,8 +5701,8 @@ do
                 if (JumpCon) then JumpCon:Disconnect() JumpCon = nil end
                 
                 if (OldJumpPow) then
-                    l_hum.JumpPower = OldJumpPow
-                    l_hum.UseJumpPower = OldUseJP
+                    clientHumanoid.JumpPower = OldJumpPow
+                    clientHumanoid.UseJumpPower = OldUseJP
                     OldJumpPow = nil
                     OldUseJP = nil
                 end
@@ -5493,15 +5713,15 @@ do
         end
         -- Noclip
         do 
-            local s_Mode = m_noclip:AddDropdown('Method', true):SetTooltip('The method Noclip uses')
-            s_Mode:AddOption('Standard'):SetTooltip('The average CanCollide noclip'):Select()
-            s_Mode:AddOption('Legacy'):SetTooltip('Emulates the older HumanoidState noclip (Just standard, but with a float effect)')
-            s_Mode:AddOption('Teleport'):SetTooltip('Teleports you through walls')
-            s_Mode:AddOption('Bypass'):SetTooltip('May bypass certain serverside anticheats that rely on the direction you\'re facing')
+            local s_Mode = m_noclip:addDropdown('Method', true):setTooltip('The method Noclip uses')
+            s_Mode:addOption('Standard'):setTooltip('The average CanCollide noclip'):Select()
+            s_Mode:addOption('Legacy'):setTooltip('Emulates the older HumanoidState noclip (Just standard, but with a float effect)')
+            s_Mode:addOption('Teleport'):setTooltip('Teleports you through walls')
+            s_Mode:addOption('Bypass'):setTooltip('May bypass certain serverside anticheats that rely on the direction you\'re facing')
             
-            local s_LookAhead = m_noclip:AddSlider('Lookahead',{min=2,cur=4,max=15,step=0.1}):SetTooltip('The amount of distance between a wall Teleport will consider noclipping')
+            local s_LookAhead = m_noclip:addSlider('Lookahead',{min=2,cur=4,max=15,step=0.1}):setTooltip('The amount of distance between a wall Teleport will consider noclipping')
             
-            local LookAhead = s_LookAhead:GetValue()
+            local LookAhead = s_LookAhead:getValue()
             s_LookAhead:Connect('Changed',function(v) LookAhead = v end)
             
             
@@ -5509,7 +5729,7 @@ do
             local Con_Step
             
             local p = RaycastParams.new()
-            p.FilterDescendantsInstances = {l_chr}
+            p.FilterDescendantsInstances = {clientChar}
             p.FilterType = Enum.RaycastFilterType.Blacklist
             
             s_Mode:Connect('Changed',function()m_noclip:Reset()end)
@@ -5517,33 +5737,33 @@ do
             local loopid
             
             m_noclip:Connect('Enabled', function() 
-                loopid = mrandom(1,999999)
+                loopid = mathRand(1,999999)
                 local mode = s_Mode:GetSelection()
                 
                 if (mode == 'Standard') then
                     local NoclipObjects = {}
                     
-                    local c = l_chr:GetChildren()
+                    local c = clientChar:GetChildren()
                     for i = 1, #c do
                         local obj = c[i]
                         if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                        tinsert(NoclipObjects, obj)
+                        tabInsert(NoclipObjects, obj)
                     end
                     
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function(chr) 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function(chr) 
                         wait(0.15)
                         
-                        tclear(NoclipObjects)
-                        local c = l_chr:GetChildren()
+                        tabClear(NoclipObjects)
+                        local c = clientChar:GetChildren()
                         for i = 1, #c do
                             local obj = c[i]
                             if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                            tinsert(NoclipObjects, obj)
+                            tabInsert(NoclipObjects, obj)
                         end
                     end)
                     
-                    Con_Step = serv_run.Stepped:Connect(function() 
+                    Con_Step = servRun.Stepped:Connect(function() 
                         for i = 1, #NoclipObjects do 
                             NoclipObjects[i].CanCollide = false 
                         end
@@ -5552,29 +5772,29 @@ do
                 elseif (mode == 'Legacy') then
                     local NoclipObjects = {}
                     
-                    local c = l_chr:GetChildren()
+                    local c = clientChar:GetChildren()
                     for i = 1, #c do
                         local obj = c[i]
                         if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                        tinsert(NoclipObjects, obj)
+                        tabInsert(NoclipObjects, obj)
                     end
                     
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function(chr) 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function(chr) 
                         wait(0.15)
                         
-                        tclear(NoclipObjects)
-                        local c = l_chr:GetChildren()
+                        tabClear(NoclipObjects)
+                        local c = clientChar:GetChildren()
                         for i = 1, #c do
                             local obj = c[i]
                             if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                            tinsert(NoclipObjects, obj)
+                            tabInsert(NoclipObjects, obj)
                         end
                     end)
                     
-                    Con_Step = serv_run.Stepped:Connect(function() 
-                        local vel = l_humrp.Velocity
-                        l_humrp.Velocity = vec3(vel.X, 0.3, vel.Z)
+                    Con_Step = servRun.Stepped:Connect(function() 
+                        local vel = clientRoot.Velocity
+                        clientRoot.Velocity = vec3(vel.X, 0.3, vel.Z)
                         for i = 1, #NoclipObjects do 
                             NoclipObjects[i].CanCollide = false 
                         end
@@ -5582,67 +5802,67 @@ do
                 
                 elseif (mode == 'Teleport') then
                     local p = RaycastParams.new()
-                    p.FilterDescendantsInstances = {l_chr}
+                    p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function(c) 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function(c) 
                         p.FilterDescendantsInstances = {c}
                     end)
                     
-                    dnec(l_humrp.Changed, 'rp_changed')
-                    dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    dnec(clientRoot.Changed, 'rp_changed')
+                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function() 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function() 
                         m_noclip:Reset()
                     end)
                     
-                    Con_Step = serv_run.Heartbeat:Connect(function() 
-                        local c = l_humrp.CFrame
+                    Con_Step = servRun.Heartbeat:Connect(function() 
+                        local c = clientRoot.CFrame
                         local lv = c.LookVector
                         c = c.Position
-                        local m = l_hum.MoveDirection.Unit
+                        local m = clientHumanoid.MoveDirection.Unit
                         
                         local j = workspace:Raycast(c, m*LookAhead, p)
                         if (j) then
                             local t = j.Position + (m * (j.Distance/2))
                             
-                            l_humrp.CFrame = cfnew(t, t + lv)
+                            clientRoot.CFrame = cfrNew(t, t + lv)
                         end
                     end)
                 elseif (mode == 'Bypass') then
                     local p = RaycastParams.new()
-                    p.FilterDescendantsInstances = {l_chr}
+                    p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function(c) 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function(c) 
                         p.FilterDescendantsInstances = {c}
                     end)
                     
-                    dnec(l_humrp.Changed, 'rp_changed')
-                    dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    dnec(clientRoot.Changed, 'rp_changed')
+                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     
                     
                     
-                    Con_Respawn = l_plr.CharacterAdded:Connect(function() 
+                    Con_Respawn = clientPlayer.CharacterAdded:Connect(function() 
                         m_noclip:Reset()
                     end)
                     
                     local lid = loopid
                     spawn(function()
-                        while m_noclip:IsEnabled() and lid == loopid do
-                            local c = l_humrp.CFrame
+                        while m_noclip:isEnabled() and lid == loopid do
+                            local c = clientRoot.CFrame
                             local lv = c.LookVector
                             c = c.Position
-                            local m = l_hum.MoveDirection.Unit
+                            local m = clientHumanoid.MoveDirection.Unit
                             
                             local j = workspace:Raycast(c, m*LookAhead, p)
                             if (j) then
-                                l_humrp.CFrame = cfnew(c, c - lv)
-                                l_humrp.Anchored = true
+                                clientRoot.CFrame = cfrNew(c, c - lv)
+                                clientRoot.Anchored = true
                                 wait(0.1) 
-                                l_humrp.Anchored = false
+                                clientRoot.Anchored = false
                                 local t = j.Position + (m * (j.Distance/2))
-                                l_humrp.CFrame = cfnew(t, t + lv)
+                                clientRoot.CFrame = cfrNew(t, t + lv)
                             end
                             wait()
                         end
@@ -5669,18 +5889,18 @@ do
         end
         -- Nofall
         do 
-            local s_Mode = m_nofall:AddDropdown('Mode', true):SetTooltip('The method Nofall uses')
-            s_Mode:AddOption('Drop'):SetTooltip('Instantly teleports you down once you start falling. Works in games like Natural Disaster Survival'):Select()
-            s_Mode:AddOption('Decelerate'):SetTooltip('Slows you down before you hit the ground. Doesn\'t work very well, but atleast its here')
-            s_Mode:AddOption('Boost'):SetTooltip('Boosts you up a bit before you hit the ground')
+            local s_Mode = m_nofall:addDropdown('Mode', true):setTooltip('The method Nofall uses')
+            s_Mode:addOption('Drop'):setTooltip('Instantly teleports you down once you start falling. Works in games like Natural Disaster Survival'):Select()
+            s_Mode:addOption('Decelerate'):setTooltip('Slows you down before you hit the ground. Doesn\'t work very well, but atleast its here')
+            s_Mode:addOption('Boost'):setTooltip('Boosts you up a bit before you hit the ground')
             
-            local s_BoostSens = m_nofall:AddSlider('Sensitivity (Boost)',{min=30,max=300,cur=100,step=0.1}):SetTooltip('How fast you need to be falling before Boost can boost you')
-            local s_DropSens = m_nofall:AddSlider('Sensitivity (Drop)',{min=5,max=50,cur=10,step=0.1}):SetTooltip('How high up you have to be above the ground before Drop will teleport you')
-            local s_DecelSens = m_nofall:AddSlider('Sensitivity (Decelerate)',{min=1,max=20,cur=10,step=0.1}):SetTooltip('How close you have to be to the ground before Decelerate will start slowing your fall')
+            local s_BoostSens = m_nofall:addSlider('Sensitivity (Boost)',{min=30,max=300,cur=100,step=0.1}):setTooltip('How fast you need to be falling before Boost can boost you')
+            local s_DropSens = m_nofall:addSlider('Sensitivity (Drop)',{min=5,max=50,cur=10,step=0.1}):setTooltip('How high up you have to be above the ground before Drop will teleport you')
+            local s_DecelSens = m_nofall:addSlider('Sensitivity (Decelerate)',{min=1,max=20,cur=10,step=0.1}):setTooltip('How close you have to be to the ground before Decelerate will start slowing your fall')
             
-            local BoostSens = -(s_BoostSens:GetValue())
-            local DropSens = s_DropSens:GetValue()
-            local DecelSens = s_DecelSens:GetValue()
+            local BoostSens = -(s_BoostSens:getValue())
+            local DropSens = s_DropSens:getValue()
+            local DecelSens = s_DecelSens:getValue()
             
             s_BoostSens:Connect('Changed',function(v)BoostSens=-v;end)
             s_DecelSens:Connect('Changed',function(v)DecelSens=v;end)
@@ -5699,51 +5919,51 @@ do
                 
                 local CurrentMode = s_Mode:GetSelection()
                 if (CurrentMode == 'Drop') then
-                    dnec(l_humrp.Changed, 'rp_changed')
-                    dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    dnec(clientRoot.Changed, 'rp_changed')
+                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     local down = vec3(0, -1000000, 0)
                     local p = RaycastParams.new()
-                    p.FilterDescendantsInstances = {l_chr}
+                    p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
                     
-                    plrcon = l_plr.CharacterAdded:Connect(function(c) 
+                    plrcon = clientPlayer.CharacterAdded:Connect(function(c) 
                         p.FilterDescendantsInstances = {c}
                     end)
                     
                     
-                    rcon = serv_run.Heartbeat:Connect(function() 
-                        local j = workspace:Raycast(l_humrp.Position, down, p)
+                    rcon = servRun.Heartbeat:Connect(function() 
+                        local j = workspace:Raycast(clientRoot.Position, down, p)
                         if (j and j.Distance > DropSens) then
-                            local hv = l_humrp.Velocity
+                            local hv = clientRoot.Velocity
                             
                             if (hv.Y < 0) then
                                 local p = j.Position
-                                l_humrp.CFrame = cfnew(p, p + l_humrp.CFrame.LookVector)
-                                l_humrp.Velocity = vec3(hv.X, 20, hv.Z)
+                                clientRoot.CFrame = cfrNew(p, p + clientRoot.CFrame.LookVector)
+                                clientRoot.Velocity = vec3(hv.X, 20, hv.Z)
                             end
                         end
                     end)
                 elseif (CurrentMode == 'Decelerate') then
-                    dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
-                    dnec(l_humrp.Changed, 'rp_changed')
+                    dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                    dnec(clientRoot.Changed, 'rp_changed')
                     
                     local down = vec3(0, -1000000, 0)
                     local p = RaycastParams.new()
-                    p.FilterDescendantsInstances = {l_chr}
+                    p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
                     
-                    plrcon = l_plr.CharacterAdded:Connect(function(c) 
+                    plrcon = clientPlayer.CharacterAdded:Connect(function(c) 
                         p.FilterDescendantsInstances = {c}
                     end)
                     
                     
-                    rcon = serv_run.Heartbeat:Connect(function(dt) 
-                        local j = workspace:Raycast(l_humrp.Position, down, p)
+                    rcon = servRun.Heartbeat:Connect(function(dt) 
+                        local j = workspace:Raycast(clientRoot.Position, down, p)
                         if (j and j.Distance < DecelSens) then
-                            local hv = l_humrp.Velocity
+                            local hv = clientRoot.Velocity
                             local y = hv.Y
                             if (y < -5) then
-                                l_humrp.Velocity = vec3(hv.X, y * 0.7, hv.Z)
+                                clientRoot.Velocity = vec3(hv.X, y * 0.7, hv.Z)
                             end
                         end
                     end)
@@ -5751,22 +5971,22 @@ do
                     local holding = false
                     local down = vec3(0, -1000000, 0)
                     local p = RaycastParams.new()
-                    p.FilterDescendantsInstances = {l_chr}
+                    p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
                     
-                    plrcon = l_plr.CharacterAdded:Connect(function(c) 
+                    plrcon = clientPlayer.CharacterAdded:Connect(function(c) 
                         p.FilterDescendantsInstances = {c}
                     end)
                     
-                    rcon = serv_run.Heartbeat:Connect(function()
+                    rcon = servRun.Heartbeat:Connect(function()
                         if (holding) then return end
-                        local j = workspace:Raycast(l_humrp.Position, down, p)
+                        local j = workspace:Raycast(clientRoot.Position, down, p)
                         
                         if (j and j.Distance < 8) then
-                            local hv = l_humrp.Velocity
+                            local hv = clientRoot.Velocity
                             
                             if (hv.Y < BoostSens) then
-                                l_humrp.Velocity = vec3(hv.X, 30, hv.Z)
+                                clientRoot.Velocity = vec3(hv.X, 30, hv.Z)
                                 
                                 holding = true
                                 delay(0.5, function()
@@ -5799,11 +6019,11 @@ do
                     h:SetStateEnabled(1, false)
                     h:SetStateEnabled(16, false)
                 end
-                if (l_hum) then
-                    hook(l_hum)
+                if (clientHumanoid) then
+                    hook(clientHumanoid)
                 end
                 
-                Con_Respawn = l_plr.CharacterAdded:Connect(function(c) 
+                Con_Respawn = clientPlayer.CharacterAdded:Connect(function(c) 
                     local hum = c:WaitForChild('Humanoid',5)
                     hook(hum)
                 end)
@@ -5811,16 +6031,16 @@ do
             m_notrip:Connect('Disabled',function() 
                 Con_Respawn:Disconnect()
                 
-                if (l_hum) then
-                    l_hum:SetStateEnabled(0, true)
-                    l_hum:SetStateEnabled(1, true)
-                    l_hum:SetStateEnabled(16, true) 
+                if (clientHumanoid) then
+                    clientHumanoid:SetStateEnabled(0, true)
+                    clientHumanoid:SetStateEnabled(1, true)
+                    clientHumanoid:SetStateEnabled(16, true) 
                 end
             end)
         end
         -- Parkour
         do 
-            local delayslid = m_parkour:AddSlider('Delay before jumping',{min=0,max=0.2,cur=0,step=0.01}):SetTooltip('How long to wait before jumping')
+            local delayslid = m_parkour:addSlider('Delay before jumping',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('How long to wait before jumping')
             local delay = 0
             local humcon
             
@@ -5829,15 +6049,15 @@ do
             m_parkour:Connect('Toggled',function(t) 
                 if (t) then
                     local a = Enum.Material.Air
-                    humcon = l_hum:GetPropertyChangedSignal('FloorMaterial'):Connect(function() 
-                        if (l_hum.FloorMaterial == a) then
+                    humcon = clientHumanoid:GetPropertyChangedSignal('FloorMaterial'):Connect(function() 
+                        if (clientHumanoid.FloorMaterial == a) then
                             if (delay == 0) then
-                                if (l_hum.Jump) then return end
-                                l_hum:ChangeState(3)
+                                if (clientHumanoid.Jump) then return end
+                                clientHumanoid:ChangeState(3)
                             else
                                 wait(delay)
-                                if (l_hum.Jump) then return end
-                                l_hum:ChangeState(3)
+                                if (clientHumanoid.Jump) then return end
+                                clientHumanoid:ChangeState(3)
                             end
                         end
                     end)
@@ -5849,14 +6069,14 @@ do
         end
         -- Speed
         do 
-            local mode = m_speed:AddDropdown('Mode',true)
-            mode:AddOption('Standard'):SetTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
-            mode:AddOption('Velocity'):SetTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
-            mode:AddOption('Bhop'):SetTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
-            mode:AddOption('Part'):SetTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
-            mode:AddOption('WalkSpeed'):SetTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. Use Standard instead.</b></font>')
+            local mode = m_speed:addDropdown('Mode',true)
+            mode:addOption('Standard'):setTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
+            mode:addOption('Velocity'):setTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
+            mode:addOption('Bhop'):setTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
+            mode:addOption('Part'):setTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
+            mode:addOption('WalkSpeed'):setTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. Use Standard instead.</b></font>')
             
-            local speedslider = m_speed:AddSlider('Speed',{min=0,max=100,cur=30,step=0.01})
+            local speedslider = m_speed:addSlider('Speed',{min=0,max=100,cur=30,step=0.01})
             local speed = 30
             speedslider:Connect('Changed',function(v)speed=v;end)
             local part
@@ -5865,31 +6085,31 @@ do
             m_speed:Connect('Enabled',function() 
                 local mode = mode:GetSelection()
                 
-                dnec(l_hum.Changed, 'hum_changed')
-                dnec(l_hum:GetPropertyChangedSignal('Jump'), 'hum_jump')
-                dnec(l_humrp.Changed, 'rp_changed')
-                dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
-                dnec(l_humrp:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                dnec(clientHumanoid.Changed, 'hum_changed')
+                dnec(clientHumanoid:GetPropertyChangedSignal('Jump'), 'hum_jump')
+                dnec(clientRoot.Changed, 'rp_changed')
+                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
                 if (scon) then scon:Disconnect() scon = nil end
                 
                 if (mode == 'Standard') then
-                    scon = serv_run.Heartbeat:Connect(function(dt) 
-                        l_humrp.CFrame += l_hum.MoveDirection * (5 * dt * speed)
+                    scon = servRun.Heartbeat:Connect(function(dt) 
+                        clientRoot.CFrame += clientHumanoid.MoveDirection * (5 * dt * speed)
                     end)
                 elseif (mode == 'Velocity') then
-                    scon = serv_run.Heartbeat:Connect(function(dt) 
-                        l_humrp.Velocity += l_hum.MoveDirection * (5 * dt * speed)
+                    scon = servRun.Heartbeat:Connect(function(dt) 
+                        clientRoot.Velocity += clientHumanoid.MoveDirection * (5 * dt * speed)
                     end)
                 elseif (mode == 'Bhop') then
-                    scon = serv_run.RenderStepped:Connect(function(dt) 
-                        local md = l_hum.MoveDirection
+                    scon = servRun.RenderStepped:Connect(function(dt) 
+                        local md = clientHumanoid.MoveDirection
                         
-                        l_humrp.Velocity += md * (5 * dt * speed)
-                        l_hum.Jump = not (md.Magnitude < 0.01 and true or false)
+                        clientRoot.Velocity += md * (5 * dt * speed)
+                        clientHumanoid.Jump = not (md.Magnitude < 0.01 and true or false)
                     end)
                 elseif (mode == 'Part') then
-                    part = inst_new('Part')
+                    part = instNew('Part')
                     part.Transparency = 0.8
                     part.Size = vec3(4,4,1)
                     part.CanTouch = false
@@ -5898,19 +6118,19 @@ do
                     part.Name = getnext()
                     part.Parent = workspace
                     scon = ev:Connect(function(dt) 
-                        local md = l_hum.MoveDirection
-                        local p = l_humrp.Position
+                        local md = clientHumanoid.MoveDirection
+                        local p = clientRoot.Position
                         
-                        part.CFrame = cfnew(p-(md), p)
+                        part.CFrame = cfrNew(p-(md), p)
                         part.Velocity = md * (dt * speed * 1200)
                         
-                        l_hum:ChangeState(8)
+                        clientHumanoid:ChangeState(8)
                     end)
                 elseif (mode == 'WalkSpeed') then
-                    dnec(l_hum:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
+                    dnec(clientHumanoid:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
                     
-                    scon = serv_run.Heartbeat:Connect(function() 
-                        l_hum.WalkSpeed = speed
+                    scon = servRun.Heartbeat:Connect(function() 
+                        clientHumanoid.WalkSpeed = speed
                     end)
                 end
             end)
@@ -5935,14 +6155,14 @@ do
                 m_speed:Reset()
             end)
             
-            mode:SetTooltip('Method used for the speedhack')
-            speedslider:SetTooltip('Amount of speed')
+            mode:setTooltip('Method used for the speedhack')
+            speedslider:setTooltip('Amount of speed')
         end
         -- Velocity
         do 
-            local xslider = m_velocity:AddSlider('X',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max X velocity you can have')
-            local yslider = m_velocity:AddSlider('Y',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max Y velocity you can have')
-            local zslider = m_velocity:AddSlider('Z',{min=0,max=100,cur=20,step=0.01}):SetTooltip('The minimum / max Z velocity you can have')
+            local xslider = m_velocity:addSlider('X',{min=0,max=100,cur=20,step=0.01}):setTooltip('The minimum / max X velocity you can have')
+            local yslider = m_velocity:addSlider('Y',{min=0,max=100,cur=20,step=0.01}):setTooltip('The minimum / max Y velocity you can have')
+            local zslider = m_velocity:addSlider('Z',{min=0,max=100,cur=20,step=0.01}):setTooltip('The minimum / max Z velocity you can have')
             
             local x,y,z = 20,20,20
             
@@ -5952,12 +6172,12 @@ do
             
             local velc
             m_velocity:Connect('Enabled',function() 
-                velc = serv_run.Stepped:Connect(function() 
-                    local v = l_humrp.Velocity
-                    l_humrp.Velocity = vec3(
-                        mclamp(v.X,-x,x),
-                        mclamp(v.Y,-y,y),
-                        mclamp(v.Z,-z,z)
+                velc = servRun.Stepped:Connect(function() 
+                    local v = clientRoot.Velocity
+                    clientRoot.Velocity = vec3(
+                        mathClamp(v.X,-x,x),
+                        mathClamp(v.Y,-y,y),
+                        mathClamp(v.Z,-z,z)
                     )
                 end)
             end)
@@ -5967,60 +6187,62 @@ do
             end)
         end
         
-        m_airjump:SetTooltip('Lets you jump in mid-air, infinitely. May bypass any jump restrictions the game has in place')
-        m_blink:SetTooltip('Freezes your character for other people. <b>Do not combine with fakelag.</b>')
-        m_clicktp:SetTooltip('You can\'t see this lololololololo')
-        m_dash:SetTooltip('Allows you to dash by double tapping W, A, S, or D')
-        m_flight:SetTooltip('Makes your character fly')
-        m_float:SetTooltip('Makes your character stop falling entirely. <i>Yes, this is basically the same as Glide, i dont care</i>')
-        m_glide:SetTooltip('Slows down your fall, letting you jump farther')
-        m_highjump:SetTooltip('Increases how high you can jump')
-        m_noclip:SetTooltip('Disables your character\'s collision, or bypasses the collision entirely')
-        m_nofall:SetTooltip('May bypass some games fall damage mechanics by changing how you fall.')
-        m_notrip:SetTooltip('Prevents you from tripping / ragdolling, like when you get by a fast part')
-        m_parkour:SetTooltip('Jumps when you reach the end of a part')
-        m_speed:SetTooltip('Speedhacks with various bypasses and settings')
-        m_velocity:SetTooltip('Limits your velocity')
+        m_airjump:setTooltip('Lets you jump in mid-air, infinitely. May bypass any jump restrictions the game has in place')
+        m_blink:setTooltip('Freezes your character for other people. <b>Do not combine with fakelag.</b>')
+        m_clicktp:setTooltip('You can\'t see this lololololololo')
+        m_dash:setTooltip('Allows you to dash by double tapping W, A, S, or D')
+        m_flight:setTooltip('Makes your character fly')
+        m_float:setTooltip('Makes your character stop falling entirely. <i>Yes, this is basically the same as Glide, i dont care</i>')
+        m_glide:setTooltip('Slows down your fall, letting you jump farther')
+        m_highjump:setTooltip('Increases how high you can jump')
+        m_noclip:setTooltip('Disables your character\'s collision, or bypasses the collision entirely')
+        m_nofall:setTooltip('May bypass some games fall damage mechanics by changing how you fall.')
+        m_notrip:setTooltip('Prevents you from tripping / ragdolling, like when you get by a fast part')
+        m_parkour:setTooltip('Jumps when you reach the end of a part')
+        m_speed:setTooltip('Speedhacks with various bypasses and settings')
+        m_velocity:setTooltip('Limits your velocity')
     end
-    local m_render = ui:CreateMenu('Render') do 
+    local m_render = ui:newMenu('Render') do 
         local CrosshairPosition
         
-        local r_crosshair   = m_render:AddMod('Crosshair')
-        local r_esp         = m_render:AddMod('ESP'..betatxt)
-        local r_freecam     = m_render:AddMod('Freecam')
-        local r_fullbright  = m_render:AddMod('Fullbright')
-        local r_keystrokes  = m_render:AddMod('Keystrokes'..betatxt)
-        local r_ugpu        = m_render:AddMod('Unfocused GPU')
-        local r_zoom        = m_render:AddMod('Zoom')
+        
+        local r_crosshair   = m_render:addMod('Crosshair')
+        local r_esp         = m_render:addMod('ESP'..betatxt)
+        local r_freecam     = m_render:addMod('Freecam')
+        local r_fullbright  = m_render:addMod('Fullbright')
+        local r_keystrokes  = m_render:addMod('Keystrokes'..betatxt)
+        local r_radar       = m_render:addMod('Radar'..betatxt)
+        local r_ugpu        = m_render:addMod('Unfocused GPU')
+        local r_zoom        = m_render:addMod('Zoom')
         
         -- Crosshair
         do 
-            local s_Size = r_crosshair:AddSlider('Size',{min=5,max=15,cur=7,step=1}):SetTooltip('The size of the crosshair circle')
-            local s_Speed = r_crosshair:AddSlider('Speed',{min=0,max=10,cur=4,step=0.1}):SetTooltip('The speed of the rotation effect')
-            local s_AccuracyMult = r_crosshair:AddSlider('Spread multiplier',{min=0.01,max=1.5,step=0.01,cur=0.05}):SetTooltip('How sensitive the spread effect is')
-            local s_Accuracy = r_crosshair:AddToggle('Spread'):SetTooltip('Emulates bullet spread by changing the crosshair arm distance based off of your velocity')
+            local s_Size = r_crosshair:addSlider('Size',{min=5,max=15,cur=7,step=1}):setTooltip('The size of the crosshair circle')
+            local s_Speed = r_crosshair:addSlider('Speed',{min=0,max=10,cur=4,step=0.1}):setTooltip('The speed of the rotation effect')
+            local s_AccuracyMult = r_crosshair:addSlider('Spread multiplier',{min=0.01,max=1.5,step=0.01,cur=0.05}):setTooltip('How sensitive the spread effect is')
+            local s_Accuracy = r_crosshair:addToggle('Spread'):setTooltip('Emulates bullet spread by changing the crosshair arm distance based off of your velocity')
             
-            local s_Style = r_crosshair:AddDropdown('Style'):SetTooltip('The crosshair design used')
-            local s_RotStyle = r_crosshair:AddDropdown('Animation'):SetTooltip('The animation used')
+            local s_Style = r_crosshair:addDropdown('Style'):setTooltip('The crosshair design used')
+            local s_RotStyle = r_crosshair:addDropdown('Animation'):setTooltip('The animation used')
             
-            local s_Status = r_crosshair:AddToggle('Aimbot status'):SetTooltip('Shows a status underneath the crosshair indicating what it\'s doing. For the aimbot module')
+            local s_Status = r_crosshair:addToggle('Aimbot status'):setTooltip('Shows a status underneath the crosshair indicating what it\'s doing. For the aimbot module')
             
-            s_Style:AddOption('2 arms'):SetTooltip('Has 2 arms with a ring'):Select()
-            s_Style:AddOption('4 arms'):SetTooltip('Has 4 arms with a ring')
-            s_Style:AddOption('2 arms (no ring)'):SetTooltip('Has just 2 arms without any ring')
-            s_Style:AddOption('4 arms (no ring)'):SetTooltip('Has just 4 arms without any ring')
+            s_Style:addOption('2 arms'):setTooltip('Has 2 arms with a ring'):Select()
+            s_Style:addOption('4 arms'):setTooltip('Has 4 arms with a ring')
+            s_Style:addOption('2 arms (no ring)'):setTooltip('Has just 2 arms without any ring')
+            s_Style:addOption('4 arms (no ring)'):setTooltip('Has just 4 arms without any ring')
         
-            s_RotStyle:AddOption('Swing'):SetTooltip('Swings back and forth'):Select()
-            s_RotStyle:AddOption('Spin'):SetTooltip('Constantly spins at a linear speed')
-            s_RotStyle:AddOption('3d'):SetTooltip('Does a cool 3d spin thing')
-            s_RotStyle:AddOption('None'):SetTooltip('No animation')
+            s_RotStyle:addOption('Swing'):setTooltip('Swings back and forth'):Select()
+            s_RotStyle:addOption('Spin'):setTooltip('Constantly spins at a linear speed')
+            s_RotStyle:addOption('3d'):setTooltip('Does a cool 3d spin thing')
+            s_RotStyle:addOption('None'):setTooltip('No animation')
             
             
-            local Accuracy = s_Accuracy:IsEnabled()
-            local AccuracyMult = s_AccuracyMult:GetValue()
-            local Size = s_Size:GetValue()
-            local Speed = s_Speed:GetValue()
-            local Status = s_Status:IsEnabled()
+            local Accuracy = s_Accuracy:isEnabled()
+            local AccuracyMult = s_AccuracyMult:getValue()
+            local Size = s_Size:getValue()
+            local Speed = s_Speed:getValue()
+            local Status = s_Status:isEnabled()
             
             s_Accuracy:Connect('Toggled',function(v)Accuracy=v;end)
             s_AccuracyMult:Connect('Changed',function(v)AccuracyMult=v;end)
@@ -6034,7 +6256,7 @@ do
             local animcon
             local moncon
             
-            local vpcen = l_cam.ViewportSize / 2 
+            local vpcen = clientCamera.ViewportSize / 2 
             
             r_crosshair:Connect('Enabled', function() 
                 stop = false
@@ -6043,17 +6265,17 @@ do
                 
                 local sin, cos = math.sin, math.cos
                 
-                local InnerLine1 = draw_new('Line')
-                local InnerLine2 = draw_new('Line')
-                local InnerLine3 = draw_new('Line')
-                local InnerLine4 = draw_new('Line')
-                local InnerRing = draw_new('Circle')
-                local OuterLine1 = draw_new('Line')
-                local OuterLine2 = draw_new('Line')
-                local OuterLine3 = draw_new('Line')
-                local OuterLine4 = draw_new('Line')
-                local OuterRing = draw_new('Circle')
-                local StatusText = draw_new('Text')
+                local InnerLine1 = drawNew('Line')
+                local InnerLine2 = drawNew('Line')
+                local InnerLine3 = drawNew('Line')
+                local InnerLine4 = drawNew('Line')
+                local InnerRing = drawNew('Circle')
+                local OuterLine1 = drawNew('Line')
+                local OuterLine2 = drawNew('Line')
+                local OuterLine3 = drawNew('Line')
+                local OuterLine4 = drawNew('Line')
+                local OuterRing = drawNew('Circle')
+                local StatusText = drawNew('Text')
                 
                 do
                     InnerLine1.Visible = true
@@ -6068,7 +6290,7 @@ do
                     OuterRing.Visible = true
                     StatusText.Visible = Status
                     
-                    OuterRing.Color = c_new(0,0,0)
+                    OuterRing.Color = colNew(0,0,0)
                     OuterRing.NumSides = 20
                     OuterRing.Position = vpcen-vec2(Size/2,Size/2)
                     OuterRing.Radius = 6
@@ -6083,32 +6305,32 @@ do
                     
                     InnerLine1.Thickness = 2
                     InnerLine1.ZIndex = 53
-                    OuterLine1.Color = c_new(0,0,0)
+                    OuterLine1.Color = colNew(0,0,0)
                     OuterLine1.Thickness = 4
                     OuterLine1.ZIndex = 52
                     
                     InnerLine2.Thickness = 2
                     InnerLine2.ZIndex = 53
-                    OuterLine2.Color = c_new(0,0,0)
+                    OuterLine2.Color = colNew(0,0,0)
                     OuterLine2.Thickness = 4
                     OuterLine2.ZIndex = 52
                     
                     InnerLine3.Thickness = 2
                     InnerLine3.ZIndex = 53
-                    OuterLine3.Color = c_new(0,0,0)
+                    OuterLine3.Color = colNew(0,0,0)
                     OuterLine3.Thickness = 4
                     OuterLine3.ZIndex = 52
                     
                     InnerLine4.Thickness = 2
                     InnerLine4.ZIndex = 53
-                    OuterLine4.Color = c_new(0,0,0)
+                    OuterLine4.Color = colNew(0,0,0)
                     OuterLine4.Thickness = 4
                     OuterLine4.ZIndex = 52
                     
                     StatusText.Center = true
                     StatusText.Font = 1
                     StatusText.Outline = true
-                    StatusText.OutlineColor = c_new(0,0,0)
+                    StatusText.OutlineColor = colNew(0,0,0)
                     StatusText.Size = 16
                     StatusText.ZIndex = 54
                 end
@@ -6154,12 +6376,12 @@ do
                 local size
                 
                 if (r == 'Swing') then
-                    animcon = serv_run.RenderStepped:Connect(function(dt) 
+                    animcon = servRun.RenderStepped:Connect(function(dt) 
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--c_hsv((t*0.02)%1,1,1)
-                        v = v + ((3 + (Accuracy and l_humrp and mclamp(l_humrp.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
+                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local _ = sin(t)
                         local t2 = _*Speed
@@ -6221,13 +6443,13 @@ do
                     end)
                 elseif (r == 'Spin') then
                     
-                    animcon = serv_run.RenderStepped:Connect(function(dt) 
+                    animcon = servRun.RenderStepped:Connect(function(dt) 
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--c_hsv((t*0.02)%1,1,1)
+                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
                         
-                        v = v + ((3 + (Accuracy and l_humrp and mclamp(l_humrp.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local t2 = (t*Speed)%360
                         local _1 = vec2(sin(t2), cos(t2))
@@ -6287,7 +6509,7 @@ do
                         InnerLine4.Color = c
                     end)
                 elseif (r == '3d') then
-                    animcon = serv_run.RenderStepped:Connect(function(dt) 
+                    animcon = servRun.RenderStepped:Connect(function(dt) 
                         if stop then return end
                         t += dt
                         
@@ -6296,7 +6518,7 @@ do
                         
                         
                         local c = RGBCOLOR
-                        v = v + ((3 + (Accuracy and l_humrp and mclamp(l_humrp.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local _ = sin(t)
                         local __ = ((cos(t+1)-1))*Speed
@@ -6362,12 +6584,12 @@ do
                     local _2 = vec2(0, -1)
                     local _3 = vec2(0, 1)
                     local _4 = vec2(-1, 0)
-                    animcon = serv_run.RenderStepped:Connect(function(dt) 
+                    animcon = servRun.RenderStepped:Connect(function(dt) 
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--c_hsv((t*0.02)%1,1,1)
-                        v = v + ((3 + (Accuracy and l_humrp and mclamp(l_humrp.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
+                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                     
                         size = Size+(sin(t))
@@ -6423,8 +6645,8 @@ do
                     end)
                 end
                 
-                moncon = l_cam:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                    vpcen = l_cam.ViewportSize / 2
+                moncon = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
+                    vpcen = clientCamera.ViewportSize / 2
                 end)
             end)
             
@@ -6455,7 +6677,7 @@ do
                 if (obj) then
                     obj.Visible = Status
                     --[[
-                    local msg = msgs[mrandom(1, #msgs)]
+                    local msg = msgs[mathRand(1, #msgs)]
                     AimbotStatus = msg
                     delay(1, function() 
                         if (AimbotStatus == msg) then
@@ -6472,24 +6694,24 @@ do
             local ascend_h = r_freecam:AddHotkey('Ascend key')
             local descend_h = r_freecam:AddHotkey('Descend key')
             -- Dropdowns
-            local mode = r_freecam:AddDropdown('Method', true)
-            local freezemode = r_freecam:AddDropdown('Freeze mode')
+            local mode = r_freecam:addDropdown('Method', true)
+            local freezemode = r_freecam:addDropdown('Freeze mode')
             -- sliders 
-            local speedslider = r_freecam:AddSlider('Speed',{min=0,max=300,step=0.1,cur=30})
+            local speedslider = r_freecam:addSlider('Speed',{min=0,max=300,step=0.1,cur=30})
             -- buttons
             local gotocam = r_freecam:AddButton('Goto freecam')
             local resetcam = r_freecam:AddButton('Reset freecam position')
             -- toggles
-            local camera = r_freecam:AddToggle('Camera-based')
-            local resetonenable = r_freecam:AddToggle('Reset pos on enable')
+            local camera = r_freecam:addToggle('Camera-based')
+            local resetonenable = r_freecam:addToggle('Reset pos on enable')
             
             
-            mode:AddOption('Standard'):SetTooltip('Standard freecam'):Select()
-            mode:AddOption('Smooth'):SetTooltip('Just like Standard, but smooth')  
-            mode:AddOption('Bypass'):SetTooltip('<b>Currently unfinished.</b> May bypass some anticheats / game mechanics that break freecam, but it\'s extremely janky')      
-            freezemode:AddOption('Anchor'):SetTooltip('Anchors your character'):Select()
-            freezemode:AddOption('Walkspeed'):SetTooltip('Sets your walkspeed to 0')
-            freezemode:AddOption('Stuck'):SetTooltip('Constantly overwrites your position')
+            mode:addOption('Standard'):setTooltip('Standard freecam'):Select()
+            mode:addOption('Smooth'):setTooltip('Just like Standard, but smooth')  
+            mode:addOption('Bypass'):setTooltip('<b>Currently unfinished.</b> May bypass some anticheats / game mechanics that break freecam, but it\'s extremely janky')      
+            freezemode:addOption('Anchor'):setTooltip('Anchors your character'):Select()
+            freezemode:addOption('Walkspeed'):setTooltip('Sets your walkspeed to 0')
+            freezemode:addOption('Stuck'):setTooltip('Constantly overwrites your position')
             
             local campart -- camera part
             local fcon -- flight connection
@@ -6498,7 +6720,7 @@ do
             local ask = Enum.KeyCode.E-- keycode for ascension
             local dsk = Enum.KeyCode.Q-- keycode for descension
             
-            local fcampos = l_humrp and l_humrp.Position or vec3(0,0,0)        
+            local fcampos = clientRoot and clientRoot.Position or vec3(0,0,0)        
             local speed = 30 -- speed 
             
             local cambased = true 
@@ -6526,17 +6748,17 @@ do
                 local curmod = mode:GetSelection()        
                 local upp, downp, nonep = vec3(0, 1, 0), vec3(0, -1, 0), vec3(0,0,0)
                 
-                if (resetonenable:IsEnabled()) then
-                    fcampos = l_humrp.Position
+                if (resetonenable:isEnabled()) then
+                    fcampos = clientRoot.Position
                 end
                 
-                local normclv = l_cam.CFrame.LookVector
-                clvcon = l_cam:GetPropertyChangedSignal('CFrame'):Connect(function() 
-                    normclv = l_cam.CFrame.LookVector
+                local normclv = clientCamera.CFrame.LookVector
+                clvcon = clientCamera:GetPropertyChangedSignal('CFrame'):Connect(function() 
+                    normclv = clientCamera.CFrame.LookVector
                 end)
                 
                 if (curmod == 'Standard') then
-                    campart = inst_new('Part')
+                    campart = instNew('Part')
                     campart.Position = fcampos
                     campart.Transparency = 1
                     campart.CanCollide = false
@@ -6545,21 +6767,21 @@ do
                     campart.Size = vec3(1, 1, 1)
                     campart.Parent = workspace  
                     
-                    l_cam.CameraSubject = campart
+                    clientCamera.CameraSubject = campart
                     
                     if (cambased) then
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
-                            local IsForwardPressed = serv_uinput:IsKeyDown(119)
-                            local IsBackwardPressed = serv_uinput:IsKeyDown(115)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
+                            local IsForwardPressed = servInput:IsKeyDown(119)
+                            local IsBackwardPressed = servInput:IsKeyDown(115)
                                                         
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
@@ -6571,19 +6793,19 @@ do
                             fcampos += Vector
                             
                             campart.Position = fcampos
-                            l_cam.CameraSubject = campart
+                            clientCamera.CameraSubject = campart
                         end)
                     else
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
                                                         
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) -- If down is pressed
@@ -6592,11 +6814,11 @@ do
                             fcampos += Vector
                             
                             campart.Position = fcampos
-                            l_cam.CameraSubject = campart
+                            clientCamera.CameraSubject = campart
                         end)
                     end
                 elseif (curmod == 'Smooth') then
-                    campart = inst_new('Part')
+                    campart = instNew('Part')
                     campart.Position = fcampos
                     campart.Transparency = 1
                     campart.CanCollide = false
@@ -6605,10 +6827,10 @@ do
                     campart.Size = vec3(1, 1, 1)
                     campart.Parent = workspace  
                     
-                    l_cam.CameraSubject = campart
+                    clientCamera.CameraSubject = campart
                     
                     
-                    local pos = inst_new('BodyPosition')
+                    local pos = instNew('BodyPosition')
                     pos.Position = fcampos
                     pos.D = 1900
                     pos.P = 125000
@@ -6618,18 +6840,18 @@ do
                     campart.Anchored = false
                     
                     if (cambased) then
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
-                            local IsForwardPressed = serv_uinput:IsKeyDown(119)
-                            local IsBackwardPressed = serv_uinput:IsKeyDown(115)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
+                            local IsForwardPressed = servInput:IsKeyDown(119)
+                            local IsBackwardPressed = servInput:IsKeyDown(115)
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = ((
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
@@ -6643,20 +6865,20 @@ do
                             pos.Position = fcampos
                         end)
                     else
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
                             -- Get what keys are pressed
-                            local IsUpPressed = serv_uinput:IsKeyDown(ask)
-                            local IsDownPressed = serv_uinput:IsKeyDown(dsk)
+                            local IsUpPressed = servInput:IsKeyDown(ask)
+                            local IsDownPressed = servInput:IsKeyDown(dsk)
                             
                             -- Keep character frozen
-                            l_hum:ChangeState(1)
-                            l_humrp.Velocity = nonep
+                            clientHumanoid:ChangeState(1)
+                            clientRoot.Velocity = nonep
                             
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
                             local Vector = (
-                                l_hum.MoveDirection + -- Direction character is moving
+                                clientHumanoid.MoveDirection + -- Direction character is moving
                                 
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) -- If down is presed
@@ -6665,24 +6887,24 @@ do
                             fcampos += Vector
                             
                             pos.Position = fcampos
-                            l_cam.CameraSubject = campart
+                            clientCamera.CameraSubject = campart
                         end)
                     end
                     
                 elseif (curmod == 'Bypass') then
                     
-                    l_cam.CameraSubject = l_hum
+                    clientCamera.CameraSubject = clientHumanoid
                     
                     if (cambased) then
-                        local thej = cfnew(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
-                            l_humrp.CFrame = thej
+                        local thej = cfrNew(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
+                            clientRoot.CFrame = thej
                             
-                            local up = serv_uinput:IsKeyDown(ask)
-                            local down = serv_uinput:IsKeyDown(dsk)
-                            local f,b = serv_uinput:IsKeyDown(119), serv_uinput:IsKeyDown(115)
+                            local up = servInput:IsKeyDown(ask)
+                            local down = servInput:IsKeyDown(dsk)
+                            local f,b = servInput:IsKeyDown(119), servInput:IsKeyDown(115)
                             
-                            local movevec = (l_hum.MoveDirection * dt * 3 * speed)
+                            local movevec = (clientHumanoid.MoveDirection * dt * 3 * speed)
                             local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
                             local cupvec = ((f and vec3(0, normclv.Y, 0) or nonep) - (b and vec3(0, normclv.Y, 0) or nonep)*(dt*3*speed))
                             
@@ -6690,27 +6912,27 @@ do
                             fcampos -= upvec
                             fcampos -= cupvec
                             
-                            local normalized = cfnew(fcampos):ToObjectSpace(thej)
+                            local normalized = cfrNew(fcampos):ToObjectSpace(thej)
                             
-                            l_hum.CameraOffset = (normalized).Position
+                            clientHumanoid.CameraOffset = (normalized).Position
                         end)
                     else
-                        local thej = cfnew(l_humrp.Position, l_humrp.Position + vec3(0, 0, 1))
-                        fcon = serv_run.Heartbeat:Connect(function(dt) 
-                            l_humrp.CFrame = thej
+                        local thej = cfrNew(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
+                        fcon = servRun.Heartbeat:Connect(function(dt) 
+                            clientRoot.CFrame = thej
                             
-                            local up = serv_uinput:IsKeyDown(ask)
-                            local down = serv_uinput:IsKeyDown(dsk)
+                            local up = servInput:IsKeyDown(ask)
+                            local down = servInput:IsKeyDown(dsk)
                             
-                            local movevec = (l_hum.MoveDirection * dt * 3 * speed)
+                            local movevec = (clientHumanoid.MoveDirection * dt * 3 * speed)
                             local upvec = (((up and upp or nonep) + (down and downp or nonep))*(dt*3*speed))
                             
                             fcampos += movevec
                             fcampos -= upvec
                             
-                            local normalized = cfnew(fcampos):ToObjectSpace(thej)
+                            local normalized = cfrNew(fcampos):ToObjectSpace(thej)
                             
-                            l_hum.CameraOffset = (normalized).Position
+                            clientHumanoid.CameraOffset = (normalized).Position
                         end)
                     end
                 end
@@ -6719,19 +6941,19 @@ do
                 
                 
                 if (fmode == 'Anchor') then
-                    l_humrp.Anchored = true
+                    clientRoot.Anchored = true
                     
                 elseif (fmode == 'Walkspeed') then
-                    oldwalk = l_hum.WalkSpeed
-                    l_hum.WalkSpeed = 0
+                    oldwalk = clientHumanoid.WalkSpeed
+                    clientHumanoid.WalkSpeed = 0
                     
                 elseif (fmode == 'Stuck') then
                     
-                    stuckcf = l_humrp.CFrame
-                    dnec(l_humrp.Changed, 'rp_changed')
-                    dnec(l_humrp:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
-                    stuckcon = serv_run.Heartbeat:Connect(function() 
-                        l_humrp.CFrame = stuckcf
+                    stuckcf = clientRoot.CFrame
+                    dnec(clientRoot.Changed, 'rp_changed')
+                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    stuckcon = servRun.Heartbeat:Connect(function() 
+                        clientRoot.CFrame = stuckcf
                     end)
                 end
             end)
@@ -6751,14 +6973,14 @@ do
                     campart = nil 
                 end
                 
-                l_cam.CameraSubject = l_hum
-                l_hum.CameraOffset = vec3(0, 0, 0)
+                clientCamera.CameraSubject = clientHumanoid
+                clientHumanoid.CameraOffset = vec3(0, 0, 0)
                 
-                if (l_humrp.Anchored == true) then
-                    l_humrp.Anchored = false
+                if (clientRoot.Anchored == true) then
+                    clientRoot.Anchored = false
                 
-                elseif (l_hum.WalkSpeed == 0) then
-                    l_humrp.WalkSpeed = (oldwalk == 0 and 16 or oldwalk) -- Prevent getting infinitely stuck
+                elseif (clientHumanoid.WalkSpeed == 0) then
+                    clientRoot.WalkSpeed = (oldwalk == 0 and 16 or oldwalk) -- Prevent getting infinitely stuck
                 end
                 if (stuckcon) then
                     stuckcon:Disconnect()
@@ -6770,60 +6992,63 @@ do
             
             gotocam:Connect('Clicked',function() 
                 local pos = campart.Position
-                local new = cfnew(pos, pos+l_humrp.CFrame.LookVector)
+                local new = cfrNew(pos, pos+clientRoot.CFrame.LookVector)
                 stuckcf = new
-                l_humrp.CFrame = new
+                clientRoot.CFrame = new
             end)
             
             resetcam:Connect('Clicked',function() 
-                fcampos = l_humrp.Position
+                fcampos = clientRoot.Position
             end)
             
-            ascend_h:SetTooltip('When pressed the freecam vertically ascends'):SetHotkey(Enum.KeyCode.E)
-            camera:SetTooltip('When enabled, the direction of your camera affects your Y movement. <b>This is the normal option you\'d see used for other scripts</b>')
-            descend_h:SetTooltip('When pressed the freecam vertically descends'):SetHotkey(Enum.KeyCode.Q)
-            mode:SetTooltip('The method Freecam uses')
-            speedslider:SetTooltip('The speed of your freecam flight')
-            freezemode:SetTooltip('The method used to make your character not move')
-            gotocam:SetTooltip('Brings you to the camera')
-            resetcam:SetTooltip('Resets the camera\'s position')
-            resetonenable:SetTooltip('Resets the camera\'s position when Freecam gets enabled')
+            ascend_h:setTooltip('When pressed the freecam vertically ascends'):setHotkey(Enum.KeyCode.E)
+            camera:setTooltip('When enabled, the direction of your camera affects your Y movement. <b>This is the normal option you\'d see used for other scripts</b>')
+            descend_h:setTooltip('When pressed the freecam vertically descends'):setHotkey(Enum.KeyCode.Q)
+            mode:setTooltip('The method Freecam uses')
+            speedslider:setTooltip('The speed of your freecam flight')
+            freezemode:setTooltip('The method used to make your character not move')
+            gotocam:setTooltip('Brings you to the camera')
+            resetcam:setTooltip('Resets the camera\'s position')
+            resetonenable:setTooltip('Resets the camera\'s position when Freecam gets enabled')
         end
         -- Esp
         do
             
             -- Settings     
-            local s_TeamCheck = r_esp:AddToggle('Team check'):SetTooltip('Won\'t display ESP for teammates')
-            local s_TeamColor = r_esp:AddToggle('Team color'):SetTooltip('Replaces the RGB color with their team color. If a player doesn\'t have a team, then their color will remain RGB')
+            local s_TeamCheck = r_esp:addToggle('Team check'):setTooltip('Won\'t display ESP for teammates')
+            local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Replaces the RGB color with their team color. If a player doesn\'t have a team, then their color will remain RGB')
+            local s_ShowDistance = r_esp:addToggle('Display distance'):setTooltip('Shows player distance in the nametag')
+            local s_ShowHealth = r_esp:addToggle('Display health'):setTooltip('Shows player health in the nametag')    
             
             -- Esp types
-            local s_Boxes = r_esp:AddToggle('Boxes'):SetTooltip('Displays boxes around the targets')
-            local s_Nametags = r_esp:AddToggle('Nametags'):SetTooltip('Shows the usernames of targets')
-            local s_Tracers = r_esp:AddToggle('Tracers'):SetTooltip('Enables tracers for the targets')
-            --local s_VisibilityCheck = r_esp:AddToggle('Visibility check'):SetTooltip('Only shows ESP for a player if they\'re visible and not blocked by anything')
+            local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Displays boxes around the targets')
+            local s_Nametags = r_esp:addToggle('Nametags'):setTooltip('Shows the usernames of targets')
+            local s_Tracers = r_esp:addToggle('Tracers'):setTooltip('Enables tracers for the targets')
+            --local s_VisibilityCheck = r_esp:addToggle('Visibility check'):setTooltip('Only shows ESP for a player if they\'re visible and not blocked by anything')
             
             -- Sliders
-            local s_UpdateDelay = r_esp:AddSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):SetTooltip('Delay in seconds between ESP updates. <0.05 recommended. <b>Only used for Drawing related ESPS</b>')
-            local s_TracerVis = r_esp:AddSlider('Tracer visibility',{min=0,max=1,cur=1,step=0.1}):SetTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully opaque')
-            local s_TextSize = r_esp:AddSlider('Text size',{min=1,max=30,cur=20,step=1}):SetTooltip('The size of the text')
+            local s_UpdateDelay = r_esp:addSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('Delay in seconds between ESP updates. <0.05 recommended. <b>Only used for Drawing related ESPS</b>')
+            local s_TracerVis = r_esp:addSlider('Tracer visibility',{min=0,max=1,cur=1,step=0.1}):setTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully opaque')
+            local s_TextSize = r_esp:addSlider('Text size',{min=1,max=30,cur=20,step=1}):setTooltip('The size of the text')
             
             -- Dropdowns
-            local s_BoxType = r_esp:AddDropdown('Box type',true):SetTooltip('The type of box to use')
-            local s_HealthType = r_esp:AddDropdown('Health display type'):SetTooltip('How the health value is calculated')
-            local s_TracerPosition = r_esp:AddDropdown('Tracer position'):SetTooltip('Where the tracer is drawn')
+            local s_BoxType = r_esp:addDropdown('Box type',true):setTooltip('The type of box to use')
+            local s_HealthType = r_esp:addDropdown('Health display type'):setTooltip('How the health value is calculated')
+            local s_TracerPosition = r_esp:addDropdown('Tracer position'):setTooltip('Where the tracer is drawn')
             
-            s_BoxType:AddOption('Simple 2d'):SetTooltip('Simple 2d box ESP. Very fast (2 WTVPs p/ object)'):Select()
-            s_BoxType:AddOption('Simple 3d'):SetTooltip('Classic Unnamed ESP look. Slightly fast (4 WTVPs p/ object)')
-            s_BoxType:AddOption('Westeria 2d'):SetTooltip('Westeria (a c++ aimbot exploit) box style. Very fast (2 WTVPs p/ object)')
-            s_BoxType:AddOption('Westeria 3d'):SetTooltip('Westeria (a c++ aimbot exploit) 3d style. Very slow (14 WTVPs p/ object); <b>this will lag your computer.</b>')
+            s_BoxType:addOption('Simple 2d'):setTooltip('Simple 2d box ESP. 2 WTVPs'):Select()
+            s_BoxType:addOption('Simple 3d'):setTooltip('Classic Unnamed ESP look. 4 WTVPs')
+            s_BoxType:addOption('Westeria 2d'):setTooltip('Westeria box style. 2 WTVPs')
+            s_BoxType:addOption('Westeria 3d'):setTooltip('Westeria 3d style. 14 WTVPs; this may lag your computer')
+            --s_BoxType:addOption('Apathy'):setTooltip('Apathy (epic 😎) style - has healthbars and a team color overlay')
             
-            s_HealthType:AddOption('Percentage'):SetTooltip('The percentage of the current health and maxhealth'):Select()
-            s_HealthType:AddOption('Value'):SetTooltip('Just the current health')
+            s_HealthType:addOption('Percentage'):setTooltip('The percentage of the current health out of the max health'):Select()
+            s_HealthType:addOption('Value'):setTooltip('Just the current health')
             
-            s_TracerPosition:AddOption('Crosshair'):SetTooltip('Tracers are drawn at the crosshairs\'s position. If Crosshair is disabled, it resorts to your mouse.'):Select()
-            s_TracerPosition:AddOption('Character'):SetTooltip('Tracers are drawn towards yourself')
-            s_TracerPosition:AddOption('Down'):SetTooltip('Tracers are drawn towards the bottom of your screen')
-            s_TracerPosition:AddOption('Mouse'):SetTooltip('Tracers are drawn at the mouse position')
+            s_TracerPosition:addOption('Crosshair'):setTooltip('Tracers are drawn at the crosshairs\'s position. If Crosshair is disabled, it resorts to your mouse.'):Select()
+            s_TracerPosition:addOption('Character'):setTooltip('Tracers are drawn towards yourself')
+            s_TracerPosition:addOption('Down'):setTooltip('Tracers are drawn towards the bottom of your screen')
+            s_TracerPosition:addOption('Mouse'):setTooltip('Tracers are drawn at the mouse position')
             
             s_Tracers:Enable()
             s_Nametags:Enable()
@@ -6832,28 +7057,30 @@ do
             -- l_ = localization
             -- s_ = setting
             
-            local l_TeamCheck   = s_TeamCheck:GetValue()
-            local l_TeamColor   = s_TeamColor:GetValue()
+            local l_TeamCheck   = s_TeamCheck:getValue()
+            local l_TeamColor   = s_TeamColor:getValue()
+            local l_ShowDistance = s_ShowDistance:getValue()
+            local l_ShowHealth = s_ShowHealth:getValue()
             
-            local l_Boxes = s_Boxes:GetValue()
-            local l_Nametags = s_Nametags:GetValue()
-            local l_Tracers = s_Tracers:GetValue()
+            local l_Boxes = s_Boxes:getValue()
+            local l_Nametags = s_Nametags:getValue()
+            local l_Tracers = s_Tracers:getValue()
             
-            local l_UpdateDelay = s_UpdateDelay:GetValue()
-            local l_TracerVis = s_TracerVis:GetValue()
-            local l_TextSize = s_TextSize:GetValue()
+            local l_UpdateDelay = s_UpdateDelay:getValue()
+            local l_TracerVis = s_TracerVis:getValue()
+            local l_TextSize = s_TextSize:getValue()
             
             
-            local l_BoxType = s_BoxType:GetValue()
-            local l_HealthType = s_HealthType:GetValue()
-            local l_TracerPosition = s_TracerPosition:GetValue()
+            local l_BoxType = s_BoxType:getValue()
+            local l_HealthType = s_HealthType:getValue()
+            local l_TracerPosition = s_TracerPosition:getValue()
             
             
             
             local PreviousMode
             local EspFolder
 
-            local EspObjects = {}
+            local espObjects = {}
             local PlrCons = {}
             local EspCons = {}
             
@@ -6861,6 +7088,8 @@ do
             do
                 s_TeamCheck:Connect('Toggled',function(t)l_TeamCheck=t;end)
                 s_TeamColor:Connect('Toggled',function(t)l_TeamColor=t;end)
+                s_ShowDistance:Connect('Toggled',function(t)l_ShowDistance=t;end)
+                s_ShowHealth:Connect('Toggled',function(t)l_ShowHealth=t;end)
                 
                 s_Boxes:Connect('Toggled',function(t)l_Boxes=t;end)
                 s_Nametags:Connect('Toggled',function(t)l_Nametags=t;end)
@@ -6880,8 +7109,8 @@ do
                 
                 s_TracerVis:Connect('Changed',function(v)
                     l_TracerVis = v
-                    for _, name in ipairs(p_Names) do 
-                        local esp = EspObjects[name]
+                    for _, name in ipairs(playerNames) do 
+                        local esp = espObjects[name]
                         if (esp) then
                             esp['Tracer1'].Transparency = v
                             esp['Tracer2'].Transparency = v
@@ -6890,10 +7119,13 @@ do
                 end)
                 s_TextSize:Connect('Changed',function(v)
                     l_TextSize = v
-                    for i,name in ipairs(p_Names) do 
-                        local esp = EspObjects[name]
+                    for i,name in ipairs(playerNames) do 
+                        local esp = espObjects[name]
                         if (esp) then
-                            esp['Text'].Size = v   
+                            local t1 = esp['Nametag']
+                            local t2 = esp['Distance']
+                            if (t1) then t1.Size = v end
+                            if (t2) then t2.Size = v end
                         end
                     end
                 end)
@@ -6905,33 +7137,33 @@ do
             
             local jskull1
             r_esp:Connect('Enabled',function()
-                jskull1 = mrandom(1,99999) -- j💀
+                jskull1 = mathRand(1,99999) -- j💀
                 print(pcall(function()
                 PreviousMode = EspType
                 
                 local function create_esp()
                     
-                    local EspObject = {}
-                    EspObject['upd'] = tick()
+                    local espObject = {}
+                    espObject['upd'] = tick()
                     
-                    local BLACK = c_new(0,0,0)
+                    local BLACK = colNew(0,0,0)
                     
                     do
-                        local Name = draw_new('Text') 
+                        local Name = drawNew('Text') 
                         Name.Center = true
-                        Name.Color = c_new(1,1,1)
+                        Name.Color = colNew(1,1,1)
                         Name.Font = 1
                         Name.Outline = true
-                        Name.OutlineColor = c_new(0,0,0)
+                        Name.OutlineColor = colNew(0,0,0)
                         Name.Size = l_TextSize
                         Name.Text = ''
                         Name.Visible = true
                         Name.ZIndex = 3
                         
-                        EspObject['Text'] = Name
+                        espObject['Nametag'] = Name
                     end do
-                        local Tracer1 = draw_new('Line')
-                        local Tracer2 = draw_new('Line')
+                        local Tracer1 = drawNew('Line')
+                        local Tracer2 = drawNew('Line')
                         
                         
                         Tracer1.Thickness = 1
@@ -6939,274 +7171,312 @@ do
                         Tracer1.Transparency = l_TracerVis or 1
                         Tracer1.ZIndex = 3
                         
-                        Tracer2.Color = c_new(0,0,0)
+                        Tracer2.Color = colNew(0,0,0)
                         Tracer2.Thickness = 3
                         Tracer2.Visible = true
                         Tracer2.Transparency = l_TracerVis or 1
                         Tracer2.ZIndex = 2
                         
-                        EspObject['Tracer1'] = Tracer1
-                        EspObject['Tracer2'] = Tracer2
+                        espObject['Tracer1'] = Tracer1
+                        espObject['Tracer2'] = Tracer2
                     end do 
-                        EspObject['Boxes'] = {}
+                        espObject['Boxes'] = {}
                         if (l_BoxType == 'Simple 2d') then
-                            local Square1 = draw_new('Square')
+                            local Square1 = drawNew('Square')
                             Square1.Thickness = 1
                             Square1.Visible = true
                             Square1.ZIndex = 3
-                            local Square2 = draw_new('Square')
+                            local Square2 = drawNew('Square')
                             Square2.Thickness = 3
                             Square2.Visible = true
                             Square2.ZIndex = 2
                             Square2.Color = BLACK
                             
-                            EspObject['Boxes']['1_1'] = Square1
-                            EspObject['Boxes']['1_2'] = Square2
+                            espObject['Boxes']['1_1'] = Square1
+                            espObject['Boxes']['1_2'] = Square2
                             
                         elseif (l_BoxType == 'Simple 3d') then
-                            local Quad1 = draw_new('Quad')
+                            local Quad1 = drawNew('Quad')
                             Quad1.Thickness = 1
                             Quad1.Visible = true
                             Quad1.ZIndex = 3
-                            local Quad2 = draw_new('Quad')
+                            local Quad2 = drawNew('Quad')
                             Quad2.Thickness = 3
                             Quad2.Visible = true
                             Quad2.ZIndex = 2
                             Quad2.Color = BLACK
                             
-                            EspObject['Boxes']['1_1'] = Quad1
-                            EspObject['Boxes']['1_2'] = Quad2
+                            espObject['Boxes']['1_1'] = Quad1
+                            espObject['Boxes']['1_2'] = Quad2
                             
                         elseif (l_BoxType == 'Westeria 2d') then
                             do
-                                local Corner1_1 = draw_new('Line')
+                                local Corner1_1 = drawNew('Line')
                                 Corner1_1.Thickness = 1
                                 Corner1_1.Visible = true
                                 Corner1_1.ZIndex = 3
-                                local Corner1_2 = draw_new('Line')
+                                local Corner1_2 = drawNew('Line')
                                 Corner1_2.Thickness = 1
                                 Corner1_2.Visible = true
                                 Corner1_2.ZIndex = 3
                                 
-                                local Corner1_1_o = draw_new('Line')
+                                local Corner1_1_o = drawNew('Line')
                                 Corner1_1_o.Thickness = 3
                                 Corner1_1_o.Visible = true
                                 Corner1_1_o.ZIndex = 2
                                 Corner1_1_o.Color = BLACK
-                                local Corner1_2_o = draw_new('Line')
+                                local Corner1_2_o = drawNew('Line')
                                 Corner1_2_o.Thickness = 3
                                 Corner1_2_o.Visible = true
                                 Corner1_2_o.ZIndex = 2
                                 Corner1_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['1_1'] = Corner1_1
-                                EspObject['Boxes']['1_2'] = Corner1_2
-                                EspObject['Boxes']['1_1_o'] = Corner1_1_o
-                                EspObject['Boxes']['1_2_o'] = Corner1_2_o
+                                espObject['Boxes']['1_1'] = Corner1_1
+                                espObject['Boxes']['1_2'] = Corner1_2
+                                espObject['Boxes']['1_1_o'] = Corner1_1_o
+                                espObject['Boxes']['1_2_o'] = Corner1_2_o
                             end
                             do
-                                local Corner2_1 = draw_new('Line')
+                                local Corner2_1 = drawNew('Line')
                                 Corner2_1.Thickness = 1
                                 Corner2_1.Visible = true
                                 Corner2_1.ZIndex = 3
-                                local Corner2_2 = draw_new('Line')
+                                local Corner2_2 = drawNew('Line')
                                 Corner2_2.Thickness = 1
                                 Corner2_2.Visible = true
                                 Corner2_2.ZIndex = 3
                                 
-                                local Corner2_1_o = draw_new('Line')
+                                local Corner2_1_o = drawNew('Line')
                                 Corner2_1_o.Thickness = 3
                                 Corner2_1_o.Visible = true
                                 Corner2_1_o.ZIndex = 2
                                 Corner2_1_o.Color = BLACK
-                                local Corner2_2_o = draw_new('Line')
+                                local Corner2_2_o = drawNew('Line')
                                 Corner2_2_o.Thickness = 3
                                 Corner2_2_o.Visible = true
                                 Corner2_2_o.ZIndex = 2
                                 Corner2_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['2_1'] = Corner2_1
-                                EspObject['Boxes']['2_2'] = Corner2_2
-                                EspObject['Boxes']['2_1_o'] = Corner2_1_o
-                                EspObject['Boxes']['2_2_o'] = Corner2_2_o
+                                espObject['Boxes']['2_1'] = Corner2_1
+                                espObject['Boxes']['2_2'] = Corner2_2
+                                espObject['Boxes']['2_1_o'] = Corner2_1_o
+                                espObject['Boxes']['2_2_o'] = Corner2_2_o
                                 
                             end
                             do
-                                local Corner3_1 = draw_new('Line')
+                                local Corner3_1 = drawNew('Line')
                                 Corner3_1.Thickness = 1
                                 Corner3_1.Visible = true
                                 Corner3_1.ZIndex = 3
-                                local Corner3_2 = draw_new('Line')
+                                local Corner3_2 = drawNew('Line')
                                 Corner3_2.Thickness = 1
                                 Corner3_2.Visible = true
                                 Corner3_2.ZIndex = 3
                                 
-                                local Corner3_1_o = draw_new('Line')
+                                local Corner3_1_o = drawNew('Line')
                                 Corner3_1_o.Thickness = 3
                                 Corner3_1_o.Visible = true
                                 Corner3_1_o.ZIndex = 2
                                 Corner3_1_o.Color = BLACK
-                                local Corner3_2_o = draw_new('Line')
+                                local Corner3_2_o = drawNew('Line')
                                 Corner3_2_o.Thickness = 3
                                 Corner3_2_o.Visible = true
                                 Corner3_2_o.ZIndex = 2
                                 Corner3_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['3_1'] = Corner3_1
-                                EspObject['Boxes']['3_2'] = Corner3_2
-                                EspObject['Boxes']['3_1_o'] = Corner3_1_o
-                                EspObject['Boxes']['3_2_o'] = Corner3_2_o
+                                espObject['Boxes']['3_1'] = Corner3_1
+                                espObject['Boxes']['3_2'] = Corner3_2
+                                espObject['Boxes']['3_1_o'] = Corner3_1_o
+                                espObject['Boxes']['3_2_o'] = Corner3_2_o
                             end
                             do
-                                local Corner4_1 = draw_new('Line')
+                                local Corner4_1 = drawNew('Line')
                                 Corner4_1.Thickness = 1
                                 Corner4_1.Visible = true
                                 Corner4_1.ZIndex = 3
-                                local Corner4_2 = draw_new('Line')
+                                local Corner4_2 = drawNew('Line')
                                 Corner4_2.Thickness = 1
                                 Corner4_2.Visible = true
                                 Corner4_2.ZIndex = 3
                                 
-                                local Corner4_1_o = draw_new('Line')
+                                local Corner4_1_o = drawNew('Line')
                                 Corner4_1_o.Thickness = 3
                                 Corner4_1_o.Visible = true
                                 Corner4_1_o.ZIndex = 2
                                 Corner4_1_o.Color = BLACK
-                                local Corner4_2_o = draw_new('Line')
+                                local Corner4_2_o = drawNew('Line')
                                 Corner4_2_o.Thickness = 3
                                 Corner4_2_o.Visible = true
                                 Corner4_2_o.ZIndex = 2
                                 Corner4_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['4_1'] = Corner4_1
-                                EspObject['Boxes']['4_2'] = Corner4_2
-                                EspObject['Boxes']['4_1_o'] = Corner4_1_o
-                                EspObject['Boxes']['4_2_o'] = Corner4_2_o
+                                espObject['Boxes']['4_1'] = Corner4_1
+                                espObject['Boxes']['4_2'] = Corner4_2
+                                espObject['Boxes']['4_1_o'] = Corner4_1_o
+                                espObject['Boxes']['4_2_o'] = Corner4_2_o
                             end
                         elseif (l_BoxType == 'Westeria 3d') then
                             do
-                                local Corner1_1 = draw_new('Line')
+                                local Corner1_1 = drawNew('Line')
                                 Corner1_1.Thickness = 1
                                 Corner1_1.Visible = true
                                 Corner1_1.ZIndex = 3
-                                local Corner1_2 = draw_new('Line')
+                                local Corner1_2 = drawNew('Line')
                                 Corner1_2.Thickness = 1
                                 Corner1_2.Visible = true
                                 Corner1_2.ZIndex = 3
                                 
-                                local Corner1_1_o = draw_new('Line')
+                                local Corner1_1_o = drawNew('Line')
                                 Corner1_1_o.Thickness = 3
                                 Corner1_1_o.Visible = true
                                 Corner1_1_o.ZIndex = 2
                                 Corner1_1_o.Color = BLACK
-                                local Corner1_2_o = draw_new('Line')
+                                local Corner1_2_o = drawNew('Line')
                                 Corner1_2_o.Thickness = 3
                                 Corner1_2_o.Visible = true
                                 Corner1_2_o.ZIndex = 2
                                 Corner1_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['1_1'] = Corner1_1
-                                EspObject['Boxes']['1_2'] = Corner1_2
-                                EspObject['Boxes']['1_1_o'] = Corner1_1_o
-                                EspObject['Boxes']['1_2_o'] = Corner1_2_o
+                                espObject['Boxes']['1_1'] = Corner1_1
+                                espObject['Boxes']['1_2'] = Corner1_2
+                                espObject['Boxes']['1_1_o'] = Corner1_1_o
+                                espObject['Boxes']['1_2_o'] = Corner1_2_o
                             end
                             do
-                                local Corner2_1 = draw_new('Line')
+                                local Corner2_1 = drawNew('Line')
                                 Corner2_1.Thickness = 1
                                 Corner2_1.Visible = true
                                 Corner2_1.ZIndex = 3
-                                local Corner2_2 = draw_new('Line')
+                                local Corner2_2 = drawNew('Line')
                                 Corner2_2.Thickness = 1
                                 Corner2_2.Visible = true
                                 Corner2_2.ZIndex = 3
                                 
-                                local Corner2_1_o = draw_new('Line')
+                                local Corner2_1_o = drawNew('Line')
                                 Corner2_1_o.Thickness = 3
                                 Corner2_1_o.Visible = true
                                 Corner2_1_o.ZIndex = 2
                                 Corner2_1_o.Color = BLACK
-                                local Corner2_2_o = draw_new('Line')
+                                local Corner2_2_o = drawNew('Line')
                                 Corner2_2_o.Thickness = 3
                                 Corner2_2_o.Visible = true
                                 Corner2_2_o.ZIndex = 2
                                 Corner2_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['2_1'] = Corner2_1
-                                EspObject['Boxes']['2_2'] = Corner2_2
-                                EspObject['Boxes']['2_1_o'] = Corner2_1_o
-                                EspObject['Boxes']['2_2_o'] = Corner2_2_o
+                                espObject['Boxes']['2_1'] = Corner2_1
+                                espObject['Boxes']['2_2'] = Corner2_2
+                                espObject['Boxes']['2_1_o'] = Corner2_1_o
+                                espObject['Boxes']['2_2_o'] = Corner2_2_o
                                 
                             end
                             do
-                                local Corner3_1 = draw_new('Line')
+                                local Corner3_1 = drawNew('Line')
                                 Corner3_1.Thickness = 1
                                 Corner3_1.Visible = true
                                 Corner3_1.ZIndex = 3
-                                local Corner3_2 = draw_new('Line')
+                                local Corner3_2 = drawNew('Line')
                                 Corner3_2.Thickness = 1
                                 Corner3_2.Visible = true
                                 Corner3_2.ZIndex = 3
                                 
-                                local Corner3_1_o = draw_new('Line')
+                                local Corner3_1_o = drawNew('Line')
                                 Corner3_1_o.Thickness = 3
                                 Corner3_1_o.Visible = true
                                 Corner3_1_o.ZIndex = 2
                                 Corner3_1_o.Color = BLACK
-                                local Corner3_2_o = draw_new('Line')
+                                local Corner3_2_o = drawNew('Line')
                                 Corner3_2_o.Thickness = 3
                                 Corner3_2_o.Visible = true
                                 Corner3_2_o.ZIndex = 2
                                 Corner3_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['3_1'] = Corner3_1
-                                EspObject['Boxes']['3_2'] = Corner3_2
-                                EspObject['Boxes']['3_1_o'] = Corner3_1_o
-                                EspObject['Boxes']['3_2_o'] = Corner3_2_o
+                                espObject['Boxes']['3_1'] = Corner3_1
+                                espObject['Boxes']['3_2'] = Corner3_2
+                                espObject['Boxes']['3_1_o'] = Corner3_1_o
+                                espObject['Boxes']['3_2_o'] = Corner3_2_o
                             end
                             do
-                                local Corner4_1 = draw_new('Line')
+                                local Corner4_1 = drawNew('Line')
                                 Corner4_1.Thickness = 1
                                 Corner4_1.Visible = true
                                 Corner4_1.ZIndex = 3
-                                local Corner4_2 = draw_new('Line')
+                                local Corner4_2 = drawNew('Line')
                                 Corner4_2.Thickness = 1
                                 Corner4_2.Visible = true
                                 Corner4_2.ZIndex = 3
                                 
-                                local Corner4_1_o = draw_new('Line')
+                                local Corner4_1_o = drawNew('Line')
                                 Corner4_1_o.Thickness = 3
                                 Corner4_1_o.Visible = true
                                 Corner4_1_o.ZIndex = 2
                                 Corner4_1_o.Color = BLACK
-                                local Corner4_2_o = draw_new('Line')
+                                local Corner4_2_o = drawNew('Line')
                                 Corner4_2_o.Thickness = 3
                                 Corner4_2_o.Visible = true
                                 Corner4_2_o.ZIndex = 2
                                 Corner4_2_o.Color = BLACK
                                 
-                                EspObject['Boxes']['4_1'] = Corner4_1
-                                EspObject['Boxes']['4_2'] = Corner4_2
-                                EspObject['Boxes']['4_1_o'] = Corner4_1_o
-                                EspObject['Boxes']['4_2_o'] = Corner4_2_o
+                                espObject['Boxes']['4_1'] = Corner4_1
+                                espObject['Boxes']['4_2'] = Corner4_2
+                                espObject['Boxes']['4_1_o'] = Corner4_1_o
+                                espObject['Boxes']['4_2_o'] = Corner4_2_o
                             end
+                        elseif (l_BoxType == 'Apathy') then
+                            local Square1 = drawNew('Square')
+                            Square1.Thickness = 1
+                            Square1.Visible = true
+                            Square1.ZIndex = 3
+                            local Square2 = drawNew('Square')
+                            Square2.Thickness = 3
+                            Square2.Visible = true
+                            Square2.ZIndex = 2
+                            Square2.Color = BLACK
+                            
+                            espObject['Boxes']['1_1'] = Square1
+                            espObject['Boxes']['1_2'] = Square2
+                            
+                            local Name = drawNew('Text') 
+                            Name.Center = true
+                            Name.Color = colNew(1,1,1)
+                            Name.Font = 1
+                            Name.Outline = true
+                            Name.OutlineColor = colNew(0,0,0)
+                            Name.Size = l_TextSize
+                            Name.Text = ''
+                            Name.Visible = true
+                            Name.ZIndex = 3
+                            
+                            espObject['Distance'] = Name
                         end
                     end
-                    return EspObject
+                    return espObject
                 end
-                local function hook_player(pName)
+                local function hookPlayer(pName)
                     local PlayerName = pName
-                    local PlayerObject = p_RefKeys[pName]
-                    if (not PlayerObject) then warn'[REDLINE:ESP] This player hasn\'t finished joining the server! Couldn\'t hook, returning' return end 
+                    local PlayerObject = playerManagers[pName]
+                    if (not PlayerObject) then 
+                        local retryCount = 0
+                        repeat
+                            if (retryCount > 5) then
+                                warn'[REDLINE:ESP] Maximum retry count (5) exceeded, returning'
+                                return
+                            end
+                            warn'[REDLINE:ESP] This player hasn\'t finished joining the server! Couldn\'t hook, retrying in 2s' 
+                            retryCount += 1
+                            wait(2)
+                        until playerManagers[pName].RootPart
+                        
+                    end 
                     
-                    local PlayerInstance = PlayerObject.plr
+                    local PlayerInstance = PlayerObject.Player
                     
                     
-                    local EspObject = create_esp()
+                    local espObject = create_esp()
                     
                     PlrCons[PlayerName] = {}
                     PlrCons[PlayerName][1] = PlayerInstance:GetPropertyChangedSignal('TeamColor'):Connect(function() 
-                        local tx = EspObjects[PlayerName]
-                        tx = tx and tx['Text'] or nil
+                        local tx = espObjects[PlayerName]
+                        tx = tx and tx['Nametag'] or nil
                         
                         local col = PlayerInstance.TeamColor
                         col = col and PlayerInstance.TeamColor.Color or nil
@@ -7214,173 +7484,181 @@ do
                         
                         
                         if (tx) then
-                            tx.Color = col or c_new(1,1,1)
+                            tx.Color = col or colNew(1,1,1)
                         end
                     end)
                     PlrCons[PlayerName][2] = PlayerInstance.CharacterAdded:Connect(function(c)
-                        EspObject['Text'].Visible = true
-                        EspObject['Tracer1'].Visible = true
-                        EspObject['Tracer2'].Visible = true
+                        espObject['Nametag'].Visible = true
+                        espObject['Tracer1'].Visible = true
+                        espObject['Tracer2'].Visible = true
                         
-                        if (EspObject['Boxes']) then 
-                            for i,v in pairs(EspObject['Boxes']) do v.Visible = true end
+                        if (espObject['Boxes']) then 
+                            for i,v in pairs(espObject['Boxes']) do v.Visible = true end
+                        end
+                        if (espObject['Distance']) then 
+                            espObject['Distance'].Visible = false
                         end
                     end)
                     PlrCons[PlayerName][3] = PlayerInstance.CharacterRemoving:Connect(function()
-                        EspObject['Text'].Visible = false
-                        EspObject['Tracer1'].Visible = false
-                        EspObject['Tracer2'].Visible = false
+                        printconsole(('[%s] Character removed, hiding objects'):format(PlayerName), 0, 0, 255)
+                        espObject['Nametag'].Text = 'CHARACTER REMOVED ('..PlayerName..')'
+                        espObject['Tracer1'].Visible = false
+                        espObject['Tracer2'].Visible = false
                         
-                        if (EspObject['Boxes']) then 
-                            for i,v in pairs(EspObject['Boxes']) do v.Visible = false end
+                        if (espObject['Boxes']) then 
+                            for i,v in pairs(espObject['Boxes']) do v.Visible = false end
                         end
+                        if (espObject['Distance']) then 
+                            espObject['Distance'].Visible = false
+                        end
+                        --printconsole(('[%s] Successfully hid objects'):format(PlayerName), 0, 255, 0)
                     end)
                     
-                    EspObjects[PlayerName] = EspObject
+                    espObjects[PlayerName] = espObject
                 end
                 
                 -- Hook stuff
                 do
-                    for i,v in ipairs(p_Names) do hook_player(v) end
+                    for i,v in ipairs(playerNames) do hookPlayer(v) end
                 
-                    EspCons['PlrA'] = serv_players.PlayerAdded:Connect(function(p) 
+                    EspCons['PlrA'] = servPlayers.PlayerAdded:Connect(function(p) 
                         local PlayerName = p.Name
                         wait(2.5)
-                        hook_player(PlayerName)
+                        hookPlayer(PlayerName)
                     end)
-                    EspCons['PlrR'] = serv_players.PlayerRemoving:Connect(function(p) 
+                    EspCons['PlrR'] = servPlayers.PlayerRemoving:Connect(function(p) 
                         local PlayerName = p.Name
-                        
-                        local _ = PlrCons[PlayerName] 
-                        if (_) then 
-                            for i,v in ipairs(_) do 
-                                v:Disconnect()
+                        --printconsole(('[%s] Player left'):format(PlayerName), 0, 0, 255)
+                        local a, b = pcall(function()
+                            local thisPlrCons = PlrCons[PlayerName] 
+                            if (thisPlrCons) then 
+                                for i,v in ipairs(thisPlrCons) do 
+                                    v:Disconnect()
+                                end
+                            end 
+                            local thisPlrObjs = espObjects[PlayerName]
+                            if (thisPlrObjs) then
+                                thisPlrObjs.Nametag:Remove()
+                                thisPlrObjs.Tracer1:Remove()
+                                thisPlrObjs.Tracer2:Remove()
+                                for i,v in pairs(thisPlrObjs['Boxes']) do 
+                                    v:Remove()
+                                end
+                                if (thisPlrObjs['Distance']) then
+                                    thisPlrObjs['Distance']:Remove() 
+                                end
+                            else
+                                warn'No objects, oopsies'
                             end
-                        end 
-                        local _ = EspObjects[v]
-                        if (_) then
-                            _['Text']:Remove()
-                            _['Tracer1']:Remove()
-                            _['Tracer2']:Remove()
-                            for i,v in pairs(_['Boxes']) do 
-                                v:Remove()
-                            end
-                        end
+                        end)
+                        --printconsole(('[%s] Deleted objects? %s; %s'):format(PlayerName, tostring(a), tostring(b)), 0, 255, 0)
                     end)
                 end
                 
                 local update_esp do
-                    local textoffs = cfnew(0, 3, 0)
-                    local boxoffs_1_0 = cfnew(-2.5,  2.8,  0.0) -- corner
-                    local boxoffs_1_1 = cfnew(-1.5,  2.8,  0.0)
-                    local boxoffs_1_2 = cfnew(-2.5,  1.8,  0.0)
+                    -- 🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑
+                    local textoffs = cfrNew(0, 3, 0)
+                    local vecNil = vec3(0, 0, 0)
+                    
+                    local boxoffs_1_0 = cfrNew(-2.5,  2.8,  0.0) -- corner
+                    local boxoffs_1_1 = cfrNew(-1.5,  2.8,  0.0)
+                    local boxoffs_1_2 = cfrNew(-2.5,  1.8,  0.0)
 
-                    local boxoffs_2_0 = cfnew( 2.5,  2.8,  0.0) -- corner
-                    local boxoffs_2_1 = cfnew( 1.5,  2.8,  0.0)
-                    local boxoffs_2_2 = cfnew( 2.5,  1.8,  0.0)
+                    local boxoffs_2_0 = cfrNew( 2.5,  2.8,  0.0) -- corner
+                    local boxoffs_2_1 = cfrNew( 1.5,  2.8,  0.0)
+                    local boxoffs_2_2 = cfrNew( 2.5,  1.8,  0.0)
                     
-                    local boxoffs_3_0 = cfnew( 2.5, -2.8,  0.0) -- corner
-                    local boxoffs_3_1 = cfnew( 1.5, -2.8,  0.0)
-                    local boxoffs_3_2 = cfnew( 2.5, -1.8,  0.0)
+                    local boxoffs_3_0 = cfrNew( 2.5, -2.8,  0.0) -- corner
+                    local boxoffs_3_1 = cfrNew( 1.5, -2.8,  0.0)
+                    local boxoffs_3_2 = cfrNew( 2.5, -1.8,  0.0)
                     
-                    local boxoffs_4_0 = cfnew(-2.5, -2.8,  0.0) -- corner
-                    local boxoffs_4_1 = cfnew(-1.5, -2.8,  0.0)
-                    local boxoffs_4_2 = cfnew(-2.5, -1.8,  0.0)
+                    local boxoffs_4_0 = cfrNew(-2.5, -2.8,  0.0) -- corner
+                    local boxoffs_4_1 = cfrNew(-1.5, -2.8,  0.0)
+                    local boxoffs_4_2 = cfrNew(-2.5, -1.8,  0.0)
                     
                     
                     local TracerPos do 
                         if (l_TracerPosition == 'Crosshair') then
-                            EspCons['TracerAimbot'] = serv_run.RenderStepped:Connect(function() 
-                                TracerPos = CrosshairPosition or serv_uinput:GetMouseLocation()
+                            EspCons['TracerAimbot'] = servRun.RenderStepped:Connect(function() 
+                                TracerPos = CrosshairPosition or servInput:GetMouseLocation()
                             end)
                         elseif (l_TracerPosition == 'Character') then
-                            EspCons['TracerAimbot'] = serv_run.RenderStepped:Connect(function() 
-                                local j = l_cam:WorldToViewportPoint(l_humrp.Position)
+                            EspCons['TracerAimbot'] = servRun.RenderStepped:Connect(function() 
+                                local j = clientCamera:WorldToViewportPoint(clientRoot.Position)
                                 TracerPos = vec2(j.X, j.Y)
                             end)
                         elseif (l_TracerPosition == 'Down') then
-                            TracerPos = l_cam.ViewportSize
+                            TracerPos = clientCamera.ViewportSize
                             TracerPos = vec2(TracerPos.X/2, TracerPos.Y*0.8)
-                            EspCons['TracerDown'] = l_cam:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                                local _ = l_cam.ViewportSize
+                            EspCons['TracerDown'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
+                                local _ = clientCamera.ViewportSize
                                 TracerPos = vec2(_.X/2, _.Y*0.8)
                             end)
                         elseif (l_TracerPosition == 'Mouse') then
-                            EspCons['TracerMouse'] = serv_run.RenderStepped:Connect(function() 
-                                TracerPos = serv_uinput:GetMouseLocation()
+                            EspCons['TracerMouse'] = servRun.RenderStepped:Connect(function() 
+                                TracerPos = servInput:GetMouseLocation()
                             end)
                         end
                     end
                     
                     if (l_BoxType == 'Simple 2d') then
-                        local ScreenY = l_cam.ViewportSize.Y
-                        EspCons['Screen'] = l_cam:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                            ScreenY = l_cam.ViewportSize.Y
+                        local viewportY = clientCamera.ViewportSize.Y
+                        EspCons['Screen'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
+                            viewportY = clientCamera.ViewportSize.Y
                         end)
                         
                         update_esp = function() 
-                            local len = #p_Names
-                            if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = l_humrp and l_humrp.Position or vec3(0, 0, 0)
-                            local CurTime = tick()
+                            local namesLen = #playerNames
+                            if (isrbxactive() == false or namesLen == 0) then return end
                             
-                            for i = 1, len do
-                                local Name = p_Names[i]
-                                local PlayerObject = p_RefKeys[Name]
-                                local EspObject = EspObjects[Name]
-                                local rp = PlayerObject.rp
-                                local hum = PlayerObject.hum
+                            -- Get some funny shit
+                            local selfPos = clientRoot and clientRoot.Position or vecNil
+                            local curTime = tick()
+                            local localTeam = clientPlayer.Team
+                            
+                            -- Loop over esp stuff
+                            for i = 1, namesLen do
+                                -- Localize some important vars
+                                local plrName = playerNames[i]
+                                local plrObject = playerManagers[plrName]
+                                local espObject = espObjects[plrName]
                                 
-                                local localteam = l_plr.Team
+                                local plrRoot = plrObject.RootPart --😎😎😎
+                                local plrHum = plrObject.Humanoid
                                 
-                                if (EspObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.plr
-                                    if (EspObject['upd'] > CurTime) then continue end
-                                    if (l_TeamCheck and PlayerInstance.Team == localteam) then 
-                                        local tx = EspObject['Text']
-                                        if (tx.Visible) then
-                                            tx.Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                
+                                -- Safety checks
+                                if (espObject and espObject.upd < curTime and plrRoot and plrHum) then
+                                    local plrInstance = plrObject.Player
+                                    
+                                    if (l_TeamCheck and plrInstance.Team == localTeam) then 
+                                        local textLabel = espObject['Nametag']
+                                        
+                                        if (textLabel.Visible) then
+                                            textLabel.Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false 
+                                            local boxes = espObject['Boxes']
+                                            boxes['1_1'].Visible = false
+                                            boxes['1_2'].Visible = false 
                                         end
                                         continue 
                                     end 
-                                    local TargRootPos = rp.CFrame
                                     
-                                    -- Some position shit
-                                    local Text_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*textoffs).Position)
+                                    local targRootPos = plrRoot.Position
+                                    local Root_Pos2d, Depth do 
+                                        local shit, vis = clientCamera:WorldToViewportPoint(targRootPos)
                                         
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = curTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    TargRootPos = TargRootPos.Position
-                                    local Root_Pos2d, Depth do 
-                                        local shit, vis = l_cam:WorldToViewportPoint(TargRootPos)
-                                        if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = EspObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
+                                            local boxes = espObject['Boxes']
+                                            boxes['1_1'].Visible = false
+                                            boxes['1_2'].Visible = false
                                             continue
                                         end
                                         
@@ -7388,42 +7666,63 @@ do
                                         Depth = shit.Z
                                     end
                                     
-                                    local Text, Tracer1, Tracer2 = EspObject['Text'], EspObject['Tracer1'], EspObject['Tracer2']
-                                    local Boxes = EspObject['Boxes']
-                                    
-                                    local Box1_1 = Boxes['1_1']
-                                    local Box1_2 = Boxes['1_2']
-                                    
-                                    -- Text shit
-                                    do
-                                        local Dist = (SelfPos - TargRootPos).Magnitude
-                                        local HealthText = l_HealthType == 'Percentage' and (mfloor((hum.Health / hum.MaxHealth)*100)..'%') or mfloor(hum.Health)
+                                    local Text_Pos2d do 
+                                        local shit, vis = clientCamera:WorldToViewportPoint((plrRoot.CFrame*textoffs).Position)
                                         
-                                        Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
+                                        if (not vis) then
+                                            espObject['upd'] = curTime + 0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
+                                            
+                                            local boxes = espObject['Boxes']
+                                            boxes['1_1'].Visible = false
+                                            boxes['1_2'].Visible = false
+                                            continue
+                                        end
+                                        Text_Pos2d = vec2(shit.X, shit.Y)
+                                    end
+                                    
+                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
+                                    local boxes = espObject['Boxes']
+                                    
+                                    local Box1_1 = boxes['1_1']
+                                    local Box1_2 = boxes['1_2']
+                                    
+                                    local validColor = l_TeamColor and plrInstance.TeamColor.Color or RGBCOLOR
+                                    
+                                    -- Nametag
+                                    do
+                                        local HealthText = ''
+                                        local DistText = ''
+                                        if (l_ShowDistance) then
+                                            DistText = (' / d: %.1f'):format((selfPos - targRootPos).Magnitude)
+                                        end
+                                        if (l_ShowHealth) then
+                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((plrHum.Health / plrHum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
+                                        end
+                                        
+                                        Text.Text = plrName .. DistText .. HealthText
                                         Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
                                     end
-                                    -- Tracer shit
-                                    local ValidColor
+                                    
+                                    -- Tracers
                                     do
                                         local TracerP1 = Root_Pos2d
                                         local TracerP2 = TracerPos or vec2(0, 0)
+                                        
                                         Tracer1.From = TracerP1 
                                         Tracer1.To = TracerP2
                                         Tracer2.From = TracerP1 
                                         Tracer2.To = TracerP2
                                         
-                                        do
-                                            local _ = (l_TeamColor and PlayerInstance.TeamColor) or false
-                                            _ = _ and _.Color or RGBCOLOR
-                                            ValidColor = _
-                                        end
-                                        Tracer1.Color = ValidColor
+                                        Tracer1.Color = validColor
                                     end
                                     
-                                    -- Box shit :troll:
+                                    -- Boxes
                                     do 
-                                        -- Use depth to figure out approx where thee corners should be
-                                        Depth = (1 / Depth) * ScreenY * (1 / (l_cam.FieldOfView / 70))
+                                        Depth = (1 / Depth) * viewportY * (1 / (clientCamera.FieldOfView / 70))
+                                        
                                         Root_Pos2d = Root_Pos2d - vec2(Depth*1.5, Depth*1.8)
                                         local Box_Size = vec2(Depth*3,Depth*4)
                                         
@@ -7434,7 +7733,7 @@ do
                                         Box1_2.Position = Root_Pos2d 
                                     end
                                     
-                                    Box1_1.Color = ValidColor
+                                    Box1_1.Color = validColor
                                     Box1_1.Visible = l_Boxes
                                     Box1_2.Visible = l_Boxes
                                     Text.Visible = l_Nametags
@@ -7444,39 +7743,39 @@ do
                             end
                         end
                     elseif (l_BoxType == 'Westeria 2d') then
-                        local ScreenY = l_cam.ViewportSize.Y
-                        EspCons['Screen'] = l_cam:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                            ScreenY = l_cam.ViewportSize.Y
+                        local ScreenY = clientCamera.ViewportSize.Y
+                        EspCons['Screen'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
+                            ScreenY = clientCamera.ViewportSize.Y
                         end)
                         
                         
                         update_esp = function() 
-                            local len = #p_Names
+                            local len = #playerNames
                             if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = l_humrp and l_humrp.Position or vec3(0, 0, 0)
+                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
                             local CurTime = tick()
                             
-                            local localteam = l_plr.Team
+                            local localteam = clientPlayer.Team
                             
                             for i = 1, len do
-                                local Name = p_Names[i]
-                                local PlayerObject = p_RefKeys[Name]
-                                local EspObject = EspObjects[Name]
-                                local rp = PlayerObject.rp
-                                local hum = PlayerObject.hum
+                                local Name = playerNames[i]
+                                local PlayerObject = playerManagers[Name]
+                                local espObject = espObjects[Name]
+                                local rp = PlayerObject.RootPart
+                                local hum = PlayerObject.Humanoid
                                 
-                                if (EspObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.plr
+                                if (espObject and rp and hum) then
+                                    local PlayerInstance = PlayerObject.Player
                                     
-                                    if (EspObject['upd'] > CurTime) then continue end
+                                    if (espObject['upd'] > CurTime) then continue end
                                     if (l_TeamCheck and PlayerInstance.Team == localteam) then
-                                        local tx = EspObject['Text']
+                                        local tx = espObject['Nametag']
                                         if (tx.Visible == true) then
                                             tx.Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7500,15 +7799,15 @@ do
                                     
                                     -- Some position shit
                                     local Text_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*textoffs).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
                                         
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7532,14 +7831,14 @@ do
                                     
                                     TargRootPos = TargRootPos.Position
                                     local Root_Pos2d, Depth do 
-                                        local shit, vis = l_cam:WorldToViewportPoint(TargRootPos)
+                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7565,8 +7864,8 @@ do
                                     end
                                     
                                     
-                                    local Text, Tracer1, Tracer2 = EspObject['Text'], EspObject['Tracer1'], EspObject['Tracer2']
-                                    local Boxes = EspObject['Boxes']
+                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
+                                    local Boxes = espObject['Boxes']
                                     
                                     -- most optimized lua code
                                     local Box1_1 = Boxes['1_1']
@@ -7590,10 +7889,16 @@ do
                                     
                                     -- Text shit
                                     do
-                                        local Dist = (SelfPos - TargRootPos).Magnitude
-                                        local HealthText = l_HealthType == 'Percentage' and (mfloor((hum.Health / hum.MaxHealth)*100)..'%') or mfloor(hum.Health)
+                                        local HealthText = ''
+                                        local DistText = ''
+                                        if (l_ShowDistance) then
+                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
+                                        end
+                                        if (l_ShowHealth) then
+                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
+                                        end
                                         
-                                        Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
+                                        Text.Text = Name .. DistText .. HealthText
                                         Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
                                     end
                                     -- Tracer shit
@@ -7616,7 +7921,7 @@ do
                                     -- Box shit :troll:
                                     do 
                                         -- Modify depth
-                                        Depth = (1 / Depth) * ScreenY * (1 / (l_cam.FieldOfView / 70))
+                                        Depth = (1 / Depth) * ScreenY * (1 / (clientCamera.FieldOfView / 70))
                                         -- Make size
                                         local BoxSize = vec2(Depth*3,Depth*4)
                                         -- Make corners
@@ -7709,32 +8014,32 @@ do
                         end
                     elseif (l_BoxType == 'Westeria 3d') then
                         update_esp = function() 
-                            local len = #p_Names
+                            local len = #playerNames
                             if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = l_humrp and l_humrp.Position or vec3(0, 0, 0)
+                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
                             local CurTime = tick()
                             
-                            local localteam = l_plr.Team
+                            local localteam = clientPlayer.Team
                             
                             for i = 1, len do
-                                local Name = p_Names[i]
-                                local PlayerObject = p_RefKeys[Name]
-                                local EspObject = EspObjects[Name]
-                                local rp = PlayerObject.rp
-                                local hum = PlayerObject.hum
+                                local Name = playerNames[i]
+                                local PlayerObject = playerManagers[Name]
+                                local espObject = espObjects[Name]
+                                local rp = PlayerObject.RootPart
+                                local hum = PlayerObject.Humanoid
                                 
-                                if (EspObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.plr
+                                if (espObject and rp and hum) then
+                                    local PlayerInstance = PlayerObject.Player
                                     
-                                    if (EspObject['upd'] > CurTime) then continue end
+                                    if (espObject['upd'] > CurTime) then continue end
                                     if (l_TeamCheck and PlayerInstance.Team == localteam) then
-                                        local tx = EspObject['Text']
+                                        local tx = espObject['Nametag']
                                         if (tx.Visible) then
                                             tx.Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7758,15 +8063,15 @@ do
                                     
                                     -- Some position shit
                                     local Text_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*textoffs).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
                                         
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7789,55 +8094,55 @@ do
                                     end
                                     
                                     local Box_Pos1_0 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
                                         -- i am not doing anymore fuckingchecks
                                         Box_Pos1_0 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos1_1 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_1_1).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_1).Position)
                                         Box_Pos1_1 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos1_2 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_1_2).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_2).Position)
                                         Box_Pos1_2 = vec2(shit.X, shit.Y)
                                     end
                                     
                                     local Box_Pos2_0 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
                                         Box_Pos2_0 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos2_1 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_2_1).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_1).Position)
                                         Box_Pos2_1 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos2_2 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_2_2).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_2).Position)
                                         Box_Pos2_2 = vec2(shit.X, shit.Y)
                                     end
                                     
                                     local Box_Pos3_0 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
                                         Box_Pos3_0 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos3_1 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_3_1).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_1).Position)
                                         Box_Pos3_1 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos3_2 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_3_2).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_2).Position)
                                         Box_Pos3_2 = vec2(shit.X, shit.Y)
                                     end
                                     
                                     local Box_Pos4_0 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
                                         Box_Pos4_0 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos4_1 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_4_1).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_1).Position)
                                         Box_Pos4_1 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos4_2 do
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_4_2).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_2).Position)
                                         Box_Pos4_2 = vec2(shit.X, shit.Y)
                                     end
                                     
@@ -7847,14 +8152,14 @@ do
                                     
                                     TargRootPos = TargRootPos.Position
                                     local Root_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint(TargRootPos)
+                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             Boxes['2_1'].Visible = false
@@ -7878,8 +8183,8 @@ do
                                     end
                                     
                                     
-                                    local Text, Tracer1, Tracer2 = EspObject['Text'], EspObject['Tracer1'], EspObject['Tracer2']
-                                    local Boxes = EspObject['Boxes']
+                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
+                                    local Boxes = espObject['Boxes']
                                     
                                     -- most optimized lua code
                                     local Box1_1 = Boxes['1_1']
@@ -7903,10 +8208,16 @@ do
                                     
                                     -- Text shit
                                     do
-                                        local Dist = (SelfPos - TargRootPos).Magnitude
-                                        local HealthText = l_HealthType == 'Percentage' and (mfloor((hum.Health / hum.MaxHealth)*100)..'%') or mfloor(hum.Health)
+                                        local HealthText = ''
+                                        local DistText = ''
+                                        if (l_ShowDistance) then
+                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
+                                        end
+                                        if (l_ShowHealth) then
+                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
+                                        end
                                         
-                                        Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
+                                        Text.Text = Name .. DistText .. HealthText
                                         Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
                                     end
                                     -- Tracer shit
@@ -8005,32 +8316,32 @@ do
                         end
                     elseif (l_BoxType == 'Simple 3d') then
                         update_esp = function() 
-                            local len = #p_Names
+                            local len = #playerNames
                             if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = l_humrp and l_humrp.Position or vec3(0, 0, 0)
+                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
                             local CurTime = tick()
                             
-                            local localteam = l_plr.Team
+                            local localteam = clientPlayer.Team
                             
                             for i = 1, len do
-                                local Name = p_Names[i]
-                                local PlayerObject = p_RefKeys[Name]
-                                local EspObject = EspObjects[Name]
-                                local rp = PlayerObject.rp
-                                local hum = PlayerObject.hum
+                                local Name = playerNames[i]
+                                local PlayerObject = playerManagers[Name]
+                                local espObject = espObjects[Name]
+                                local rp = PlayerObject.RootPart
+                                local hum = PlayerObject.Humanoid
                                 
-                                if (EspObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.plr
+                                if (espObject and rp and hum) then
+                                    local PlayerInstance = PlayerObject.Player
                                     
-                                    if (EspObject['upd'] > CurTime) then continue end
+                                    if (espObject['upd'] > CurTime) then continue end
                                     if (l_TeamCheck and PlayerInstance.Team == localteam) then
-                                        local tx = EspObject['Text']
+                                        local tx = espObject['Nametag']
                                         if (tx.Visible == true) then
                                             tx.Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                         end
@@ -8040,15 +8351,15 @@ do
                                     
                                     -- Some position shit
                                     local Text_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*textoffs).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
                                         
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             continue
@@ -8057,33 +8368,33 @@ do
                                     end
                                     
                                     local Box_Pos1 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
                                         Box_Pos1 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos2 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
                                         Box_Pos2 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos3 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
                                         Box_Pos3 = vec2(shit.X, shit.Y)
                                     end
                                     local Box_Pos4 do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
                                         Box_Pos4 = vec2(shit.X, shit.Y)
                                     end
                                     
                                     
                                     TargRootPos = TargRootPos.Position
                                     local Root_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint(TargRootPos)
+                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             
-                                            local Boxes = EspObject['Boxes']
+                                            local Boxes = espObject['Boxes']
                                             Boxes['1_1'].Visible = false
                                             Boxes['1_2'].Visible = false
                                             continue
@@ -8093,17 +8404,23 @@ do
                                     end
                                     
                                     
-                                    local Text, Tracer1, Tracer2 = EspObject['Text'], EspObject['Tracer1'], EspObject['Tracer2']
-                                    local Boxes = EspObject['Boxes']
+                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
+                                    local Boxes = espObject['Boxes']
                                     local Box1_1 = Boxes['1_1']
                                     local Box1_2 = Boxes['1_2']
                                     
                                     -- Text shit
                                     do
-                                        local Dist = (SelfPos - TargRootPos).Magnitude
-                                        local HealthText = l_HealthType == 'Percentage' and (mfloor((hum.Health / hum.MaxHealth)*100)..'%') or mfloor(hum.Health)
+                                        local HealthText = ''
+                                        local DistText = ''
+                                        if (l_ShowDistance) then
+                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
+                                        end
+                                        if (l_ShowHealth) then
+                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
+                                        end
                                         
-                                        Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
+                                        Text.Text = Name .. DistText .. HealthText
                                         Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
                                     end
                                     -- Tracer shit
@@ -8151,33 +8468,33 @@ do
                     else 
                         
                         update_esp = function() 
-                            local len = #p_Names
+                            local len = #playerNames
                             if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = l_humrp and l_humrp.Position or vec3(0, 0, 0)
+                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
                             local CurTime = tick()
                             
                             for i = 1, len do
-                                local Name = p_Names[i]
-                                local PlayerObject = p_RefKeys[Name]
-                                local EspObject = EspObjects[Name]
-                                local rp = PlayerObject.rp
-                                local hum = PlayerObject.hum
+                                local Name = playerNames[i]
+                                local PlayerObject = playerManagers[Name]
+                                local espObject = espObjects[Name]
+                                local rp = PlayerObject.RootPart
+                                local hum = PlayerObject.Humanoid
                                 
                                 
                                 
-                                if (EspObject and rp and hum) then
-                                    if (EspObject['upd'] > CurTime) then continue end
+                                if (espObject and rp and hum) then
+                                    if (espObject['upd'] > CurTime) then continue end
                                     
                                     local TargRootPos = rp.CFrame
                                     
                                     local Text_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint((TargRootPos*textoffs).Position)
+                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
                                         
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             continue
                                         end
                                         Text_Pos2d = vec2(shit.X, shit.Y)
@@ -8186,12 +8503,12 @@ do
                                     TargRootPos = TargRootPos.Position
                                     
                                     local Root_Pos2d do 
-                                        local shit, vis = l_cam:WorldToViewportPoint(TargRootPos)
+                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
                                         if (not vis) then
-                                            EspObject['upd'] = CurTime+0.2
-                                            EspObject['Text'].Visible = false
-                                            EspObject['Tracer1'].Visible = false
-                                            EspObject['Tracer2'].Visible = false
+                                            espObject['upd'] = CurTime+0.2
+                                            espObject['Nametag'].Visible = false
+                                            espObject['Tracer1'].Visible = false
+                                            espObject['Tracer2'].Visible = false
                                             continue
                                         end
                                         
@@ -8200,10 +8517,10 @@ do
                                     
                                     
                                     
-                                    local Text, Tracer1, Tracer2 = EspObject['Text'], EspObject['Tracer1'], EspObject['Tracer2']
+                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
                                     
                                     local Dist = (SelfPos - TargRootPos).Magnitude
-                                    local HealthText = l_HealthType == 'Percentage' and (mfloor((hum.Health / hum.MaxHealth)*100)..'%') or mdloor(hum.Health)
+                                    local HealthText = l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mdloor(hum.Health)
                                     
                                     
                                     Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
@@ -8235,11 +8552,11 @@ do
                 
                 
                 if (l_UpdateDelay == 0) then
-                    EspCons['Update'] = serv_run.RenderStepped:Connect(update_esp)
+                    EspCons['Update'] = servRun.RenderStepped:Connect(update_esp)
                 else
                     local jskull2 = jskull1
                     spawn(function()
-                        while jskull2 == jskull1 and r_esp:IsEnabled() do 
+                        while jskull2 == jskull1 and r_esp:isEnabled() do 
                             update_esp()
                             wait(l_UpdateDelay)
                         end
@@ -8248,21 +8565,22 @@ do
             end))
             end)
             r_esp:Connect('Disabled',function() 
+                print(pcall(function()
                 for _, con in pairs(EspCons) do con:Disconnect() end
-                tclear(EspCons)
+                tabClear(EspCons)
                 
                 --if (EspFolder) then EspFolder:Destroy() EspFolder = nil end
                 
-                for i,v in ipairs(p_Names) do 
+                for i,v in ipairs(playerNames) do 
                     local _ = PlrCons[v] 
                     if (_) then 
                         for i,v in ipairs(_) do 
                             v:Disconnect()
                         end
                     end 
-                    local _ = EspObjects[v]
+                    local _ = espObjects[v]
                     if (_) then
-                        _['Text']:Remove()
+                        _['Nametag']:Remove()
                         _['Tracer1']:Remove()
                         _['Tracer2']:Remove()
                         
@@ -8271,19 +8589,21 @@ do
                         end
                     end
                 end
-                tclear(PlrCons)
-                tclear(EspObjects)
+                tabClear(PlrCons)
+                tabClear(espObjects)
+            end))
             end)
+        
         end
         -- Fullbright
         do 
-            local s_looped = r_fullbright:AddToggle('Looped'):SetTooltip('Loops the fullbright every frame. Needed for games like the Rake or Lumber Tycoon')
-            local s_mode = r_fullbright:AddDropdown('Mode',true):SetTooltip('Different modes for fullbright. Some may work better in other games')
+            local s_looped = r_fullbright:addToggle('Looped'):setTooltip('Loops the fullbright every frame. Needed for games like the Rake or Lumber Tycoon')
+            local s_mode = r_fullbright:addDropdown('Mode',true):setTooltip('Different modes for fullbright. Some may work better in other games')
             
-            s_mode:AddOption('Standard'):SetTooltip('Your average fullbright. Doesn\'t look too harsh'):Select()
-            s_mode:AddOption('Bright'):SetTooltip('Insanely bright')
-            s_mode:AddOption('Nofog'):SetTooltip('Only affects fog')
-            s_mode:AddOption('Soft'):SetTooltip('Instead of turning everything white, it turns everything gray. Meant for games with bloom effects')
+            s_mode:addOption('Standard'):setTooltip('Your average fullbright. Doesn\'t look too harsh'):Select()
+            s_mode:addOption('Bright'):setTooltip('Insanely bright')
+            s_mode:addOption('Nofog'):setTooltip('Only affects fog')
+            s_mode:addOption('Soft'):setTooltip('Instead of turning everything white, it turns everything gray. Meant for games with bloom effects')
             
             s_looped:Connect('Toggled',function()r_fullbright:Reset()end)
             s_mode:Connect('Changed',function()r_fullbright:Reset()end)
@@ -8298,7 +8618,7 @@ do
             local steppedcon
             
             r_fullbright:Connect('Enabled',function() 
-                local loop = s_looped:IsEnabled()
+                local loop = s_looped:isEnabled()
                 local mode = s_mode:GetSelection()
                 
                 local lighting = game:GetService('Lighting')
@@ -8312,7 +8632,7 @@ do
                 oldfogstart    = lighting.FogStart
                 
                 if (mode == 'Standard') then
-                    local c1 = c_new(0.9, 0.9, 0.9)
+                    local c1 = colNew(0.9, 0.9, 0.9)
                     local function fb() 
                         lighting.Ambient = c1
                         lighting.OutdoorAmbient = c1
@@ -8322,13 +8642,13 @@ do
                     end
                     
                     if (loop) then
-                        serv_run:BindToRenderStep('RL-Fullbright',9999,fb)
-                        steppedcon = serv_run.Stepped:Connect(fb)
+                        servRun:BindToRenderStep('RL-Fullbright',9999,fb)
+                        steppedcon = servRun.Stepped:Connect(fb)
                     else
                         fb()   
                     end
                 elseif (mode == 'Bright') then
-                    local c1 = c_new(1, 1, 1)
+                    local c1 = colNew(1, 1, 1)
                     local function fb() 
                         lighting.Ambient = c1
                         lighting.OutdoorAmbient = c1
@@ -8339,8 +8659,8 @@ do
                     end
                     
                     if (loop) then
-                        serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
-                        steppedcon = serv_run.Stepped:Connect(fb)
+                        servRun:BindToRenderStep('RL-Fullbright',9999,fb) 
+                        steppedcon = servRun.Stepped:Connect(fb)
                     else
                         fb()   
                     end
@@ -8351,13 +8671,13 @@ do
                     end
                     
                     if (loop) then
-                        serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
-                        steppedcon = serv_run.Stepped:Connect(fb)
+                        servRun:BindToRenderStep('RL-Fullbright',9999,fb) 
+                        steppedcon = servRun.Stepped:Connect(fb)
                     else
                         fb()   
                     end
                 elseif (mode == 'Soft') then
-                    local c1 = c_new(0.6, 0.6, 0.6)
+                    local c1 = colNew(0.6, 0.6, 0.6)
                     local function fb() 
                         lighting.Ambient = c1
                         lighting.OutdoorAmbient = c1
@@ -8367,8 +8687,8 @@ do
                     end
                     
                     if (loop) then
-                        serv_run:BindToRenderStep('RL-Fullbright',9999,fb) 
-                        steppedcon = serv_run.Stepped:Connect(fb)
+                        servRun:BindToRenderStep('RL-Fullbright',9999,fb) 
+                        steppedcon = servRun.Stepped:Connect(fb)
                     else
                         fb()   
                     end
@@ -8376,7 +8696,7 @@ do
             end)
             
             r_fullbright:Connect('Disabled',function() 
-                serv_run:UnbindFromRenderStep('RL-Fullbright')
+                servRun:UnbindFromRenderStep('RL-Fullbright')
                 if (steppedcon) then steppedcon:Disconnect() steppedcon=nil;end
                 
                 local lighting = game:GetService('Lighting')
@@ -8399,20 +8719,20 @@ do
             local KSDrag
             
             r_keystrokes:Connect('Enabled',function() 
-                kmframe = inst_new('Frame')
+                kmframe = instNew('Frame')
                 kmframe.BackgroundTransparency = 1
-                kmframe.Size = dim_off(170, 115)
-                kmframe.Position = dim_new(1,-170-20,0,20)
+                kmframe.Size = dimOffset(170, 115)
+                kmframe.Position = dimNew(1,-170-20,0,20)
                 kmframe.ZIndex = 200
                 kmframe.Parent = ui:GetScreen()
                 
-                local w = inst_new('TextLabel')
+                local w = instNew('TextLabel')
                 w.AnchorPoint = vec2(0.5, 0)
                 w.BackgroundColor3 = RLTHEMEDATA['gw'][1]
                 w.BackgroundTransparency = RLTHEMEDATA['gw'][2]
                 w.Font = RLTHEMEFONT
-                w.Position = dim_sca(0.5, 0)
-                w.Size = dim_off(50, 50)
+                w.Position = dimScale(0.5, 0)
+                w.Size = dimOffset(50, 50)
                 w.Text = 'W'
                 w.TextColor3 = RLTHEMEDATA['tm'][1]
                 w.TextSize = 19
@@ -8427,19 +8747,19 @@ do
                 local a = w:Clone()
                 a.Text = 'A'
                 a.AnchorPoint = vec2(0, 1)
-                a.Position = dim_sca(0, 1)
+                a.Position = dimScale(0, 1)
                 a.Parent = kmframe
                 
                 local s = w:Clone()
                 s.Text = 'S'
                 s.AnchorPoint = vec2(0.5, 1)
-                s.Position = dim_sca(0.5, 1)
+                s.Position = dimScale(0.5, 1)
                 s.Parent = kmframe
                 
                 local d = w:Clone()
                 d.Text = 'D'
                 d.AnchorPoint = vec2(1, 1)
-                d.Position = dim_sca(1, 1)
+                d.Position = dimScale(1, 1)
                 d.Parent = kmframe
                 
 
@@ -8451,24 +8771,24 @@ do
                 keys[Enum.KeyCode.D] = d
                 
                 
-                local monitor_inset = serv_gui:GetGuiInset()
+                local monitor_inset = servGui:GetGuiInset()
                 
                 kmframe.InputBegan:Connect(function(io) 
                     local uitv = io.UserInputType.Value
                     
                     if (uitv == 0) then
-                        local monitor_res = l_cam.ViewportSize
+                        local monitor_res = clientCamera.ViewportSize
                         
                         local root_pos = kmframe.AbsolutePosition -- Get the original header position
                         local start_pos = io.Position
                         start_pos = vec2(start_pos.X, start_pos.Y)
                         
-                        KSDrag = serv_uinput.InputChanged:Connect(function(io) 
+                        KSDrag = servInput.InputChanged:Connect(function(io) 
                             if (io.UserInputType.Value == 4) then
                                 local curr_pos = io.Position
                                 curr_pos = vec2(curr_pos.X, curr_pos.Y)
                                 local _ = (root_pos + (curr_pos - start_pos) + monitor_inset) / monitor_res
-                                kmframe.Position = dim_sca(_.X,_.Y)
+                                kmframe.Position = dimScale(_.X,_.Y)
                             end
                         end)
                     end
@@ -8482,7 +8802,7 @@ do
                 local ColEnabled = RLTHEMEDATA['ge'][1]
                 local ColNorm = RLTHEMEDATA['gw'][1]
                 
-                InputConnection = serv_uinput.InputBegan:Connect(function(kc) 
+                InputConnection = servInput.InputBegan:Connect(function(kc) 
                     kc = kc.KeyCode
                     local key = keys[kc]
                     if (key) then
@@ -8490,7 +8810,7 @@ do
                     end
                 end)
                 
-                InputConnection = serv_uinput.InputEnded:Connect(function(kc) 
+                InputConnection = servInput.InputEnded:Connect(function(kc) 
                     kc = kc.KeyCode
                     local key = keys[kc]
                     if (key) then
@@ -8512,15 +8832,15 @@ do
             r_ugpu:Connect('Enabled',function() 
                 
                 if (isrbxactive and isrbxactive() == false) then
-                    serv_run:Set3dRenderingEnabled(false)
+                    servRun:Set3dRenderingEnabled(false)
                 end
                 
                 
-                FocusedConnection = serv_uinput.WindowFocused:Connect(function() 
-                    serv_run:Set3dRenderingEnabled(true)
+                FocusedConnection = servInput.WindowFocused:Connect(function() 
+                    servRun:Set3dRenderingEnabled(true)
                 end)
-                UnfocusedConnection = serv_uinput.WindowFocusReleased:Connect(function() 
-                    serv_run:Set3dRenderingEnabled(false)
+                UnfocusedConnection = servInput.WindowFocusReleased:Connect(function() 
+                    servRun:Set3dRenderingEnabled(false)
                 end)
                 
             end)
@@ -8535,11 +8855,11 @@ do
         end
         -- Zoom
         do 
-            local s_Amount = r_zoom:AddSlider('Zoom amount',{min=0,max=140,cur=30,step=0.1},true):SetTooltip('The amount to zoom in by')
-            local s_Looped = r_zoom:AddToggle('Looped'):SetTooltip('Loop changes FOV. Useful for some games that change it every frame')
-            local s_Key = r_zoom:AddHotkey('Toggle key'):SetTooltip('Toggles zoom without requiring a module disable / enable')
+            local s_Amount = r_zoom:addSlider('Zoom amount',{min=0,max=140,cur=30,step=0.1},true):setTooltip('The amount to zoom in by')
+            local s_Looped = r_zoom:addToggle('Looped'):setTooltip('Loop changes FOV. Useful for some games that change it every frame')
+            local s_Key = r_zoom:AddHotkey('Toggle key'):setTooltip('Toggles zoom without requiring a module disable / enable')
             
-            local Key = s_Key:GetValue()
+            local Key = s_Key:getValue()
             s_Key:Connect('HotkeySet',function(k) 
                 Key = k 
                 r_zoom:Reset()
@@ -8549,54 +8869,54 @@ do
             local Toggled
             local KeyCon
             
-            local oldfov = l_cam and l_cam.FieldOfView or 70
+            local oldfov = clientCamera and clientCamera.FieldOfView or 70
             r_zoom:Connect('Enabled',function() 
-                dnec(l_cam:GetPropertyChangedSignal('FieldOfView'),'cam_fov')
+                dnec(clientCamera:GetPropertyChangedSignal('FieldOfView'),'cam_fov')
                 
-                local v = 70 - (s_Amount:GetValue()*.5)
+                local v = 70 - (s_Amount:getValue()*.5)
                 
                 if (Key) then
                     
                     s_Amount:Connect('Changed',function(j) 
                         v = 70 - (j*.5)
                         if (Toggled) then 
-                            l_cam.FieldOfView = v
+                            clientCamera.FieldOfView = v
                         end
                     end)
                     
                     
                     Toggled = false
-                    KeyCon = serv_uinput.InputBegan:Connect(function(io, gpe) 
+                    KeyCon = servInput.InputBegan:Connect(function(io, gpe) 
                         if (gpe == false and io.KeyCode == Key) then
                             Toggled = not Toggled
                             if (Toggled) then
-                                if (s_Looped:IsEnabled()) then
-                                    serv_run:BindToRenderStep('RL-FOV',2000,function() 
-                                        l_cam.FieldOfView = v
+                                if (s_Looped:isEnabled()) then
+                                    servRun:BindToRenderStep('RL-FOV',2000,function() 
+                                        clientCamera.FieldOfView = v
                                     end)
                                 else
-                                    twn(l_cam, {FieldOfView = v}, true)
+                                    twn(clientCamera, {FieldOfView = v}, true)
                                 end
                             else
-                                twn(l_cam, {FieldOfView = oldfov}, true)
+                                twn(clientCamera, {FieldOfView = oldfov}, true)
                                 
                                 
-                                serv_run:UnbindFromRenderStep('RL-FOV')
+                                servRun:UnbindFromRenderStep('RL-FOV')
                             end
                         end
                     end)
                 else
                     s_Amount:Connect('Changed',function(j) 
                         v = 70 - (j*.5)
-                        l_cam.FieldOfView = v
+                        clientCamera.FieldOfView = v
                     end)
                     
-                    if (s_Looped:IsEnabled()) then
-                        serv_run:BindToRenderStep('RL-FOV',2000,function() 
-                            l_cam.FieldOfView = v
+                    if (s_Looped:isEnabled()) then
+                        servRun:BindToRenderStep('RL-FOV',2000,function() 
+                            clientCamera.FieldOfView = v
                         end)
                     else
-                        l_cam.FieldOfView = v
+                        clientCamera.FieldOfView = v
                     end
                 end
             end)
@@ -8604,9 +8924,9 @@ do
                 
             r_zoom:Connect('Disabled',function()
                 s_Amount:Connect('Changed',nil)
-                serv_run:UnbindFromRenderStep('RL-FOV')
+                servRun:UnbindFromRenderStep('RL-FOV')
                 
-                l_cam.FieldOfView = oldfov
+                clientCamera.FieldOfView = oldfov
                 enec('cam_fov')
                 
                 if (KeyCon) then KeyCon:Disconnect() KeyCon = nil end
@@ -8614,34 +8934,34 @@ do
 
         end
         
-        r_crosshair:SetTooltip('Enables a crosshair overlay made in Drawing. Also has extra features for Aimbot')
-        r_esp:SetTooltip('Activates ESP for other players. Currently is in beta, may glitch out, but should be way more stable than before.')
-        r_freecam:SetTooltip('Frees up your camera, letting you fly it anywhere. Useful for spying on others. <i>Doesn\'t work on games with custom camera systems</i>')
-        r_fullbright:SetTooltip('Makes the world insanely bright. Useful for games with fog effects, like Lumber Tycoon 2 or Rake. <i>May not work with every game</i>')
-        r_keystrokes:SetTooltip('Enables an overlay with your movement keys. Currently unfinished')
-        r_ugpu:SetTooltip('Disables 3d rendering when the window loses focus, saving GPU processing time')
-        r_zoom:SetTooltip('Zooms in your camera. <i>May not work with every game</i>')
+        r_crosshair:setTooltip('Enables a crosshair overlay made in Drawing. Also has extra features for Aimbot')
+        r_esp:setTooltip('Activates ESP for other players. Currently is in beta, may glitch out, but should be way more stable than before.')
+        r_freecam:setTooltip('Frees up your camera, letting you fly it anywhere. Useful for spying on others. <i>Doesn\'t work on games with custom camera systems</i>')
+        r_fullbright:setTooltip('Makes the world insanely bright. Useful for games with fog effects, like Lumber Tycoon 2 or Rake. <i>May not work with every game</i>')
+        r_keystrokes:setTooltip('Enables an overlay with your movement keys. Currently unfinished')
+        r_ugpu:setTooltip('Disables 3d rendering when the window loses focus, saving GPU processing time')
+        r_zoom:setTooltip('Zooms in your camera. <i>May not work with every game</i>')
     end
-    local m_ui = ui:CreateMenu('UI') do 
-        local u_jeff = m_ui:AddMod('Jeff')
-        local u_modlist = m_ui:AddMod('Mod list')
-        local u_plr = m_ui:AddMod('Player notifications')
-        local u_theme = m_ui:AddMod('Theme',nil,true)
+    local m_ui = ui:newMenu('UI') do 
+        local u_jeff = m_ui:addMod('Jeff')
+        local u_modlist = m_ui:addMod('Mod list')
+        local u_plr = m_ui:addMod('Player notifications')
+        local u_theme = m_ui:addMod('Theme',nil,true)
         
         -- jeff 
         do 
             local _
             u_jeff:Connect('Toggled', function(t) 
                 if (t) then
-                    _ = inst_new('ImageLabel')
-                    _.Size = dim_off(250, 250)
+                    _ = instNew('ImageLabel')
+                    _.Size = dimOffset(250, 250)
                     _.BackgroundTransparency = 1
-                    _.Position = dim_new(1, -250, 1, 0)
+                    _.Position = dimNew(1, -250, 1, 0)
                     _.Image = 'rbxassetid://8723094657'
                     _.ResampleMode = 'Pixelated'
                     _.Parent = ui:GetScreen()
                     
-                    ctwn(_, {Position = dim_new(1, -250, 1, -130)}, 25)
+                    ctwn(_, {Position = dimNew(1, -250, 1, -130)}, 25)
                 else
                     _:Destroy()
                 end
@@ -8650,8 +8970,8 @@ do
         end
         -- plr
         do 
-            local rfriends = u_plr:AddToggle('Roblox friends only'):SetTooltip('Only send notifications if they are your roblox friend')
-            local sound = u_plr:AddToggle('Play sound'):SetTooltip('Play the notif sound'):Enable()
+            local rfriends = u_plr:addToggle('Roblox friends only'):setTooltip('Only send notifications if they are your roblox friend')
+            local sound = u_plr:addToggle('Play sound'):setTooltip('Play the notif sound'):Enable()
             
             local h = true
             sound:Connect('Toggled',function(t)h=t;end)
@@ -8660,11 +8980,11 @@ do
             local leave 
             
             u_plr:Connect('Enabled',function() 
-                join = serv_players.PlayerAdded:Connect(function(p) 
+                join = servPlayers.PlayerAdded:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
                     local title,msg,duration,sound do
-                        title = l_plr:IsFriendsWith(p.UserId) and 'Friend joined' or 'Player joined'
+                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend joined' or 'Player joined'
                         msg = (display and display ~= name and 
                             ('%s (%s) has joined the server'):format(display, name)) or 
                             ('%s has joined the server'):format(name)
@@ -8682,11 +9002,11 @@ do
                     
                     
                 end)
-                leave = serv_players.PlayerRemoving:Connect(function(p) 
+                leave = servPlayers.PlayerRemoving:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
                     local title,msg,duration,sound do
-                        title = l_plr:IsFriendsWith(p.UserId) and 'Friend left' or 'Player left'
+                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend left' or 'Player left'
                         msg = (display and display ~= name and 
                             ('%s (%s) has left the server'):format(display, name)) or 
                             ('%s has left the server'):format(name)
@@ -8710,11 +9030,11 @@ do
         end
         -- modlist
         do 
-            local corner = u_modlist:AddDropdown('Corner'):SetTooltip('The corner the modlist is in')
-            corner:AddOption('Top left'):SetTooltip('Sets the modlist to be at the top left')
-            corner:AddOption('Top right'):SetTooltip('Sets the modlist to be at the top right')
-            corner:AddOption('Bottom left'):SetTooltip('Sets the modlist to be at the bottom left; default option'):Select()
-            corner:AddOption('Bottom right'):SetTooltip('Sets the modlist to be at the bottom right')
+            local corner = u_modlist:addDropdown('Corner'):setTooltip('The corner the modlist is in')
+            corner:addOption('Top left'):setTooltip('Sets the modlist to be at the top left')
+            corner:addOption('Top right'):setTooltip('Sets the modlist to be at the top right')
+            corner:addOption('Bottom left'):setTooltip('Sets the modlist to be at the bottom left; default option'):Select()
+            corner:addOption('Bottom right'):setTooltip('Sets the modlist to be at the bottom right')
             
             
             local _ = ui:manageml()
@@ -8731,7 +9051,7 @@ do
                 
                 
                 if (s == 'Top left') then
-                    uiframe.Position = dim_sca(0, 0)
+                    uiframe.Position = dimScale(0, 0)
                     uiframe.AnchorPoint = vec2(0, 0)
                     
                     uilist.HorizontalAlignment = 'Left'
@@ -8740,7 +9060,7 @@ do
                     ui:manageml(-100, 10, 'Left', 'PaddingLeft')
                     
                 elseif (s == 'Top right') then
-                    uiframe.Position = dim_sca(1, 0)
+                    uiframe.Position = dimScale(1, 0)
                     uiframe.AnchorPoint = vec2(1, 0)
                     
                     uilist.HorizontalAlignment = 'Right'
@@ -8748,7 +9068,7 @@ do
                     
                     ui:manageml(-100, 10, 'Right', 'PaddingRight')
                 elseif (s == 'Bottom left') then
-                    uiframe.Position = dim_sca(0, 1)
+                    uiframe.Position = dimScale(0, 1)
                     uiframe.AnchorPoint = vec2(0, 1)
                     
                     uilist.HorizontalAlignment = 'Left'
@@ -8756,7 +9076,7 @@ do
                     
                     ui:manageml(-100, 10, 'Left', 'PaddingLeft')
                 elseif (s == 'Bottom right') then
-                    uiframe.Position = dim_sca(1, 1)
+                    uiframe.Position = dimScale(1, 1)
                     uiframe.AnchorPoint = vec2(1, 1)
                     
                     uilist.HorizontalAlignment = 'Right'
@@ -8780,9 +9100,9 @@ do
         -- theme
         do 
             
-            local s_theme = u_theme:AddDropdown('Theme'):SetTooltip('The preset theme to use. If you want to make your own then edit the config')
-            local s_save = u_theme:AddButton('Save'):SetTooltip('Saves the selected theme to the theme config. Requires a restart to load the theme')
-            local s_apply = u_theme:AddButton('Apply'):SetTooltip('Saves the selected theme to the theme config. Automatically restarts')
+            local s_theme = u_theme:addDropdown('Theme'):setTooltip('The preset theme to use. If you want to make your own then edit the config')
+            local s_save = u_theme:AddButton('Save'):setTooltip('Saves the selected theme to the theme config. Requires a restart to load the theme')
+            local s_apply = u_theme:AddButton('Apply'):setTooltip('Saves the selected theme to the theme config. Automatically restarts')
             
             local themedata 
             
@@ -8817,24 +9137,24 @@ do
                     local b = a:match('([^|]+)|')
                     local c = a:match('|(.+)')
                     
-                    local _ = s_theme:AddOption(b):SetTooltip(c)
+                    local _ = s_theme:addOption(b):setTooltip(c)
                     if ( i == 1 ) then _:Select() end
                 end
             end)
         end
         
         
-        u_jeff:SetTooltip('🗿🗿🗿')
-        u_modlist:SetTooltip('Displays what modules you currently have enabled in a list')
-        u_plr:SetTooltip('Get notifications whenever a player joins / leaves the server')
-        u_theme:SetTooltip('Lets you choose a UI theme. <b>This "mod" is only temporary and will be replaced by a separate window for UI theming soon!</b>')
+        u_jeff:setTooltip('🗿🗿🗿')
+        u_modlist:setTooltip('Displays what modules you currently have enabled in a list')
+        u_plr:setTooltip('Get notifications whenever a player joins / leaves the server')
+        u_theme:setTooltip('Lets you choose a UI theme. <b>This "mod" is only temporary and will be replaced by a separate window for UI theming soon!</b>')
     end
-    local m_server = ui:CreateMenu('Server') do 
-        local s_autohop = m_server:AddMod('AutoHop'..betatxt)
-        local s_autorec = m_server:AddMod('AutoReconnect'..betatxt)
-        local s_hop = m_server:AddMod('Server hop'..betatxt, 'Button')
-        local s_priv = m_server:AddMod('Private server'..betatxt,'Button')
-        local s_rejoin = m_server:AddMod('Rejoin', 'Button')
+    local m_server = ui:newMenu('Server') do 
+        local s_autohop = m_server:addMod('AutoHop'..betatxt)
+        local s_autorec = m_server:addMod('AutoReconnect'..betatxt)
+        local s_hop = m_server:addMod('Server hop'..betatxt, 'Button')
+        local s_priv = m_server:addMod('Private server'..betatxt,'Button')
+        local s_rejoin = m_server:addMod('Rejoin', 'Button')
         
         -- Autohop
         do 
@@ -8842,7 +9162,7 @@ do
             s_autorec:Connect('Enabled',function() 
                 local kicktime = 0
                 
-                MsgChangedCon = serv_gui.ErrorMessageChanged:Connect(function() 
+                MsgChangedCon = servGui.ErrorMessageChanged:Connect(function() 
                     -- Debounce cause messagechanged gets fired multiple times for some reason
                     local curtime = tick()
                     if (curtime - kicktime < 10) then
@@ -8852,7 +9172,7 @@ do
                     
                     -- Notify
                     wait(1)
-                    serv_gui:ClearError()
+                    servGui:ClearError()
                     ui:Notify('Auto Hop','Auto hopping in a few seconds, hang tight', 5, 'high')
                     wait(1)
                     do 
@@ -8875,7 +9195,7 @@ do
             s_autorec:Connect('Enabled',function() 
                 local kicktime = 0
                 
-                MsgChangedCon = serv_gui.ErrorMessageChanged:Connect(function() 
+                MsgChangedCon = servGui.ErrorMessageChanged:Connect(function() 
                     -- Debounce cause messagechanged gets fired multiple times for some reason
                     local curtime = tick()
                     if (curtime - kicktime < 10) then
@@ -8885,15 +9205,15 @@ do
                     
                     -- Notify
                     wait(1)
-                    serv_gui:ClearError()
+                    servGui:ClearError()
                     ui:Notify('Auto Reconnect','Auto reconnecting in a few seconds, hang tight', 5, 'high')
                     wait(1)
                     
                     -- Player kicked, rejoin
-                    if (#serv_players:GetPlayers() <= 1) then
-                        serv_tps:Teleport(game.PlaceId, l_plr)
+                    if (#servPlayers:GetPlayers() <= 1) then
+                        servTeleport:Teleport(game.PlaceId, clientPlayer)
                     else
-                        serv_tps:TeleportToPlaceInstance(game.PlaceId, game.JobId, l_plr)
+                        servTeleport:TeleportToPlaceInstance(game.PlaceId, game.JobId, clientPlayer)
                     end
                 end)
             end)
@@ -8918,7 +9238,7 @@ do
                     
                     do
                         do
-                            local Data = serv_http:JSONDecode(game:HttpGet(APIURL))
+                            local Data = servHttp:JSONDecode(game:HttpGet(APIURL))
                             local Servers = Data.data
                             local TargetServers = {}
                             
@@ -8931,9 +9251,9 @@ do
                             for i = 1, 200 do 
                                 if (j > 25) then break end
                                 
-                                local Server = Servers[mrandom(1,#Servers)]
+                                local Server = Servers[mathRand(1,#Servers)]
                                 if (Server.playing == Server.maxPlayers or Server.id == CurJobId) then continue end
-                                tinsert(TargetServers, Server.id)
+                                tabInsert(TargetServers, Server.id)
                                 j += 1
                             end
                             
@@ -8942,8 +9262,8 @@ do
                                 ui:Notify('Server hop','Couldn\'t find a valid server; you may already be in the smallest one. Try again later',5, 'low')
                                 
                             else
-                                local serv = TargetServers[mrandom(1,#TargetServers)]
-                                serv_tps:TeleportToPlaceInstance(CurPlaceId, serv, l_plr)
+                                local serv = TargetServers[mathRand(1,#TargetServers)]
+                                servTeleport:TeleportToPlaceInstance(CurPlaceId, serv, clientPlayer)
                                 ui:Notify('Server hop','Teleporting to a new server, wait a sec',5, 'high')
                             end
                         end
@@ -8967,21 +9287,21 @@ do
                     local p_Status
                     
                     do 
-                        p_Backframe = inst_new('Frame')
+                        p_Backframe = instNew('Frame')
                         p_Backframe.BackgroundTransparency = 1
-                        p_Backframe.Size = dim_sca(0,0)
-                        p_Backframe.Position = dim_sca(0.5, 0.5)
+                        p_Backframe.Size = dimScale(0,0)
+                        p_Backframe.Position = dimScale(0.5, 0.5)
                         p_Backframe.AnchorPoint = vec2(0.5, 0.5)
                         p_Backframe.ZIndex = 300
                         p_Backframe.Parent = sc
                                         
-                        p_Header = inst_new('TextLabel')
+                        p_Header = instNew('TextLabel')
                         p_Header.BackgroundColor3 = RLTHEMEDATA['bm'][1]
                         p_Header.BackgroundTransparency = RLTHEMEDATA['bm'][2]
                         p_Header.BorderSizePixel = 0
                         p_Header.Font = RLTHEMEFONT
                         p_Header.RichText = true
-                        p_Header.Size = dim_new(1, 0, 0,20)
+                        p_Header.Size = dimNew(1, 0, 0,20)
                         p_Header.Text = 'Private server'
                         p_Header.TextColor3 = RLTHEMEDATA['tm'][1]
                         p_Header.TextSize = 19
@@ -8993,40 +9313,40 @@ do
                         
                         stroke(p_Header, 'Border')
                         
-                        p_Window = inst_new('Frame')
+                        p_Window = instNew('Frame')
                         p_Window.BackgroundColor3 = RLTHEMEDATA['gw'][1]
                         p_Window.BackgroundTransparency = RLTHEMEDATA['gw'][2]
                         p_Window.BorderSizePixel = 0
-                        p_Window.Position = dim_off(0, 20)
-                        p_Window.Size = dim_new(1, 0, 1, -20)
+                        p_Window.Position = dimOffset(0, 20)
+                        p_Window.Size = dimNew(1, 0, 1, -20)
                         p_Window.ZIndex = 300
                         p_Window.Parent = p_Backframe
                         
-                        p_Progress1 = inst_new('Frame')
+                        p_Progress1 = instNew('Frame')
                         p_Progress1.AnchorPoint = vec2(0.5, 0)
                         p_Progress1.BackgroundTransparency = 1
-                        p_Progress1.Position = dim_new(0.5, 0, 0.1, 0)
-                        p_Progress1.Size = dim_new(1, -10, 0, 20)
+                        p_Progress1.Position = dimNew(0.5, 0, 0.1, 0)
+                        p_Progress1.Size = dimNew(1, -10, 0, 20)
                         p_Progress1.ZIndex = 301
                         p_Progress1.Parent = p_Window
                         
-                        p_Progress2 = inst_new('Frame')
+                        p_Progress2 = instNew('Frame')
                         p_Progress2.BackgroundColor3 = RLTHEMEDATA['ge'][1]
                         p_Progress2.BackgroundTransparency = 0.5
                         p_Progress2.BorderSizePixel = 0
-                        p_Progress2.Size = dim_sca(0,1)
+                        p_Progress2.Size = dimScale(0,1)
                         p_Progress2.ZIndex = 302
                         p_Progress2.Parent = p_Progress1
                         
                         stroke(p_Progress1)
                         
-                        p_Status = inst_new('TextLabel')
+                        p_Status = instNew('TextLabel')
                         p_Status.AnchorPoint = vec2(0.5, 1)
                         p_Status.BackgroundTransparency = 1
                         p_Status.Font = RLTHEMEFONT
-                        p_Status.Position = dim_new(0.5, 0, 1, 0)
+                        p_Status.Position = dimNew(0.5, 0, 1, 0)
                         p_Status.RichText = true
-                        p_Status.Size = dim_new(1, 0, 0, 40)
+                        p_Status.Size = dimNew(1, 0, 0, 40)
                         p_Status.Text = '...'
                         p_Status.TextColor3 = RLTHEMEDATA['tm'][1]
                         p_Status.TextSize = 17
@@ -9041,7 +9361,7 @@ do
                         
                         stroke(p_Window, 'Border')
                         
-                        twn(p_Backframe, {Size = dim_sca(0.2, 0.1)}, true)
+                        twn(p_Backframe, {Size = dimScale(0.2, 0.1)}, true)
                     end
                     
                     
@@ -9061,7 +9381,7 @@ do
                             
                             if (jsondata) then
                                 -- If we got a response check to see if decoding works
-                                Worked = pcall(function() jsondata = serv_http:JSONDecode(jsondata) end)
+                                Worked = pcall(function() jsondata = servHttp:JSONDecode(jsondata) end)
                                 
                                 if (Worked) then
                                     -- Everything worked
@@ -9099,7 +9419,7 @@ do
                                     local CurrentPlaying = GameStats['data'][1]['playing']
                                     local MaxServers = GameStats['data'][1]['maxPlayers']
                                     
-                                    EstimatedServerCount = mfloor(((CurrentPlaying / MaxServers)*1.01)+1)
+                                    EstimatedServerCount = mathFloor(((CurrentPlaying / MaxServers)*1.01)+1)
                                     --print(EstimatedServerCount)
                                 else
                                     Loop = false
@@ -9128,7 +9448,7 @@ do
                         do
                             local a = 0
                             while Loop do
-                                wait(0.1 + (mrandom(10, 30)*0.01))
+                                wait(0.1 + (mathRand(10, 30)*0.01))
                                 -- Get list of servers via api
                                 local CurrentData
                                 local OldData
@@ -9159,11 +9479,11 @@ do
                                     -- Check to see if there actually is a new cursor
                                     if (PrevCursor) then
                                         -- There are more servers, so increase progress bar and continue the loop
-                                        p_Progress2.Size = dim_sca((CurrentServerCount/EstimatedServerCount), 1)
+                                        p_Progress2.Size = dimScale((CurrentServerCount/EstimatedServerCount), 1)
                                         p_Status.Text = ('Fetching more servers... (%s / ~%s)'):format(CurrentServerCount, EstimatedServerCount)
                                         continue
                                     else
-                                        p_Progress2.Size = dim_sca(1, 1)
+                                        p_Progress2.Size = dimScale(1, 1)
                                         -- There are no more servers (on the last page), so handle stuff                                 
                                         -- Get the servers for this page and make a table that will hold a few matching servers
                                         wait(0.3)
@@ -9174,21 +9494,21 @@ do
                                         
                                         -- Save the 40 smallest servers
                                         for i = 0, 39 do 
-                                            tinsert(TargetServers, Servers[#Servers-i])
+                                            tabInsert(TargetServers, Servers[#Servers-i])
                                         end
                                         
                                         -- Store a success variable (used to identify if it couldn't teleport to / find a server)
                                         local Worked = false
                                         for i = 1, 100 do 
                                             -- Increase progress bar to show progress
-                                            --p_Progress2.Size = dim_sca(0.8 + (i/100), 1)
+                                            --p_Progress2.Size = dimScale(0.8 + (i/100), 1)
                                             -- Update text
                                             p_Status.Text = ('Checking for a valid server (%s out of 100 tries)'):format(i)
                                             -- Yield to display text and progress
                                             wait()
                                             
                                             -- Get a random server (this is why there are 25 attempts)
-                                            local Server = TargetServers[mrandom(1, #TargetServers)]
+                                            local Server = TargetServers[mathRand(1, #TargetServers)]
                                             if (Server.id == CurJobId or Server.playing == Server.maxPlayers) then
                                                 -- If the chosen server is the current one or if its full then continue
                                                 continue
@@ -9197,7 +9517,7 @@ do
                                                 p_Status.Text = 'Got a matching server! Teleporting...'
                                                 Worked = true
                                                 wait(0.5)
-                                                serv_tps:TeleportToPlaceInstance(CurPlaceId, Server.id, l_plr)
+                                                servTeleport:TeleportToPlaceInstance(CurPlaceId, Server.id, clientPlayer)
                                                 Loop = false
                                                 break
                                             end
@@ -9218,9 +9538,9 @@ do
                     
                     p_Header.Text = ''
                     p_Status.Text = ''
-                    twn(p_Progress2, {Size = dim_sca(0, 1)}, true)
+                    twn(p_Progress2, {Size = dimScale(0, 1)}, true)
                     wait(0.1)
-                    twn(p_Backframe, {Size = dim_sca(0, 0)}, true).Completed:Wait()
+                    twn(p_Backframe, {Size = dimScale(0, 0)}, true).Completed:Wait()
                     p_Backframe:Destroy()
                     
                     -- Done
@@ -9232,27 +9552,28 @@ do
         -- Rejoin
         do
             s_rejoin:Connect('Clicked',function() 
-                if #serv_players:GetPlayers() <= 1 then
-                    l_plr:Kick('\nRejoining, one second...')
+                if #servPlayers:GetPlayers() <= 1 then
+                    clientPlayer:Kick('\nRejoining, one second...')
                     wait(0.3)
-                    serv_tps:Teleport(game.PlaceId, l_plr)
+                    servTeleport:Teleport(game.PlaceId, clientPlayer)
                 else
-                    serv_tps:TeleportToPlaceInstance(game.PlaceId, game.JobId, l_plr)
+                    servTeleport:TeleportToPlaceInstance(game.PlaceId, game.JobId, clientPlayer)
                 end
             end)
         end
         
-        s_autohop:SetTooltip('Automatically server hops whenever you get disconnected. Useful for server ban evading')
-        s_autorec:SetTooltip('Automatically rejoins whenever you get disconnected')
-        s_hop:SetTooltip('Teleports you to a random server')
-        s_priv:SetTooltip('Teleports you to one of the smallest servers possible. May take a bit of time to search, but atleast it has a snazzy progress bar')
-        s_rejoin:SetTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
+        s_autohop:setTooltip('Automatically server hops whenever you get disconnected. Useful for server ban evading')
+        s_autorec:setTooltip('Automatically rejoins whenever you get disconnected')
+        s_hop:setTooltip('Teleports you to a random server')
+        s_priv:setTooltip('Teleports you to one of the smallest servers possible. May take a bit of time to search, but atleast it has a snazzy progress bar')
+        s_rejoin:setTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
     end
-    --[[
-    local w_Search = ui:CreateWidget('Search', dim_new(1,-325,1,-225), vec2(300, 50), true) do 
-        
+    do
+        --[[
+        local w_Search = ui:CreateWidget('Search', dimNew(1,-325,1,-225), vec2(300, 50), true) do 
+            
+        end]]
     end
-    ]]
 end
 _G.RLLOADED = true
 
@@ -9265,7 +9586,7 @@ end
 
 do
     wait(1)
-    local sound = inst_new('Sound')
+    local sound = instNew('Sound')
     sound.SoundId = 'rbxassetid://9009663963'--'rbxassetid://8781250986'
     sound.Volume = 1
     sound.TimePosition = 0.15
@@ -9276,7 +9597,7 @@ do
         
         local col = RLTHEMEDATA['ge'][1]
         local dn = function() 
-            local _ = draw_new('Line')
+            local _ = drawNew('Line')
             _.Visible = true
             _.Color = col
             _.Thickness = 4
@@ -9288,7 +9609,7 @@ do
         local SizeAnimation 
         local PositionAnim
         
-        SizeAnimation = serv_run.RenderStepped:Connect(function(dt) 
+        SizeAnimation = servRun.RenderStepped:Connect(function(dt) 
             dt *= 9
             for i,v in ipairs(lines) do 
                 local obj = v[1]
@@ -9303,61 +9624,61 @@ do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tinsert(lines, {_, center + vec2(-200, 0), 0})
+                tabInsert(lines, {_, center + vec2(-200, 0), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tinsert(lines, {_, center + vec2(-66, 45), 0})
+                tabInsert(lines, {_, center + vec2(-66, 45), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tinsert(lines, {_, center + vec2(66, 45), 0})
+                tabInsert(lines, {_, center + vec2(66, 45), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tinsert(lines, {_, center + vec2(200, 0), 0})
+                tabInsert(lines, {_, center + vec2(200, 0), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-200, 0)
                 _.To = _.From
-                tinsert(lines, {_, center + vec2(0, 66), 0})
+                tabInsert(lines, {_, center + vec2(0, 66), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(200, 0)
                 _.To = _.From
-                tinsert(lines, {_, center + vec2(0, 66), 0})
+                tabInsert(lines, {_, center + vec2(0, 66), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-200, 0)
                 _.To = _.From
-                tinsert(lines, {_, down, 0})
+                tabInsert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-66, 44)
                 _.To = _.From
-                tinsert(lines, {_, down, 0})
+                tabInsert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(66, 44)
                 _.To = _.From
-                tinsert(lines, {_, down, 0})
+                tabInsert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(200, 0)
                 _.To = _.From
-                tinsert(lines, {_, down, 0})
+                tabInsert(lines, {_, down, 0})
             end
         end
         wait(1)
@@ -9365,7 +9686,7 @@ do
         wait(1)
         
         local y = 0
-        PositionAnim = serv_run.RenderStepped:Connect(function(dt) 
+        PositionAnim = servRun.RenderStepped:Connect(function(dt) 
             local _1 = dt * 15
             local _2 = _1 * 15
         
@@ -9389,23 +9710,23 @@ do
     sound:Destroy()
         
     do
-        local bf = ui:GetBackframe()
+        local bf = ui:GetModframe()
         
-        local prism = inst_new('ImageLabel')
+        local prism = instNew('ImageLabel')
         prism.AnchorPoint = vec2(0, 0)
         prism.BackgroundTransparency = 1
         prism.Image = 'rbxassetid://8951023311'
         prism.ImageColor3 = RLTHEMEDATA['ge'][1]
-        prism.Position = dim_sca(0.5, 0.5)
-        prism.Size = dim_off(0,0)
+        prism.Position = dimScale(0.5, 0.5)
+        prism.Size = dimOffset(0,0)
         
-        local redline = inst_new('ImageLabel')
+        local redline = instNew('ImageLabel')
         redline.BackgroundTransparency = 1
         redline.Image = 'rbxassetid://8950999035'
         redline.ImageColor3 = RLTHEMEDATA['tm'][1]
         redline.AnchorPoint = vec2(0, 0)
-        redline.Position = dim_sca(0.5, 0.5)
-        redline.Size = dim_sca(0.8, 0.8)
+        redline.Position = dimScale(0.5, 0.5)
+        redline.Size = dimScale(0.8, 0.8)
 
         redline.Parent = bf
         prism.Parent = bf
@@ -9414,14 +9735,14 @@ do
         redline.AnchorPoint = vec2(0,0)
         prism.AnchorPoint = vec2(0,0)
         
-        redline.Size = dim_off(150, 150)
-        prism.Size = dim_off(75, 75) 
+        redline.Size = dimOffset(150, 150)
+        prism.Size = dimOffset(75, 75) 
         
-        prism.Position = dim_off(25, -105)
-        redline.Position = dim_off(90, -155)
+        prism.Position = dimOffset(25, -105)
+        redline.Position = dimOffset(90, -155)
         
-        twn(prism, {Position = dim_off(25, 35)},true)
-        twn(redline, {Position = dim_off(90, -5)},true)
+        twn(prism, {Position = dimOffset(25, 35)},true)
+        twn(redline, {Position = dimOffset(90, -5)},true)
     end
     
 end
@@ -9464,7 +9785,8 @@ end
 if (isfile('REDLINE/Queued.txt')) then
     _G.RLQUEUED = readfile('REDLINE/Queued.txt'):match('true') ~= nil
 else
-    _G.RLQUEUED = false
+    _G.RLQUEUED = true
+    writefile('REDLINE/Queued.txt', 'true')
 end
 
 if (pg and _G.RLQUEUED == false) then
@@ -9472,3 +9794,17 @@ if (pg and _G.RLQUEUED == false) then
     writefile('REDLINE/Queued.txt', 'true')
     _G.RLQUEUED = true
 end
+
+
+-- 0.6.3
+--[[
+- Added more ESP settings
+- Added visual indicator to autoclicker
+- Improved ESP a ton, now it's way more stable and doesn't memleak :troll:
+- Improved Velocity a bit
+- Remade some internal shit, most modules should be 0.00001% faster now
+^^ this also improves stability
+- Rewrote some parts of aimbot
+- Added option to move crosshair over target under Aimbot
+! Sorry about no updates, been working on some other stuff
+]]--
