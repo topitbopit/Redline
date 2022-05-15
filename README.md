@@ -87,6 +87,10 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 Current version: 0.6.3  
 Dates will follow MM/DD/YYYY  
 
+Version 0.6.3.1 (5/14/2022)  
+- Fixed non-synapse exploits not being able to use Redline  (oops)
+
+
 Version 0.6.3 (5/14/2022)  
 - ! Sorry about no updates, been working on some other stuff !
 - Added more ESP settings
