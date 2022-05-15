@@ -95,8 +95,7 @@ Version 0.6.3 (5/14/2022)
 - Changed a bunch of tooltips to be more accurate
 - Improved ESP a ton, now it's way more stable and doesn't memleak :troll:
 - Improved Velocity a bit
-- Remade some internal shit, most modules should be 0.00001% faster now
-^^ this also improves stability
+- Remade some internal shit, most modules should be 0.00001% faster now (this also improves stability)
 - Rewrote some parts of aimbot
 
 Version 0.6.2 (3/25/2022)
