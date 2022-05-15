@@ -84,8 +84,20 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.6.2  
+Current version: 0.6.3  
 Dates will follow MM/DD/YYYY  
+
+Version 0.6.3 (5/14/2022)  
+- ! Sorry about no updates, been working on some other stuff !
+- Added more ESP settings
+- Added option to move crosshair over target under Aimbot
+- Added visual indicator to autoclicker
+- Changed a bunch of tooltips to be more accurate
+- Improved ESP a ton, now it's way more stable and doesn't memleak :troll:
+- Improved Velocity a bit
+- Remade some internal shit, most modules should be 0.00001% faster now
+^^ this also improves stability
+- Rewrote some parts of aimbot
 
 Version 0.6.2 (3/25/2022)
  - Fixed queue_on_teleport not being triggered if a certain file was missing (i.e. queueing works now)
