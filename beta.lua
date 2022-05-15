@@ -34,9 +34,9 @@
 
 
 if (_G.RLLOADED) then
-    if (printconsole) then 
-        printconsole('Already loaded Redline', 255, 64, 64)
-        printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
+    if (--printconsole) then 
+        --printconsole('Already loaded Redline', 255, 64, 64)
+        --printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
         return
     else
         warn('Already loaded Redline\nDestroy the current script by pressing [End]')
@@ -56,7 +56,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.3'
+local REDLINEVER = 'v0.6.3.1'
 
 
 local IndentLevel1 = 8
@@ -3340,7 +3340,7 @@ do
         
         table.remove(playerNames, table.find(playerNames, thisName))
         
-        printconsole(('disconnected %s; left'):format(thisName), 255, 255, 0)
+        --printconsole(('disconnected %s; left'):format(thisName), 255, 255, 0)
     end
     
     
@@ -3372,7 +3372,7 @@ do
                 end
             end)
             
-            printconsole(('updated %s character'):format(thisName), 128, 128, 255)
+            --printconsole(('updated %s character'):format(thisName), 128, 128, 255)
         end)
         thisPlayerCons['chr-rem'] = player.CharacterRemoving:Connect(function() 
             if (thisManager.onRemoval) then
@@ -3382,12 +3382,12 @@ do
             thisManager.RootPart = nil
             thisManager.Humanoid = nil 
             
-            printconsole(('removed %s character'):format(thisName), 128, 128, 255)
+            --printconsole(('removed %s character'):format(thisName), 128, 128, 255)
         end)
         thisPlayerCons['team'] = player:GetPropertyChangedSignal('Team'):Connect(function() 
             thisManager.Team = player.Team
             
-            printconsole(('updated %s team'):format(thisName), 128, 128, 255)
+            --printconsole(('updated %s team'):format(thisName), 128, 128, 255)
         end)
         
         if (player.Character) then
@@ -3398,7 +3398,7 @@ do
             thisManager.RootPart = RootPart
             thisManager.Humanoid = Humanoid 
             
-            printconsole(('init %s character'):format(thisName), 128, 128, 255)
+            --printconsole(('init %s character'):format(thisName), 128, 128, 255)
         end
         thisManager.Team = player.Team
         thisManager.Player = player
@@ -3408,7 +3408,7 @@ do
         playerManagers[thisName] = thisManager
         playerCons[thisName] = thisPlayerCons
         
-        printconsole(('readied %s'):format(thisName), 0, 255, 0)
+        --printconsole(('readied %s'):format(thisName), 0, 255, 0)
     end
     
     for _, player in ipairs(servPlayers:GetPlayers()) do
@@ -7500,7 +7500,7 @@ do
                         end
                     end)
                     PlrCons[PlayerName][3] = PlayerInstance.CharacterRemoving:Connect(function()
-                        printconsole(('[%s] Character removed, hiding objects'):format(PlayerName), 0, 0, 255)
+                        --printconsole(('[%s] Character removed, hiding objects'):format(PlayerName), 0, 0, 255)
                         espObject['Nametag'].Text = 'CHARACTER REMOVED ('..PlayerName..')'
                         espObject['Tracer1'].Visible = false
                         espObject['Tracer2'].Visible = false
@@ -7511,7 +7511,7 @@ do
                         if (espObject['Distance']) then 
                             espObject['Distance'].Visible = false
                         end
-                        --printconsole(('[%s] Successfully hid objects'):format(PlayerName), 0, 255, 0)
+                        ----printconsole(('[%s] Successfully hid objects'):format(PlayerName), 0, 255, 0)
                     end)
                     
                     espObjects[PlayerName] = espObject
@@ -7528,7 +7528,7 @@ do
                     end)
                     EspCons['PlrR'] = servPlayers.PlayerRemoving:Connect(function(p) 
                         local PlayerName = p.Name
-                        --printconsole(('[%s] Player left'):format(PlayerName), 0, 0, 255)
+                        ----printconsole(('[%s] Player left'):format(PlayerName), 0, 0, 255)
                         local a, b = pcall(function()
                             local thisPlrCons = PlrCons[PlayerName] 
                             if (thisPlrCons) then 
@@ -7551,7 +7551,7 @@ do
                                 warn'No objects, oopsies'
                             end
                         end)
-                        --printconsole(('[%s] Deleted objects? %s; %s'):format(PlayerName, tostring(a), tostring(b)), 0, 255, 0)
+                        ----printconsole(('[%s] Deleted objects? %s; %s'):format(PlayerName, tostring(a), tostring(b)), 0, 255, 0)
                     end)
                 end
                 
@@ -9794,17 +9794,3 @@ if (pg and _G.RLQUEUED == false) then
     writefile('REDLINE/Queued.txt', 'true')
     _G.RLQUEUED = true
 end
-
-
--- 0.6.3
---[[
-- Added more ESP settings
-- Added visual indicator to autoclicker
-- Improved ESP a ton, now it's way more stable and doesn't memleak :troll:
-- Improved Velocity a bit
-- Remade some internal shit, most modules should be 0.00001% faster now
-^^ this also improves stability
-- Rewrote some parts of aimbot
-- Added option to move crosshair over target under Aimbot
-! Sorry about no updates, been working on some other stuff
-]]--
