@@ -43,19 +43,19 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I won't bypass game specific anticheats.  
 
 - **When's the next update?**  
-I don't have a regular update schedule, but I try to shoot for atleast 3 updates a month.  
+I don't have a regular update schedule, but I (previously) tried to shoot for atleast 3 updates a month.  
 
-- **Can I whitelist my friends from a certain mod (ex. prevent them from setting off antifling)?**  
-You will be able to later.  
+- **Can I whitelist my friends from a certain mod (ex. prevent them from setting off anti-player)?**  
+This is a planned feature, but isn't in Redline yet.  
 
 - **Can I copy / use some of the code?**  
-Yes, but Redline is under the GPL 3 license. Make sure your project follows that license too if you copy / paste anything.  
+Sure  
 
 - **Why won't Redline execute?**  
 Make sure your executor is supported. Open up an issue / DM me the error and I'll fix it fast.  
 
 - **Can I make my own fork / contribute?**  
-Yes, but good luck figuring out what my code does cause got damn it sucks  
+Yes, but good luck figuring out what my code does cause it is fucking ass cheeks  
 
 - **Hi**  
 Hi  
@@ -72,7 +72,6 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 
 ## Planned features  
 - More mods, such as  
-	- Discord rich presence  
 	- Triggerbot  
 - Advanced UI Configuration  
 	- Customize themes in real-time and share them with others  
@@ -84,15 +83,24 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.6.3  
+Current version: 0.6.4  
 Dates will follow MM/DD/YYYY  
 
+Version 0.6.4 (7/26/2022)
+ ! Sorry about the lack of updates  
+ - Added Antiplayer mod  
+ - Changed a few tooltips  
+ - Changed the name and description of the respawn mod  
+ - Fixed aimbot smoothness when the method is set to Mouse being inverted  
+ - Removed glide module since it was useless  
+ - Trying to execute redline when its already loaded now sends a notification instead of printing  
+
 Version 0.6.3.1 (5/14/2022)  
-- Fixed non-synapse exploits not being able to use Redline  (oops)
+- Fixed non-synapse exploits not being able to use Redline  (oops)  
 
 
 Version 0.6.3 (5/14/2022)  
-- ! Sorry about no updates, been working on some other stuff !
+- ! Sorry about no updates, been working on some other stuff!
 - Added more ESP settings
 - Added option to move crosshair over target under Aimbot
 - Added visual indicator to autoclicker
