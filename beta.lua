@@ -26,21 +26,26 @@
 ]]--
 
 
-
--- redline rewrite will possibly be done in 20 years 
--- because half of this code is absolute shit :money_Mouth:
+-- redline might be rewritten soon since all of this code is absolute shit
 
 
 
 
 if (_G.RLLOADED) then
-    if (printconsole) then 
-        printconsole('Already loaded Redline', 255, 64, 64)
-        printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
+    
+    if (_G.RLNOTIF) then
+        _G.RLNOTIF('Oops','Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
         return
     else
-        warn('Already loaded Redline\nDestroy the current script by pressing [End]')
-        return
+    
+        if (printconsole) then 
+            printconsole('Already loaded Redline', 255, 64, 64)
+            printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
+            return
+        else
+            warn('Already loaded Redline\nDestroy the current script by pressing [End]')
+            return
+        end
     end
 end
 
@@ -56,7 +61,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.3.1'
+local REDLINEVER = 'v0.6.4'
 
 
 local IndentLevel1 = 8
@@ -3209,10 +3214,8 @@ end
 
 
 
--- Executor closure func
+-- kys
 local isexecclosure = is_synapse_function or 
-
-
     is_exec_closure or 
     is_exec_func or 
     is_exec_function or 
@@ -3307,10 +3310,10 @@ local clientCamera do
     end)
 end
 
-local playerNames = {}
-local playerExisting = {}
-local playerManagers = {}
-local playerCons = {} 
+local playerNames = {} -- an array of every player's name
+local playerExisting = {} -- playerNames, but as a switch dictionary where keys are the names
+local playerManagers = {} -- managers of each player
+local playerCons = {}  -- connections related to the managers
 
 
 -- PlayerRemoving and PlayerAdded
@@ -3592,7 +3595,7 @@ do
         -- Aimbot
         local c_aimbot = m_combat:addMod('Aimbot')
         do 
-            local s_SafetyKey = c_aimbot:AddHotkey('Aimbot key'):setTooltip('Only aims if this key is held. If no key is set mouse2 is checked for instead')
+            local s_SafetyKey = c_aimbot:AddHotkey('Aimbot key'):setTooltip('Only aims if this key is held. If no key is set, Mouse2 is checked for instead')
             
             local s_AliveCheck = c_aimbot:addToggle('Alive check'):setTooltip('Skips over targets that are dead')
             local s_DistanceCheck = c_aimbot:addToggle('Distance check'):setTooltip('Skips over targets that are too far away from your character')
@@ -3602,7 +3605,7 @@ do
             
             local s_DeltaTime = c_aimbot:addToggle('Deltatime safe'):setTooltip('Makes mouse movement more consistent across different frame rates, but ends up decreasing aim precision')
             local s_LockOn = c_aimbot:addToggle('Lock on'):setTooltip('Locks onto a target until aiming is disabled or the target loses focus')
-            local s_Prediction = c_aimbot:addToggle('Prediction'):setTooltip('Aims at the position ahead of the target')
+            local s_Prediction = c_aimbot:addToggle('Prediction'):setTooltip('Aims at the position ahead of the target. A little scuffed, but can work good enough.')
             
             
             
@@ -3967,7 +3970,7 @@ do
                         
                         if (position) then
                             local delta = position - mp
-                            delta *= Deltatime and (Smoothness * dt * 75) or Smoothness
+                            delta *= Deltatime and ((1 - Smoothness) * dt * 75) or (1 - Smoothness)
                             mousemoverel(delta.X, delta.Y)
                         end
                     end)
@@ -4161,10 +4164,11 @@ do
         local p_anticrash   = m_player:addMod('Anti-crash')
         local p_antifling   = m_player:addMod('Anti-fling')
         local p_antiwarp    = m_player:addMod('Anti-warp')
+        local p_antiplayer  = m_player:addMod('Anti-player')
         local p_autoclick   = m_player:addMod('Auto clicker')
+        local p_brespawn    = m_player:addMod('Better reset', 'Toggle')
         local p_flag        = m_player:addMod('Fakelag')
         local p_flashback   = m_player:addMod('Flashback')
-        local p_respawn     = m_player:addMod('Respawn', 'Toggle')
         local p_safemin     = m_player:addMod('Safe minimize')
         local p_waypoints   = m_player:addMod('Waypoints')
         
@@ -4454,6 +4458,137 @@ do
                 enec('rp_cframe')
             end)
         end
+        -- Antiplayer
+        do 
+            local settingDist = p_antiplayer:addSlider('Distance',{min=50,max=3000,cur=500,step=1}):setTooltip('How close a player has to be to trip the antiplayer')
+            local settingKick = p_antiplayer:addToggle('Kick when triggered'):setTooltip('Kicks you from the game if someone gets too close')
+            
+            local valueDist = settingDist:getValue()
+            local valueKick = settingKick:getValue()
+            
+            settingDist:Connect('Changed', function(v)
+                valueDist = v  
+            end)
+            settingKick:Connect('Toggled', function(v)
+                valueKick = v  
+            end)
+            
+            
+            local playerAddCn
+            local playerRemCn
+            local runCn
+            
+            local drawingObjects = {}
+            p_antiplayer:Connect('Enabled', function()
+                local function initPlayer(player)
+                    local playerName = player.Name
+                    
+                    local obj = {} do 
+                        local nametag = Drawing.new('Text')
+                        nametag.Text = playerName
+                        nametag.Size = 20
+                        nametag.Center = true
+                        nametag.Outline = true
+                        nametag.Color = Color3.fromRGB(212, 212, 212)
+                        nametag.OutlineColor = Color3.fromRGB(2, 2, 2)
+                        
+                        local distance = Drawing.new('Text')
+                        distance.Text = ('%s studs away')
+                        distance.Size = 18
+                        distance.Center = true
+                        distance.Outline = true
+                        distance.Color = Color3.fromRGB(168, 168, 168)
+                        distance.OutlineColor = Color3.fromRGB(2, 2, 2)
+                        
+                        obj.Nametag = nametag
+                        obj.Distance = distance
+                    end
+                    
+                    drawingObjects[playerName] = obj 
+                end
+                local function cleanupPlayer(player)
+                    local playerName = player.Name
+                    
+                    local obj = drawingObjects[playerName]
+                    obj.Nametag:Remove()
+                    obj.Distance:Remove()
+                    drawingObjects[playerName] = nil
+                end
+                
+                playerAddCn = servPlayers.PlayerAdded:Connect(initPlayer)
+                playerRemCn = servPlayers.PlayerRemoving:Connect(cleanupPlayer)
+                
+                for _, playerName in ipairs(playerNames) do 
+                    local manager = playerManagers[playerName]
+                    local player = manager.Player
+                    
+                    initPlayer(player)
+                end
+                
+                local offs1, offs2 = vec3(0, 4, 0), vec3(0, -2, 0)
+                
+                runCn = servRun.Heartbeat:Connect(function() 
+                    local clientPos = clientRoot.Position
+                    
+                    for _, playerName in ipairs(playerNames) do 
+                        local manager = playerManagers[playerName]
+                        local root = manager.RootPart
+                        
+                        if (root) then
+                            local drawObj = drawingObjects[playerName]
+                            local nameTag = drawObj.Nametag
+                            local distanceTag = drawObj.Distance
+                            
+                            local playerPos = root.Position
+                            
+                            local distance = (playerPos - clientPos).Magnitude
+                            if (distance <= valueDist) then
+                                if (valueKick) then
+                                    runCn:Disconnect()
+                                    clientPlayer:Kick(('%s was %d studs away!'):format(playerName, distance))
+                                    return 
+                                end
+                                
+                                local namePos, nameVis = clientCamera:WorldToViewportPoint(playerPos + offs1)
+                                local distPos, distVis = clientCamera:WorldToViewportPoint(playerPos + offs2)
+                                
+                                nameTag.Visible = true
+                                distanceTag.Visible = true
+                                
+                                distanceTag.Text = ('%d studs away'):format(distance)
+                                                                
+                                if (nameVis and distVis) then
+                                    nameTag.Visible = true
+                                    distanceTag.Visible = true
+                                    
+                                    nameTag.Position = vec2(namePos.X, namePos.Y - 10)
+                                    distanceTag.Position = vec2(distPos.X, distPos.Y + 10)
+                                else
+                                    nameTag.Visible = false
+                                    distanceTag.Visible = false
+                                end
+                            else
+                                nameTag.Visible = false
+                                distanceTag.Visible = false
+                            end
+                        end
+                    end
+                end)
+            end)
+                
+                
+            p_antiplayer:Connect('Disabled', function() 
+                runCn:Disconnect()
+                playerAddCn:Disconnect()
+                playerRemCn:Disconnect()
+                
+                for player, objs in pairs(drawingObjects) do 
+                    objs.Nametag:Remove()
+                    objs.Distance:Remove()
+                end
+                table.clear(drawingObjects)
+            end)
+        end
         -- Autoclick
         do 
             local s_ButtonType = p_autoclick:addDropdown('Mouse key',true):setTooltip('The key to click')
@@ -4636,6 +4771,34 @@ do
                 end
             end)
         end 
+        -- Better reset
+        do 
+            local resp_con
+            local qdie_con
+            p_brespawn:Connect('Enabled', function() 
+                local function bind(h) 
+                    qdie_con = h.Died:Connect(function() 
+                        h:Destroy()
+                    end)
+                end
+                
+                bind(clientHumanoid)
+                resp_con = clientPlayer.CharacterAdded:Connect(function(c) 
+                    local h = c:WaitForChild('Humanoid',0.5)
+                    if (h) then
+                        bind(h) 
+                    end
+                end)
+                
+                if (clientHumanoid.Health == 0) then
+                    clientHumanoid:Destroy()
+                end
+            end)
+            p_brespawn:Connect('Disabled',function() 
+                resp_con:Disconnect()
+                qdie_con:Disconnect()
+            end)
+        end
         -- Fake lag
         do 
             local s_Method = p_flag:addDropdown('Method',true)
@@ -4753,34 +4916,6 @@ do
             p_flashback:Connect('Disabled', function() 
                 fb_con:Disconnect()
                 resp_con:Disconnect()
-            end)
-        end
-        -- Respawn
-        do 
-            local resp_con
-            local qdie_con
-            p_respawn:Connect('Enabled', function() 
-                local function bind(h) 
-                    qdie_con = h.Died:Connect(function() 
-                        h:Destroy()
-                    end)
-                end
-                
-                bind(clientHumanoid)
-                resp_con = clientPlayer.CharacterAdded:Connect(function(c) 
-                    local h = c:WaitForChild('Humanoid',0.5)
-                    if (h) then
-                        bind(h) 
-                    end
-                end)
-                
-                if (clientHumanoid.Health == 0) then
-                    clientHumanoid:Destroy()
-                end
-            end)
-            p_respawn:Connect('Disabled',function() 
-                resp_con:Disconnect()
-                qdie_con:Disconnect()
             end)
         end
         -- Safe min
@@ -4988,6 +5123,7 @@ do
             delewp:setTooltip('Deletes all waypoints matching the name you type in')
         end
         
+        
         --p_fancy:setTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
         --p_ftools:setTooltip('Lets you equip and unequip multiple tools at once')
         --p_gtweaks:setTooltip('Lets you configure various misc 'forceable' settings like 3rd person, chat, inventories, and more')
@@ -4996,12 +5132,13 @@ do
         p_animspeed:setTooltip('Increases the speed of your character animations. May mess with game logic')
         p_antiafk:setTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
         p_anticrash:setTooltip('Prevents game scripts from while true do end\'ing you. Lets you bypass some clientside anticheats. <i>Doesn\'t work for certain uncommon methods</i>')
-        p_antifling:setTooltip('Prevents skids from flinging you. Only works on players, not other things like NPCs or in game objects / parts. <i>Doesn\'t work well for some reanimations yet</i>')
+        p_antifling:setTooltip('Sorta scuffed anti-fling. Only works on players, not other things like NPCs or in game objects / parts.')
         p_antiwarp:setTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
+        p_antiplayer:setTooltip('Shows text above players that are within a certain distance. Also has the option to kick you if someone is close enough.')
         p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 2160 CPS (144 fps * 15 clicks p/ frame)')
         p_flag:setTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
         p_flashback:setTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
-        p_respawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
+        p_brespawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
         p_safemin:setTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
         p_waypoints:setTooltip('Lets you save positions and teleport back to them later')
     end
@@ -5012,7 +5149,6 @@ do
         local m_dash      = m_movement:addMod('Dash')
         local m_flight    = m_movement:addMod('Flight')
         local m_float     = m_movement:addMod('Float')
-        local m_glide     = m_movement:addMod('Glide')
         local m_highjump  = m_movement:addMod('High jump')
         local m_noclip    = m_movement:addMod('Noclip')
         local m_nofall    = m_movement:addMod('Nofall')
@@ -5635,31 +5771,6 @@ do
             end)
             
         end
-        -- Glide
-        do 
-            local s_Amount = m_glide:addSlider('Glide amount',{min=-25,max=-1,step=0.1,cur=-5},true):setTooltip('How much your downwards velocity gets limited to')
-            local Amount = s_Amount:getValue()
-            
-            s_Amount:Connect('Changed',function(v)Amount=v;end)
-            
-            
-            local GlideCon
-            m_glide:Connect('Enabled',function() 
-                dnec(clientRoot.Changed, 'rp_changed')
-                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
-                
-                GlideCon = servRun.Heartbeat:Connect(function() 
-                    local vel = clientRoot.Velocity
-                    clientRoot.Velocity = vec3(vel.X, mathClamp(vel.Y, Amount, 9e9), vel.Z)
-                end)
-            end)
-            m_glide:Connect('Disabled',function() 
-                if (GlideCon) then GlideCon:Disconnect() GlideCon = nil end
-                
-                enec('rp_changed')
-                enec('rp_velocity')
-            end)
-        end
         -- High jump
         do 
             local s_Mode = m_highjump:addDropdown('Method',true):setTooltip('The method Highjump uses')
@@ -6189,11 +6300,10 @@ do
         
         m_airjump:setTooltip('Lets you jump in mid-air, infinitely. May bypass any jump restrictions the game has in place')
         m_blink:setTooltip('Freezes your character for other people. <b>Do not combine with fakelag.</b>')
-        m_clicktp:setTooltip('You can\'t see this lololololololo')
-        m_dash:setTooltip('Allows you to dash by double tapping W, A, S, or D')
+        m_clicktp:setTooltip('Classic click teleport')
+        m_dash:setTooltip('Boosts your velocity when you double tap W, A, S, or D. Will be improved upon later.')
         m_flight:setTooltip('Makes your character fly')
-        m_float:setTooltip('Makes your character stop falling entirely. <i>Yes, this is basically the same as Glide, i dont care</i>')
-        m_glide:setTooltip('Slows down your fall, letting you jump farther')
+        m_float:setTooltip('Lets you slowly fall, slowly rise, or simply just float.')
         m_highjump:setTooltip('Increases how high you can jump')
         m_noclip:setTooltip('Disables your character\'s collision, or bypasses the collision entirely')
         m_nofall:setTooltip('May bypass some games fall damage mechanics by changing how you fall.')
@@ -6211,7 +6321,7 @@ do
         local r_freecam     = m_render:addMod('Freecam')
         local r_fullbright  = m_render:addMod('Fullbright')
         local r_keystrokes  = m_render:addMod('Keystrokes'..betatxt)
-        local r_radar       = m_render:addMod('Radar'..betatxt)
+        --local r_radar       = m_render:addMod('Radar'..betatxt)
         local r_ugpu        = m_render:addMod('Unfocused GPU')
         local r_zoom        = m_render:addMod('Zoom')
         
@@ -7039,7 +7149,7 @@ do
             s_BoxType:addOption('Simple 2d'):setTooltip('Simple 2d box ESP. 2 WTVPs'):Select()
             s_BoxType:addOption('Simple 3d'):setTooltip('Classic Unnamed ESP look. 4 WTVPs')
             s_BoxType:addOption('Westeria 2d'):setTooltip('Westeria box style. 2 WTVPs')
-            s_BoxType:addOption('Westeria 3d'):setTooltip('Westeria 3d style. 14 WTVPs; this may lag your computer')
+            s_BoxType:addOption('Westeria 3d'):setTooltip('Westeria 3d style. 14 WTVPs; this may lag a bit!')
             --s_BoxType:addOption('Apathy'):setTooltip('Apathy (epic 😎) style - has healthbars and a team color overlay')
             
             s_HealthType:addOption('Percentage'):setTooltip('The percentage of the current health out of the max health'):Select()
@@ -8720,8 +8830,8 @@ do
             
             r_keystrokes:Connect('Enabled',function() 
                 kmframe = instNew('Frame')
-                kmframe.BackgroundTransparency = 1
-                kmframe.Size = dimOffset(170, 115)
+                kmframe.BackgroundTransparency = 0.9
+                kmframe.Size = dimOffset(170, 120)
                 kmframe.Position = dimNew(1,-170-20,0,20)
                 kmframe.ZIndex = 200
                 kmframe.Parent = ui:GetScreen()
@@ -8762,6 +8872,11 @@ do
                 d.Position = dimScale(1, 1)
                 d.Parent = kmframe
                 
+                --[[local mb1 = w:Clone()
+                mb1.Text = 'Mouse1'
+                mb1.AnchorPoint = vec2(0, 1)
+                mb1.Position = dimScale(0, 2)
+                mb1.Parent = kmframe]]
 
                 
                 local keys = {}
@@ -9794,3 +9909,17 @@ if (pg and _G.RLQUEUED == false) then
     writefile('REDLINE/Queued.txt', 'true')
     _G.RLQUEUED = true
 end
+_G.RLNOTIF = function(...) 
+    return ui:Notify(...)
+end
+
+-- 0.6.4
+--[[
+! Sorry about the lack of updates
+- Added Antiplayer mod
+- Changed a few tooltips
+- Changed the name and description of the respawn mod
+- Fixed aimbot smoothness when the method is set to Mouse being inverted
+- Removed glide module since it was useless
+- Trying to execute redline when its already loaded now sends a notification instead of printing
+]]--
