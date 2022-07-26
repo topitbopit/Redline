@@ -87,7 +87,7 @@ Current version: 0.6.4
 Dates will follow MM/DD/YYYY  
 
 Version 0.6.4 (7/26/2022)  
- ! Sorry about the lack of updates  
+ - ! Sorry about the lack of updates  
  - Added Antiplayer mod  
  - Changed a few tooltips  
  - Changed the name and description of the respawn mod  
