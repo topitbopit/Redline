@@ -61,7 +61,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.4'
+local REDLINEVER = 'v0.6.4.1'
 
 
 local IndentLevel1 = 8
@@ -5370,7 +5370,7 @@ do
             local descend_h = m_flight:AddHotkey('Descend key')
             local mode = m_flight:addDropdown('Method', true)
             local turndir = m_flight:addDropdown('Turn direction')
-            local speedslider = m_flight:addSlider('Speed',{min=0,max=250,step=0.01,cur=30})
+            local speedslider = m_flight:addSlider('Speed',{min=0,max=350,step=0.01,cur=30})
             local camera = m_flight:addToggle('Camera-based')
             
             
@@ -6187,7 +6187,7 @@ do
             mode:addOption('Part'):setTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
             mode:addOption('WalkSpeed'):setTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. Use Standard instead.</b></font>')
             
-            local speedslider = m_speed:addSlider('Speed',{min=0,max=100,cur=30,step=0.01})
+            local speedslider = m_speed:addSlider('Speed',{min=0,max=250,cur=30,step=0.01})
             local speed = 30
             speedslider:Connect('Changed',function(v)speed=v;end)
             local part
@@ -9913,13 +9913,8 @@ _G.RLNOTIF = function(...)
     return ui:Notify(...)
 end
 
--- 0.6.4
+-- v0.6.4.1
 --[[
-! Sorry about the lack of updates
-- Added Antiplayer mod
-- Changed a few tooltips
-- Changed the name and description of the respawn mod
-- Fixed aimbot smoothness when the method is set to Mouse being inverted
-- Removed glide module since it was useless
-- Trying to execute redline when its already loaded now sends a notification instead of printing
+- Increased Flight's speed cap from 250 to 350
+- Increased Speed's cap from 100 to 300
 ]]--
