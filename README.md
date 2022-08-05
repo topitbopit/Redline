@@ -83,8 +83,13 @@ Unfortunately the list of mods - along with their settings and descriptions - ch
 	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.6.4  
-Dates will follow MM/DD/YYYY  
+Current version: 0.6.4.1  
+Dates will follow MM/DD/YYYY   
+
+
+Version 0.6.4.1 (8/4/2022)  
+- Increased Flight's speed cap from 250 to 350  
+- Increased Speed's cap from 100 to 300  
 
 Version 0.6.4 (7/26/2022)  
  - ! Sorry about the lack of updates  
