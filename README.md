@@ -2,7 +2,7 @@
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Ftopitbopit%2FRedline&count_bg=%23C83D3D&title_bg=%23434343&icon=&icon_color=%23CF3A3A&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 [![Forks](https://badgen.net/github/forks/topitbopit/Redline/)]()
 [![Stars](https://badgen.net/github/stars/topitbopit/Redline)](https://github.com/topitbopit/Redline/stargazers)
-[![Issues](https://badgen.net/github/issues/topitbopit/Redline/)](https://GitHub.com/topitbopit/Redline/issues/)
+[![Issues](https://badgen.net/github/issues/topitbopit/Redline/)](https://github.com/topitbopit/Redline/issues/)
 
 <!-- j -->
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
