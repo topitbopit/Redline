@@ -61,7 +61,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.4.1'
+local REDLINEVER = 'v0.6.5'
 
 
 local IndentLevel1 = 8
@@ -198,12 +198,12 @@ local function DecodeThemeJson(json)
     return RLTHEME, RLTHEMEFONT
 end
 
-if (isfile('REDLINE/theme.jsonc')) then
+if (isfile('REDLINE/theme.json')) then
     _G.RLLOADERROR = 0
     
     local ThemeData, Font
     pcall(function()
-        local FileData = readfile('REDLINE/theme.jsonc')
+        local FileData = readfile('REDLINE/theme.json')
         ThemeData, Font = DecodeThemeJson(FileData)
     end)
     
@@ -661,8 +661,8 @@ local ui = {} do
             -- :troll
             local c = w_ModList:GetChildren()
             local _ = ModlistPadding[2]
-            local __ = ModlistPadding[4]
-            local ___ = __ == 'PaddingLeft' and 'PaddingRight' or __
+            local paddingDir = ModlistPadding[4]
+            local ___ = paddingDir == 'PaddingLeft' and 'PaddingRight' or paddingDir
             local ____ = dimOffset(0,0).X
             for i = 1, #c do
                 local v = c[i]
@@ -2980,8 +2980,8 @@ local ui = {} do
         _G.RLTHEMEDATA = nil
         _G.RLTHEMEFONT = nil
         _G.RLLOADERROR = nil
-        
-        writefile('REDLINE/Queued.txt','')
+        _G.RLQUEUED = nil
+        writefile('REDLINE/Queued.txt', 'false')
         
         local sound = instNew('Sound')
         sound.SoundId = 'rbxassetid://9009668475'
@@ -3368,13 +3368,13 @@ do
             thisManager.RootPart = RootPart
             thisManager.Humanoid = Humanoid
             
-            
-            thisPlayerCons['chr-die'] = Humanoid.Died:Connect(function() 
-                if (thisManager.onDeath) then
-                    thisManager.onDeath()
-                end
-            end)
-            
+            if (Humanoid) then 
+                thisPlayerCons['chr-die'] = Humanoid.Died:Connect(function() 
+                    if (thisManager.onDeath) then
+                        thisManager.onDeath()
+                    end
+                end)
+            end
             --printconsole(('updated %s character'):format(thisName), 128, 128, 255)
         end)
         thisPlayerCons['chr-rem'] = player.CharacterRemoving:Connect(function() 
@@ -3400,6 +3400,14 @@ do
             thisManager.Character = Character
             thisManager.RootPart = RootPart
             thisManager.Humanoid = Humanoid 
+            
+            if (Humanoid) then 
+                thisPlayerCons['chr-die'] = Humanoid.Died:Connect(function() 
+                    if (thisManager.onDeath) then
+                        thisManager.onDeath()
+                    end
+                end)
+            end
             
             --printconsole(('init %s character'):format(thisName), 128, 128, 255)
         end
@@ -7129,6 +7137,7 @@ do
             local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Replaces the RGB color with their team color. If a player doesn\'t have a team, then their color will remain RGB')
             local s_ShowDistance = r_esp:addToggle('Display distance'):setTooltip('Shows player distance in the nametag')
             local s_ShowHealth = r_esp:addToggle('Display health'):setTooltip('Shows player health in the nametag')    
+            local s_DistanceCheck = r_esp:addToggle('Distance check'):setTooltip('Only displays targets that are close enough to you')
             
             -- Esp types
             local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Displays boxes around the targets')
@@ -7137,9 +7146,10 @@ do
             --local s_VisibilityCheck = r_esp:addToggle('Visibility check'):setTooltip('Only shows ESP for a player if they\'re visible and not blocked by anything')
             
             -- Sliders
-            local s_UpdateDelay = r_esp:addSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('Delay in seconds between ESP updates. <0.05 recommended. <b>Only used for Drawing related ESPS</b>')
+            local s_UpdateDelay = r_esp:addSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('Delay in seconds between ESP updates. < 0.05 of a delay is recommended.')
             local s_TracerVis = r_esp:addSlider('Tracer visibility',{min=0,max=1,cur=1,step=0.1}):setTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully opaque')
-            local s_TextSize = r_esp:addSlider('Text size',{min=1,max=30,cur=20,step=1}):setTooltip('The size of the text')
+            local s_TextSize = r_esp:addSlider('Text size',{min=1,max=30,cur=16,step=1}):setTooltip('The size of the text')
+            local s_Distance = r_esp:addSlider('Distance', {min=1,max=5000,cur=3000,step=1}):setTooltip('How close someone has to be to trigger the distance check')
             
             -- Dropdowns
             local s_BoxType = r_esp:addDropdown('Box type',true):setTooltip('The type of box to use')
@@ -7160,7 +7170,6 @@ do
             s_TracerPosition:addOption('Down'):setTooltip('Tracers are drawn towards the bottom of your screen')
             s_TracerPosition:addOption('Mouse'):setTooltip('Tracers are drawn at the mouse position')
             
-            s_Tracers:Enable()
             s_Nametags:Enable()
             s_Boxes:Enable()
             
@@ -7171,6 +7180,7 @@ do
             local l_TeamColor   = s_TeamColor:getValue()
             local l_ShowDistance = s_ShowDistance:getValue()
             local l_ShowHealth = s_ShowHealth:getValue()
+            local l_DistanceCheck = s_DistanceCheck:getValue()
             
             local l_Boxes = s_Boxes:getValue()
             local l_Nametags = s_Nametags:getValue()
@@ -7179,7 +7189,7 @@ do
             local l_UpdateDelay = s_UpdateDelay:getValue()
             local l_TracerVis = s_TracerVis:getValue()
             local l_TextSize = s_TextSize:getValue()
-            
+            local l_Distance = s_Distance:getValue()
             
             local l_BoxType = s_BoxType:getValue()
             local l_HealthType = s_HealthType:getValue()
@@ -7200,6 +7210,7 @@ do
                 s_TeamColor:Connect('Toggled',function(t)l_TeamColor=t;end)
                 s_ShowDistance:Connect('Toggled',function(t)l_ShowDistance=t;end)
                 s_ShowHealth:Connect('Toggled',function(t)l_ShowHealth=t;end)
+                s_DistanceCheck:Connect('Toggled',function(t)l_DistanceCheck=t;end)
                 
                 s_Boxes:Connect('Toggled',function(t)l_Boxes=t;end)
                 s_Nametags:Connect('Toggled',function(t)l_Nametags=t;end)
@@ -7239,15 +7250,12 @@ do
                         end
                     end
                 end)
+                s_Distance:Connect('Changed',function(v)l_Distance=v;end)
             end
-            
-            
-                   
-            
             
             local jskull1
             r_esp:Connect('Enabled',function()
-                jskull1 = mathRand(1,99999) -- j💀
+                jskull1 = mathRand(1,99999)
                 print(pcall(function()
                 PreviousMode = EspType
                 
@@ -7262,7 +7270,7 @@ do
                         local Name = drawNew('Text') 
                         Name.Center = true
                         Name.Color = colNew(1,1,1)
-                        Name.Font = 1
+                        Name.Font = Drawing.Fonts.UI or 0
                         Name.Outline = true
                         Name.OutlineColor = colNew(0,0,0)
                         Name.Size = l_TextSize
@@ -7277,13 +7285,13 @@ do
                         
                         
                         Tracer1.Thickness = 1
-                        Tracer1.Visible = true
+                        Tracer1.Visible = false
                         Tracer1.Transparency = l_TracerVis or 1
                         Tracer1.ZIndex = 3
                         
                         Tracer2.Color = colNew(0,0,0)
                         Tracer2.Thickness = 3
-                        Tracer2.Visible = true
+                        Tracer2.Visible = false
                         Tracer2.Transparency = l_TracerVis or 1
                         Tracer2.ZIndex = 2
                         
@@ -7733,7 +7741,7 @@ do
                                 local plrObject = playerManagers[plrName]
                                 local espObject = espObjects[plrName]
                                 
-                                local plrRoot = plrObject.RootPart --😎😎😎
+                                local plrRoot = plrObject.RootPart
                                 local plrHum = plrObject.Humanoid
                                 
                                 
@@ -7741,7 +7749,9 @@ do
                                 if (espObject and espObject.upd < curTime and plrRoot and plrHum) then
                                     local plrInstance = plrObject.Player
                                     
-                                    if (l_TeamCheck and plrInstance.Team == localTeam) then 
+                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
+                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
+                                    if (d or t) then 
                                         local textLabel = espObject['Nametag']
                                         
                                         if (textLabel.Visible) then
@@ -7878,7 +7888,9 @@ do
                                     local PlayerInstance = PlayerObject.Player
                                     
                                     if (espObject['upd'] > CurTime) then continue end
-                                    if (l_TeamCheck and PlayerInstance.Team == localteam) then
+                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
+                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
+                                    if (d or t) then 
                                         local tx = espObject['Nametag']
                                         if (tx.Visible == true) then
                                             tx.Visible = false
@@ -8142,7 +8154,9 @@ do
                                     local PlayerInstance = PlayerObject.Player
                                     
                                     if (espObject['upd'] > CurTime) then continue end
-                                    if (l_TeamCheck and PlayerInstance.Team == localteam) then
+                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
+                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
+                                    if (d or t) then 
                                         local tx = espObject['Nametag']
                                         if (tx.Visible) then
                                             tx.Visible = false
@@ -8444,7 +8458,9 @@ do
                                     local PlayerInstance = PlayerObject.Player
                                     
                                     if (espObject['upd'] > CurTime) then continue end
-                                    if (l_TeamCheck and PlayerInstance.Team == localteam) then
+                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
+                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
+                                    if (d or t) then 
                                         local tx = espObject['Nametag']
                                         if (tx.Visible == true) then
                                             tx.Visible = false
@@ -8682,20 +8698,22 @@ do
                 --if (EspFolder) then EspFolder:Destroy() EspFolder = nil end
                 
                 for i,v in ipairs(playerNames) do 
-                    local _ = PlrCons[v] 
-                    if (_) then 
-                        for i,v in ipairs(_) do 
+                    local cns = PlrCons[v] 
+                    if (cns) then 
+                        for i,v in ipairs(cns) do 
                             v:Disconnect()
                         end
                     end 
-                    local _ = espObjects[v]
-                    if (_) then
-                        _['Nametag']:Remove()
-                        _['Tracer1']:Remove()
-                        _['Tracer2']:Remove()
+                    local obj = espObjects[v]
+                    if (obj) then
+                        obj['Nametag']:Remove()
+                        obj['Tracer1']:Remove()
+                        obj['Tracer2']:Remove()
                         
-                        if (_['Boxes']) then
-                            for i,v in pairs(_['Boxes']) do v:Remove() end    
+                        if (obj['Boxes']) then
+                            for i,v in pairs(obj['Boxes']) do 
+                                v:Remove() 
+                            end    
                         end
                     end
                 end
@@ -8830,7 +8848,7 @@ do
             
             r_keystrokes:Connect('Enabled',function() 
                 kmframe = instNew('Frame')
-                kmframe.BackgroundTransparency = 0.9
+                kmframe.BackgroundTransparency = 1
                 kmframe.Size = dimOffset(170, 120)
                 kmframe.Position = dimNew(1,-170-20,0,20)
                 kmframe.ZIndex = 200
@@ -9050,7 +9068,7 @@ do
         end
         
         r_crosshair:setTooltip('Enables a crosshair overlay made in Drawing. Also has extra features for Aimbot')
-        r_esp:setTooltip('Activates ESP for other players. Currently is in beta, may glitch out, but should be way more stable than before.')
+        r_esp:setTooltip('Activates ESP for other players. <b>Currently is in beta, so it may glitch out!</b>')
         r_freecam:setTooltip('Frees up your camera, letting you fly it anywhere. Useful for spying on others. <i>Doesn\'t work on games with custom camera systems</i>')
         r_fullbright:setTooltip('Makes the world insanely bright. Useful for games with fog effects, like Lumber Tycoon 2 or Rake. <i>May not work with every game</i>')
         r_keystrokes:setTooltip('Enables an overlay with your movement keys. Currently unfinished')
@@ -9065,20 +9083,20 @@ do
         
         -- jeff 
         do 
-            local _
+            local jeff
             u_jeff:Connect('Toggled', function(t) 
                 if (t) then
-                    _ = instNew('ImageLabel')
-                    _.Size = dimOffset(250, 250)
-                    _.BackgroundTransparency = 1
-                    _.Position = dimNew(1, -250, 1, 0)
-                    _.Image = 'rbxassetid://8723094657'
-                    _.ResampleMode = 'Pixelated'
-                    _.Parent = ui:GetScreen()
+                    jeff = instNew('ImageLabel')
+                    jeff.Size = dimOffset(250, 250)
+                    jeff.BackgroundTransparency = 1
+                    jeff.Position = dimNew(1, -250, 1, 0)
+                    jeff.Image = 'rbxassetid://8723094657'
+                    jeff.ResampleMode = 'Pixelated'
+                    jeff.Parent = ui:GetScreen()
                     
-                    ctwn(_, {Position = dimNew(1, -250, 1, -130)}, 25)
+                    ctwn(jeff, {Position = dimNew(1, -250, 1, -130)}, 25)
                 else
-                    _:Destroy()
+                    jeff:Destroy()
                 end
                 
             end)
@@ -9152,10 +9170,10 @@ do
             corner:addOption('Bottom right'):setTooltip('Sets the modlist to be at the bottom right')
             
             
-            local _ = ui:manageml()
-            local uiframe = _[1]
-            local uilist = _[2]
-            local uititle = _[3]
+            local objs = ui:manageml()
+            local uiframe = objs[1]
+            local uilist = objs[2]
+            local uititle = objs[3]
             
             corner:Connect('Changed',function() 
                 u_modlist:Reset()
@@ -9226,7 +9244,7 @@ do
                     themedata = nil
                                 
                     local worked = pcall(function()
-                        themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.jsonc')
+                        themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.json')
                     end)
                     
                     if (not worked) then
@@ -9236,10 +9254,10 @@ do
             end)
             
             s_save:Connect('Clicked',function()
-                writefile('REDLINE/theme.jsonc', themedata)
+                writefile('REDLINE/theme.json', themedata)
             end)
             s_apply:Connect('Clicked',function()
-                writefile('REDLINE/theme.jsonc', themedata)
+                writefile('REDLINE/theme.json', themedata)
                 ui:Destroy()
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()
             end)
@@ -9252,8 +9270,10 @@ do
                     local b = a:match('([^|]+)|')
                     local c = a:match('|(.+)')
                     
-                    local _ = s_theme:addOption(b):setTooltip(c)
-                    if ( i == 1 ) then _:Select() end
+                    local option = s_theme:addOption(b):setTooltip(c)
+                    if ( i == 1 ) then 
+                        option:Select() 
+                    end
                 end
             end)
         end
@@ -9871,7 +9891,7 @@ if (_G.RLLOADERROR ~= 0) then
         print(
             'The JSON decoder recognized the config as invalid JSON.'..
             '\nMake sure that the config is formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.jsonc) and reload Redline.'
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Redline.'
         )
         
     elseif (err == 2) then
@@ -9880,7 +9900,7 @@ if (_G.RLLOADERROR ~= 0) then
         print(
             'An unknown error occured while loading the theme config.'..
             '\nMake sure that the theme config\'s values are formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.jsonc) and reload Redline.'
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Redline.'
         )
     end
 else
@@ -9913,8 +9933,17 @@ _G.RLNOTIF = function(...)
     return ui:Notify(...)
 end
 
--- v0.6.4.1
+-- v0.6.5
 --[[
-- Increased Flight's speed cap from 250 to 350
-- Increased Speed's cap from 100 to 300
+- Added Distance check to ESP
+- Changed a few default settings for ESP 
+- Changed a few tooltips
+- Changed how files save, you might need to redownload your theme!
+- Fixed a bug with the ESP font, which only affected certain exploits
+- Hopefully fixed a bug with a nil theme
+- Hopefully fixed character manager Humanoid bug 
+- Hopefully fixed queueing not disabling properly
+- Improved some older code a bit
 ]]--
+
+
