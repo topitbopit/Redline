@@ -1,93 +1,66 @@
-<!-- funny stuff -->
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Ftopitbopit%2FRedline&count_bg=%23C83D3D&title_bg=%23434343&icon=&icon_color=%23CF3A3A&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-[![Forks](https://badgen.net/github/forks/topitbopit/Redline/)]()
-[![Stars](https://badgen.net/github/stars/topitbopit/Redline)](https://github.com/topitbopit/Redline/stargazers)
-[![Issues](https://badgen.net/github/issues/topitbopit/Redline/)](https://github.com/topitbopit/Redline/issues/)
-
-<!-- j -->
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
 
 <!-- beta notice -->
 ## Notice  
-**This is in insanely early beta! Only like 14 things actually work**  
+**This is in insanely early beta! Only like 14 things actually work.**  
 **Want to join the discord?**
-Probably not but [here it is](https://discord.gg/TyKZFQtDvw)
+Probably not but [here it is anyway](https://discord.gg/TyKZFQtDvw)
 
-<!-- script since nobody cares about the explanation -->
 ## Loadstring  
 ```lua
 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()  
 ```
-
-<!-- explanation -->
 ## What is Redline?  
 Redline is a massive universal script based on many popular Minecraft hacked clients. It's customizable, easy to use, and packed with features.  
 
 ## Why use Redline?  
 - **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
-- **It's extremely optimized.** No extra bloat, no super laggy code. Redline is very lightweight and doesn't leave any traces.  
+- **It's extremely optimized.** Each module has been designed to be super quick.  
 - **It's built from scratch.** Everything you see in Redline was made from the ground up.  
-- **It's secure.** Redline bypasses many common detections other scripts don't. (I'm looking at you, IY)  
+- **It's secure.** Redline bypasses many (un?)common detections other scripts might not.  
 - **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
 
-<!-- showcases -->
 ## Screenshots  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/features.jpg)  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/gamedemo1.jpg)  
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/gamedemo2.jpg)  
-## Showcases  
-- Haven't made any videos yet, check back later  
 
 ## Q/A  
-- **A game I play detects a module, can you bypass it?**  
-Open up an issue or DM me (topit#4057) and I'll check it out. Since this is a universal script *(and I'm definitely not just lazy)* I won't bypass game specific anticheats.  
+- **How do I use Redline?**
+When you execute it, press RightShift to open up the UI. Right click the menus to open up a list of modules under that category.  
 
-- **When's the next update?**  
-I don't have a regular update schedule, but I (previously) tried to shoot for atleast 3 updates a month.  
-
-- **Can I whitelist my friends from a certain mod (ex. prevent them from setting off anti-player)?**  
-This is a planned feature, but isn't in Redline yet.  
-
-- **Can I copy / use some of the code?**  
-Sure  
+- **Can I whitelist my friends from a certain mod (ex. not lock onto them with aimbot)?**  
+This is a planned feature for the rewrite.  
 
 - **Why won't Redline execute?**  
-Make sure your executor is supported. Open up an issue / DM me the error and I'll fix it fast.  
+Make sure you pressed RightShift and there aren't any errors in console.  
 
 - **Can I make my own fork / contribute?**  
-Yes, but good luck figuring out what my code does cause it is fucking ass cheeks  
+Yes, but I'd wait for the rewrite as it is way more cleaner and in a more module-like format.  
 
 - **Hi**  
 Hi  
   
 ## Supported executors  
-- **Synapse X** - fully tested  
-- **Fluxus** - fully tested  
-- **WRD executors (Nihon, JJsploit, etc.)** - mostly tested, 1-2 things may not be working  
+- All of them  
 
-Other exploits will likely work, so if you're unsure still give it a try (and DM me if it works!)  
-
-## Mods (modules?)  
-Unfortunately the list of mods - along with their settings and descriptions - changes all the time and I don't want to update it here  
-
-## Planned features  
-- More mods, such as  
-	- Triggerbot  
-- Advanced UI Configuration  
-	- Customize themes in real-time and share them with others  
-- Server browser  
-	- View other servers and sort by ping, player count, and more  
-- Command bar  
-	- Easily enable and disable mods, as well as run simple commands  
-- Plugins  
-	- Lets you add custom commands, modules, and more  
 
 ## Changelog  
-Current version: 0.6.4.1  
+Current version: 0.6.5  
 Dates will follow MM/DD/YYYY   
 
-
-Version 0.6.4.1 (8/4/2022)  
+Version 0.6.5 (8/25/2022)   
+- Added Distance check to ESP   
+- Changed a few default settings for ESP    
+- Changed a few tooltips   
+- Changed how files save, you might need to redownload your theme!   
+- Fixed a bug with the ESP font, which only affected certain exploits   
+- Hopefully fixed a bug with a nil theme   
+- Hopefully fixed character manager Humanoid bug    
+- Hopefully fixed queueing not disabling properly   
+- Improved some older code a bit   
+  
+Version 0.6.4.1 (8/4/2022)   
 - Increased Flight's speed cap from 250 to 350  
 - Increased Speed's cap from 100 to 300  
 
