@@ -61,7 +61,7 @@ if (not isfile('REDLINE')) then
 end
 
 -- { Version } --
-local REDLINEVER = 'v0.6.5'
+local REDLINEVER = 'v0.6.6'
 
 
 local IndentLevel1 = 8
@@ -112,7 +112,7 @@ local tick = tick
 local workspace = workspace
 local ipairs = ipairs
 local game = game
-local isrbxactive = isrbxactive
+local isrbxactive = isrbxactive or iswindowactive
 
 
 if (isrbxactive == nil) then
@@ -410,7 +410,7 @@ local ui = {} do
     
     -- connections
     ui_Connections['i'] = servInput.InputBegan:Connect(function(io, gpe) 
-        if (gpe == false and io.UserInputType.Value == 8) then
+        if ( gpe == false and io.UserInputType.Value == 8 ) then
             local kcv = io.KeyCode.Value
             for i = 1, #ui_Hotkeys do 
                 local hk = ui_Hotkeys[i]
@@ -423,14 +423,21 @@ local ui = {} do
     do
         local rgbtime = 0
         
-        ui_Connections['r'] = servRun.RenderStepped:Connect(function(dt) 
-            if (not isrbxactive()) then return end
+        ui_Connections['r'] = servRun.RenderStepped:Connect(function(deltaTime) 
+            if ( not isrbxactive() ) then 
+                return 
+            end
             
-            rgbtime = (rgbtime > 1 and 0 or rgbtime)+(dt*0.1)
-            RGBCOLOR = colHsv(rgbtime,0.8,1)
+            rgbtime += deltaTime / 10 
+            if ( rgbtime > 1 ) then
+                rgbtime -= 1  
+            end
+            
+            RGBCOLOR = colHsv(rgbtime, 0.8, 1)
+            
             for i = 1, #rgbinsts do 
                 local v = rgbinsts[i]
-                v[1][v[2]] = RGBCOLOR
+                v[1][ v[2] ] = RGBCOLOR
             end
         end)
     end
@@ -465,9 +472,10 @@ local ui = {} do
         w_Screen.IgnoreGuiInset = true
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
         w_Screen.Name = getnext()
-        pcall(function() 
-            syn.protect_gui(w_Screen)
-        end)
+        
+        if ( typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil ) then
+            syn.protect_gui(w_Screen)  
+        end
         w_Screen.DisplayOrder = 939393
         w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
         
@@ -3309,6 +3317,12 @@ local clientCamera do
         
     end)
 end
+local clientTeam do 
+    scriptCons.teamUpdate = clientPlayer:GetPropertyChangedSignal('Team'):Connect(function() 
+        clientTeam = clientPlayer.Team
+    end)
+    clientTeam = clientPlayer.Team
+end
 
 local playerNames = {} -- an array of every player's name
 local playerExisting = {} -- playerNames, but as a switch dictionary where keys are the names
@@ -3358,8 +3372,8 @@ do
         
         -- setup connections
         thisPlayerCons['chr-add'] = player.CharacterAdded:Connect(function(newChar) 
-            local RootPart = newChar:WaitForChild('HumanoidRootPart', 3)
-            local Humanoid = newChar:WaitForChild('Humanoid', 3)
+            local RootPart = newChar:WaitForChild('HumanoidRootPart', 5)
+            local Humanoid = newChar:WaitForChild('Humanoid', 5)
             
             if (thisManager.onRespawn) then
                 thisManager.onRespawn(newChar, RootPart, Humanoid)
@@ -3800,7 +3814,7 @@ do
                     
                     local function team(team) 
                         if (TeamCheck) then
-                            return (team ~= clientPlayer.Team)
+                            return (team ~= clientTeam)
                         else
                             return true
                         end
@@ -4042,14 +4056,15 @@ do
                     
                     HitboxConnection = servRun.RenderStepped:Connect(function() 
                         local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
-                        local lteam = clientPlayer.Team
                         
                         for i = 1, #playerNames do 
                             local pobj = playerManagers[playerNames[i]]
-                            if (pobj.Player.Team == lteam) then continue end
+                            if ( pobj.Player.Team == clientTeam ) then 
+                                continue 
+                            end
                             local humrp = pobj.RootPart
                             
-                            if (humrp) then
+                            if ( humrp ) then
                                 humrp.Size = size
                                 humrp.Color = RGB and RGBCOLOR or old_color
                                 humrp.Transparency = Transparency
@@ -6325,7 +6340,7 @@ do
         
         
         local r_crosshair   = m_render:addMod('Crosshair')
-        local r_esp         = m_render:addMod('ESP'..betatxt)
+        local r_esp         = m_render:addMod('ESP')
         local r_freecam     = m_render:addMod('Freecam')
         local r_fullbright  = m_render:addMod('Fullbright')
         local r_keystrokes  = m_render:addMod('Keystrokes'..betatxt)
@@ -7131,39 +7146,30 @@ do
         end
         -- Esp
         do
+            local s_TeamCheck = r_esp:addToggle('Team check'):setTooltip('Skips over targets that are on your team')
+            local s_DistCheck = r_esp:addToggle('Distance check'):setTooltip('Skips over targets that are further away than a set threshold')
+            local s_Distance = r_esp:addSlider('Distance', { min = 1, max = 5000, cur = 3000, step = 1 }):setTooltip('How far someone away has to be to trigger the distance check and be hidden')
+            local s_VisCheck = r_esp:addToggle('Visibility check'):setTooltip('Skips over targets that are behind walls. <b>May show targets behind extremely thin walls, and hide targets that are barely visible!</b>')
+            local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Replaces the box color with their team color') 
+
+            local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Shows a box around each target')
+            local s_Nametags = r_esp:addToggle('Nametags'):setTooltip('Shows the targets\'s display name above their head')
+            local s_Tracers = r_esp:addToggle('Tracers'):setTooltip('Shows a line connecting the target to your cursor. Doesn\'t support off-screen targets (which might kinda defeat the point of using tracers, oops)')
+            local s_ShowDistance = r_esp:addToggle('Distance display'):setTooltip('Shows a display under each player indicating their distance to you')
+            local s_ShowHealth = r_esp:addToggle('Health display'):setTooltip('Shows a health bar display on each player\'s left')   
             
-            -- Settings     
-            local s_TeamCheck = r_esp:addToggle('Team check'):setTooltip('Won\'t display ESP for teammates')
-            local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Replaces the RGB color with their team color. If a player doesn\'t have a team, then their color will remain RGB')
-            local s_ShowDistance = r_esp:addToggle('Display distance'):setTooltip('Shows player distance in the nametag')
-            local s_ShowHealth = r_esp:addToggle('Display health'):setTooltip('Shows player health in the nametag')    
-            local s_DistanceCheck = r_esp:addToggle('Distance check'):setTooltip('Only displays targets that are close enough to you')
+            local s_UpdateDelay = r_esp:addSlider('Update delay', { min = 0, max = 0.1, cur = 0,step = 0.01 }):setTooltip('The delay (in seconds) between ESP updates. If set to 0 before esp is enabled, ESP will be updated on RenderStepped')
+            local s_TracerVis = r_esp:addSlider('Tracer transparency', { min = 0, max = 1, cur = 1, step = 0.1 }):setTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully visible')
+            local s_TextSize = r_esp:addSlider('Text size', { min = 10, max = 30, cur = 16, step = 1 }):setTooltip('The size of the text + distance display')
+            local s_CornerSize = r_esp:addSlider('Corner size', { min = 1, max = 25, cur = 10, step = 0.1 }):setTooltip('The size / depth of the corners. Only used in the Corners 2d and Corners 3d box types.')
             
-            -- Esp types
-            local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Displays boxes around the targets')
-            local s_Nametags = r_esp:addToggle('Nametags'):setTooltip('Shows the usernames of targets')
-            local s_Tracers = r_esp:addToggle('Tracers'):setTooltip('Enables tracers for the targets')
-            --local s_VisibilityCheck = r_esp:addToggle('Visibility check'):setTooltip('Only shows ESP for a player if they\'re visible and not blocked by anything')
-            
-            -- Sliders
-            local s_UpdateDelay = r_esp:addSlider('Update delay',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('Delay in seconds between ESP updates. < 0.05 of a delay is recommended.')
-            local s_TracerVis = r_esp:addSlider('Tracer visibility',{min=0,max=1,cur=1,step=0.1}):setTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully opaque')
-            local s_TextSize = r_esp:addSlider('Text size',{min=1,max=30,cur=16,step=1}):setTooltip('The size of the text')
-            local s_Distance = r_esp:addSlider('Distance', {min=1,max=5000,cur=3000,step=1}):setTooltip('How close someone has to be to trigger the distance check')
-            
-            -- Dropdowns
-            local s_BoxType = r_esp:addDropdown('Box type',true):setTooltip('The type of box to use')
-            local s_HealthType = r_esp:addDropdown('Health display type'):setTooltip('How the health value is calculated')
+            local s_BoxType = r_esp:addDropdown('Box type', true):setTooltip('The type of box to use')
             local s_TracerPosition = r_esp:addDropdown('Tracer position'):setTooltip('Where the tracer is drawn')
             
-            s_BoxType:addOption('Simple 2d'):setTooltip('Simple 2d box ESP. 2 WTVPs'):Select()
-            s_BoxType:addOption('Simple 3d'):setTooltip('Classic Unnamed ESP look. 4 WTVPs')
-            s_BoxType:addOption('Westeria 2d'):setTooltip('Westeria box style. 2 WTVPs')
-            s_BoxType:addOption('Westeria 3d'):setTooltip('Westeria 3d style. 14 WTVPs; this may lag a bit!')
-            --s_BoxType:addOption('Apathy'):setTooltip('Apathy (epic 😎) style - has healthbars and a team color overlay')
-            
-            s_HealthType:addOption('Percentage'):setTooltip('The percentage of the current health out of the max health'):Select()
-            s_HealthType:addOption('Value'):setTooltip('Just the current health')
+            s_BoxType:addOption('Box 2d'):setTooltip('Uses a simple 2d box. This is by far the fastest ESP box style - it will definitely not lag'):Select()
+            s_BoxType:addOption('Box 3d'):setTooltip('The classic Unnamed ESP style')
+            s_BoxType:addOption('Corners 2d'):setTooltip('A 2d box style that only has the corners. Looks cool and is decently fast!')
+            s_BoxType:addOption('Corners 3d'):setTooltip('A 3d box style that only has the corners. This is rather expensive, you should expect lag when using this on already slow games')
             
             s_TracerPosition:addOption('Crosshair'):setTooltip('Tracers are drawn at the crosshairs\'s position. If Crosshair is disabled, it resorts to your mouse.'):Select()
             s_TracerPosition:addOption('Character'):setTooltip('Tracers are drawn towards yourself')
@@ -7172,1554 +7178,1060 @@ do
             
             s_Nametags:Enable()
             s_Boxes:Enable()
+            s_ShowHealth:Enable()
+            s_ShowDistance:Enable()
             
             -- l_ = localization
             -- s_ = setting
             
-            local l_TeamCheck   = s_TeamCheck:getValue()
-            local l_TeamColor   = s_TeamColor:getValue()
-            local l_ShowDistance = s_ShowDistance:getValue()
-            local l_ShowHealth = s_ShowHealth:getValue()
-            local l_DistanceCheck = s_DistanceCheck:getValue()
+            -- Bunch of locals for the extra speed 🤪🤪🤪🤪🤪🤪🤪🤪🤪🤪🤪🤪
+            local l_TeamCheck = s_TeamCheck:getValue()
+            local l_DistCheck = s_DistCheck:getValue()
+            local l_Distance = s_Distance:getValue()
+            local l_VisCheck = s_VisCheck:getValue()
+            local l_TeamColor = s_TeamColor:getValue()
             
             local l_Boxes = s_Boxes:getValue()
             local l_Nametags = s_Nametags:getValue()
             local l_Tracers = s_Tracers:getValue()
+            local l_ShowDistance = s_ShowDistance:getValue()
+            local l_ShowHealth = s_ShowHealth:getValue()
             
             local l_UpdateDelay = s_UpdateDelay:getValue()
             local l_TracerVis = s_TracerVis:getValue()
             local l_TextSize = s_TextSize:getValue()
-            local l_Distance = s_Distance:getValue()
+            local l_CornerSize = s_CornerSize:getValue() * 100
             
             local l_BoxType = s_BoxType:getValue()
-            local l_HealthType = s_HealthType:getValue()
             local l_TracerPosition = s_TracerPosition:getValue()
+                        
+            local espCons = {} 
+            local espObjs = {} 
             
-            
-            
-            local PreviousMode
-            local EspFolder
-
-            local espObjects = {}
-            local PlrCons = {}
-            local EspCons = {}
-            
-            
+            local cornerLines = {
+                -- bottom left 
+               'LineBL1';
+               'LineBL2';
+                -- bottom right
+               'LineBR1';
+               'LineBR2';
+                -- top left 
+               'LineTL1';
+               'LineTL2';
+                -- top right 
+               'LineTR1';
+               'LineTR2';
+           }
+                       
+            -- Localization shit
+            -- God this is awful
             do
-                s_TeamCheck:Connect('Toggled',function(t)l_TeamCheck=t;end)
-                s_TeamColor:Connect('Toggled',function(t)l_TeamColor=t;end)
-                s_ShowDistance:Connect('Toggled',function(t)l_ShowDistance=t;end)
-                s_ShowHealth:Connect('Toggled',function(t)l_ShowHealth=t;end)
-                s_DistanceCheck:Connect('Toggled',function(t)l_DistanceCheck=t;end)
+                s_TeamCheck:Connect('Toggled', function(t)
+                    l_TeamCheck = t
+                end)
+                s_DistCheck:Connect('Toggled', function(t)
+                    l_DistCheck = t
+                end)
+                s_Distance:Connect('Changed', function(v)
+                    l_Distance = v
+                end)
+                s_VisCheck:Connect('Toggled', function(t)
+                    l_VisCheck = t
+                end)
+                s_TeamColor:Connect('Toggled', function(t)
+                    l_TeamColor = t
+                    
+                    if ( l_TeamColor ) then 
+                        for _, name in ipairs( playerNames ) do 
+                            local manager = playerManagers[name]
+                            local newColor = manager.Player.TeamColor.Color
+                            
+                            local thisObjs = espObjs[name] 
+                            
+                            if ( l_BoxType == 'Box 2d' or l_BoxType == 'Box 3d' ) then
+                                thisObjs.Box.Color = newColor
+                            else
+                                for _, line in ipairs( cornerLines ) do 
+                                    thisObjs[line].Color = newColor 
+                                end
+                            end
+                            
+                            thisObjs.Tracer.Color = newColor
+                        end 
+                    end
+                end)
                 
-                s_Boxes:Connect('Toggled',function(t)l_Boxes=t;end)
-                s_Nametags:Connect('Toggled',function(t)l_Nametags=t;end)
-                s_Tracers:Connect('Toggled',function(t)l_Tracers=t;end)
+                s_Boxes:Connect('Toggled', function(t)
+                    l_Boxes = t
+                end)
+                s_Nametags:Connect('Toggled', function(t)
+                    l_Nametags = t
+                end)
+                s_Tracers:Connect('Toggled', function(t)
+                    l_Tracers = t
+                end)
+                s_ShowDistance:Connect('Toggled', function(t)
+                    l_ShowDistance = t
+                end)
+                s_ShowHealth:Connect('Toggled', function(t)
+                    l_ShowHealth = t
+                end)
+                                
+                s_UpdateDelay:Connect('Changed', function(v) 
+                    l_UpdateDelay = v
+                end)
                 
-                s_UpdateDelay:Connect('Changed',function(v)l_UpdateDelay=v;end)
+                s_TracerVis:Connect('Changed', function(v)
+                    l_TracerVis = v
+                end)
+                
+                s_TextSize:Connect('Changed', function(v)
+                    l_TextSize = v
+                end)
+                
+                s_CornerSize:Connect('Changed', function(v) 
+                    l_CornerSize = v * 100
+                end)
                 
                 s_BoxType:Connect('Changed',function(v)
-                    l_BoxType=v;
-                    r_esp:Reset()
-                end)
-                s_HealthType:Connect('Changed',function(v)l_HealthType=v;end)
-                s_TracerPosition:Connect('Changed',function(v)
-                    l_TracerPosition=v;
+                    l_BoxType = v
                     r_esp:Reset()
                 end)
                 
-                s_TracerVis:Connect('Changed',function(v)
-                    l_TracerVis = v
-                    for _, name in ipairs(playerNames) do 
-                        local esp = espObjects[name]
-                        if (esp) then
-                            esp['Tracer1'].Transparency = v
-                            esp['Tracer2'].Transparency = v
-                        end
-                    end
+                s_TracerPosition:Connect('Changed',function(v)
+                    l_TracerPosition = v
+                    
+                    r_esp:Reset()
                 end)
-                s_TextSize:Connect('Changed',function(v)
-                    l_TextSize = v
-                    for i,name in ipairs(playerNames) do 
-                        local esp = espObjects[name]
-                        if (esp) then
-                            local t1 = esp['Nametag']
-                            local t2 = esp['Distance']
-                            if (t1) then t1.Size = v end
-                            if (t2) then t2.Size = v end
-                        end
-                    end
-                end)
-                s_Distance:Connect('Changed',function(v)l_Distance=v;end)
             end
             
-            local jskull1
-            r_esp:Connect('Enabled',function()
-                jskull1 = mathRand(1,99999)
-                print(pcall(function()
-                PreviousMode = EspType
+            local function roundVec2(vec2)
+                return Vector2.new(math.round(vec2.X), math.round(vec2.Y))
+            end
+            
+            local function addEsp(player) 
+                local playerName = player.Name
+                local teamColor = player.TeamColor.Color 
                 
-                local function create_esp()
-                    
-                    local espObject = {}
-                    espObject['upd'] = tick()
-                    
-                    local BLACK = colNew(0,0,0)
-                    
-                    do
-                        local Name = drawNew('Text') 
-                        Name.Center = true
-                        Name.Color = colNew(1,1,1)
-                        Name.Font = Drawing.Fonts.UI or 0
-                        Name.Outline = true
-                        Name.OutlineColor = colNew(0,0,0)
-                        Name.Size = l_TextSize
-                        Name.Text = ''
-                        Name.Visible = true
-                        Name.ZIndex = 3
-                        
-                        espObject['Nametag'] = Name
-                    end do
-                        local Tracer1 = drawNew('Line')
-                        local Tracer2 = drawNew('Line')
-                        
-                        
-                        Tracer1.Thickness = 1
-                        Tracer1.Visible = false
-                        Tracer1.Transparency = l_TracerVis or 1
-                        Tracer1.ZIndex = 3
-                        
-                        Tracer2.Color = colNew(0,0,0)
-                        Tracer2.Thickness = 3
-                        Tracer2.Visible = false
-                        Tracer2.Transparency = l_TracerVis or 1
-                        Tracer2.ZIndex = 2
-                        
-                        espObject['Tracer1'] = Tracer1
-                        espObject['Tracer2'] = Tracer2
-                    end do 
-                        espObject['Boxes'] = {}
-                        if (l_BoxType == 'Simple 2d') then
-                            local Square1 = drawNew('Square')
-                            Square1.Thickness = 1
-                            Square1.Visible = true
-                            Square1.ZIndex = 3
-                            local Square2 = drawNew('Square')
-                            Square2.Thickness = 3
-                            Square2.Visible = true
-                            Square2.ZIndex = 2
-                            Square2.Color = BLACK
-                            
-                            espObject['Boxes']['1_1'] = Square1
-                            espObject['Boxes']['1_2'] = Square2
-                            
-                        elseif (l_BoxType == 'Simple 3d') then
-                            local Quad1 = drawNew('Quad')
-                            Quad1.Thickness = 1
-                            Quad1.Visible = true
-                            Quad1.ZIndex = 3
-                            local Quad2 = drawNew('Quad')
-                            Quad2.Thickness = 3
-                            Quad2.Visible = true
-                            Quad2.ZIndex = 2
-                            Quad2.Color = BLACK
-                            
-                            espObject['Boxes']['1_1'] = Quad1
-                            espObject['Boxes']['1_2'] = Quad2
-                            
-                        elseif (l_BoxType == 'Westeria 2d') then
-                            do
-                                local Corner1_1 = drawNew('Line')
-                                Corner1_1.Thickness = 1
-                                Corner1_1.Visible = true
-                                Corner1_1.ZIndex = 3
-                                local Corner1_2 = drawNew('Line')
-                                Corner1_2.Thickness = 1
-                                Corner1_2.Visible = true
-                                Corner1_2.ZIndex = 3
-                                
-                                local Corner1_1_o = drawNew('Line')
-                                Corner1_1_o.Thickness = 3
-                                Corner1_1_o.Visible = true
-                                Corner1_1_o.ZIndex = 2
-                                Corner1_1_o.Color = BLACK
-                                local Corner1_2_o = drawNew('Line')
-                                Corner1_2_o.Thickness = 3
-                                Corner1_2_o.Visible = true
-                                Corner1_2_o.ZIndex = 2
-                                Corner1_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['1_1'] = Corner1_1
-                                espObject['Boxes']['1_2'] = Corner1_2
-                                espObject['Boxes']['1_1_o'] = Corner1_1_o
-                                espObject['Boxes']['1_2_o'] = Corner1_2_o
-                            end
-                            do
-                                local Corner2_1 = drawNew('Line')
-                                Corner2_1.Thickness = 1
-                                Corner2_1.Visible = true
-                                Corner2_1.ZIndex = 3
-                                local Corner2_2 = drawNew('Line')
-                                Corner2_2.Thickness = 1
-                                Corner2_2.Visible = true
-                                Corner2_2.ZIndex = 3
-                                
-                                local Corner2_1_o = drawNew('Line')
-                                Corner2_1_o.Thickness = 3
-                                Corner2_1_o.Visible = true
-                                Corner2_1_o.ZIndex = 2
-                                Corner2_1_o.Color = BLACK
-                                local Corner2_2_o = drawNew('Line')
-                                Corner2_2_o.Thickness = 3
-                                Corner2_2_o.Visible = true
-                                Corner2_2_o.ZIndex = 2
-                                Corner2_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['2_1'] = Corner2_1
-                                espObject['Boxes']['2_2'] = Corner2_2
-                                espObject['Boxes']['2_1_o'] = Corner2_1_o
-                                espObject['Boxes']['2_2_o'] = Corner2_2_o
-                                
-                            end
-                            do
-                                local Corner3_1 = drawNew('Line')
-                                Corner3_1.Thickness = 1
-                                Corner3_1.Visible = true
-                                Corner3_1.ZIndex = 3
-                                local Corner3_2 = drawNew('Line')
-                                Corner3_2.Thickness = 1
-                                Corner3_2.Visible = true
-                                Corner3_2.ZIndex = 3
-                                
-                                local Corner3_1_o = drawNew('Line')
-                                Corner3_1_o.Thickness = 3
-                                Corner3_1_o.Visible = true
-                                Corner3_1_o.ZIndex = 2
-                                Corner3_1_o.Color = BLACK
-                                local Corner3_2_o = drawNew('Line')
-                                Corner3_2_o.Thickness = 3
-                                Corner3_2_o.Visible = true
-                                Corner3_2_o.ZIndex = 2
-                                Corner3_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['3_1'] = Corner3_1
-                                espObject['Boxes']['3_2'] = Corner3_2
-                                espObject['Boxes']['3_1_o'] = Corner3_1_o
-                                espObject['Boxes']['3_2_o'] = Corner3_2_o
-                            end
-                            do
-                                local Corner4_1 = drawNew('Line')
-                                Corner4_1.Thickness = 1
-                                Corner4_1.Visible = true
-                                Corner4_1.ZIndex = 3
-                                local Corner4_2 = drawNew('Line')
-                                Corner4_2.Thickness = 1
-                                Corner4_2.Visible = true
-                                Corner4_2.ZIndex = 3
-                                
-                                local Corner4_1_o = drawNew('Line')
-                                Corner4_1_o.Thickness = 3
-                                Corner4_1_o.Visible = true
-                                Corner4_1_o.ZIndex = 2
-                                Corner4_1_o.Color = BLACK
-                                local Corner4_2_o = drawNew('Line')
-                                Corner4_2_o.Thickness = 3
-                                Corner4_2_o.Visible = true
-                                Corner4_2_o.ZIndex = 2
-                                Corner4_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['4_1'] = Corner4_1
-                                espObject['Boxes']['4_2'] = Corner4_2
-                                espObject['Boxes']['4_1_o'] = Corner4_1_o
-                                espObject['Boxes']['4_2_o'] = Corner4_2_o
-                            end
-                        elseif (l_BoxType == 'Westeria 3d') then
-                            do
-                                local Corner1_1 = drawNew('Line')
-                                Corner1_1.Thickness = 1
-                                Corner1_1.Visible = true
-                                Corner1_1.ZIndex = 3
-                                local Corner1_2 = drawNew('Line')
-                                Corner1_2.Thickness = 1
-                                Corner1_2.Visible = true
-                                Corner1_2.ZIndex = 3
-                                
-                                local Corner1_1_o = drawNew('Line')
-                                Corner1_1_o.Thickness = 3
-                                Corner1_1_o.Visible = true
-                                Corner1_1_o.ZIndex = 2
-                                Corner1_1_o.Color = BLACK
-                                local Corner1_2_o = drawNew('Line')
-                                Corner1_2_o.Thickness = 3
-                                Corner1_2_o.Visible = true
-                                Corner1_2_o.ZIndex = 2
-                                Corner1_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['1_1'] = Corner1_1
-                                espObject['Boxes']['1_2'] = Corner1_2
-                                espObject['Boxes']['1_1_o'] = Corner1_1_o
-                                espObject['Boxes']['1_2_o'] = Corner1_2_o
-                            end
-                            do
-                                local Corner2_1 = drawNew('Line')
-                                Corner2_1.Thickness = 1
-                                Corner2_1.Visible = true
-                                Corner2_1.ZIndex = 3
-                                local Corner2_2 = drawNew('Line')
-                                Corner2_2.Thickness = 1
-                                Corner2_2.Visible = true
-                                Corner2_2.ZIndex = 3
-                                
-                                local Corner2_1_o = drawNew('Line')
-                                Corner2_1_o.Thickness = 3
-                                Corner2_1_o.Visible = true
-                                Corner2_1_o.ZIndex = 2
-                                Corner2_1_o.Color = BLACK
-                                local Corner2_2_o = drawNew('Line')
-                                Corner2_2_o.Thickness = 3
-                                Corner2_2_o.Visible = true
-                                Corner2_2_o.ZIndex = 2
-                                Corner2_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['2_1'] = Corner2_1
-                                espObject['Boxes']['2_2'] = Corner2_2
-                                espObject['Boxes']['2_1_o'] = Corner2_1_o
-                                espObject['Boxes']['2_2_o'] = Corner2_2_o
-                                
-                            end
-                            do
-                                local Corner3_1 = drawNew('Line')
-                                Corner3_1.Thickness = 1
-                                Corner3_1.Visible = true
-                                Corner3_1.ZIndex = 3
-                                local Corner3_2 = drawNew('Line')
-                                Corner3_2.Thickness = 1
-                                Corner3_2.Visible = true
-                                Corner3_2.ZIndex = 3
-                                
-                                local Corner3_1_o = drawNew('Line')
-                                Corner3_1_o.Thickness = 3
-                                Corner3_1_o.Visible = true
-                                Corner3_1_o.ZIndex = 2
-                                Corner3_1_o.Color = BLACK
-                                local Corner3_2_o = drawNew('Line')
-                                Corner3_2_o.Thickness = 3
-                                Corner3_2_o.Visible = true
-                                Corner3_2_o.ZIndex = 2
-                                Corner3_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['3_1'] = Corner3_1
-                                espObject['Boxes']['3_2'] = Corner3_2
-                                espObject['Boxes']['3_1_o'] = Corner3_1_o
-                                espObject['Boxes']['3_2_o'] = Corner3_2_o
-                            end
-                            do
-                                local Corner4_1 = drawNew('Line')
-                                Corner4_1.Thickness = 1
-                                Corner4_1.Visible = true
-                                Corner4_1.ZIndex = 3
-                                local Corner4_2 = drawNew('Line')
-                                Corner4_2.Thickness = 1
-                                Corner4_2.Visible = true
-                                Corner4_2.ZIndex = 3
-                                
-                                local Corner4_1_o = drawNew('Line')
-                                Corner4_1_o.Thickness = 3
-                                Corner4_1_o.Visible = true
-                                Corner4_1_o.ZIndex = 2
-                                Corner4_1_o.Color = BLACK
-                                local Corner4_2_o = drawNew('Line')
-                                Corner4_2_o.Thickness = 3
-                                Corner4_2_o.Visible = true
-                                Corner4_2_o.ZIndex = 2
-                                Corner4_2_o.Color = BLACK
-                                
-                                espObject['Boxes']['4_1'] = Corner4_1
-                                espObject['Boxes']['4_2'] = Corner4_2
-                                espObject['Boxes']['4_1_o'] = Corner4_1_o
-                                espObject['Boxes']['4_2_o'] = Corner4_2_o
-                            end
-                        elseif (l_BoxType == 'Apathy') then
-                            local Square1 = drawNew('Square')
-                            Square1.Thickness = 1
-                            Square1.Visible = true
-                            Square1.ZIndex = 3
-                            local Square2 = drawNew('Square')
-                            Square2.Thickness = 3
-                            Square2.Visible = true
-                            Square2.ZIndex = 2
-                            Square2.Color = BLACK
-                            
-                            espObject['Boxes']['1_1'] = Square1
-                            espObject['Boxes']['1_2'] = Square2
-                            
-                            local Name = drawNew('Text') 
-                            Name.Center = true
-                            Name.Color = colNew(1,1,1)
-                            Name.Font = 1
-                            Name.Outline = true
-                            Name.OutlineColor = colNew(0,0,0)
-                            Name.Size = l_TextSize
-                            Name.Text = ''
-                            Name.Visible = true
-                            Name.ZIndex = 3
-                            
-                            espObject['Distance'] = Name
-                        end
-                    end
-                    return espObject
-                end
-                local function hookPlayer(pName)
-                    local PlayerName = pName
-                    local PlayerObject = playerManagers[pName]
-                    if (not PlayerObject) then 
-                        local retryCount = 0
-                        repeat
-                            if (retryCount > 5) then
-                                warn'[REDLINE:ESP] Maximum retry count (5) exceeded, returning'
-                                return
-                            end
-                            warn'[REDLINE:ESP] This player hasn\'t finished joining the server! Couldn\'t hook, retrying in 2s' 
-                            retryCount += 1
-                            wait(2)
-                        until playerManagers[pName].RootPart
-                        
-                    end 
-                    
-                    local PlayerInstance = PlayerObject.Player
-                    
-                    
-                    local espObject = create_esp()
-                    
-                    PlrCons[PlayerName] = {}
-                    PlrCons[PlayerName][1] = PlayerInstance:GetPropertyChangedSignal('TeamColor'):Connect(function() 
-                        local tx = espObjects[PlayerName]
-                        tx = tx and tx['Nametag'] or nil
-                        
-                        local col = PlayerInstance.TeamColor
-                        col = col and PlayerInstance.TeamColor.Color or nil
-                        
-                        
-                        
-                        if (tx) then
-                            tx.Color = col or colNew(1,1,1)
-                        end
-                    end)
-                    PlrCons[PlayerName][2] = PlayerInstance.CharacterAdded:Connect(function(c)
-                        espObject['Nametag'].Visible = true
-                        espObject['Tracer1'].Visible = true
-                        espObject['Tracer2'].Visible = true
-                        
-                        if (espObject['Boxes']) then 
-                            for i,v in pairs(espObject['Boxes']) do v.Visible = true end
-                        end
-                        if (espObject['Distance']) then 
-                            espObject['Distance'].Visible = false
-                        end
-                    end)
-                    PlrCons[PlayerName][3] = PlayerInstance.CharacterRemoving:Connect(function()
-                        --printconsole(('[%s] Character removed, hiding objects'):format(PlayerName), 0, 0, 255)
-                        espObject['Nametag'].Text = 'CHARACTER REMOVED ('..PlayerName..')'
-                        espObject['Tracer1'].Visible = false
-                        espObject['Tracer2'].Visible = false
-                        
-                        if (espObject['Boxes']) then 
-                            for i,v in pairs(espObject['Boxes']) do v.Visible = false end
-                        end
-                        if (espObject['Distance']) then 
-                            espObject['Distance'].Visible = false
-                        end
-                        ----printconsole(('[%s] Successfully hid objects'):format(PlayerName), 0, 255, 0)
-                    end)
-                    
-                    espObjects[PlayerName] = espObject
-                end
-                
-                -- Hook stuff
-                do
-                    for i,v in ipairs(playerNames) do hookPlayer(v) end
-                
-                    EspCons['PlrA'] = servPlayers.PlayerAdded:Connect(function(p) 
-                        local PlayerName = p.Name
-                        wait(2.5)
-                        hookPlayer(PlayerName)
-                    end)
-                    EspCons['PlrR'] = servPlayers.PlayerRemoving:Connect(function(p) 
-                        local PlayerName = p.Name
-                        ----printconsole(('[%s] Player left'):format(PlayerName), 0, 0, 255)
-                        local a, b = pcall(function()
-                            local thisPlrCons = PlrCons[PlayerName] 
-                            if (thisPlrCons) then 
-                                for i,v in ipairs(thisPlrCons) do 
-                                    v:Disconnect()
-                                end
-                            end 
-                            local thisPlrObjs = espObjects[PlayerName]
-                            if (thisPlrObjs) then
-                                thisPlrObjs.Nametag:Remove()
-                                thisPlrObjs.Tracer1:Remove()
-                                thisPlrObjs.Tracer2:Remove()
-                                for i,v in pairs(thisPlrObjs['Boxes']) do 
-                                    v:Remove()
-                                end
-                                if (thisPlrObjs['Distance']) then
-                                    thisPlrObjs['Distance']:Remove() 
-                                end
-                            else
-                                warn'No objects, oopsies'
-                            end
-                        end)
-                        ----printconsole(('[%s] Deleted objects? %s; %s'):format(PlayerName, tostring(a), tostring(b)), 0, 255, 0)
-                    end)
-                end
-                
-                local update_esp do
-                    -- 🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑
-                    local textoffs = cfrNew(0, 3, 0)
-                    local vecNil = vec3(0, 0, 0)
-                    
-                    local boxoffs_1_0 = cfrNew(-2.5,  2.8,  0.0) -- corner
-                    local boxoffs_1_1 = cfrNew(-1.5,  2.8,  0.0)
-                    local boxoffs_1_2 = cfrNew(-2.5,  1.8,  0.0)
+                local thisObjs = {} 
+                local thisCons = {} 
 
-                    local boxoffs_2_0 = cfrNew( 2.5,  2.8,  0.0) -- corner
-                    local boxoffs_2_1 = cfrNew( 1.5,  2.8,  0.0)
-                    local boxoffs_2_2 = cfrNew( 2.5,  1.8,  0.0)
-                    
-                    local boxoffs_3_0 = cfrNew( 2.5, -2.8,  0.0) -- corner
-                    local boxoffs_3_1 = cfrNew( 1.5, -2.8,  0.0)
-                    local boxoffs_3_2 = cfrNew( 2.5, -1.8,  0.0)
-                    
-                    local boxoffs_4_0 = cfrNew(-2.5, -2.8,  0.0) -- corner
-                    local boxoffs_4_1 = cfrNew(-1.5, -2.8,  0.0)
-                    local boxoffs_4_2 = cfrNew(-2.5, -1.8,  0.0)
-                    
-                    
-                    local TracerPos do 
-                        if (l_TracerPosition == 'Crosshair') then
-                            EspCons['TracerAimbot'] = servRun.RenderStepped:Connect(function() 
-                                TracerPos = CrosshairPosition or servInput:GetMouseLocation()
-                            end)
-                        elseif (l_TracerPosition == 'Character') then
-                            EspCons['TracerAimbot'] = servRun.RenderStepped:Connect(function() 
-                                local j = clientCamera:WorldToViewportPoint(clientRoot.Position)
-                                TracerPos = vec2(j.X, j.Y)
-                            end)
-                        elseif (l_TracerPosition == 'Down') then
-                            TracerPos = clientCamera.ViewportSize
-                            TracerPos = vec2(TracerPos.X/2, TracerPos.Y*0.8)
-                            EspCons['TracerDown'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                                local _ = clientCamera.ViewportSize
-                                TracerPos = vec2(_.X/2, _.Y*0.8)
-                            end)
-                        elseif (l_TracerPosition == 'Mouse') then
-                            EspCons['TracerMouse'] = servRun.RenderStepped:Connect(function() 
-                                TracerPos = servInput:GetMouseLocation()
-                            end)
+                do 
+                    if ( l_BoxType == 'Box 2d' ) then 
+                        -- thisObjs.Box
+                        do 
+                            local Box = Drawing.new('Square')
+                            Box.Color = teamColor
+                            Box.Filled = false
+                            Box.Thickness = 1 
+                            Box.Transparency = 1
+                            
+                            thisObjs.Box = Box 
+                        end
+                        
+                        -- thisObjs.BoxOutline
+                        do 
+                            local BoxOutline = Drawing.new('Square')
+                            BoxOutline.Color = Color3.new(0, 0, 0)
+                            BoxOutline.Filled = false
+                            BoxOutline.Thickness = 3
+                            BoxOutline.Transparency = 1
+                            
+                            thisObjs.BoxOutline = BoxOutline
+                        end
+                    elseif ( l_BoxType == 'Box 3d' ) then
+                        -- thisObjs.Box
+                        do 
+                            local Box = Drawing.new('Quad')
+                            Box.Color = teamColor
+                            Box.Filled = false
+                            Box.Thickness = 1 
+                            Box.Transparency = 1
+                            
+                            thisObjs.Box = Box 
+                        end
+                        
+                        -- thisObjs.BoxOutline
+                        do 
+                            local BoxOutline = Drawing.new('Quad')
+                            BoxOutline.Color = Color3.new(0, 0, 0)
+                            BoxOutline.Filled = false
+                            BoxOutline.Thickness = 3
+                            BoxOutline.Transparency = 1
+                            
+                            thisObjs.BoxOutline = BoxOutline
+                        end
+                    else
+                        
+                        for _, line in ipairs( cornerLines ) do 
+                            local Line = Drawing.new('Line')
+                            Line.Color = teamColor
+                            Line.Thickness = 1 
+                            Line.Transparency = 1
+                            
+                            thisObjs[line] = Line
+                            
+                            local LineO = Drawing.new('Line')
+                            LineO.Color = Color3.new(0, 0, 0)
+                            LineO.Thickness = 3
+                            LineO.Transparency = 1
+                            
+                            thisObjs[line .. 'O'] = LineO
                         end
                     end
+                     
+                    -- thisObjs.HealthBar
+                    do 
+                        local HealthBar = Drawing.new('Line')
+                        HealthBar.Color = Color3.new(0.5, 0.1, 0.1)
+                        HealthBar.Thickness = 1
+                        HealthBar.Visible = false
+                        HealthBar.ZIndex = 3
+                        
+                        thisObjs.HealthBar = HealthBar 
+                    end
                     
-                    if (l_BoxType == 'Simple 2d') then
-                        local viewportY = clientCamera.ViewportSize.Y
-                        EspCons['Screen'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                            viewportY = clientCamera.ViewportSize.Y
+                    -- thisObjs.HealthBarO
+                    do
+                        local HealthBarO = Drawing.new('Line')
+                        HealthBarO.Color = Color3.new(0, 0, 0)
+                        HealthBarO.Thickness = 3
+                        HealthBarO.Visible = false
+                        HealthBarO.ZIndex = 2
+                        
+                        thisObjs.HealthBarO = HealthBarO 
+                    end
+                    
+                    -- thisObjs.HealthFill
+                    do 
+                        local HealthFill = Drawing.new('Line')
+                        HealthFill.Color = Color3.new(0, 1, 0)
+                        HealthFill.Thickness = 1 
+                        HealthFill.Visible = false
+                        HealthFill.ZIndex = 4
+                        
+                        thisObjs.HealthFill = HealthFill 
+                    end
+                    
+                    -- thisObjs.Nametag
+                    do 
+                        local Nametag = Drawing.new('Text')
+                        Nametag.Center = true 
+                        Nametag.Color = Color3.new(1, 1, 1)
+                        Nametag.Font = Drawing.Fonts.UI
+                        Nametag.Outline = true
+                        Nametag.OutlineColor = Color3.new(0, 0, 0)
+                        Nametag.Size = l_TextSize
+                        Nametag.Text = player.DisplayName
+                        Nametag.Visible = false
+                        
+                        thisObjs.Nametag = Nametag
+                    end
+                    
+                    -- thisObjs.Distance
+                    do 
+                        local Distance = Drawing.new('Text')
+                        Distance.Center = true 
+                        Distance.Color = Color3.new(0.8, 0.8, 0.8)
+                        Distance.Font = Drawing.Fonts.UI
+                        Distance.Outline = true
+                        Distance.OutlineColor = Color3.new(0, 0, 0)
+                        Distance.Size = l_TextSize
+                        Distance.Text = '[0]'
+                        Distance.Visible = false
+                        
+                        thisObjs.Distance = Distance
+                    end
+                    
+                    -- thisObjs.Tracer
+                    do
+                        local Tracer = Drawing.new('Line')
+                        Tracer.Color = teamColor
+                        Tracer.Thickness = 1
+                        Tracer.Visible = false
+                        Tracer.ZIndex = 9e6
+                        
+                        thisObjs.Tracer = Tracer 
+                    end
+                    
+                    -- thisObjs.TracerO
+                    do
+                        local TracerO = Drawing.new('Line')
+                        TracerO.Color = Color3.new(0, 0, 0)
+                        TracerO.Thickness = 3
+                        TracerO.Visible = false
+                        TracerO.ZIndex = 9e6 - 1
+                        
+                        thisObjs.TracerO = TracerO 
+                    end
+                end
+                
+                thisCons.TeamChange = player:GetPropertyChangedSignal('TeamColor'):Connect(function() 
+                    if ( l_TeamColor ) then 
+                        local newColor = player.TeamColor.Color 
+                        
+                        if ( l_BoxType == 'Box 2d' or l_BoxType == 'Box 3d' ) then
+                            thisObjs.Box.Color = newColor
+                        else
+                            for _, line in ipairs( cornerLines ) do 
+                                thisObjs[line].Color = newColor 
+                            end
+                        end
+                        
+                        thisObjs.Tracer.Color = newColor
+                    end
+                end)
+                
+                espObjs[playerName] = thisObjs
+                espCons[playerName] = thisCons
+                
+            end
+            
+            local function delEsp(player) 
+                local playerName = player.Name 
+                
+                if ( not espObjs[playerName] ) then
+                    return
+                end
+                
+                for _, obj in pairs(espObjs[playerName]) do 
+                    obj:Remove()
+                end
+                
+                for _, con in pairs(espCons[playerName]) do 
+                    con:Disconnect()
+                end
+                
+                espObjs[playerName] = nil
+                espCons[playerName] = nil
+            end
+            
+            r_esp:Connect('Enabled',function()
+                local boxSize = Vector2.new(3500, 4500)
+                local raycastParams = RaycastParams.new()
+                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+                raycastParams.FilterDescendantsInstances = { clientChar } 
+                
+                local cornerOffsets = {
+                    -- health points
+                    ['Health1'] = CFrame.new(2.3, 3, 0);
+                    ['Health2'] = CFrame.new(2.3, -3, 0);
+                    -- bot left points
+                    ['LineBL1'] = CFrame.new(2, -2.75, 0);
+                    ['LineBL2'] = CFrame.new(1.75, -3, 0);
+                    ['PosBL']   = CFrame.new(2, -3, 0);
+                    -- bot right
+                    ['LineBR1'] = CFrame.new(-2, -2.75, 0);
+                    ['LineBR2'] = CFrame.new(-1.75, -3, 0);
+                    ['PosBR']   = CFrame.new(-2, -3, 0);
+                    -- top left 
+                    ['LineBR1'] = CFrame.new(2, 2.75, 0);
+                    ['LineBR2'] = CFrame.new(1.75, 3, 0);
+                    ['PosTL']   = CFrame.new(2, 3, 0);
+                    -- top right 
+                    ['LineTR1'] = CFrame.new(-2, 2.75, 0);
+                    ['LineTR2'] = CFrame.new(-1.75, 3, 0);
+                    ['PosTR']   = CFrame.new(-2, 3, 0);
+                    -- nametag, disttag 
+                    ['Nametag'] = CFrame.new(0, 3.2, 0);
+                    ['Disttag'] = CFrame.new(0, -3.2, 0);
+                    
+               }
+                
+                espCons.playerAdd = servPlayers.PlayerAdded:Connect(addEsp)
+                espCons.playerRemove = servPlayers.PlayerRemoving:Connect(delEsp)
+                espCons.raycastUpd = clientPlayer.CharacterAdded:Connect(function(newChar) 
+                    raycastParams.FilterDescendantsInstances = { newChar } 
+                end)
+                
+                for _, manager in pairs(playerManagers) do 
+                    addEsp(manager.Player)
+                end
+                
+                local TracerPos = Vector2.new(0, 0) do 
+                    if ( l_TracerPosition == 'Crosshair' ) then
+                        local existingCn = espCons.TracerUpd
+                        if ( existingCn and existingCn.Connected ) then
+                            existingCn:Disconnect() 
+                        end
+                        
+                        espCons.TracerUpd = servRun.Heartbeat:Connect(function() 
+                            TracerPos = CrosshairPosition or servInput:GetMouseLocation()
                         end)
                         
-                        update_esp = function() 
-                            local namesLen = #playerNames
-                            if (isrbxactive() == false or namesLen == 0) then return end
+                    elseif ( l_TracerPosition == 'Character' ) then
+                        local existingCn = espCons.TracerUpd
+                        if ( existingCn and existingCn.Connected ) then
+                            existingCn:Disconnect() 
+                        end
+                        
+                        espCons.TracerUpd = servRun.Heartbeat:Connect(function() 
+                            local rootPos2d = clientCamera:WorldToViewportPoint(clientRoot.Position)
+                            TracerPos = vec2(rootPos2d.X, rootPos2d.Y)
+                        end)
+                        
+                    elseif ( l_TracerPosition == 'Down' ) then
+                        local existingCn = espCons.TracerUpd
+                        if ( existingCn and existingCn.Connected ) then
+                            existingCn:Disconnect() 
+                        end
+                        
+                        local screenSize = clientCamera.ViewportSize
+                        TracerPos = vec2(screenSize.X / 2, screenSize.Y * 0.8)
+                        
+                        espCons.TracerUpd = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
+                            local screenSize = clientCamera.ViewportSize
                             
-                            -- Get some funny shit
-                            local selfPos = clientRoot and clientRoot.Position or vecNil
-                            local curTime = tick()
-                            local localTeam = clientPlayer.Team
+                            TracerPos = vec2(screenSize.X / 2, screenSize.Y * 0.8)
+                        end)
+                        
+                    elseif ( l_TracerPosition == 'Mouse' ) then
+                        local existingCn = espCons.TracerUpd
+                        if ( existingCn and existingCn.Connected ) then
+                            existingCn:Disconnect() 
+                        end
+                        
+                        espCons.TracerUpd = servRun.Heartbeat:Connect(function() 
+                            TracerPos = servInput:GetMouseLocation()
+                        end)
+                    end
+                end
+                
+                local function updateEsp() 
+                    if ( not isrbxactive() ) then
+                        return
+                    end
+                    
+                    local cameraPos = clientCamera.CFrame.Position
+                    local localPos = clientRoot.Position
+                    
+                    local fovOffset = clientCamera.FieldOfView / 70
+                    local resOffset = 1080 / clientCamera.ViewportSize.Y
+                    
+                    for name, manager in pairs(playerManagers) do 
+                        local objs = espObjs[name]
+                        
+                        -- Safety check #1, this handles players that just joined and dont have an ESP object made for them
+                        if ( not objs ) then
+                            continue
+                        end 
+                        
+                        local root, humanoid = manager.RootPart, manager.Humanoid
+                        -- Safety check #2, this handles players that haven't spawned in
+                        if ( root == nil or humanoid == nil ) then
+                            if ( objs.Nametag.Visible ) then 
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                            end
+                            continue
+                        end
+                        
+                        local rootPos = root.Position
+                        local rootDistance = ( localPos - rootPos).Magnitude
+                        -- Distance check 
+                        if ( l_DistCheck and rootDistance > l_Distance ) then
+                            if ( objs.Nametag.Visible ) then 
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                            end
+                            continue  
+                        end 
+                        
+                        -- Team check 
+                        if ( l_TeamCheck and manager.Team == clientTeam ) then
+                            if ( objs.Nametag.Visible ) then 
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                            end
+                            continue  
+                        end 
+                        
+                        -- Visibility check
+                        if ( l_VisCheck ) then
+                            local direction = ( rootPos - cameraPos ).Unit * 12345
+                            local raycast = workspace:Raycast(cameraPos, direction, raycastParams)
                             
-                            -- Loop over esp stuff
-                            for i = 1, namesLen do
-                                -- Localize some important vars
-                                local plrName = playerNames[i]
-                                local plrObject = playerManagers[plrName]
-                                local espObject = espObjects[plrName]
+                            if ( raycast ) then
                                 
-                                local plrRoot = plrObject.RootPart
-                                local plrHum = plrObject.Humanoid
+                                if ( ( raycast.Position - rootPos ).Magnitude > 5 ) then --  and raycast.Instance.Name ~= 'HumanoidRootPart' ) then
+                                    if ( objs.Nametag.Visible ) then 
+                                        for _, obj in pairs(objs) do 
+                                            obj.Visible = false 
+                                        end
+                                    end
+                                    continue
+                                end
                                 
+                            else
+                                if ( objs.Nametag.Visible ) then 
+                                    for _, obj in pairs(objs) do 
+                                        obj.Visible = false 
+                                    end
+                                end
+                                continue
+                            end 
+                        end
+                        
+                        local pos3d = clientCamera:WorldToViewportPoint(rootPos)
+                        
+                        local depth = pos3d.Z * fovOffset * resOffset
+                        local humHealth = humanoid.Health
+                        -- Safety check #3, this handles players that are off screen 
+                        if ( depth < 0 ) then
+                            if ( objs.Nametag.Visible ) then 
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                            end
+                            continue
+                        end
+                        
+                        -- Get some values that will be used later
+                        local pos2d = Vector2.new(pos3d.X, pos3d.Y)
+                        local healthPercent = math.max(humHealth / humanoid.MaxHealth, 0)
+                        
+                        -- Localize some objects that will be frequently edited
+                        local HealthBar = objs.HealthBar
+                        local HealthBarO = objs.HealthBarO
+                        local HealthFill = objs.HealthFill
+                        local Nametag = objs.Nametag
+                        local Distance = objs.Distance
+                        local Tracer = objs.Tracer
+                        local TracerO = objs.TracerO 
+                        
+                        -- Visiblity
+                        HealthBar.Visible = l_ShowHealth
+                        HealthBarO.Visible = l_ShowHealth
+                        HealthFill.Visible = l_ShowHealth
+                        
+                        Distance.Visible = l_ShowDistance 
+                        Nametag.Visible = l_Nametags  
+                        
+                        Tracer.Visible = l_Tracers
+                        TracerO.Visible = l_Tracers
+
+                        -- Text
+                        Distance.Text = string.format('[%d]', rootDistance)
+                        
+                        -- Tracers
+                        Tracer.Transparency = l_TracerVis
+                        TracerO.Transparency = l_TracerVis
+                        
+                        Tracer.From = TracerPos 
+                        Tracer.To = pos2d
+                        TracerO.From = TracerPos 
+                        TracerO.To = pos2d
+                        
+                        -- ZIndex
+                        local zindexOffset = 1e6 - depth 
+                        Distance.ZIndex = zindexOffset + 1
+                        HealthBar.ZIndex = zindexOffset
+                        HealthBarO.ZIndex = zindexOffset - 1
+                        HealthFill.ZIndex = zindexOffset + 1
+                        Nametag.ZIndex = zindexOffset + 3
+                        
+                        -- Box updating 
+                        if ( l_BoxType == 'Box 2d' ) then
+                            local boxSize = roundVec2(boxSize / depth)
+                            local boxHeight = boxSize.Y
+                            local textSize = math.max(1000 / depth, l_TextSize)
+                            
+                            local topLeft = roundVec2(pos2d - ( boxSize / 2 ))
+                            
+                            local Box = objs.Box
+                            local BoxOutline = objs.BoxOutline
+                            
+                            Box.Position = topLeft
+                            Box.Size = boxSize
+                            Box.Visible = l_Boxes
+                            Box.ZIndex = zindexOffset
+                            
+                            BoxOutline.Position = topLeft 
+                            BoxOutline.Size = boxSize 
+                            BoxOutline.Visible = l_Boxes
+                            BoxOutline.ZIndex = zindexOffset - 1
+                            
+                            Distance.Position = roundVec2(pos2d + Vector2.new(0, boxHeight / 2 ))
+                            Distance.Size = textSize
+                            Nametag.Position = roundVec2(pos2d - Vector2.new(0, Nametag.TextBounds.Y + ( boxHeight / 2 )))
+                            Nametag.Size = textSize
+                            
+                            -- Health bar 
+                            do
+                                local offset = Vector2.new( -( boxSize.X / 2 + 4 ), (boxHeight / 2 ) ) 
                                 
-                                -- Safety checks
-                                if (espObject and espObject.upd < curTime and plrRoot and plrHum) then
-                                    local plrInstance = plrObject.Player
+                                local from = roundVec2(pos2d + offset)
+                                local toBar = from - Vector2.new(0, boxHeight * healthPercent)
+                                local to = from - Vector2.new(0, boxHeight)
+                                
+                                HealthBar.From = from
+                                HealthBar.To = to
+                                HealthBarO.From = from
+                                HealthBarO.To = to
+                                
+                                HealthFill.From = from
+                                HealthFill.To = toBar
+                            end
+                            
+                        
+                            if ( not l_TeamColor ) then
+                                Box.Color = RGBCOLOR
+                                Tracer.Color = RGBCOLOR
+                            end
+                            
+                        elseif ( l_BoxType == 'Box 3d' ) then
+                            local rootCf = root.CFrame
+                            
+                            local botLeft  = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.PosBL).Position )
+                            if ( botLeft.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local botRight = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.PosBR).Position )
+                            if ( botRight.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local topLeft  = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.PosTL).Position )
+                            if ( topLeft.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local topRight = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.PosTR).Position )
+                            if ( topRight.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local namePos = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Nametag).Position )
+                            if ( namePos.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            botLeft = roundVec2(botLeft)
+                            botRight = roundVec2(botRight)
+                            topLeft = roundVec2(topLeft)
+                            topRight = roundVec2(topRight)
+                            
+                            local Box = objs.Box
+                            local BoxOutline = objs.BoxOutline
+                            
+                            Box.PointA = botLeft
+                            Box.PointB = botRight 
+                            Box.PointC = topRight 
+                            Box.PointD = topLeft 
+                            Box.Visible = l_Boxes
+                            Box.ZIndex = zindexOffset
+                            
+                            BoxOutline.PointA = botLeft
+                            BoxOutline.PointB = botRight 
+                            BoxOutline.PointC = topRight 
+                            BoxOutline.PointD = topLeft 
+                            BoxOutline.Visible = l_Boxes
+                            BoxOutline.ZIndex = zindexOffset - 1
+                            
+                            Nametag.Size = math.max(1000 / namePos.Z, l_TextSize)
+                            Nametag.Position = roundVec2(namePos) - Vector2.new(0, Nametag.TextBounds.Y)
+                            
+                            -- Health bar 
+                            do
+                                if ( l_ShowHealth ) then 
                                     
-                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
-                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
-                                    if (d or t) then 
-                                        local textLabel = espObject['Nametag']
-                                        
-                                        if (textLabel.Visible) then
-                                            textLabel.Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local boxes = espObject['Boxes']
-                                            boxes['1_1'].Visible = false
-                                            boxes['1_2'].Visible = false 
+                                    local from  = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Health2).Position )
+                                    if ( from.Z < 0 ) then
+                                        for _, obj in pairs(objs) do 
+                                            obj.Visible = false 
                                         end
                                         continue 
-                                    end 
+                                    end
                                     
-                                    local targRootPos = plrRoot.Position
-                                    local Root_Pos2d, Depth do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint(targRootPos)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = curTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local boxes = espObject['Boxes']
-                                            boxes['1_1'].Visible = false
-                                            boxes['1_2'].Visible = false
-                                            continue
+                                    local to = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Health1).Position )
+                                    if ( to.Z < 0 ) then
+                                        for _, obj in pairs(objs) do 
+                                            obj.Visible = false 
                                         end
-                                        
-                                        Root_Pos2d = vec2(shit.X, shit.Y)
-                                        Depth = shit.Z
+                                        continue 
                                     end
                                     
-                                    local Text_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((plrRoot.CFrame*textoffs).Position)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = curTime + 0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local boxes = espObject['Boxes']
-                                            boxes['1_1'].Visible = false
-                                            boxes['1_2'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
-                                    end
+                                    local toBar = clientCamera:WorldToViewportPoint( (rootCf * CFrame.new(2.3, ( healthPercent * 6 ) - 3, 0)).Position )
                                     
-                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
-                                    local boxes = espObject['Boxes']
+                                    toBar = roundVec2(toBar)
+                                    from = roundVec2(from)
+                                    to = roundVec2(to)
                                     
-                                    local Box1_1 = boxes['1_1']
-                                    local Box1_2 = boxes['1_2']
+                                    HealthBar.From = from
+                                    HealthBar.To = to
+                                    HealthBarO.From = from
+                                    HealthBarO.To = to
                                     
-                                    local validColor = l_TeamColor and plrInstance.TeamColor.Color or RGBCOLOR
-                                    
-                                    -- Nametag
-                                    do
-                                        local HealthText = ''
-                                        local DistText = ''
-                                        if (l_ShowDistance) then
-                                            DistText = (' / d: %.1f'):format((selfPos - targRootPos).Magnitude)
-                                        end
-                                        if (l_ShowHealth) then
-                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((plrHum.Health / plrHum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
-                                        end
-                                        
-                                        Text.Text = plrName .. DistText .. HealthText
-                                        Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
-                                    end
-                                    
-                                    -- Tracers
-                                    do
-                                        local TracerP1 = Root_Pos2d
-                                        local TracerP2 = TracerPos or vec2(0, 0)
-                                        
-                                        Tracer1.From = TracerP1 
-                                        Tracer1.To = TracerP2
-                                        Tracer2.From = TracerP1 
-                                        Tracer2.To = TracerP2
-                                        
-                                        Tracer1.Color = validColor
-                                    end
-                                    
-                                    -- Boxes
-                                    do 
-                                        Depth = (1 / Depth) * viewportY * (1 / (clientCamera.FieldOfView / 70))
-                                        
-                                        Root_Pos2d = Root_Pos2d - vec2(Depth*1.5, Depth*1.8)
-                                        local Box_Size = vec2(Depth*3,Depth*4)
-                                        
-                                        Box1_1.Size = Box_Size
-                                        Box1_1.Position = Root_Pos2d
-                                        
-                                        Box1_2.Size = Box_Size
-                                        Box1_2.Position = Root_Pos2d 
-                                    end
-                                    
-                                    Box1_1.Color = validColor
-                                    Box1_1.Visible = l_Boxes
-                                    Box1_2.Visible = l_Boxes
-                                    Text.Visible = l_Nametags
-                                    Tracer1.Visible = l_Tracers
-                                    Tracer2.Visible = l_Tracers
+                                    HealthFill.From = from
+                                    HealthFill.To = toBar
                                 end
                             end
-                        end
-                    elseif (l_BoxType == 'Westeria 2d') then
-                        local ScreenY = clientCamera.ViewportSize.Y
-                        EspCons['Screen'] = clientCamera:GetPropertyChangedSignal('ViewportSize'):Connect(function() 
-                            ScreenY = clientCamera.ViewportSize.Y
-                        end)
-                        
-                        
-                        update_esp = function() 
-                            local len = #playerNames
-                            if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
-                            local CurTime = tick()
                             
-                            local localteam = clientPlayer.Team
-                            
-                            for i = 1, len do
-                                local Name = playerNames[i]
-                                local PlayerObject = playerManagers[Name]
-                                local espObject = espObjects[Name]
-                                local rp = PlayerObject.RootPart
-                                local hum = PlayerObject.Humanoid
+                            -- Distance display 
+                            if ( l_ShowDistance ) then
+                                local distPos = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Disttag).Position )
                                 
-                                if (espObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.Player
+                                Distance.Size = math.max(1000 / distPos.Z, l_TextSize)
+                                Distance.Position = roundVec2(distPos)
+                            end
+                            
+                            if ( not l_TeamColor ) then
+                                Box.Color = RGBCOLOR
+                                Tracer.Color = RGBCOLOR
+                            end
+                            
+                        elseif ( l_BoxType == 'Corners 2d' ) then
+                            local boxSize = roundVec2(boxSize / depth)
+                            local boxHeight = boxSize.Y
+                            local textSize = math.max(1000 / depth, l_TextSize)
+                            
+                            local halfBoxSize = boxSize / 2
+                            
+                            -- yea i know this method looks awful
+                            -- but the only other viable way is using a shit ton of tables / for loops / redundant indexing
+                            -- even though this doesnt look good it probably runs the best 👍
+                            do
+                                local cornerBL  = pos2d + Vector2.new(-halfBoxSize.X, halfBoxSize.Y)
+                                local cornerBR  = pos2d + halfBoxSize
+                                local cornerTL  = pos2d - halfBoxSize
+                                local cornerTR  = pos2d + Vector2.new(halfBoxSize.X, -halfBoxSize.Y)
+                                
+                                local cornerLen = l_CornerSize / depth
+                                local cornerY = Vector2.new(0, cornerLen)
+                                local cornerX = Vector2.new(cornerLen, 0)
+                                
+                                local posBL1 = cornerBL - cornerY
+                                local posBL2 = cornerBL + cornerX
+                                local posBR1 = cornerBR - cornerY
+                                local posBR2 = cornerBR - cornerX
+                                local posTL1 = cornerTL + cornerY
+                                local posTL2 = cornerTL + cornerX
+                                local posTR1 = cornerTR + cornerY
+                                local posTR2 = cornerTR - cornerX
+                                
+                                local LineBL1 = objs.LineBL1
+                                local LineBL2 = objs.LineBL2
+                                local LineBR1 = objs.LineBR1
+                                local LineBR2 = objs.LineBR2
+                                local LineTL1 = objs.LineTL1
+                                local LineTL2 = objs.LineTL2
+                                local LineTR1 = objs.LineTR1
+                                local LineTR2 = objs.LineTR2
+                                
+                                local LineBL1O = objs.LineBL1O
+                                local LineBL2O = objs.LineBL2O
+                                local LineBR1O = objs.LineBR1O
+                                local LineBR2O = objs.LineBR2O
+                                local LineTL1O = objs.LineTL1O
+                                local LineTL2O = objs.LineTL2O
+                                local LineTR1O = objs.LineTR1O
+                                local LineTR2O = objs.LineTR2O
+                                
+                                LineBL1.From = cornerBL
+                                LineBL2.From = cornerBL
+                                LineBR1.From = cornerBR 
+                                LineBR2.From = cornerBR 
+                                LineTL1.From = cornerTL 
+                                LineTL2.From = cornerTL 
+                                LineTR1.From = cornerTR 
+                                LineTR2.From = cornerTR 
+                                LineBL1.To = posBL1
+                                LineBL2.To = posBL2
+                                LineBR1.To = posBR1
+                                LineBR2.To = posBR2
+                                LineTL1.To = posTL1
+                                LineTL2.To = posTL2
+                                LineTR1.To = posTR1
+                                LineTR2.To = posTR2 
+                                
+                                LineBL1O.From = cornerBL
+                                LineBL2O.From = cornerBL
+                                LineBR1O.From = cornerBR 
+                                LineBR2O.From = cornerBR 
+                                LineTL1O.From = cornerTL 
+                                LineTL2O.From = cornerTL 
+                                LineTR1O.From = cornerTR 
+                                LineTR2O.From = cornerTR 
+                                LineBL1O.To = posBL1
+                                LineBL2O.To = posBL2
+                                LineBR1O.To = posBR1
+                                LineBR2O.To = posBR2
+                                LineTL1O.To = posTL1
+                                LineTL2O.To = posTL2
+                                LineTR1O.To = posTR1
+                                LineTR2O.To = posTR2 
+                            end
+                            
+                            for _, line in ipairs( cornerLines ) do 
+                                local Box = objs[line]
+                                local BoxOutline = objs[line .. 'O']
+                                
+                                Box.Visible = l_Boxes
+                                Box.ZIndex = zindexOffset
+                                BoxOutline.Visible = l_Boxes
+                                BoxOutline.ZIndex = zindexOffset - 1 
+                            end
+                            
+                            Distance.Position = roundVec2(pos2d + Vector2.new(0, boxHeight / 2 ))
+                            Distance.Size = textSize
+                            Nametag.Position = roundVec2(pos2d - Vector2.new(0, Nametag.TextBounds.Y + ( boxHeight / 2 )))
+                            Nametag.Size = textSize
+                            
+                            -- Health bar 
+                            do
+                                local offset = Vector2.new( -( boxSize.X / 2 + 4 ), (boxHeight / 2 ) ) 
+                                
+                                local from = roundVec2(pos2d + offset)
+                                local toBar = from - Vector2.new(0, boxHeight * healthPercent)
+                                local to = from - Vector2.new(0, boxHeight)
+                                
+                                HealthBar.From = from
+                                HealthBar.To = to
+                                HealthBarO.From = from
+                                HealthBarO.To = to
+                                
+                                HealthFill.From = from
+                                HealthFill.To = toBar
+                            end
+                            
+                            if ( not l_TeamColor ) then
+                                for _, line in ipairs( cornerLines ) do 
+                                    objs[line].Color = RGBCOLOR 
+                                end
+                                Tracer.Color = RGBCOLOR
+                            end
+                            
+                        elseif ( l_BoxType == 'Corners 3d' ) then
+                            local rootCf = root.CFrame
+                            
+                            local namePos = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Nametag).Position )
+                            if ( namePos.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local cornerBL = rootCf * cornerOffsets.PosBL
+                            local cornerBR = rootCf * cornerOffsets.PosBR
+                            local cornerTL = rootCf * cornerOffsets.PosTL
+                            local cornerTR = rootCf * cornerOffsets.PosTR
+                            
+                            local cornerBL2d  = clientCamera:WorldToViewportPoint( cornerBL.Position )
+                            if ( cornerBL2d.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local cornerBR2d = clientCamera:WorldToViewportPoint( cornerBR.Position )
+                            if ( cornerBR2d.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local cornerTL2d  = clientCamera:WorldToViewportPoint( cornerTL.Position )
+                            if ( cornerTL2d.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            local cornerTR2d = clientCamera:WorldToViewportPoint( cornerTR.Position )
+                            if ( cornerTR2d.Z < 0 ) then
+                                for _, obj in pairs(objs) do 
+                                    obj.Visible = false 
+                                end
+                                continue
+                            end
+                            
+                            cornerBL2d = roundVec2(cornerBL2d)
+                            cornerBR2d = roundVec2(cornerBR2d)
+                            cornerTL2d = roundVec2(cornerTL2d)
+                            cornerTR2d = roundVec2(cornerTR2d)
+                            
+                            do
+                                local cornerLen = l_CornerSize / 1000
+                                local cornerY = CFrame.new(0, -cornerLen, 0)
+                                local cornerX = CFrame.new(-cornerLen, 0, 0)
+                                local cornerY_M = CFrame.new(0, cornerLen, 0)
+                                local cornerX_M = CFrame.new(cornerLen, 0, 0)
+                                
+                                local posBL1 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerBL * cornerY_M ).Position ) )
+                                local posBL2 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerBL * cornerX ).Position ) )
+                                local posBR1 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerBR * cornerY_M ).Position ) )
+                                local posBR2 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerBR * cornerX_M ).Position ) )
+                                local posTL1 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerTL * cornerY ).Position ) )
+                                local posTL2 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerTL * cornerX ).Position ) )
+                                local posTR1 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerTR * cornerY ).Position ) )
+                                local posTR2 = roundVec2( clientCamera:WorldToViewportPoint( ( cornerTR * cornerX_M ).Position ) )
+                                
+                                local LineBL1 = objs.LineBL1
+                                local LineBL2 = objs.LineBL2
+                                local LineBR1 = objs.LineBR1
+                                local LineBR2 = objs.LineBR2
+                                local LineTL1 = objs.LineTL1
+                                local LineTL2 = objs.LineTL2
+                                local LineTR1 = objs.LineTR1
+                                local LineTR2 = objs.LineTR2
+                                
+                                local LineBL1O = objs.LineBL1O
+                                local LineBL2O = objs.LineBL2O
+                                local LineBR1O = objs.LineBR1O
+                                local LineBR2O = objs.LineBR2O
+                                local LineTL1O = objs.LineTL1O
+                                local LineTL2O = objs.LineTL2O
+                                local LineTR1O = objs.LineTR1O
+                                local LineTR2O = objs.LineTR2O
+                                
+                                LineBL1.From = cornerBL2d
+                                LineBL2.From = cornerBL2d
+                                LineBR1.From = cornerBR2d
+                                LineBR2.From = cornerBR2d
+                                LineTL1.From = cornerTL2d
+                                LineTL2.From = cornerTL2d
+                                LineTR1.From = cornerTR2d
+                                LineTR2.From = cornerTR2d
+                                LineBL1.To = posBL1
+                                LineBL2.To = posBL2
+                                LineBR1.To = posBR1
+                                LineBR2.To = posBR2
+                                LineTL1.To = posTL1
+                                LineTL2.To = posTL2
+                                LineTR1.To = posTR1
+                                LineTR2.To = posTR2
+                                
+                                LineBL1O.From = cornerBL2d
+                                LineBL2O.From = cornerBL2d
+                                LineBR1O.From = cornerBR2d
+                                LineBR2O.From = cornerBR2d
+                                LineTL1O.From = cornerTL2d
+                                LineTL2O.From = cornerTL2d
+                                LineTR1O.From = cornerTR2d
+                                LineTR2O.From = cornerTR2d
+                                LineBL1O.To = posBL1
+                                LineBL2O.To = posBL2
+                                LineBR1O.To = posBR1
+                                LineBR2O.To = posBR2
+                                LineTL1O.To = posTL1
+                                LineTL2O.To = posTL2
+                                LineTR1O.To = posTR1
+                                LineTR2O.To = posTR2
+                            end
+                            
+                            for _, line in ipairs( cornerLines ) do 
+                                local Box = objs[line]
+                                local BoxOutline = objs[line .. 'O']
+                                
+                                Box.Visible = l_Boxes
+                                Box.ZIndex = zindexOffset
+                                BoxOutline.Visible = l_Boxes
+                                BoxOutline.ZIndex = zindexOffset - 1 
+                            end     
+                            
+                            Nametag.Size = math.max(1000 / namePos.Z, l_TextSize)
+                            Nametag.Position = roundVec2(namePos) - Vector2.new(0, Nametag.TextBounds.Y)
+                            
+                            -- Health bar 
+                            do
+                                if ( l_ShowHealth ) then 
                                     
-                                    if (espObject['upd'] > CurTime) then continue end
-                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
-                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
-                                    if (d or t) then 
-                                        local tx = espObject['Nametag']
-                                        if (tx.Visible == true) then
-                                            tx.Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
+                                    local from  = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Health2).Position )
+                                    if ( from.Z < 0 ) then
+                                        for _, obj in pairs(objs) do 
+                                            obj.Visible = false 
                                         end
-                                        continue
-                                    end 
-                                    local TargRootPos = rp.CFrame
-                                    
-                                    -- Some position shit
-                                    local Text_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
+                                        continue 
                                     end
                                     
-                                    TargRootPos = TargRootPos.Position
-                                    local Root_Pos2d, Depth do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
-                                            continue
+                                    local to = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Health1).Position )
+                                    if ( to.Z < 0 ) then
+                                        for _, obj in pairs(objs) do 
+                                            obj.Visible = false 
                                         end
-                                        
-                                        
-                                        Root_Pos2d = vec2(shit.X, shit.Y)
-                                        Depth = shit.Z
+                                        continue 
                                     end
                                     
+                                    local toBar = clientCamera:WorldToViewportPoint( (rootCf * CFrame.new(2.3, ( healthPercent * 6 ) - 3, 0)).Position )
                                     
-                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
-                                    local Boxes = espObject['Boxes']
+                                    toBar = roundVec2(toBar)
+                                    from = roundVec2(from)
+                                    to = roundVec2(to)
                                     
-                                    -- most optimized lua code
-                                    local Box1_1 = Boxes['1_1']
-                                    local Box1_2 = Boxes['1_2']
-                                    local Box2_1 = Boxes['2_1']
-                                    local Box2_2 = Boxes['2_2']
-                                    local Box3_1 = Boxes['3_1']
-                                    local Box3_2 = Boxes['3_2']
-                                    local Box4_1 = Boxes['4_1']
-                                    local Box4_2 = Boxes['4_2']
+                                    HealthBar.From = from
+                                    HealthBar.To = to
+                                    HealthBarO.From = from
+                                    HealthBarO.To = to
                                     
-                                    local Box1_1_o = Boxes['1_1_o']
-                                    local Box1_2_o = Boxes['1_2_o']
-                                    local Box2_1_o = Boxes['2_1_o']
-                                    local Box2_2_o = Boxes['2_2_o']
-                                    local Box3_1_o = Boxes['3_1_o']
-                                    local Box3_2_o = Boxes['3_2_o']
-                                    local Box4_1_o = Boxes['4_1_o']
-                                    local Box4_2_o = Boxes['4_2_o']
-                                    
-                                    
-                                    -- Text shit
-                                    do
-                                        local HealthText = ''
-                                        local DistText = ''
-                                        if (l_ShowDistance) then
-                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
-                                        end
-                                        if (l_ShowHealth) then
-                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
-                                        end
-                                        
-                                        Text.Text = Name .. DistText .. HealthText
-                                        Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
-                                    end
-                                    -- Tracer shit
-                                    local ValidColor
-                                    do
-                                        local TracerP1 = Root_Pos2d
-                                        local TracerP2 = TracerPos or vec2(0, 0)
-                                        Tracer1.From = TracerP1 
-                                        Tracer1.To = TracerP2
-                                        Tracer2.From = TracerP1 
-                                        Tracer2.To = TracerP2
-                                        do
-                                            local _ = (l_TeamColor and PlayerInstance.TeamColor)
-                                            _ = _ and _.Color or RGBCOLOR
-                                            ValidColor = _
-                                        end
-                                        Tracer1.Color = ValidColor
-                                    end
-                                    
-                                    -- Box shit :troll:
-                                    do 
-                                        -- Modify depth
-                                        Depth = (1 / Depth) * ScreenY * (1 / (clientCamera.FieldOfView / 70))
-                                        -- Make size
-                                        local BoxSize = vec2(Depth*3,Depth*4)
-                                        -- Make corners
-                                        local TopLeft = Root_Pos2d - vec2(Depth*1.5, Depth*1.8)
-                                        local TopRight = Root_Pos2d + vec2(Depth*1.5, -Depth*1.8)
-                                        local BottomLeft = Root_Pos2d - vec2(Depth*1.5, -Depth*1.8)
-                                        local BottomRight = Root_Pos2d + vec2(Depth*1.5, Depth*1.8)
-
-                                        local p1 = TopLeft:lerp(TopRight, 0.2)
-                                        local p2 = TopLeft:lerp(BottomLeft, 0.2)
-                                        local p3 = TopRight:lerp(TopLeft, 0.2)
-                                        local p4 = TopRight:lerp(BottomRight, 0.2)
-                                        local p5 = BottomLeft:lerp(TopLeft, 0.2)
-                                        local p6 = BottomLeft:lerp(BottomRight, 0.2)
-                                        local p7 = BottomRight:lerp(TopRight, 0.2)
-                                        local p8 = BottomRight:lerp(BottomLeft, 0.2)
-                                        
-                                        Box1_1.From = TopLeft
-                                        Box1_1.To = p1
-                                        Box1_2.From = TopLeft
-                                        Box1_2.To = p2
-                                        
-                                        Box2_1.From = TopRight
-                                        Box2_1.To = p3
-                                        Box2_2.From = TopRight
-                                        Box2_2.To = p4
-                                        
-                                        Box3_1.From = BottomLeft
-                                        Box3_1.To = p5
-                                        Box3_2.From = BottomLeft
-                                        Box3_2.To = p6
-                                        
-                                        Box4_1.From = BottomRight
-                                        Box4_1.To = p7
-                                        Box4_2.From = BottomRight
-                                        Box4_2.To = p8
-                                        
-                                        
-                                        Box1_1_o.From = TopLeft
-                                        Box1_1_o.To = p1
-                                        Box1_2_o.From = TopLeft
-                                        Box1_2_o.To = p2
-                                        Box2_1_o.From = TopRight
-                                        Box2_1_o.To = p3
-                                        Box2_2_o.From = TopRight
-                                        Box2_2_o.To = p4
-                                        Box3_1_o.From = BottomLeft
-                                        Box3_1_o.To = p5
-                                        Box3_2_o.From = BottomLeft
-                                        Box3_2_o.To = p6
-                                        Box4_1_o.From = BottomRight
-                                        Box4_1_o.To = p7
-                                        Box4_2_o.From = BottomRight
-                                        Box4_2_o.To = p8
-                                    end
-                                    
-                                    Text.Visible = l_Nametags
-                                    Tracer1.Visible = l_Tracers
-                                    Tracer2.Visible = l_Tracers
-                                    
-                                    
-                                    Box1_1.Color = ValidColor
-                                    Box1_2.Color = ValidColor
-                                    Box2_1.Color = ValidColor
-                                    Box2_2.Color = ValidColor
-                                    Box3_1.Color = ValidColor
-                                    Box3_2.Color = ValidColor
-                                    Box4_1.Color = ValidColor
-                                    Box4_2.Color = ValidColor
-                                    
-                                    Box1_1.Visible = l_Boxes
-                                    Box1_2.Visible = l_Boxes
-                                    Box2_1.Visible = l_Boxes
-                                    Box2_2.Visible = l_Boxes
-                                    Box3_1.Visible = l_Boxes
-                                    Box3_2.Visible = l_Boxes
-                                    Box4_1.Visible = l_Boxes
-                                    Box4_2.Visible = l_Boxes
-                                    
-                                    Box1_1_o.Visible = l_Boxes
-                                    Box1_2_o.Visible = l_Boxes
-                                    Box2_1_o.Visible = l_Boxes
-                                    Box2_2_o.Visible = l_Boxes
-                                    Box3_1_o.Visible = l_Boxes
-                                    Box3_2_o.Visible = l_Boxes
-                                    Box4_1_o.Visible = l_Boxes
-                                    Box4_2_o.Visible = l_Boxes
+                                    HealthFill.From = from
+                                    HealthFill.To = toBar
                                 end
                             end
-                        end
-                    elseif (l_BoxType == 'Westeria 3d') then
-                        update_esp = function() 
-                            local len = #playerNames
-                            if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
-                            local CurTime = tick()
                             
-                            local localteam = clientPlayer.Team
-                            
-                            for i = 1, len do
-                                local Name = playerNames[i]
-                                local PlayerObject = playerManagers[Name]
-                                local espObject = espObjects[Name]
-                                local rp = PlayerObject.RootPart
-                                local hum = PlayerObject.Humanoid
+                            -- Distance display 
+                            if ( l_ShowDistance ) then
+                                local distPos = clientCamera:WorldToViewportPoint( (rootCf * cornerOffsets.Disttag).Position )
                                 
-                                if (espObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.Player
-                                    
-                                    if (espObject['upd'] > CurTime) then continue end
-                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
-                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
-                                    if (d or t) then 
-                                        local tx = espObject['Nametag']
-                                        if (tx.Visible) then
-                                            tx.Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
-                                        end
-                                        continue
-                                    end
-                                    local TargRootPos = rp.CFrame
-                                    
-                                    -- Some position shit
-                                    local Text_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    local Box_Pos1_0 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
-                                        -- i am not doing anymore fuckingchecks
-                                        Box_Pos1_0 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos1_1 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_1).Position)
-                                        Box_Pos1_1 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos1_2 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_2).Position)
-                                        Box_Pos1_2 = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    local Box_Pos2_0 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
-                                        Box_Pos2_0 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos2_1 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_1).Position)
-                                        Box_Pos2_1 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos2_2 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_2).Position)
-                                        Box_Pos2_2 = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    local Box_Pos3_0 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
-                                        Box_Pos3_0 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos3_1 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_1).Position)
-                                        Box_Pos3_1 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos3_2 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_2).Position)
-                                        Box_Pos3_2 = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    local Box_Pos4_0 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
-                                        Box_Pos4_0 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos4_1 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_1).Position)
-                                        Box_Pos4_1 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos4_2 do
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_2).Position)
-                                        Box_Pos4_2 = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    TargRootPos = TargRootPos.Position
-                                    local Root_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            Boxes['2_1'].Visible = false
-                                            Boxes['2_2'].Visible = false
-                                            Boxes['3_1'].Visible = false
-                                            Boxes['3_2'].Visible = false
-                                            Boxes['4_1'].Visible = false
-                                            Boxes['4_2'].Visible = false
-                                            Boxes['1_1_o'].Visible = false
-                                            Boxes['1_2_o'].Visible = false
-                                            Boxes['2_1_o'].Visible = false
-                                            Boxes['2_2_o'].Visible = false
-                                            Boxes['3_1_o'].Visible = false
-                                            Boxes['3_2_o'].Visible = false
-                                            Boxes['4_1_o'].Visible = false
-                                            Boxes['4_2_o'].Visible = false
-                                            continue
-                                        end
-                                        
-                                        Root_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    
-                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
-                                    local Boxes = espObject['Boxes']
-                                    
-                                    -- most optimized lua code
-                                    local Box1_1 = Boxes['1_1']
-                                    local Box1_2 = Boxes['1_2']
-                                    local Box2_1 = Boxes['2_1']
-                                    local Box2_2 = Boxes['2_2']
-                                    local Box3_1 = Boxes['3_1']
-                                    local Box3_2 = Boxes['3_2']
-                                    local Box4_1 = Boxes['4_1']
-                                    local Box4_2 = Boxes['4_2']
-                                    
-                                    local Box1_1_o = Boxes['1_1_o']
-                                    local Box1_2_o = Boxes['1_2_o']
-                                    local Box2_1_o = Boxes['2_1_o']
-                                    local Box2_2_o = Boxes['2_2_o']
-                                    local Box3_1_o = Boxes['3_1_o']
-                                    local Box3_2_o = Boxes['3_2_o']
-                                    local Box4_1_o = Boxes['4_1_o']
-                                    local Box4_2_o = Boxes['4_2_o']
-                                    
-                                    
-                                    -- Text shit
-                                    do
-                                        local HealthText = ''
-                                        local DistText = ''
-                                        if (l_ShowDistance) then
-                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
-                                        end
-                                        if (l_ShowHealth) then
-                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
-                                        end
-                                        
-                                        Text.Text = Name .. DistText .. HealthText
-                                        Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
-                                    end
-                                    -- Tracer shit
-                                    local ValidColor
-                                    do
-                                        local TracerP1 = Root_Pos2d
-                                        local TracerP2 = TracerPos or vec2(0, 0)
-                                        Tracer1.From = TracerP1 
-                                        Tracer1.To = TracerP2
-                                        Tracer2.From = TracerP1 
-                                        Tracer2.To = TracerP2
-                                        do
-                                            local _ = (l_TeamColor and PlayerInstance.TeamColor)
-                                            _ = _ and _.Color or RGBCOLOR
-                                            ValidColor = _
-                                        end
-                                        Tracer1.Color = ValidColor
-                                    end
-                                    
-                                    -- Box shit :troll:
-                                    do 
-                                        Box1_1.From = Box_Pos1_0
-                                        Box1_1.To = Box_Pos1_1
-                                        Box1_2.From = Box_Pos1_0
-                                        Box1_2.To = Box_Pos1_2
-                                        
-                                        Box2_1.From = Box_Pos2_0
-                                        Box2_1.To = Box_Pos2_1
-                                        Box2_2.From = Box_Pos2_0
-                                        Box2_2.To = Box_Pos2_2
-                                        
-                                        Box3_1.From = Box_Pos3_0
-                                        Box3_1.To = Box_Pos3_1
-                                        Box3_2.From = Box_Pos3_0
-                                        Box3_2.To = Box_Pos3_2
-                                        
-                                        Box4_1.From = Box_Pos4_0
-                                        Box4_1.To = Box_Pos4_1
-                                        Box4_2.From = Box_Pos4_0
-                                        Box4_2.To = Box_Pos4_2
-                                        
-                                        Box1_1_o.From = Box_Pos1_0
-                                        Box1_1_o.To = Box_Pos1_1
-                                        Box1_2_o.From = Box_Pos1_0
-                                        Box1_2_o.To = Box_Pos1_2
-                                        
-                                        Box2_1_o.From = Box_Pos2_0
-                                        Box2_1_o.To = Box_Pos2_1
-                                        Box2_2_o.From = Box_Pos2_0
-                                        Box2_2_o.To = Box_Pos2_2
-                                        
-                                        Box3_1_o.From = Box_Pos3_0
-                                        Box3_1_o.To = Box_Pos3_1
-                                        Box3_2_o.From = Box_Pos3_0
-                                        Box3_2_o.To = Box_Pos3_2
-                                        
-                                        Box4_1_o.From = Box_Pos4_0
-                                        Box4_1_o.To = Box_Pos4_1
-                                        Box4_2_o.From = Box_Pos4_0
-                                        Box4_2_o.To = Box_Pos4_2
-                                    end
-                                    
-                                    Text.Visible = l_Nametags
-                                    Tracer1.Visible = l_Tracers
-                                    Tracer2.Visible = l_Tracers
-                                    
-                                    
-                                    Box1_1.Color = ValidColor
-                                    Box1_2.Color = ValidColor
-                                    Box2_1.Color = ValidColor
-                                    Box2_2.Color = ValidColor
-                                    Box3_1.Color = ValidColor
-                                    Box3_2.Color = ValidColor
-                                    Box4_1.Color = ValidColor
-                                    Box4_2.Color = ValidColor
-                                    
-                                    Box1_1.Visible = l_Boxes
-                                    Box1_2.Visible = l_Boxes
-                                    Box2_1.Visible = l_Boxes
-                                    Box2_2.Visible = l_Boxes
-                                    Box3_1.Visible = l_Boxes
-                                    Box3_2.Visible = l_Boxes
-                                    Box4_1.Visible = l_Boxes
-                                    Box4_2.Visible = l_Boxes
-                                    
-                                    Box1_1_o.Visible = l_Boxes
-                                    Box1_2_o.Visible = l_Boxes
-                                    Box2_1_o.Visible = l_Boxes
-                                    Box2_2_o.Visible = l_Boxes
-                                    Box3_1_o.Visible = l_Boxes
-                                    Box3_2_o.Visible = l_Boxes
-                                    Box4_1_o.Visible = l_Boxes
-                                    Box4_2_o.Visible = l_Boxes
-                                end
+                                Distance.Size = math.max(1000 / distPos.Z, l_TextSize)
+                                Distance.Position = roundVec2(distPos)
                             end
-                        end
-                    elseif (l_BoxType == 'Simple 3d') then
-                        update_esp = function() 
-                            local len = #playerNames
-                            if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
-                            local CurTime = tick()
                             
-                            local localteam = clientPlayer.Team
-                            
-                            for i = 1, len do
-                                local Name = playerNames[i]
-                                local PlayerObject = playerManagers[Name]
-                                local espObject = espObjects[Name]
-                                local rp = PlayerObject.RootPart
-                                local hum = PlayerObject.Humanoid
-                                
-                                if (espObject and rp and hum) then
-                                    local PlayerInstance = PlayerObject.Player
-                                    
-                                    if (espObject['upd'] > CurTime) then continue end
-                                    local d = (l_DistanceCheck and (plrRoot.Position - clientRoot.Position).Magnitude > l_Distance)
-                                    local t = (l_TeamCheck and plrInstance.Team == localTeam)
-                                    if (d or t) then 
-                                        local tx = espObject['Nametag']
-                                        if (tx.Visible == true) then
-                                            tx.Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                        end
-                                        continue
-                                    end
-                                    local TargRootPos = rp.CFrame
-                                    
-                                    -- Some position shit
-                                    local Text_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    local Box_Pos1 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_1_0).Position)
-                                        Box_Pos1 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos2 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_2_0).Position)
-                                        Box_Pos2 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos3 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_3_0).Position)
-                                        Box_Pos3 = vec2(shit.X, shit.Y)
-                                    end
-                                    local Box_Pos4 do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*boxoffs_4_0).Position)
-                                        Box_Pos4 = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    
-                                    TargRootPos = TargRootPos.Position
-                                    local Root_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            
-                                            local Boxes = espObject['Boxes']
-                                            Boxes['1_1'].Visible = false
-                                            Boxes['1_2'].Visible = false
-                                            continue
-                                        end
-                                        
-                                        Root_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    
-                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
-                                    local Boxes = espObject['Boxes']
-                                    local Box1_1 = Boxes['1_1']
-                                    local Box1_2 = Boxes['1_2']
-                                    
-                                    -- Text shit
-                                    do
-                                        local HealthText = ''
-                                        local DistText = ''
-                                        if (l_ShowDistance) then
-                                            DistText = (' / d: %.1f'):format((SelfPos - TargRootPos).Magnitude)
-                                        end
-                                        if (l_ShowHealth) then
-                                            HealthText = ' / hp: '..(l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mathFloor(hum.Health))
-                                        end
-                                        
-                                        Text.Text = Name .. DistText .. HealthText
-                                        Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
-                                    end
-                                    -- Tracer shit
-                                    local ValidColor
-                                    do
-                                        local TracerP1 = Root_Pos2d
-                                        local TracerP2 = TracerPos or vec2(0, 0)
-                                        Tracer1.From = TracerP1 
-                                        Tracer1.To = TracerP2
-                                        Tracer2.From = TracerP1 
-                                        Tracer2.To = TracerP2
-                                        do
-                                            local _ = (l_TeamColor and PlayerInstance.TeamColor)
-                                            _ = _ and _.Color or RGBCOLOR
-                                            
-                                            ValidColor = _
-                                        end
-                                        Tracer1.Color = ValidColor
-                                    end
-                                    
-                                    -- Box shit :troll:
-                                    do 
-                                        Box1_1.PointA = Box_Pos1
-                                        Box1_1.PointB = Box_Pos2
-                                        Box1_1.PointC = Box_Pos3
-                                        Box1_1.PointD = Box_Pos4
-                                        
-                                        Box1_2.PointA = Box_Pos1
-                                        Box1_2.PointB = Box_Pos2
-                                        Box1_2.PointC = Box_Pos3
-                                        Box1_2.PointD = Box_Pos4
-                                    end
-                                    
-                                    Text.Visible = l_Nametags
-                                    Tracer1.Visible = l_Tracers
-                                    Tracer2.Visible = l_Tracers
-                                    
-                                    Box1_1.Color = ValidColor
-                                    
-                                    Box1_1.Visible = l_Boxes
-                                    Box1_2.Visible = l_Boxes
+                            if ( not l_TeamColor ) then
+                                for _, line in ipairs( cornerLines ) do 
+                                    objs[line].Color = RGBCOLOR 
                                 end
-                            end
-                        end
-                    else 
-                        
-                        update_esp = function() 
-                            local len = #playerNames
-                            if (isrbxactive() == false or len == 0) then return end
-                            local SelfPos = clientRoot and clientRoot.Position or vec3(0, 0, 0)
-                            local CurTime = tick()
-                            
-                            for i = 1, len do
-                                local Name = playerNames[i]
-                                local PlayerObject = playerManagers[Name]
-                                local espObject = espObjects[Name]
-                                local rp = PlayerObject.RootPart
-                                local hum = PlayerObject.Humanoid
-                                
-                                
-                                
-                                if (espObject and rp and hum) then
-                                    if (espObject['upd'] > CurTime) then continue end
-                                    
-                                    local TargRootPos = rp.CFrame
-                                    
-                                    local Text_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint((TargRootPos*textoffs).Position)
-                                        
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            continue
-                                        end
-                                        Text_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    TargRootPos = TargRootPos.Position
-                                    
-                                    local Root_Pos2d do 
-                                        local shit, vis = clientCamera:WorldToViewportPoint(TargRootPos)
-                                        if (not vis) then
-                                            espObject['upd'] = CurTime+0.2
-                                            espObject['Nametag'].Visible = false
-                                            espObject['Tracer1'].Visible = false
-                                            espObject['Tracer2'].Visible = false
-                                            continue
-                                        end
-                                        
-                                        Root_Pos2d = vec2(shit.X, shit.Y)
-                                    end
-                                    
-                                    
-                                    
-                                    local Text, Tracer1, Tracer2 = espObject['Nametag'], espObject['Tracer1'], espObject['Tracer2']
-                                    
-                                    local Dist = (SelfPos - TargRootPos).Magnitude
-                                    local HealthText = l_HealthType == 'Percentage' and (mathFloor((hum.Health / hum.MaxHealth)*100)..'%') or mdloor(hum.Health)
-                                    
-                                    
-                                    Text.Text = (('%s / dist:%.1f / hp:%s'):format(Name, Dist, HealthText))
-                                    Text.Position = Text_Pos2d - vec2(0, Text.TextBounds.Y)
-                                    
-                                    
-                                    local TracerP1 = Root_Pos2d
-                                    local TracerP2 = TracerPos or vec2(0, 0)
-                                    
-                                    Tracer1.From = TracerP1 
-                                    Tracer1.To = TracerP2
-                                    Tracer2.From = TracerP1 
-                                    Tracer2.To = TracerP2
-                                    
-                                    do
-                                        local _ = (l_TeamColor and PlayerObject.TeamColor)
-                                        _ = _ and _.Color or RGBCOLOR
-                                        
-                                        Tracer1.Color = _
-                                    end
-                                    Text.Visible = l_Nametags
-                                    Tracer1.Visible = l_Tracers
-                                    Tracer2.Visible = l_Tracers
-                                end
+                                Tracer.Color = RGBCOLOR
                             end
                         end
                     end
                 end
                 
-                
-                if (l_UpdateDelay == 0) then
-                    EspCons['Update'] = servRun.RenderStepped:Connect(update_esp)
+                if ( l_UpdateDelay == 0 ) then 
+                    espCons.espLoop = servRun.RenderStepped:Connect(updateEsp) -- i would use Heartbeat but the frame delay is painful 😔
                 else
-                    local jskull2 = jskull1
-                    spawn(function()
-                        while jskull2 == jskull1 and r_esp:isEnabled() do 
-                            update_esp()
-                            wait(l_UpdateDelay)
+                    task.spawn(function()
+                        while ( r_esp:isEnabled() ) do 
+                            updateEsp()
+                            
+                            task.wait(l_UpdateDelay)
                         end
                     end)
                 end
-            end))
             end)
+            
             r_esp:Connect('Disabled',function() 
-                print(pcall(function()
-                for _, con in pairs(EspCons) do con:Disconnect() end
-                tabClear(EspCons)
-                
-                --if (EspFolder) then EspFolder:Destroy() EspFolder = nil end
-                
-                for i,v in ipairs(playerNames) do 
-                    local cns = PlrCons[v] 
-                    if (cns) then 
-                        for i,v in ipairs(cns) do 
-                            v:Disconnect()
-                        end
-                    end 
-                    local obj = espObjects[v]
-                    if (obj) then
-                        obj['Nametag']:Remove()
-                        obj['Tracer1']:Remove()
-                        obj['Tracer2']:Remove()
-                        
-                        if (obj['Boxes']) then
-                            for i,v in pairs(obj['Boxes']) do 
-                                v:Remove() 
-                            end    
-                        end
-                    end
+                for name, manager in pairs(playerManagers) do 
+                    delEsp(manager.Player)
                 end
-                tabClear(PlrCons)
-                tabClear(espObjects)
-            end))
+                
+                for name, cn in pairs(espCons) do -- pairs 
+                    cn:Disconnect()
+                end
+                table.clear(espObjs)
+                table.clear(espCons)                 
             end)
         
         end
@@ -9068,7 +8580,7 @@ do
         end
         
         r_crosshair:setTooltip('Enables a crosshair overlay made in Drawing. Also has extra features for Aimbot')
-        r_esp:setTooltip('Activates ESP for other players. <b>Currently is in beta, so it may glitch out!</b>')
+        r_esp:setTooltip('Displays an overlay over every other player using Drawing. <b>Report any bugs to the Github or in the Discord.</b>')
         r_freecam:setTooltip('Frees up your camera, letting you fly it anywhere. Useful for spying on others. <i>Doesn\'t work on games with custom camera systems</i>')
         r_fullbright:setTooltip('Makes the world insanely bright. Useful for games with fog effects, like Lumber Tycoon 2 or Rake. <i>May not work with every game</i>')
         r_keystrokes:setTooltip('Enables an overlay with your movement keys. Currently unfinished')
@@ -9876,10 +9388,9 @@ do
         prism.Position = dimOffset(25, -105)
         redline.Position = dimOffset(90, -155)
         
-        twn(prism, {Position = dimOffset(25, 35)},true)
-        twn(redline, {Position = dimOffset(90, -5)},true)
+        twn(prism, {Position = dimOffset(25, 35)}, true)
+        twn(redline, {Position = dimOffset(90, -5)}, true)
     end
-    
 end
 
 _G.RLTHEME = nil
@@ -9906,14 +9417,13 @@ if (_G.RLLOADERROR ~= 0) then
 else
     _G.RLLOADERROR = nil
     
-    ui:Notify(('Redline %s loaded'):format(REDLINEVER), ('Press RightShift to begin'), 5, 'high')
+    ui:Notify(('Redline %s loaded'):format(REDLINEVER), ('Press RightShift to open up the menu'), 7, 'high')
 end
 
 
 local pg do 
-    pg = nil or 
-        (type(syn) == 'table' and syn.queue_on_teleport) or 
-        (type(fluxus) == 'table' and fluxus.queue_on_teleport) or 
+    pg = (typeof(syn) == 'table' and syn.queue_on_teleport) or 
+        (typeof(fluxus) == 'table' and fluxus.queue_on_teleport) or 
         (queue_on_teleport)
 end 
 
@@ -9932,18 +9442,3 @@ end
 _G.RLNOTIF = function(...) 
     return ui:Notify(...)
 end
-
--- v0.6.5
---[[
-- Added Distance check to ESP
-- Changed a few default settings for ESP 
-- Changed a few tooltips
-- Changed how files save, you might need to redownload your theme!
-- Fixed a bug with the ESP font, which only affected certain exploits
-- Hopefully fixed a bug with a nil theme
-- Hopefully fixed character manager Humanoid bug 
-- Hopefully fixed queueing not disabling properly
-- Improved some older code a bit
-]]--
-
-
