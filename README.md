@@ -36,7 +36,7 @@ This is a planned feature for the rewrite.
 Make sure you pressed RightShift and there aren't any errors in console.  
 
 - **Can I make my own fork / contribute?**  
-Yes, but I'd wait for the rewrite as it is way more cleaner and in a more module-like format.  
+Yes, but I'd wait for the rewrite as it is way more cleaner and in a more modular-like format.  
 
 - **Hi**  
 Hi  
@@ -44,10 +44,16 @@ Hi
 ## Supported executors  
 - All of them  
 
-
 ## Changelog  
-Current version: 0.6.5  
-Dates will follow MM/DD/YYYY   
+Current version: 0.6.6  
+Dates will follow MM/DD/YYYY  
+
+Version 0.6.6 (9/19/2022)  
+- Rewrote the entirety of the ESP  
+- Added visibility check, health bars, and a distance display to the ESP  
+- Improved ESP stability by a lot  
+- Esp is no longer a beta module  
+! Please report any bugs to the Github or in the Discord!  
 
 Version 0.6.5 (8/25/2022)   
 - Added Distance check to ESP   
