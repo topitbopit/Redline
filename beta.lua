@@ -1,80 +1,46 @@
 --[[
 
-                      REDLINE
-
-                      .=%%=.                      
-                    .+%%@@%%+.                    
-                  .+%*-%**%-*%+.                  
-                .+%*: =@::@= :*%+.                
-              .+%*:  .%+  +%.  :*%+.              
-            .+%*:    +@.  .@+    :*%+.            
-          .+%*:     .@+    +@.     :*%+.          
-        .+%*:       +%.    .%+       :*%+.        
-      .+%*:        :@=      =@:        :*%+.      
-    .=#*.          *%.      .%*          .*#=.    
-    *@%=--:.      :@-        -@:      .:--=%@*    
-    .=%@*+****++=-##.        .##-=++****+*@%=.    
-       =#*:  :-=+*@%**+=--=+**%@*+=-:  :*#=       
-        .+%*:     +@::-=++=-::@+     :*%+.        
-          .+%*:   .@=        =@.   :*%+.          
-            .+%*:  +@.      .@+  :*%+.            
-              .+%*:.%+      +%.:*%+.              
-                .+%**@:    :@**%+.                
-                  .+%@*    *@%+.                  
-                    .=%*::*%=.                    
-                      .+##+.                      
+            REDLINE
+             :**:             
+           :+*%%*+:           
+         :+=.+--+.=+:         
+       :+=. :#  #: .=+:       
+     :+=.   *-  -*   .=+:     
+   :+=     :#    #:     =+:   
+  -@*:::.  *:    :*  .:::*@-  
+   :*#=:-=+%--::--%+=-:=#*:   
+     :+=.  #-:--:-#  .=+:     
+       :+=.-+    +-.=+:       
+         :++%:  :%++:         
+           :*#..#*:           
+             :++:                
 ]]--
 
 
--- redline might be rewritten soon since all of this code is absolute shit
 
+-- WARNING: this is pretty much entirely shitcode
+-- im currently working on a rewrite with 10x more features
+-- join discord for updates https://discord.gg/TyKZFQtDvw
 
-
-
-if (_G.RLLOADED) then
-    
-    if (_G.RLNOTIF) then
-        _G.RLNOTIF('Oops','Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
-        return
-    else
-    
-        if (printconsole) then 
-            printconsole('Already loaded Redline', 255, 64, 64)
-            printconsole('Destroy the current script by pressing [End]', 192, 192, 255)
-            return
-        else
-            warn('Already loaded Redline\nDestroy the current script by pressing [End]')
-            return
-        end
-    end
-end
-
-if (Drawing == nil) then
-    warn('Unfortunately, your executor is missing the Drawing library and is not supported by Redline.')
-    warn('Consider upgrading to an exploit like Fluxus or KRNL')
+if ( _G.RLLOADED and _G.RLNOTIF ) then
+    _G.RLNOTIF('Oops','Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
     return
 end
 
--- { Make redline folder } --
-if (not isfile('REDLINE')) then
+
+if ( not isfolder('REDLINE') ) then
     makefolder('REDLINE')
 end
+--[[if ( not isfolder('REDLINE/Configs')) then
+    makefolder('REDLINE/Configs') 
+end]]
 
--- { Version } --
-local REDLINEVER = 'v0.6.6'
 
+local REDLINEVER = 'v0.7.0'
 
-local IndentLevel1 = 8
-local IndentLevel2 = 14
-local IndentLevel3 = 22
-local RightIndent = 14
-
--- { Wait for load } --
 if not game:IsLoaded() then game.Loaded:Wait() end
 
--- { Microops } --
-
--- Services
+--- Services
 local servContext   = game:GetService('ContextActionService')
 local servGui       = game:GetService('GuiService')
 local servHttp      = game:GetService('HttpService')
@@ -84,10 +50,9 @@ local servRun       = game:GetService('RunService')
 local servTeleport  = game:GetService('TeleportService')
 local servTween     = game:GetService('TweenService')
 local servInput     = game:GetService('UserInputService')
-local servVim       = game:GetService('VirtualInputManager')
 
 -- Colors
-local colRgb,colHsv,colNew = Color3.fromRGB, Color3.fromHSV, Color3.new
+local colRgb, colNew = Color3.fromRGB, Color3.new
 -- UDim2
 local dimOffset, dimScale, dimNew = UDim2.fromOffset, UDim2.fromScale, UDim2.new
 -- Instances
@@ -95,28 +60,12 @@ local instNew = Instance.new
 local drawNew = Drawing.new
 -- Vectors
 local vec3, vec2 = Vector3.new, Vector2.new
--- CFrames
-local cfrNew = CFrame.new
--- Task
-local wait, delay, spawn = task.wait, task.delay, task.spawn
--- Math
-local mathRand = math.random
-local mathFloor = math.floor
-local mathClamp = math.clamp
--- Table
-local tabInsert,tabRemove,tabClear,tabFind = table.insert, table.remove, table.clear, table.find
--- Os
-local date = os.date
-local tick = tick
 -- Other stuff
-local workspace = workspace
-local ipairs = ipairs
-local game = game
 local isrbxactive = isrbxactive or iswindowactive
+local isexecclosure = is_synapse_function  or isexecutorclosure or isourclosure
 
 
-if (isrbxactive == nil) then
-    
+if ( isrbxactive == nil ) then
     local active = true
     servInput.WindowFocused:Connect(function() 
         active = true 
@@ -127,31 +76,29 @@ if (isrbxactive == nil) then
     getgenv().isrbxactive = function() 
         return active
     end
+    
     isrbxactive = isrbxactive
 end
 
+local blankfn = function() end -- used for flags
 
 
--- { Load in some shit } --
+-- { Load in theme } --
 local function DecodeThemeJson(json) 
-    
-    -- Strip away comments
     json = json:gsub('//[^\n]+','')
-    -- Convert JSON to lua
+
     local stuff = servHttp:JSONDecode(json)
-    -- Get the theme data
     local theme = stuff['theme']
     
-    -- Set up locals
     local RLTHEME
     local RLTHEMEFONT
     do
         RLTHEME = {}
         RLTHEMEFONT = theme['Font']
         
-        -- Make a switch statement
+        -- this is an extremely shitty idea (but atleast it works for now 👍👍)
         local switch = {}
-        switch['Generic_Outline']       = 'go' -- Thank god im switching away from indices
+        switch['Generic_Outline']       = 'go'
         switch['Generic_Shadow']        = 'gs'
         switch['Generic_Window']        = 'gw'
         switch['Generic_Enabled']       = 'ge'
@@ -168,33 +115,29 @@ local function DecodeThemeJson(json)
         switch['Text_Main']             = 'tm'
         switch['Text_Outline']          = 'to'
         
-        -- Go through all theme data and do stuff
+
         for Index, ThemeSetting in pairs(theme) do
-            -- If this setting isnt a table (like the font) then continue
-            if (type(ThemeSetting) ~= 'table') then continue end            
-            -- If this setting doesn't have a valid id then continue
-            if (not switch[Index]) then continue end
-            -- Get theme options
+            if ( typeof(ThemeSetting) ~= 'table' ) then 
+                continue 
+            end            
+            if ( not switch[Index] ) then 
+                continue 
+            end
+
             local Color1 = ThemeSetting['Color']
             local Color2 = ThemeSetting['Color2']
             local IsGradient = ThemeSetting['Gradient']
-            local Transpar = ThemeSetting['Transparency']
+            local Trans = ThemeSetting['Transparency']
             
-            -- Add to RLTHEME
-            local _ = {
-                colRgb(Color1[1],Color1[2],Color1[3]);
-                Transpar;
+            RLTHEME[switch[Index]] = {
+                colRgb(Color1[1], Color1[2], Color1[3]);
+                Trans;
                 IsGradient;
-                Color2 and colRgb(Color2[1],Color2[2],Color2[3]);
-                
-                
+                Color2 and colRgb(Color2[1], Color2[2], Color2[3]);
             }
-            RLTHEME[switch[Index]] = _
         end
     end
     
-    
-    -- Return
     return RLTHEME, RLTHEMEFONT
 end
 
@@ -207,158 +150,84 @@ if (isfile('REDLINE/theme.json')) then
         ThemeData, Font = DecodeThemeJson(FileData)
     end)
     
-    if (ThemeData and Font) then
+    if ( ThemeData and Font ) then
         _G.RLTHEMEDATA = ThemeData
         _G.RLTHEMEFONT = Font
     else
-        _G.RLLOADERROR = 2 -- Couldn't load theme properly (JSON decoder failed)
+        _G.RLLOADERROR = 2 -- couldnt load theme properly
     end
 end
 
--- ! WARNING ! --
--- SHITTY THEME CODE BELOW
--- SKIP DOWN LIKE 2000 LINES TO GET TO THE GOOD STUFF
-
-
--- { Theme } --
+--- theme
 local RLTHEMEDATA, RLTHEMEFONT do 
     RLTHEMEFONT = _G.RLTHEMEFONT or 'SourceSans'
-    if (RLTHEMEFONT:match('https://')) then
-        -- syn v3 forwards compatibility
-        -- doubt this works but maybe it does
-        
-        local req = nil or
-            (type(syn) == 'table' and syn.request) or 
-            (type(http) == 'table' and http.request) or 
-            (type(fluxus) == 'table' and fluxus.request) or
-            http_request or request
-        
-        if (req) then
-            local _ = req{
-                Method = 'GET',
-                Url = RLTHEMEFONT
-            }
-            if (_.Success) then
-                writefile('rl-temp.ttf', _.Body)
-                local works = pcall(function()
-                    RLTHEMEFONT = (getsynasset or getcustomasset or fakeasset or getfakeasset)('temp.ttf')
-                end)
-                if (not works) then
-                    RLTHEMEFONT = 'SourceSans'  
-                end
-                delfile('rl-temp.ttf')
-            end
-        else
-            RLTHEMEFONT = 'SourceSans' 
-        end
-    end
+    RLTHEMEDATA = _G.RLTHEMEDATA or {} 
     
-    RLTHEMEDATA = _G.RLTHEMEDATA or {} do
-        RLTHEMEDATA['go'] = RLTHEMEDATA['go'] or {}
-        RLTHEMEDATA['gs'] = RLTHEMEDATA['gs'] or {}
-        RLTHEMEDATA['gw'] = RLTHEMEDATA['gw'] or {}
-        RLTHEMEDATA['ge'] = RLTHEMEDATA['ge'] or {}
-        RLTHEMEDATA['bm'] = RLTHEMEDATA['bm'] or {}
-        RLTHEMEDATA['bo'] = RLTHEMEDATA['bo'] or {}
-        RLTHEMEDATA['bs'] = RLTHEMEDATA['bs'] or {}
-        RLTHEMEDATA['bd'] = RLTHEMEDATA['bd'] or {}
-        RLTHEMEDATA['hm'] = RLTHEMEDATA['hm'] or {}
-        RLTHEMEDATA['ho'] = RLTHEMEDATA['ho'] or {}
-        RLTHEMEDATA['hs'] = RLTHEMEDATA['hs'] or {}
-        RLTHEMEDATA['hd'] = RLTHEMEDATA['hd'] or {}
-        RLTHEMEDATA['sf'] = RLTHEMEDATA['sf'] or {}
-        RLTHEMEDATA['sb'] = RLTHEMEDATA['sb'] or {}
-        RLTHEMEDATA['tm'] = RLTHEMEDATA['tm'] or {}
-        RLTHEMEDATA['to'] = RLTHEMEDATA['to'] or {}
-    end
-    -- so many fucking tables my god
-    do 
-        -- generic
-        RLTHEMEDATA['go'][1]   = RLTHEMEDATA['go'][1]  or colRgb(075, 075, 080); -- outline color
-        RLTHEMEDATA['gs'][1]   = RLTHEMEDATA['gs'][1]  or colRgb(005, 005, 010); -- shadow
-        RLTHEMEDATA['gw'][1]   = RLTHEMEDATA['gw'][1]  or colRgb(023, 022, 027); -- window background
-        RLTHEMEDATA['ge'][1]   = RLTHEMEDATA['ge'][1]  or colRgb(225, 035, 061); -- enabled
-        -- backgrounds
-        RLTHEMEDATA['bm'][1]   = RLTHEMEDATA['bm'][1]  or colRgb(035, 035, 040); -- header background
-        RLTHEMEDATA['bo'][1]   = RLTHEMEDATA['bo'][1]  or colRgb(030, 030, 035); -- object background
-        RLTHEMEDATA['bs'][1]   = RLTHEMEDATA['bs'][1]  or colRgb(025, 025, 030); -- setting background
-        RLTHEMEDATA['bd'][1]   = RLTHEMEDATA['bd'][1]  or colRgb(020, 020, 025); -- dropdown background
-        -- backgrounds selected
-        RLTHEMEDATA['hm'][1]   = RLTHEMEDATA['hm'][1]  or colRgb(038, 038, 043); -- header hovering
-        RLTHEMEDATA['ho'][1]   = RLTHEMEDATA['ho'][1] or colRgb(033, 033, 038); -- object hovering
-        RLTHEMEDATA['hs'][1]   = RLTHEMEDATA['hs'][1] or colRgb(028, 028, 033); -- setting hovering
-        RLTHEMEDATA['hd'][1]   = RLTHEMEDATA['hd'][1] or colRgb(023, 023, 028); -- dropdown hovering
-        -- slider 
-        RLTHEMEDATA['sf'][1]   = RLTHEMEDATA['sf'][1] or colRgb(225, 075, 080); -- slider foreground
-        RLTHEMEDATA['sb'][1]   = RLTHEMEDATA['sb'][1] or colRgb(033, 033, 038); -- slider background
-        -- text   
-        RLTHEMEDATA['tm'][1]   = RLTHEMEDATA['tm'][1] or colRgb(255, 255, 255); -- main text
-        RLTHEMEDATA['to'][1]   = RLTHEMEDATA['to'][1] or colRgb(020, 020, 025); -- outline
-    end
-    do 
-        RLTHEMEDATA['go'][2]   = RLTHEMEDATA['go'][2]  or 0;
-        RLTHEMEDATA['gs'][2]   = RLTHEMEDATA['gs'][2]  or 0;
-        RLTHEMEDATA['gw'][2]   = RLTHEMEDATA['gw'][2]  or 0.2;
-        RLTHEMEDATA['ge'][2]   = RLTHEMEDATA['ge'][2]  or 0.7;
-        RLTHEMEDATA['bm'][2]   = RLTHEMEDATA['bm'][2]  or 0;
-        RLTHEMEDATA['bo'][2]   = RLTHEMEDATA['bo'][2]  or 0;
-        RLTHEMEDATA['bs'][2]   = RLTHEMEDATA['bs'][2]  or 0;
-        RLTHEMEDATA['bd'][2]   = RLTHEMEDATA['bd'][2]  or 0;
-        RLTHEMEDATA['hm'][2]   = RLTHEMEDATA['hm'][2]  or 0;
-        RLTHEMEDATA['ho'][2]   = RLTHEMEDATA['ho'][2]  or 0;
-        RLTHEMEDATA['hs'][2]   = RLTHEMEDATA['hs'][2]  or 0;
-        RLTHEMEDATA['hd'][2]   = RLTHEMEDATA['hd'][2]  or 0;
-        RLTHEMEDATA['sf'][2]   = RLTHEMEDATA['sf'][2]  or 0;
-        RLTHEMEDATA['sb'][2]   = RLTHEMEDATA['sb'][2]  or 0;
-        RLTHEMEDATA['tm'][2]   = RLTHEMEDATA['tm'][2]  or 0;
-        RLTHEMEDATA['to'][2]   = RLTHEMEDATA['to'][2]  or 0;
-    end
+    local keys = {
+        ['go'] = { colRgb(075, 075, 080), 0.0, false}; -- generic outline (3rd argument should be true for gradients)
+        ['gs'] = { colRgb(005, 005, 010), 0.0}; -- generic shadow
+        ['gw'] = { colRgb(023, 022, 027), 0.2}; -- generic window
+        ['ge'] = { colRgb(225, 035, 061), 0.7}; -- generic enabled
+        ['bm'] = { colRgb(035, 035, 040), 0.0}; -- header background
+        ['bo'] = { colRgb(030, 030, 035), 0.0}; -- object background
+        ['bs'] = { colRgb(025, 025, 030), 0.0}; -- setting background
+        ['bd'] = { colRgb(020, 020, 025), 0.0}; -- dropdown background
+        ['hm'] = { colRgb(038, 038, 043), 0.0}; -- header hovering
+        ['ho'] = { colRgb(033, 033, 038), 0.0}; -- object hovering
+        ['hs'] = { colRgb(028, 028, 033), 0.0}; -- setting hovering
+        ['hd'] = { colRgb(023, 023, 028), 0.0}; -- dropdown hovering
+        ['sf'] = { colRgb(225, 075, 080), 0.0}; -- slider foreground
+        ['sb'] = { colRgb(033, 033, 038), 0.0}; -- slider background
+        ['tm'] = { colRgb(255, 255, 255), 0.0}; -- main text
+        ['to'] = { colRgb(020, 020, 025), 0.0}; -- outline
+    }
     
-    do 
-        RLTHEMEDATA['go'][3]  = RLTHEMEDATA['go'][3] or false;
+    for i, v in pairs(keys) do 
+        RLTHEMEDATA[i] = RLTHEMEDATA[i] or v
     end
 end
 
 -- { UI functions / variables } --
-local gradient,twn,ctwn,getnext,stroke,round,uierror
+local gradient,twn,ctwn,randstr,stroke,round,uierror
 do
     do
-        local g1
-        if (RLTHEMEDATA['go'][3]) then 
-            g1 = ColorSequence.new{
+        local gradColor
+        if ( RLTHEMEDATA['go'][3] ) then 
+            gradColor = ColorSequence.new{
                 ColorSequenceKeypoint.new(0, RLTHEMEDATA['go'][1]);
                 ColorSequenceKeypoint.new(1, RLTHEMEDATA['go'][4]);
             }
         end
-        gradient = function(parent)
-            local _ = instNew('UIGradient')
-            _.Rotation = 45
-            --_.Transparency = parent.Transparency
-            _.Color = g1
-            _.Parent = parent
+        function gradient(parent)
+            local newGradient = instNew('UIGradient')
+            newGradient.Rotation = 45
+            newGradient.Color = gradColor
+            newGradient.Parent = parent
         
-            return _
+            return newGradient
         end
-    end
-    stroke = function(parent,mode, trans) 
-        local _ = instNew('UIStroke')
-        _.ApplyStrokeMode = mode or 'Contextual'
-        _.Thickness = 1
-        
-        _.Transparency = trans or RLTHEMEDATA['go'][2]
-        
-        if (RLTHEMEDATA['go'][3]) then
-            gradient(_) 
-            _.Color = colNew(1,1,1)
-        else
-            _.Color = RLTHEMEDATA['go'][1]
-        end
-        
-        _.Parent = parent
-        return _
     end
     
-    local info1, info2 = TweenInfo.new(0.1,10,1), TweenInfo.new(0.3,10,1)
+    function stroke(parent, mode, trans) 
+        local str = instNew('UIStroke')
+        str.ApplyStrokeMode = mode or 'Contextual'
+        str.Thickness = 1
+        
+        str.Transparency = trans or RLTHEMEDATA['go'][2]
+        
+        if ( RLTHEMEDATA['go'][3] ) then -- if gradients are being used, add a gradient
+            gradient(str) 
+            str.Color = colNew(1, 1, 1)
+        else
+            str.Color = RLTHEMEDATA['go'][1] -- leave the color as the default outline
+        end
+        
+        str.Parent = parent
+        return str
+    end
+    
+    local info1, info2 = TweenInfo.new(0.1, 10, 1), TweenInfo.new(0.3, 10, 1)
+    
     function twn(twn_target, twn_settings, twn_long) 
         local tween = servTween:Create(
             twn_target,
@@ -368,6 +237,7 @@ do
         tween:Play()
         return tween
     end
+    
     function ctwn(twn_target, twn_settings, twn_dur, twn_style, twn_dir) 
         local tween = servTween:Create(
             twn_target,
@@ -377,14 +247,17 @@ do
         tween:Play()
         return tween
     end
-    function getnext() 
+    
+    function randstr() 
         local a = ''
-        for i = 1, 5 do a = a .. utf8.char(mathRand(50,2000)) end 
+        for i = 1, 5 do a = a .. utf8.char(math.random(50,2000)) end 
         return a 
     end
+    
     function round(num, place) 
-        return mathFloor(((num+(place*.5)) / place)) * place
+        return math.floor(((num+(place*.5)) / place)) * place
     end
+    
     function uierror(func, prop, type) 
         error(('%s failed; %s is not of type %s'):format(func,prop,type), 3)
     end
@@ -392,7 +265,7 @@ end
 
 
 
-local W_WindowOpen = false or false
+local W_WindowOpen = false
 local RGBCOLOR
 -- { UI } --
 local ui = {} do 
@@ -423,7 +296,7 @@ local ui = {} do
     do
         local rgbtime = 0
         
-        ui_Connections['r'] = servRun.RenderStepped:Connect(function(deltaTime) 
+        ui_Connections['r'] = servRun.Heartbeat:Connect(function(deltaTime) 
             if ( not isrbxactive() ) then 
                 return 
             end
@@ -433,7 +306,7 @@ local ui = {} do
                 rgbtime -= 1  
             end
             
-            RGBCOLOR = colHsv(rgbtime, 0.8, 1)
+            RGBCOLOR = Color3.fromHSV(rgbtime, 0.8, 1)
             
             for i = 1, #rgbinsts do 
                 local v = rgbinsts[i]
@@ -460,7 +333,7 @@ local ui = {} do
     local w_MouseCursor
     
     
-    local ModlistPadding = {
+    local ModlistPadding = { -- i still have no clue why i thought this was a good idea 
         dimOffset(-100, 0).X;
         dimOffset(8, 0).X;
         Enum.TextXAlignment.Left;
@@ -469,14 +342,14 @@ local ui = {} do
     
     do 
         w_Screen = instNew('ScreenGui')
+        w_Screen.DisplayOrder = 939393
         w_Screen.IgnoreGuiInset = true
+        w_Screen.Name = randstr()
         w_Screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
-        w_Screen.Name = getnext()
         
         if ( typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil ) then
             syn.protect_gui(w_Screen)  
         end
-        w_Screen.DisplayOrder = 939393
         w_Screen.Parent = (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game.CoreGui
         
         w_Backframe = instNew('Frame')
@@ -670,15 +543,15 @@ local ui = {} do
             local c = w_ModList:GetChildren()
             local _ = ModlistPadding[2]
             local paddingDir = ModlistPadding[4]
-            local ___ = paddingDir == 'PaddingLeft' and 'PaddingRight' or paddingDir
-            local ____ = dimOffset(0,0).X
+            local direction = paddingDir == 'PaddingLeft' and 'PaddingRight' or paddingDir
+            local value = dimOffset(0,0).X
             for i = 1, #c do
                 local v = c[i]
                 if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
                     v.TextXAlignment = align
                     local p = v.P
                     p[__] = _
-                    p[___] = ____
+                    p[direction] = value
                 end
             end
             w_ModListTitle.TextXAlignment = align
@@ -695,7 +568,7 @@ local ui = {} do
     
     
     
-    ui_Connections['t'] = servRun.RenderStepped:Connect(function() 
+    ui_Connections['t'] = servRun.Heartbeat:Connect(function() 
         local pos = servInput:GetMouseLocation()
         local x,y = pos.X, pos.Y
         w_TooltipHeader.Position = dimOffset(x+15, y+15)
@@ -728,30 +601,29 @@ local ui = {} do
         end
         
         ModListInit = function(name) 
-            local _ = instNew('TextLabel')
-            _.Size = dimNew(0, 0, 0, 0)
-            _.BackgroundTransparency = 1
-            _.Font = RLTHEMEFONT
-            _.TextXAlignment = ModlistPadding[3]
-            _.TextColor3 = RLTHEMEDATA['tm'][1]
-            _.TextSize = 22
-            _.Text = name
-            --_.Name = name
-            _.RichText = true
-            _.TextTransparency = 1
-            _.TextStrokeTransparency = 1
-            _.TextStrokeColor3 = RLTHEMEDATA['to'][1]
-            _.ZIndex = 5
+            local label = instNew('TextLabel')
+            label.Size = dimNew(0, 0, 0, 0)
+            label.BackgroundTransparency = 1
+            label.Font = RLTHEMEFONT
+            label.TextXAlignment = ModlistPadding[3]
+            label.TextColor3 = RLTHEMEDATA['tm'][1]
+            label.TextSize = 22
+            label.Text = name
+            label.RichText = true
+            label.TextTransparency = 1
+            label.TextStrokeTransparency = 1
+            label.TextStrokeColor3 = RLTHEMEDATA['to'][1]
+            label.ZIndex = 5
             
-            mods_instance[name] = _
+            mods_instance[name] = label
             
-            tabInsert(rgbinsts, {_,'TextColor3'})
+            table.insert(rgbinsts, {label, 'TextColor3'})
             
             
-            local __ = instNew('UIPadding')
-            __.Name = 'P'
-            __[ModlistPadding[4]] = ModlistPadding[1]
-            __.Parent = _
+            local padding = instNew('UIPadding')
+            padding.Name = 'P'
+            padding[ModlistPadding[4]] = ModlistPadding[1]
+            padding.Parent = label
         end
     end
     
@@ -802,8 +674,8 @@ local ui = {} do
                 self.OToggled = t
                 
                 
-                pcall(self.Flags.Toggled, t)
-                pcall(self.Flags[t and 'Enabled' or 'Disabled'])
+                task.spawn(self.Flags.Toggled, t)
+                task.spawn(self.Flags[t and 'Enabled' or 'Disabled'])
                 
                 twn(self.Effect, {Size = t and s1 or s2}, true)
                 
@@ -817,8 +689,8 @@ local ui = {} do
             base_class.module_toggle_enable = function(self) 
                 self.OToggled = true
                 
-                pcall(self.Flags.Toggled, true)
-                pcall(self.Flags.Enabled)
+                task.spawn(self.Flags.Toggled, true)
+                task.spawn(self.Flags.Enabled)
                 
                 twn(self.Effect, {Size = s1}, true)
                 
@@ -828,8 +700,8 @@ local ui = {} do
             base_class.module_toggle_disable = function(self) 
                 self.OToggled = false
                 
-                pcall(self.Flags.Toggled, false)
-                pcall(self.Flags.Disabled)
+                task.spawn(self.Flags.Toggled, false)
+                task.spawn(self.Flags.Disabled)
                 
                 twn(self.Effect, {Size = s2}, true)
                 
@@ -839,11 +711,11 @@ local ui = {} do
             base_class.module_toggle_reset = function(self)
                 if (self.OToggled) then
                     local f = self.Flags
-                    pcall(f.Toggled, false)
-                    pcall(f.Disabled)
+                    task.spawn(f.Toggled, false)
+                    task.spawn(f.Disabled)
                     
-                    pcall(f.Toggled, true)
-                    pcall(f.Enabled)
+                    task.spawn(f.Toggled, true)
+                    task.spawn(f.Enabled)
                 end
             end
             base_class.module_getstate_self = function(self) return self.OToggled end
@@ -855,7 +727,7 @@ local ui = {} do
             end 
             
             base_class.module_click_self = function(self) 
-                pcall(self.Flags.Clicked)
+                task.spawn(self.Flags.Clicked)
                 
                 self.Effect.BackgroundTransparency = 0.8
                 twn(self.Effect, {BackgroundTransparency = 1}, true)
@@ -870,9 +742,9 @@ local ui = {} do
             base_class.s_toggle_self = function(self) 
                 local t = not self.Toggled
                 
-                pcall(self.Flags.Toggled, t)
-                pcall(self.Flags.Enabled)
-                pcall(self.Flags.Disabled)
+                task.spawn(self.Flags.Toggled, t)
+                task.spawn(self.Flags.Enabled)
+                task.spawn(self.Flags.Disabled)
                 
                 self.Toggled = t
                 twn(self.Icon, {BackgroundTransparency = t and 0 or 1})
@@ -881,8 +753,8 @@ local ui = {} do
             base_class.s_toggle_enable = function(self) 
                 self.Toggled = true
                 
-                pcall(self.Flags.Toggled, true)
-                pcall(self.Flags.Enabled)
+                task.spawn(self.Flags.Toggled, true)
+                task.spawn(self.Flags.Enabled)
                 
                 twn(self.Icon, {BackgroundTransparency = 0})
                 return self
@@ -890,8 +762,8 @@ local ui = {} do
             base_class.s_toggle_disable = function(self) 
                 self.Toggled = false
                 
-                pcall(self.Flags.Toggled, false)
-                pcall(self.Flags.Disabled)
+                task.spawn(self.Flags.Toggled, false)
+                task.spawn(self.Flags.Disabled)
                 
                 twn(self.Icon, {BackgroundTransparency = 1})
                 return self
@@ -899,11 +771,11 @@ local ui = {} do
             base_class.s_toggle_reset = function(self) 
                 if (self.Toggled) then
                     local f = self.Flags
-                    pcall(f.Toggled, false)
-                    pcall(f.Disabled)
+                    task.spawn(f.Toggled, false)
+                    task.spawn(f.Disabled)
                     
-                    pcall(f.Toggled, true)
-                    pcall(f.Enabled)
+                    task.spawn(f.Toggled, true)
+                    task.spawn(f.Enabled)
                 end
             end
             base_class.s_toggle_getstate = function(self) 
@@ -914,45 +786,48 @@ local ui = {} do
                 local label = self.Label
                 label.Text = 'Press any key...'
                 
-                wait(0.01);
-                local c;
-                c = servInput.InputBegan:Connect(function(io,gpe)
+                task.wait(0.01)
+                local cn
+                cn = servInput.InputBegan:Connect(function(input, gpe)
                     
-                    local kcv = io.KeyCode.Value
-                    if (kcv ~= 0) then
+                    local code = input.KeyCode 
+                    local codeName = code.Name
+                    if ( codeName ~= 'Unknown' ) then
                         
-                        self.Hotkey = kcv
-                        label.Text = 'Hotkey: '..io.KeyCode.Name
+                        self.Hotkey = code.Value
+                        label.Text = 'Hotkey: ' .. codeName
                         
                         -- As scuffed as this is, it works
                         -- To prevent the module being bound from immediately toggling, a short delay is made
-                        delay(0.01, function()
-                            local n = self.Parent.Name
+                        task.delay(0.01, function()
+                            local name = self.Parent.Name
+                            
                             for i = 1, #ui_Hotkeys do 
-                                if ui_Hotkeys[i][3] == n then
-                                    tabRemove(ui_Hotkeys, i)
+                                if (ui_Hotkeys[i][3] == name) then
+                                    table.remove(ui_Hotkeys, i)
                                     break
                                 end
                             end
-                            tabInsert(ui_Hotkeys, {kcv, function() 
+                            
+                            table.insert(ui_Hotkeys, {code.Value, function() 
                                 self.Parent:Toggle()
-                            end, n})
+                            end, name})
                         end)
                     else
                         self.Hotkey = nil    
                         label.Text = 'Hotkey: N/A'
                         
-                        local n = self.Parent.Name
+                        local name = self.Parent.Name
                         for i = 1, #ui_Hotkeys do 
-                            if ui_Hotkeys[i][3] == n then
-                                tabRemove(ui_Hotkeys, i)
+                            if ui_Hotkeys[i][3] == name then
+                                table.remove(ui_Hotkeys, i)
                                 break
                             end
                         end
                     end
-                    c:Disconnect()
+                    
+                    cn:Disconnect()
                 end)
-                
             end
         
             base_class.s_modhotkey_gethotkey = function(self) 
@@ -963,7 +838,7 @@ local ui = {} do
                 local label = self.Label
                 label.Text = 'Press any key...'
                 
-                wait(0.01);
+                task.wait(0.01);
                 local c;
                 c = servInput.InputBegan:Connect(function(io,gpe)
                     local kc = io.KeyCode
@@ -973,12 +848,12 @@ local ui = {} do
                         self.Hotkey = kc
                         label.Text = self.Name..': '..kc.Name
                         
-                        pcall(self.Flags.HotkeySet, kc, kcv)
+                        task.spawn(self.Flags.HotkeySet, kc, kcv)
                     else
                         self.Hotkey = nil    
                         label.Text = self.Name..': N/A'
                         
-                        pcall(self.Flags.HotkeySet, nil, 0)
+                        task.spawn(self.Flags.HotkeySet, nil, 0)
                     end
                     c:Disconnect()
                 end)
@@ -988,7 +863,7 @@ local ui = {} do
                 self.Hotkey = kc
                 self.Label.Text = self.Name..': '..kc.Name
                 
-                pcall(self.Flags.HotkeySet, kc, kc.Value)
+                task.spawn(self.Flags.HotkeySet, kc, kc.Value)
                 
                 return self
             end
@@ -1007,7 +882,7 @@ local ui = {} do
                 self.MToggled = t
                 self.Menu.Visible = t
                 
-                pcall(self.Flags[ t and 'Opened' or 'Closed'])
+                task.spawn(self.Flags[ t and 'Opened' or 'Closed'])
                 
                 twn(self.Icon, {Rotation = t and 0 or 180}, true)
             end
@@ -1020,7 +895,7 @@ local ui = {} do
                 
                 self.Selected = true
                 parent.Selection = self.Name
-                pcall(parent.Flags['Changed'], self.Name, self)
+                task.spawn(parent.Flags['Changed'], self.Name, self)
                 
                 if (parent.Primary) then
                     local n = parent.Parent.Name 
@@ -1050,13 +925,13 @@ local ui = {} do
                 local pval = self.PreviousVal
 
                 
-                cval = round(mathClamp(nval, min, self.Max), self.Step)
+                cval = round(math.clamp(nval, min, self.Max), self.Step)
                 
                 if (pval ~= cval) then
                     pval = cval
                     local form = self.StepFormat
                     
-                    self.SliderFill.Position = dimOffset(mathFloor((cval - min) * self.Ratio), 0)
+                    self.SliderFill.Position = dimOffset(math.floor((cval - min) * self.Ratio), 0)
                     self.SliderAmnt.Text = form:format(cval)
                     
                     if (self.Primary) then
@@ -1064,7 +939,7 @@ local ui = {} do
                         ModListModify(n, n .. (' <font color="#DFDFDF">('..form..')</font>'):format(cval))
                     end
                     
-                    pcall(self.Flags.Changed, cval)
+                    task.spawn(self.Flags.Changed, cval)
                 end
                 
                 self.CurrentVal = cval
@@ -1074,7 +949,7 @@ local ui = {} do
                 local cval = self.CurrentVal
                 local pval = self.PreviousVal
                 
-                local pos_normalized = mathClamp(xval - self.SliderBg.AbsolutePosition.X, 0, self.SliderSize)
+                local pos_normalized = math.clamp(xval - self.SliderBg.AbsolutePosition.X, 0, self.SliderSize)
                 
                 cval = round((pos_normalized * self.RatioInverse)+min, self.Step)
                 
@@ -1082,7 +957,7 @@ local ui = {} do
                     pval = cval
                     local form = self.StepFormat
                     
-                    self.SliderFill.Position = dimOffset(mathFloor((cval - min)*self.Ratio), 0)
+                    self.SliderFill.Position = dimOffset(math.floor((cval - min)*self.Ratio), 0)
                     self.SliderAmnt.Text = form:format(cval)
                     
                     self.CurrentVal = cval
@@ -1092,13 +967,13 @@ local ui = {} do
                         ModListModify(n, n .. (' <font color="#DFDFDF">('..form..')</font>'):format(cval))
                     end
                     
-                    pcall(self.Flags.Changed, cval)
+                    task.spawn(self.Flags.Changed, cval)
                 end
             end
         end
         -- Button funcs
         base_class.button_click = function(self) 
-            pcall(self.Flags['Clicked'])
+            task.spawn(self.Flags.Clicked)
         end
         -- Slider funcs
         base_class.slider_setval = function(self, value) 
@@ -1106,7 +981,7 @@ local ui = {} do
             if not value then uierror('slider_setval','value','number') end
             
             local m1,m2,m3 = self.min, self.max, self.step
-            value = mathClamp(round(value, m3),m1,m2)
+            value = math.clamp(round(value, m3),m1,m2)
             
             self.setval_internal(value)
         end
@@ -1221,7 +1096,7 @@ local ui = {} do
                       m_ModuleText.Parent = m_ModuleBackground
                       
                        m_TextPadding = instNew('UIPadding')
-                       m_TextPadding.PaddingLeft = dimOffset(IndentLevel1, 0).X -- LEFT PADDING 1
+                       m_TextPadding.PaddingLeft = dimOffset(8, 0).X -- LEFT PADDING 1
                        m_TextPadding.Parent = m_ModuleText
                       
                       m_ModuleIcon = instNew('TextLabel')
@@ -1266,9 +1141,9 @@ local ui = {} do
                     M_Object.OToggled = false
                     
                     M_Object.Flags = {} do 
-                        M_Object.Flags['Enabled'] = true
-                        M_Object.Flags['Disabled'] = true
-                        M_Object.Flags['Toggled'] = true
+                        M_Object.Flags['Enabled'] = blankfn
+                        M_Object.Flags['Disabled'] = blankfn
+                        M_Object.Flags['Toggled'] = blankfn
                     end
                     
                     M_Object.Name = text
@@ -1344,7 +1219,7 @@ local ui = {} do
                 
                 if (not nohotkey) then M_Object:addModHotkey() end
                 
-                tabInsert(ui_Modules, M_Object)
+                table.insert(ui_Modules, M_Object)
                 return M_Object
             elseif (Type == 'Textbox') then
                 local m_ModuleRoot
@@ -1396,7 +1271,7 @@ local ui = {} do
                      m_ModuleText.Parent = m_ModuleBackground
                       
                       m_ModulePadding = instNew('UIPadding')
-                      m_ModulePadding.PaddingLeft = dimOffset(IndentLevel1, 0).X
+                      m_ModulePadding.PaddingLeft = dimOffset(8, 0).X
                       m_ModulePadding.Parent = m_ModuleText
                      
                      m_ModuleIcon = instNew('TextLabel')
@@ -1421,9 +1296,9 @@ local ui = {} do
                     
                     
                     M_Object.Flags = {} do 
-                        M_Object.Flags['Focused'] = true
-                        M_Object.Flags['Unfocused'] = true
-                        M_Object.Flags['TextChanged'] = true
+                        M_Object.Flags['Focused'] = blankfn
+                        M_Object.Flags['Unfocused'] = blankfn
+                        M_Object.Flags['TextChanged'] = blankfn
                     end
                     
                     M_Object.Effect = m_ModuleEnableEffect
@@ -1457,20 +1332,20 @@ local ui = {} do
                     end)
                     
                     m_ModuleText.FocusLost:Connect(function(enter) 
-                        pcall(M_Object.Flags.Unfocused, m_ModuleText.Text, enter)
+                        task.spawn(M_Object.Flags.Unfocused, m_ModuleText.Text, enter)
                         if (not nohotkey) then 
                             m_ModuleText.Text = M_Object.Name
                         end
                     end)
                     m_ModuleText.Focused:Connect(function() 
-                        pcall(M_Object.Flags.Focused)
+                        task.spawn(M_Object.Flags.Focused)
                     end)
                     m_ModuleText:GetPropertyChangedSignal('Text'):Connect(function() 
-                        pcall(M_Object.Flags.TextChanged, m_ModuleText.Text)
+                        task.spawn(M_Object.Flags.TextChanged, m_ModuleText.Text)
                     end)
                 end
                 
-                tabInsert(ui_Modules, M_Object)
+                table.insert(ui_Modules, M_Object)
                 return M_Object
             elseif (Type == 'Button') then
                 local m_ModuleRoot
@@ -1533,7 +1408,7 @@ local ui = {} do
                      m_ModuleText.Parent = m_ModuleBackground
                      
                      m_ModulePadding = instNew('UIPadding')
-                     m_ModulePadding.PaddingLeft = dimOffset(IndentLevel1, 0).X
+                     m_ModulePadding.PaddingLeft = dimOffset(8, 0).X
                      m_ModulePadding.Parent = m_ModuleText
                      
                      m_ModuleIcon = instNew('ImageLabel')
@@ -1553,7 +1428,7 @@ local ui = {} do
                     
                     
                     M_Object.Flags = {} do 
-                        M_Object.Flags['Clicked'] = true
+                        M_Object.Flags['Clicked'] = blankfn
                     end
                     
                     M_Object.setvis = base_class.module_setvis
@@ -1603,7 +1478,7 @@ local ui = {} do
                     end)
                 end
                 
-                tabInsert(ui_Modules, M_Object)
+                table.insert(ui_Modules, M_Object)
                 return M_Object
             end
         end
@@ -1633,7 +1508,7 @@ local ui = {} do
                 t_Text.ZIndex = T_IndexOffset
                 
                 t_Padding = instNew('UIPadding')
-                t_Padding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                t_Padding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                 t_Padding.Parent = t_Text
             end
             
@@ -1707,7 +1582,7 @@ local ui = {} do
                  t_Text.Parent = t_Toggle
                  
                   t_TextPadding = instNew('UIPadding')
-                  t_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                  t_TextPadding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                   t_TextPadding.Parent = t_Text
                  
                  t_Box1 = instNew('Frame')
@@ -1715,7 +1590,7 @@ local ui = {} do
                  t_Box1.BackgroundColor3 = RLTHEMEDATA['sf'][1]
                  t_Box1.BackgroundTransparency = 1
                  t_Box1.BorderSizePixel = 0
-                 t_Box1.Position = dimNew(1,-RightIndent,0.5,-5) -- RIGHT PADDING
+                 t_Box1.Position = dimNew(1,-14,0.5,-5) -- RIGHT PADDING
                  t_Box1.Size = dimOffset(10, 10)
                  t_Box1.ZIndex = T_IndexOffset
                  t_Box1.Parent = t_Toggle
@@ -1738,9 +1613,9 @@ local ui = {} do
                 T_Object.Toggled = false
                 
                 T_Object.Flags = {}
-                T_Object.Flags['Enabled'] = true
-                T_Object.Flags['Disabled'] = true
-                T_Object.Flags['Toggled'] = true
+                T_Object.Flags['Enabled'] = blankfn
+                T_Object.Flags['Disabled'] = blankfn
+                T_Object.Flags['Toggled'] = blankfn
                 
                 T_Object.Icon = t_Box2
                 T_Object.Name = text
@@ -1836,12 +1711,12 @@ local ui = {} do
                   d_HeaderText.Parent = d_Header
                   
                    d_TextPadding = instNew('UIPadding')
-                   d_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                   d_TextPadding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                    d_TextPadding.Parent = d_HeaderText
                   
                   d_HeaderIcon = instNew('ImageLabel')
                   d_HeaderIcon.Size = dimOffset(25, 25)
-                  d_HeaderIcon.Position = dimNew(1,-RightIndent +10, 0, 0) -- RIGHT PADDING
+                  d_HeaderIcon.Position = dimNew(1,-14 +10, 0, 0) -- RIGHT PADDING
                   d_HeaderIcon.AnchorPoint = vec2(1,0)
                   d_HeaderIcon.BackgroundTransparency = 1
                   d_HeaderIcon.ImageColor3 = RLTHEMEDATA['tm'][1]
@@ -1886,9 +1761,9 @@ local ui = {} do
                 
                 
                 D_Object.Flags = {}
-                D_Object.Flags['Changed'] = true
-                D_Object.Flags['Opened'] = true
-                D_Object.Flags['Closed'] = true
+                D_Object.Flags['Changed'] = blankfn
+                D_Object.Flags['Opened'] = blankfn
+                D_Object.Flags['Closed'] = blankfn
                 
                 D_Object.Toggle = base_class.s_dropdown_toggle
                 D_Object.GetSelection = base_class.s_dropdown_getselection
@@ -1961,7 +1836,7 @@ local ui = {} do
                  h_Text.Parent = h_Hotkey
                  
                   h_TextPadding = instNew('UIPadding')
-                  h_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                  h_TextPadding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                   h_TextPadding.Parent = h_Text
                     
             end
@@ -1974,7 +1849,7 @@ local ui = {} do
                 H_Object.Tooltip = nil
                 
                 H_Object.Flags = {}
-                H_Object.Flags['HotkeySet'] = true
+                H_Object.Flags['HotkeySet'] = blankfn
                 
                 H_Object.setHotkey = base_class.s_modhotkey_sethotkey
                 H_Object.GetHotkey = base_class.s_modhotkey_gethotkey
@@ -2034,7 +1909,7 @@ local ui = {} do
                  h_Text.Parent = h_Hotkey
                  
                  h_TextPadding = instNew('UIPadding')
-                 h_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                 h_TextPadding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                  h_TextPadding.Parent = h_Text
             end
                 
@@ -2047,7 +1922,7 @@ local ui = {} do
                 
                 H_Object.Name = tostring(text)
                 H_Object.Flags = {}
-                H_Object.Flags['HotkeySet'] = true
+                H_Object.Flags['HotkeySet'] = blankfn
                 
                 H_Object.bind = base_class.s_hotkey_sethotkey
                 H_Object.setHotkey = base_class.s_hotkey_sethotkeyexplicit
@@ -2150,12 +2025,12 @@ local ui = {} do
                  s_Text.Parent = s_Slider
                   
                   s_TextPad = instNew('UIPadding')
-                  s_TextPad.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                  s_TextPad.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                   s_TextPad.Parent = s_Text 
                  
                  s_Amount = instNew('TextLabel')
                  s_Amount.Size = dimNew(0, 30, 1, 0)
-                 s_Amount.Position = dimNew(1,-RightIndent, 0, 0) -- RIGHT PADDING
+                 s_Amount.Position = dimNew(1,-14, 0, 0) -- RIGHT PADDING
                  s_Amount.AnchorPoint = vec2(1,0)
                  s_Amount.BackgroundTransparency = 1
                  s_Amount.BorderSizePixel = 0
@@ -2244,7 +2119,7 @@ local ui = {} do
                 
                 
                 S_Object.Flags = {}
-                S_Object.Flags['Changed'] = true
+                S_Object.Flags['Changed'] = blankfn
                 
                 S_Object.getValue = base_class.s_slider_getval
                 S_Object.SetValue = base_class.s_slider_setvalnum
@@ -2262,7 +2137,7 @@ local ui = {} do
                     
                     s_Amount.TextXAlignment = 'Center'
                     twn(s_Text, {BackgroundTransparency = 1, TextTransparency = 1, TextStrokeTransparency = 1},true)
-                    twn(s_Amount, {Position = dimNew(0.5,IndentLevel2,0,0)}, true) -- LEFT PADDING 2
+                    twn(s_Amount, {Position = dimNew(0.5,14,0,0)}, true) -- LEFT PADDING 2
                     
                     local tt = S_Object.Tooltip
                     if (tt) then
@@ -2277,7 +2152,7 @@ local ui = {} do
                     -- deez nuts
                     s_Amount.TextXAlignment = 'Right'
                     twn(s_Text, {BackgroundTransparency = 0.2, TextTransparency = 0, TextStrokeTransparency = 0},true)
-                    twn(s_Amount, {Position = dimNew(1,-RightIndent,0,0)}, true) -- RIGHT PADDING
+                    twn(s_Amount, {Position = dimNew(1,-14,0,0)}, true) -- RIGHT PADDING
                     
                     if (w_Tooltip.Text == S_Object.Tooltip) then
                         w_TooltipHeader.Visible = false
@@ -2355,12 +2230,12 @@ local ui = {} do
                 i_Input.Parent = self.Menu
                  
                  i_TextPad = instNew('UIPadding')
-                 i_TextPad.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                 i_TextPad.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                  i_TextPad.Parent = i_Input
                 
                 i_Icon = instNew('ImageLabel')
-                i_Icon.AnchorPoint = vec2(1,0.5)
-                i_Icon.Position = dimNew(1,-4, 0.5, 0)                
+                i_Icon.AnchorPoint = vec2(1, 0.5)
+                i_Icon.Position = dimNew(1, -12, 0.5, 0)                
                 i_Icon.BackgroundTransparency = 1
                 i_Icon.Image = 'rbxassetid://8997447289'
                 i_Icon.Rotation = 0
@@ -2374,9 +2249,9 @@ local ui = {} do
                 
                 
                 I_Object.Flags = {} do 
-                    I_Object.Flags['Focused'] = true
-                    I_Object.Flags['Unfocused'] = true
-                    I_Object.Flags['TextChanged'] = true
+                    I_Object.Flags['Focused'] = blankfn
+                    I_Object.Flags['Unfocused'] = blankfn
+                    I_Object.Flags['TextChanged'] = blankfn
                 end
                 
                 I_Object.Name = text
@@ -2408,14 +2283,14 @@ local ui = {} do
                 end)
                 
                 i_Input.FocusLost:Connect(function(enter) 
-                    pcall(I_Object.Flags.Unfocused, i_Input.Text, enter)
+                    task.spawn(I_Object.Flags.Unfocused, i_Input.Text, enter)
                     i_Input.Text = I_Object.Name
                 end)
                 i_Input.Focused:Connect(function() 
-                    pcall(I_Object.Flags.Focused)
+                    task.spawn(I_Object.Flags.Focused)
                 end)
                 i_Input:GetPropertyChangedSignal('Text'):Connect(function() 
-                    pcall(I_Object.Flags.TextChanged, i_Input.Text)
+                    task.spawn(I_Object.Flags.TextChanged, i_Input.Text)
                 end)
             end
             
@@ -2453,8 +2328,8 @@ local ui = {} do
                  b_Text = instNew('TextLabel')
                  b_Text.BackgroundTransparency = 1
                  b_Text.Font = RLTHEMEFONT
-                 b_Text.Position = dimOffset(10, 0)
-                 b_Text.Size = dimNew(1, -10, 1, 0)
+                 b_Text.Position = dimOffset(0, 0)
+                 b_Text.Size = dimNew(1, 0, 1, 0)
                  b_Text.Text = text
                  b_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                  b_Text.TextSize = 18
@@ -2465,14 +2340,14 @@ local ui = {} do
                  b_Text.Parent = b_Background
                  
                   b_TextPadding = instNew('UIPadding')
-                  b_TextPadding.PaddingLeft = dimOffset(IndentLevel2, 0).X -- LEFT PADDING 2
+                  b_TextPadding.PaddingLeft = dimOffset(14, 0).X -- LEFT PADDING 2
                   b_TextPadding.Parent = b_Text
-                    
-                 
+                
+                  
                  b_Icon = instNew('ImageLabel')
                  b_Icon.AnchorPoint = vec2(1,0.5)
                  b_Icon.BackgroundTransparency = 1
-                 b_Icon.Position = dimNew(1,-4, 0.5, 0)
+                 b_Icon.Position = dimNew(1,-14, 0.5, 0)
                  b_Icon.Rotation = 0
                  b_Icon.Size = dimOffset(12, 12)
                  b_Icon.Image = 'rbxassetid://8997446977'
@@ -2486,7 +2361,7 @@ local ui = {} do
                 
                 
                 B_Object.Flags = {} do 
-                    B_Object.Flags['Clicked'] = true
+                    B_Object.Flags['Clicked'] = blankfn
                 end
                 
                 B_Object.Effect = b_EnableEffect
@@ -2566,7 +2441,7 @@ local ui = {} do
                  o_Text.Parent = o_Option
                  
                  o_TextPadding = instNew('UIPadding')
-                 o_TextPadding.PaddingLeft = dimOffset(IndentLevel3, 0).X -- LEFT PADDING 3
+                 o_TextPadding.PaddingLeft = dimOffset(22, 0).X -- LEFT PADDING 3
                  o_TextPadding.Parent = o_Text
                  
                  o_EnableEffect = instNew('Frame')
@@ -2633,7 +2508,7 @@ local ui = {} do
                 end)
             end
             
-            tabInsert(self.Objects, O_Object)
+            table.insert(self.Objects, O_Object)
             return O_Object
         end
         
@@ -2704,8 +2579,8 @@ local ui = {} do
         m_Header.Size = dimOffset(monitor_resolution.X < 1600 and 200 or 250, 30)
         
         local FinalPosition do 
-            local MenusPerRow = mathFloor(((monitor_resolution.X-400) / 300))
-            FinalPosition = dimOffset(200+(((M_Id-1)%MenusPerRow)*(300)), 200+150*(mathFloor((M_Id-1)/MenusPerRow)))
+            local MenusPerRow = math.floor(((monitor_resolution.X-400) / 300))
+            FinalPosition = dimOffset(200+(((M_Id-1)%MenusPerRow)*(300)), 200+150*(math.floor((M_Id-1)/MenusPerRow)))
         end
         
         
@@ -2861,7 +2736,7 @@ local ui = {} do
         
         
         
-        tabInsert(ui_Menus, M_Object)
+        table.insert(ui_Menus, M_Object)
         return M_Object
     end
     function ui:CreateWidget(Name, Position, Size, InRedlineWindow) 
@@ -2962,11 +2837,11 @@ local ui = {} do
     end
     
     function ui:Destroy() 
-        pcall(ui.Flags.Destroying)
+        task.spawn(ui.Flags.Destroying)
         
         
         -- Destroy
-        local _ = w_Screen.Parent
+        local coreGui = w_Screen.Parent
         w_Screen:Destroy()
         
         -- Unbinds
@@ -2979,8 +2854,12 @@ local ui = {} do
             v:Disconnect() 
         end
         
-        -- Variable clearing
-        gradient,getnext,stroke,round,uierror = nil,nil,nil,nil,nil
+        -- Cleanup clearing
+        gradient = nil
+        randstr = nil
+        stroke = nil
+        round = nil
+        uierror = nil
         ui_Menus = nil
         
         _G.RLLOADED = false
@@ -2995,7 +2874,7 @@ local ui = {} do
         sound.SoundId = 'rbxassetid://9009668475'
         sound.Volume = 1
         sound.TimePosition = 0.02
-        sound.Parent = _
+        sound.Parent = coreGui
         sound:Play()
         sound.Ended:Connect(function() 
             sound:Destroy()
@@ -3115,7 +2994,7 @@ local ui = {} do
         
         
         function ui:Notify(title, text, duration, tone, warning) 
-            duration = mathClamp(duration or 2, 0.1, 30)
+            duration = math.clamp(duration or 2, 0.1, 30)
             
             local m_Notif = m_Notif:Clone()
             local m_Description = m_Description:Clone()
@@ -3153,14 +3032,14 @@ local ui = {} do
             
             
             
-            tabInsert(notifs, m_Notif)
+            table.insert(notifs, m_Notif)
             twn(m_Notif, {Position = m_Notif.Position - dimOffset(300,0)}, true)
             local j = ctwn(m_Progress, {Size = dimOffset(0, 1)}, duration)
             j.Completed:Connect(function()
                 do
                     for i = 1, #notifs do 
                         if (notifs[i] == m_Notif) then 
-                            tabRemove(notifs, i) 
+                            table.remove(notifs, i) 
                         end 
                     end
                     for i = 1, #notifs do 
@@ -3211,7 +3090,7 @@ local ui = {} do
         end
     end,false,999999,Enum.KeyCode.End)
     -- Auto collection
-    delay(5, function() 
+    task.delay(5, function() 
         if (ui_Menus ~= nil and #ui_Menus == 0) then
             ui:Destroy()
             warn'[REDLINE] Failure to clean library resources!\nAutomatically cleared for you; make sure to\ncall ui:Destroy() when finished'
@@ -3220,80 +3099,47 @@ local ui = {} do
 end
 -- // END REDLINE LIBRARY
 
-
-
--- kys
-local isexecclosure = is_synapse_function or 
-    is_exec_closure or 
-    is_exec_func or 
-    is_exec_function or 
-    is_executor_closure or 
-    is_executor_func or 
-    is_executor_function or
-    is_our_closure or 
-    is_our_func or
-    is_our_function or 
-    is_synapse_closure or 
-    is_synapse_func or 
-    is_synapse_function or 
-    iselectronfunction or 
-    isexecclosure or 
-    isexecfunc or 
-    isexecfunction or 
-    isexecutorclosure or
-    isexecutorfunc or 
-    isexecutorfunction or
-    isfluxusfunction or 
-    iskrnlclosure or
-    iskrnlfunction or
-    isourclosure or 
-    isourfunc or
-    isourfunction or
-    isoxygenfunction
-    
--- Disable non exec cons
-
-local disabled_signals = {}
-local function dnec(signal, id)
-    disabled_signals[id] = disabled_signals[id] or {}
+local disabledSignals = {}
+local function disablecons(signal, id)
+    disabledSignals[id] = disabledSignals[id] or {}
         
-    if (#disabled_signals[id] ~= 0) then warn'returning' return end
+    if ( #disabledSignals[id] ~= 0 ) then 
+        -- signals are already disabled
+        return 
+    end
     
-    local average = getconnections(signal)
-    for i = 1, #average do 
-        local connection = average[i]
-        local confunc = connection.Function
+    local connections = getconnections(signal)
+    for _, cn in ipairs(connections) do 
+        local confunc = cn.Function
                 
-        if (type(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc)) then
-            tabInsert(disabled_signals[id], connection)
+        if ( typeof(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc) ) then
+            table.insert(disabledSignals[id], connection)
             connection:Disable()
         end
     end
-    
 end
--- Reenable non exec cons
-local function enec(id)
-    local signals = disabled_signals[id]
+
+local function enablecons(id)
+    local signals = disabledSignals[id]
     
-    if (signals == nil or #signals == 0) then return end
+    if ( signals == nil or #signals == 0 ) then 
+        return 
+    end
     
-    for i = 1, #signals do 
-        local connection = signals[i]
-        local confunc = connection.Function
+    for _, cn in ipairs(signals) do 
+        local confunc = cn.Function
         
-        if (type(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc)) then
+        if (typeof(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc) ) then
             connection:Enable()
         end
     end
     
-    tabClear(disabled_signals[id])
+    table.clear(disabledSignals[id])
 end
 
 local scriptCons = {}
 
--- Locals
-
-
+-- Local stuff
 local clientPlayer = servPlayers.LocalPlayer
 local clientMouse = clientPlayer:GetMouse()
 local clientChar = clientPlayer.Character
@@ -3446,13 +3292,9 @@ do
     
 end
 
-
-
-
-
-local fakechar do 
-    fakechar = instNew('Model')
-    fakechar.Name = getnext()
+local function getFakeChar() 
+    local fakechar = instNew('Model')
+    fakechar.Name = randstr()
 
 
     local Head = instNew('Part')
@@ -3507,71 +3349,74 @@ local fakechar do
     HumanoidRootPart.Parent = fakechar
 
     local Right_Shoulder = instNew('Motor6D')
-    Right_Shoulder.C0 = cfrNew(1, 0.5, 0)
-    Right_Shoulder.C1 = cfrNew(-0.5, 0.5, 0)
+    Right_Shoulder.C0 = CFrame.new(1, 0.5, 0)
+    Right_Shoulder.C1 = CFrame.new(-0.5, 0.5, 0)
     Right_Shoulder.Name = 'Right Shoulder'
     Right_Shoulder.Part0 = Torso
     Right_Shoulder.Part1 = Right_Arm
     Right_Shoulder.Parent = Torso
 
     local Left_Shoulder = instNew('Motor6D')
-    Left_Shoulder.C0 = cfrNew(-1, 0.5, 0)
-    Left_Shoulder.C1 = cfrNew(0.5, 0.5, 0)
+    Left_Shoulder.C0 = CFrame.new(-1, 0.5, 0)
+    Left_Shoulder.C1 = CFrame.new(0.5, 0.5, 0)
     Left_Shoulder.Name = 'Left Shoulder'
     Left_Shoulder.Part0 = Torso
     Left_Shoulder.Part1 = Left_Arm
     Left_Shoulder.Parent = Torso
 
     local Right_Hip = instNew('Motor6D')
-    Right_Hip.C0 = cfrNew(1, -1, 0)
-    Right_Hip.C1 = cfrNew(0.5, 1, 0)
+    Right_Hip.C0 = CFrame.new(1, -1, 0)
+    Right_Hip.C1 = CFrame.new(0.5, 1, 0)
     Right_Hip.Name = 'Right Hip'
     Right_Hip.Part0 = Torso
     Right_Hip.Part1 = Right_Leg
     Right_Hip.Parent = Torso
 
     local Left_Hip = instNew('Motor6D')
-    Left_Hip.C0 = cfrNew(-1, -1, 0)
-    Left_Hip.C1 = cfrNew(-0.5, 1, 0)
+    Left_Hip.C0 = CFrame.new(-1, -1, 0)
+    Left_Hip.C1 = CFrame.new(-0.5, 1, 0)
     Left_Hip.Name = 'Left Hip'
     Left_Hip.Part0 = Torso
     Left_Hip.Part1 = Left_Leg
     Left_Hip.Parent = Torso
 
     local Neck = instNew('Motor6D')
-    Neck.C0 = cfrNew(0, 1, 0)
-    Neck.C1 = cfrNew(0, -0.5, 0)
+    Neck.C0 = CFrame.new(0, 1, 0)
+    Neck.C1 = CFrame.new(0, -0.5, 0)
     Neck.Name = 'Neck'
     Neck.Part0 = Torso
     Neck.Part1 = Head
     Neck.Parent = Torso
 
     local RootJoint = instNew('Motor6D')
-    RootJoint.C0 = cfrNew(0, 0, 0)
-    RootJoint.C1 = cfrNew(0, 0, 0)
+    RootJoint.C0 = CFrame.new(0, 0, 0)
+    RootJoint.C1 = CFrame.new(0, 0, 0)
     RootJoint.Name = 'RootJoint'
     RootJoint.Part0 = HumanoidRootPart
     RootJoint.Part1 = Torso
     RootJoint.Parent = HumanoidRootPart
     
     do 
-        local _ = fakechar:GetChildren()
-        for i = 1, #_ do
-            local c = _[i]
-            if (not c:IsA('BasePart')) then continue end
-            c.Material = 1584
-            c.Color = colNew(0.52, 0.52, 0.55)
+        for i, v in ipairs(fakechar:GetChildren()) do 
+            if ( not v:IsA('BasePart') ) then 
+                continue 
+            end
             
-            local _ = instNew('BoxHandleAdornment')
-            _.Adornee = c
-            _.AlwaysOnTop = true
-            _.ZIndex = 10
-            _.Color3 = RLTHEMEDATA['ge'][1]
-            _.Size = c.Size
-            _.Transparency = 0.5
-            _.Parent = c
+            v.Material = 'ForceField'
+            v.Color = colNew(0.52, 0.52, 0.55)
+            
+            local glow = instNew('BoxHandleAdornment')
+            glow.Adornee = v
+            glow.AlwaysOnTop = true
+            glow.ZIndex = 10
+            glow.Color3 = RLTHEMEDATA['ge'][1]
+            glow.Size = v.Size
+            glow.Transparency = 0.5
+            glow.Parent = v
         end
     end
+    
+    return fakechar
 end
 
 
@@ -3591,7 +3436,7 @@ ui:Connect('Destroying', function()
             for i,v in pairs(playerCons[playerName]) do
                 v:Disconnect()
             end
-            playerManagers[PlayerName] = nil
+            playerManagers[playerName] = nil
         end 
         playerNames[i] = nil
     end
@@ -3599,8 +3444,6 @@ ui:Connect('Destroying', function()
     playerManagers = nil
     
     servInput.MouseIconEnabled = true
-    
-    fakechar:Destroy()
 end)
 
 do
@@ -3634,7 +3477,7 @@ do
             local s_DistanceSlider = c_aimbot:addSlider('Distance',{min=100,max=10000,cur=2000}):setTooltip('Targets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
             local s_FovSlider = c_aimbot:addSlider('FOV',{min=50,max=500,cur=150,step=1}):setTooltip('The size of the FOV. Requires <b>FOV check</b> to be enabled')
             local s_PredictionSlider = c_aimbot:addSlider('Prediction',{min=0.1,max=1,cur=0,step=0.1}):setTooltip('How far prediction looks ahead. Requires <b>Prediction</b> to be enabled')
-            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0,max=1,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
+            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0.1,max=0.9,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
             local s_VerticalOffset = c_aimbot:addSlider('Y Offset (Studs)',{min=-2,max=2,step=-0.1,cur=0}):setTooltip('Optional Y offset. <b>Works in studs</b>')
             --local s_VerticalPxOffset = c_aimbot:addSlider('Y Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional Y offset. <b>Works in pixels</b>')
             --local s_HorizontalOffset = c_aimbot:addSlider('X Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional X offset. <b>Works in pixels</b>')
@@ -3738,10 +3581,10 @@ do
                                 FovCircle.Color = RGBCOLOR
                             end)
                             
-                            spawn(function()
+                            task.spawn(function()
                                 
                                 while tick() - last < 0.2 do
-                                    wait() 
+                                    task.wait() 
                                 end
                                 servRun:UnbindFromRenderStep('RL-fovanim')
                                 if (tempCircle) then
@@ -3843,7 +3686,7 @@ do
                     
                     local function predic(part) 
                         if (Prediction) then
-                            return part and (part.Position + (part.Velocity * PredictionValue) + vec3(0, VerticalOffset, 0))
+                            return part and (part.Position + (part.AssemblyLinearVelocity * PredictionValue) + vec3(0, VerticalOffset, 0))
                         else
                             return part and (part.Position + vec3(0, VerticalOffset, 0))
                         end
@@ -3954,7 +3797,7 @@ do
                         
                         if (position) then
                             local _ = clientCamera.CFrame
-                            clientCamera.CFrame = cfrNew(_.Position, position):lerp(_, Smoothness)
+                            clientCamera.CFrame = CFrame.new(_.Position, position):lerp(_, Smoothness)
                         end
                     end)
                 elseif (AimbotMethod == 'Mouse') then
@@ -4003,17 +3846,17 @@ do
                 AimbotTarget = nil
                 AimbotStatus = ''
                 
-                if (AimbotConnection) then 
+                if ( AimbotConnection ) then 
                     AimbotConnection:Disconnect() 
                     AimbotConnection = nil 
                 end
                 
-                if (FovCircle) then 
+                if ( FovCircle ) then 
                     FovCircle:Remove()
                     FovCircle = nil
                 end
                 
-                if (FovCircleOutline) then 
+                if ( FovCircleOutline ) then 
                     FovCircleOutline:Remove()
                     FovCircleOutline = nil
                 end
@@ -4023,8 +3866,12 @@ do
         -- Hitboxes
         local c_hitbox = m_combat:addMod('Hitboxes')
         do 
-            local s_HitboxSize = c_hitbox:addSlider('Size',{min=2,max=50,step=0.1,value=5}):setTooltip('How large (in studs) the hitboxes are')
-            local s_Transparency = c_hitbox:addSlider('Transparency',{min=0,max=1,step=0.01,value=0.5}):setTooltip('How transparent the hitboxes are')
+            local s_HitboxSize = c_hitbox:addSlider('Size', {min = 2, max = 50, step = 0.1, value = 5}):setTooltip('How large (in studs) the hitboxes are')
+            local s_Transparency = c_hitbox:addSlider('Transparency', {min = 0,max = 1,step = 0.01,value = 0.5}):setTooltip('How transparent the hitboxes are')
+            
+            local s_HitboxPart = c_hitbox:addDropdown('Hitbox part', true)
+            s_HitboxPart:addOption('RootPart'):setTooltip('Expands the RootPart (effectively the same thing as torso)'):Select()
+            s_HitboxPart:addOption('Head'):setTooltip('Expands the Head, good for getting headshots')
             
             local s_RGB = c_hitbox:addToggle('RGB'):setTooltip('Makes hitboxes RGB instead of gray')
             local s_TeamCheck = c_hitbox:addToggle('Team check'):setTooltip('Disables hbe for teammates')
@@ -4037,67 +3884,101 @@ do
             local TeamCheck = s_TeamCheck:getValue()
             local XZOnly = s_XZOnly:getValue()
             
-            s_HitboxSize:Connect('Changed',function(v)HitboxSize=v;end)
-            s_Transparency:Connect('Changed',function(v)Transparency=v;end)
-            s_RGB:Connect('Toggled',function(v)RGB=v;end)
-            s_TeamCheck:Connect('Toggled',function(v)TeamCheck=v;c_hitbox:Reset();end)
-            s_XZOnly:Connect('Toggled',function(v)XZOnly=v;end)
+            local HitboxPart = s_HitboxPart:getValue()
             
+            s_HitboxSize:Connect('Changed', function(t)
+                HitboxSize = t
+            end)
+            
+            s_Transparency:Connect('Changed', function(t)
+                Transparency = t
+            end)
+            
+            s_RGB:Connect('Toggled', function(t)
+                RGB = t
+            end)
+            
+            s_TeamCheck:Connect('Toggled', function(t)
+                TeamCheck = t
+                c_hitbox:Reset()
+            end)
+            
+            s_XZOnly:Connect('Toggled', function(t)
+                XZOnly = t
+            end)
+            s_HitboxPart:Connect('Changed', function(s)
+                HitboxPart = s 
+                c_hitbox:Reset()
+            end)
             
             local HitboxConnection
-            local old_color
-            local old_size 
+            local root_OldColor
+            local root_OldSize 
+            
+            local head_OldSize = vec3(1.2, 1.1, 1.1)
+            
+            
 
             c_hitbox:Connect('Enabled',function() 
-                old_color = clientRoot.Color 
-                old_size = clientRoot.Size
+                root_OldColor = clientRoot.Color 
+                root_OldSize = clientRoot.Size
                 
-                if (TeamCheck) then
-                    
-                    HitboxConnection = servRun.RenderStepped:Connect(function() 
-                        local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
-                        
-                        for i = 1, #playerNames do 
-                            local pobj = playerManagers[playerNames[i]]
-                            if ( pobj.Player.Team == clientTeam ) then 
-                                continue 
-                            end
-                            local humrp = pobj.RootPart
-                            
-                            if ( humrp ) then
-                                humrp.Size = size
-                                humrp.Color = RGB and RGBCOLOR or old_color
-                                humrp.Transparency = Transparency
-                            end
-                        end
-                    end)
-                else 
-                    HitboxConnection = servRun.RenderStepped:Connect(function() 
-                        local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
-                        for i = 1, #playerNames do 
-                            local pobj = playerManagers[playerNames[i]]
-                            local humrp = pobj.RootPart
-                            
-                            if (humrp) then
-                                humrp.Size = size
-                                humrp.Color = RGB and RGBCOLOR or old_color
-                                humrp.Transparency = Transparency
-                            end
-                        end
-                    end)
+                if ( HitboxPart == 'Head' and clientRoot ) then
+                    local head = clientChar:FindFirstChild('Head')
+                    if ( head ) then
+                        head_OldSize = head.Size 
+                    end
                 end
+                
+                HitboxConnection = servRun.Heartbeat:Connect(function(dt) 
+                    local size = vec3(HitboxSize, XZOnly and 2 or HitboxSize, HitboxSize)
+                    
+                    for i, name in ipairs(playerNames) do 
+                        local manager = playerManagers[name]
+                        if ( TeamCheck and manager.Player.Team == clientTeam ) then 
+                            continue 
+                        end
+                        
+                        local humrp = manager.RootPart
+                        if ( HitboxPart == 'Head' ) then
+                            local head = humrp and manager.Character:FindFirstChild('Head')
+                            if ( not head ) then
+                                continue
+                            end
+                            
+                            head.Size = size
+                            head.Transparency = Transparency
+                            
+                        elseif ( humrp ) then
+                            humrp.Size = size
+                            humrp.Color = RGB and RGBCOLOR or root_OldColor
+                            humrp.Transparency = Transparency
+                        end
+                    end
+                end)
             end)
             c_hitbox:Connect('Disabled',function() 
-                if (HitboxConnection) then 
-                    HitboxConnection:Disconnect() HitboxConnection = nil
+                if ( HitboxConnection ) then 
+                    HitboxConnection:Disconnect() 
+                    HitboxConnection = nil
                 end
-                for i = 1, #playerNames do 
-                    local pobj = playerManagers[playerNames[i]]
-                    local rp = pobj.RootPart
-                    if (rp) then
-                        rp.Transparency = 1
-                        rp.Color = old_color
-                        rp.Size = old_size 
+                
+                for i, name in ipairs(playerNames) do 
+                    local manager = playerManagers[name]
+                    
+                    local rootPart = manager.RootPart
+                    
+                    if ( rootPart ) then
+                        rootPart.Transparency = 1
+                        rootPart.Color = root_OldColor
+                        rootPart.Size = root_OldSize
+                        
+                        local head = manager.Character:FindFirstChild('Head')
+                    
+                        if ( head ) then
+                            head.Transparency = 0
+                            head.Size = head_OldSize 
+                        end
                     end
                 end
             end)
@@ -4189,7 +4070,7 @@ do
         local p_antiwarp    = m_player:addMod('Anti-warp')
         local p_antiplayer  = m_player:addMod('Anti-player')
         local p_autoclick   = m_player:addMod('Auto clicker')
-        local p_brespawn    = m_player:addMod('Better reset', 'Toggle')
+        --local p_brespawn    = m_player:addMod('Better reset', 'Toggle')
         local p_flag        = m_player:addMod('Fakelag')
         local p_flashback   = m_player:addMod('Flashback')
         local p_safemin     = m_player:addMod('Safe minimize')
@@ -4255,7 +4136,7 @@ do
                 end
                 
                 resetcon = clientPlayer.CharacterAdded:Connect(function() 
-                    wait()
+                    task.wait()
                     p_animspeed:Reset()
                 end)
             end)
@@ -4284,7 +4165,7 @@ do
             local p = 'Standard'
             p_antiafk:Connect('Enabled', function() 
                 if (p == 'Standard') then
-                    dnec(clientPlayer.Idled, 'plr_idled')
+                    disablecons(clientPlayer.Idled, 'plr_idled')
                     return 
                 end
                 if (p == 'Move on idle') then
@@ -4295,14 +4176,14 @@ do
                 end
             
                 if (p == 'Walk around') then
-                    spawn(function() 
+                    task.spawn(function() 
                         local base = clientRoot.Position
                         while (p_antiafk:isEnabled()) do 
-                            wait(mathRand()*8)
+                            task.wait(math.random()*8)
                             clientHumanoid:MoveTo(base + vec3(
-                                (mathRand()-.5)*15,
+                                (math.random()-.5)*15,
                                 0,
-                                (mathRand()-.5)*15)
+                                (math.random()-.5)*15)
                             )
                         end
                     end)
@@ -4310,7 +4191,7 @@ do
                 end
             end)
             p_antiafk:Connect('Disabled', function()
-                enec('plr_idled')
+                enablecons('plr_idled')
                 
                 if (c) then
                     c:Disconnect()
@@ -4359,9 +4240,9 @@ do
             
             p_antifling:Connect('Enabled', function() 
                 local m = s_FreezeMethod:GetSelection()
-                dnec(clientRoot.Changed, 'rp_changed')
-                dnec(clientRoot:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
-                dnec(clientRoot:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
+                disablecons(clientRoot.Changed, 'rp_changed')
+                disablecons(clientRoot:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
+                disablecons(clientRoot:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
                 
                 if (m == 'Anchor') then
                     pcon = servRun.Heartbeat:Connect(function() 
@@ -4420,7 +4301,7 @@ do
                             local rootPart = playerManagers[playerNames[i]].RootPart
                             
                             if (rootPart and ((rootPart.Position - self_pos).Magnitude) < distance) then
-                                clientRoot.CFrame += vec3(mathRand(-100,100)*.1,mathRand(0,20)*.1,mathRand(-100,100)*.1)
+                                clientRoot.CFrame += vec3(math.random(-100,100)*.1,math.random(0,20)*.1,math.random(-100,100)*.1)
                                 break
                             end
                         end		
@@ -4431,9 +4312,9 @@ do
                 if (pcon) then pcon:Disconnect() pcon = nil end		
                 if (clientRoot.Anchored) then clientRoot.Anchored = false end
                 
-                enec('rp_changed')
-                enec('rp_cancollide')
-                enec('rp_anchored')
+                enablecons('rp_changed')
+                enablecons('rp_cancollide')
+                enablecons('rp_anchored')
             end)
         
         
@@ -4453,12 +4334,12 @@ do
             
             local AntiwarpStep
             
-            local CurrentCFrame = clientRoot and clientRoot.CFrame or cfrNew(0,0,0)
-            local PreviousCFrame = clientRoot and clientRoot.CFrame or cfrNew(0,0,0)
+            local CurrentCFrame = clientRoot and clientRoot.CFrame or CFrame.new(0,0,0)
+            local PreviousCFrame = clientRoot and clientRoot.CFrame or CFrame.new(0,0,0)
             
             p_antiwarp:Connect('Enabled',function() 
-                dnec(clientRoot.Changed, 'rp_changed')
-                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                disablecons(clientRoot.Changed, 'rp_changed')
+                disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                 
                 
                 PreviousCFrame = clientRoot.CFrame
@@ -4477,8 +4358,8 @@ do
             p_antiwarp:Connect('Disabled',function() 
                 if (AntiwarpStep) then AntiwarpStep:Disconnect() AntiwarpStep = nil end
                 
-                enec('rp_changed')
-                enec('rp_cframe')
+                enablecons('rp_changed')
+                enablecons('rp_cframe')
             end)
         end
         -- Antiplayer
@@ -4651,6 +4532,7 @@ do
                 ClickAmount = v
             end)
             s_clickVisual:Connect('Toggled', function(t) 
+                task.wait()
                 p_autoclick:Reset()
             end)
             
@@ -4660,20 +4542,20 @@ do
             local visualCircle
             
             p_autoclick:Connect('Enabled',function() 
-                ConnectionIdentifier = mathRand(1, 9999)
+                ConnectionIdentifier = math.random(1, 9999)
                 local _ = ConnectionIdentifier
                 
                 
                 -- Handle shaking
-                spawn(function() 
+                task.spawn(function() 
                     if (Shake) then
                         while (Shake and p_autoclick:isEnabled()) do 
                             if (not W_WindowOpen) then
-                                mousemoverel(mathRand(-ShakeAmount, ShakeAmount),mathRand(-ShakeAmount, ShakeAmount))
+                                mousemoverel(math.random(-ShakeAmount, ShakeAmount),math.random(-ShakeAmount, ShakeAmount))
                             else
-                                wait(0.5)
+                                task.wait(0.5)
                             end
-                            wait(0.02)
+                            task.wait(0.02)
                             if (ConnectionIdentifier ~= _) then break end
                         end
                     end
@@ -4699,7 +4581,7 @@ do
                             visualCircle.Transparency = 0.8
                             visualCircle.Visible = true 
                             
-                            ClickConnection = servRun.RenderStepped:Connect(function(dt)
+                            ClickConnection = servRun.Heartbeat:Connect(function(dt)
                                 visualCircle.Transparency -= dt*5
                                 visualCircle.Position = servInput:GetMouseLocation()
                                 -- If window is closed then
@@ -4728,7 +4610,7 @@ do
                         end
                     else
                         -- If the clickrate isn't 0 then spawn a loop
-                        spawn(function() 
+                        task.spawn(function() 
                             -- Get func
                             local clickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
                             
@@ -4759,7 +4641,7 @@ do
                                         visualCircle.Transparency = 0.8
                                     end
                                     -- wait for click duration
-                                    wait(ClickRate)
+                                    task.wait(ClickRate)
                                     -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
                                     if (ConnectionIdentifier ~= _) then break end
                                 end
@@ -4773,7 +4655,7 @@ do
                                         end
                                     end
                                     -- wait for click duration
-                                    wait(ClickRate)
+                                    task.wait(ClickRate)
                                     -- check if the identifier changed (i.e. check if there are 2 loops, break if there are)
                                     if (ConnectionIdentifier ~= _) then break end
                                 end
@@ -4794,7 +4676,7 @@ do
                 end
             end)
         end 
-        -- Better reset
+        --[[ Better reset
         do 
             local resp_con
             local qdie_con
@@ -4807,7 +4689,7 @@ do
                 
                 bind(clientHumanoid)
                 resp_con = clientPlayer.CharacterAdded:Connect(function(c) 
-                    local h = c:WaitForChild('Humanoid',0.5)
+                    local h = c:WaitForChild('Humanoid', 0.5)
                     if (h) then
                         bind(h) 
                     end
@@ -4821,35 +4703,42 @@ do
                 resp_con:Disconnect()
                 qdie_con:Disconnect()
             end)
-        end
+        end]]
         -- Fake lag
         do 
-            local s_Method = p_flag:addDropdown('Method',true)
+            local s_Method = p_flag:addDropdown('Method', true)
             s_Method:addOption('Fake'):setTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
             s_Method:addOption('Real'):setTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
             
-            local s_LagAmnt = p_flag:addSlider('Amount',{min=1,max=10,step=0.1,cur=3}):setTooltip('Lag amount. The larger the number, the more lag you have')
+            local s_LagAmnt = p_flag:addSlider('Amount', { min = 1, max = 10, step = 0.1, cur = 3 }):setTooltip('Lag amount. The larger the number, the more lag you have')
             local LagAmnt = s_LagAmnt:getValue()
             local Method = s_Method:GetSelection()
             
-            s_LagAmnt:Connect('Changed',function(v)LagAmnt=v;end)
-            s_Method:Connect('Changed',function(v)Method=v;p_flag:Reset()end)
+            s_LagAmnt:Connect('Changed', function(v)
+                LagAmnt = v 
+            end)
+            s_Method:Connect('Changed', function(v)
+                Method = v 
+                p_flag:Reset()
+            end)
             
+            local fakechar 
             local seat
             p_flag:Connect('Enabled',function() 
+                fakechar = getFakeChar()
                 local fakerp = fakechar.HumanoidRootPart
                 
                 if (Method == 'Fake') then
                     local s = Method 
                     
-                    local thej = clientRoot.CFrame
+                    local position = clientRoot.CFrame
                     
                     seat = instNew('Seat')
                     seat.Transparency = 1
                     seat.CanTouch = false
                     seat.CanCollide = false
                     seat.Anchored = true
-                    seat.CFrame = thej
+                    seat.CFrame = position
                     
                     local weld = instNew('Weld')
                     weld.Part0 = seat
@@ -4858,35 +4747,35 @@ do
                     
                     seat.Parent = workspace
                     
-                    spawn(function() 
+                    task.spawn(function() 
                         while true do 
-                            if (not p_flag:isEnabled() or Method ~= s) then break end
-                            wait((mathRand(20,40)*.1) / LagAmnt)
-                            if (not p_flag:isEnabled() or Method ~= s) then break end
+                            if ( not p_flag:isEnabled() or Method ~= s ) then break end
+                            task.wait((math.random(20, 40) * 0.1) / LagAmnt)
+                            if ( not p_flag:isEnabled() or Method ~= s ) then break end
                             
                             do
                                 seat.Anchored = false
-                                local thej = clientRoot.CFrame
+                                local position = clientRoot.CFrame
                                 fakechar.Parent = workspace
-                                fakerp.CFrame = thej
+                                fakerp.CFrame = position
                                 
-                                seat.CFrame = thej
+                                seat.CFrame = position
                                 weld.Part1 = clientRoot
                             end
                             
-                            wait(mathRand(1,LagAmnt)*.1)
+                            task.wait(math.random(1,LagAmnt) * 0.1)
                             fakechar.Parent = nil
                             weld.Part1 = nil
                             seat.Anchored = true
                         end 
                     end)
                 else
-                    spawn(function() 
+                    task.spawn(function() 
                         local s = Method
                         while true do 
-                            if (not p_flag:isEnabled() or Method ~= s) then break end
-                            wait(5 / LagAmnt)
-                            if (not p_flag:isEnabled() or Method ~= s) then break end
+                            if ( not p_flag:isEnabled() or Method ~= s ) then break end
+                            task.wait(5 / LagAmnt)
+                            if ( not p_flag:isEnabled() or Method ~= s ) then break end
                             
                             
                             fakechar.Parent = workspace
@@ -4894,7 +4783,7 @@ do
                             
                             servNetwork:SetOutgoingKBPSLimit(1)
                             
-                            wait(mathRand(1,LagAmnt)*.1)
+                            task.wait(math.random(1, LagAmnt) * 0.1)
                             fakechar.Parent = nil
                             servNetwork:SetOutgoingKBPSLimit(9e9)
                         end 
@@ -4903,9 +4792,12 @@ do
             end)
             
             p_flag:Connect('Disabled',function() 
-                if (seat) then seat:Destroy() seat = nil end 
+                if (seat) then 
+                    seat:Destroy() 
+                    seat = nil 
+                end 
                 
-                fakechar.Parent = nil
+                fakechar:Destroy()
                 servNetwork:SetOutgoingKBPSLimit(9e9)
             end)
         end
@@ -4925,12 +4817,12 @@ do
                     h.Died:Connect(function() 
                         pos = clientRoot.CFrame
                         clientPlayer.CharacterAdded:Wait()
-                        delay(flash_delay:getValue(), function() clientRoot.CFrame = pos end)
+                        task.delay(flash_delay:getValue(), function() clientRoot.CFrame = pos end)
                     end)
                 end
                 
                 resp_con = clientPlayer.CharacterAdded:Connect(function() 
-                    wait(0.03)
+                    task.wait(0.03)
                     bind(clientHumanoid)
                 end)
                 
@@ -4943,11 +4835,13 @@ do
         end
         -- Safe min
         do 
-            local s_DetectMode = p_safemin:addDropdown('Detection mode',true):setTooltip('The method used to detect tabbing out. Leave on default unless detection stops working')
+            local s_DetectMode = p_safemin:addDropdown('Detection mode', true):setTooltip('The method used to detect tabbing out. Leave on default unless detection stops working')
             s_DetectMode:addOption('Default'):setTooltip('Uses UserInputService to detect window minimizing. Some scripts may mess with this event!'):Select()
             s_DetectMode:addOption('Backup'):setTooltip('Uses isrbxactive to detect window minimizing. May not be compatible with every exploit')
             
-            s_DetectMode:Connect('Changed',function()p_safemin:Reset();end)
+            s_DetectMode:Connect('Changed',function()
+                p_safemin:Reset()
+            end)
             
             local freezecon
             local wincon1
@@ -5022,7 +4916,7 @@ do
                 c.CanCollide = false
                 c.CanTouch = false
                 c.Color = colNew(0,0,0)
-                c.Name = getnext()
+                c.Name = randstr()
                 c.Size = vec3(1, 1, 1)
                 c.Position = new[2].Position
                 c.Transparency = 1
@@ -5066,7 +4960,7 @@ do
                 new[5] = c
                 new[6] = d
                 
-                tabInsert(waypoints, new)
+                table.insert(waypoints, new)
             end
             
             
@@ -5077,7 +4971,7 @@ do
                     local wp = waypoints[i]
                     if (wp[1] == text) then
                         for i = 3, 5 do wp[i]:Destroy() end
-                        tabRemove(waypoints, i)
+                        table.remove(waypoints, i)
                         break
                     end
                 end 
@@ -5090,7 +4984,7 @@ do
                     local wp = waypoints[i]
                     if (wp[1] == text) then
                         for i = 3, 5 do wp[i]:Destroy() end
-                        tabRemove(waypoints, i)
+                        table.remove(waypoints, i)
                         break
                     end
                 end 
@@ -5099,14 +4993,14 @@ do
             gotowp:Connect('Unfocused',function(text) 
                 for i = 1, #waypoints do
                     local wp = waypoints[i]
-                    if (wp[1] == text) then
-                        dnec(clientRoot.Changed, 'rp_changed')
-                        dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    if (wp[1] == text and clientRoot) then
+                        disablecons(clientRoot.Changed, 'rp_changed')
+                        disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                         
                         clientRoot.CFrame = wp[2]
                         
-                        enec('rp_changed')
-                        enec('rp_cframe')
+                        enablecons('rp_changed')
+                        enablecons('rp_cframe')
                     end
                 end 
             end)
@@ -5117,14 +5011,14 @@ do
                     for i = 3, 5 do wp[i]:Destroy() end
                     waypoints[i] = nil
                 end
-                tabClear(waypoints)
+                table.clear(waypoints)
             end)
             
             p_waypoints:Connect('Enabled',function() 
                 waypoints = {}
                 
                 folder = instNew('Folder')
-                folder.Name = getnext()
+                folder.Name = randstr()
                 folder.Parent = game.CoreGui
             end)
             
@@ -5144,13 +5038,9 @@ do
             deleall:setTooltip('Deletes all waypoints. Preferable over untoggling and retoggling')
             makewp:setTooltip('Makes a waypoint at your position with the name you type in')
             delewp:setTooltip('Deletes all waypoints matching the name you type in')
+            gotowp:setTooltip('Teleports you to the waypoint matching the name you type in')
         end
         
-        
-        --p_fancy:setTooltip('Converts your chat letters into a fancier version. Has a toggleable mode and a non-toggleable mode')
-        --p_ftools:setTooltip('Lets you equip and unequip multiple tools at once')
-        --p_gtweaks:setTooltip('Lets you configure various misc 'forceable' settings like 3rd person, chat, inventories, and more')
-        --p_pathfind:setTooltip('Pathfinder. Kinda like Baritone')
         --p_radar:setTooltip('Radar that displays where other players are')
         p_animspeed:setTooltip('Increases the speed of your character animations. May mess with game logic')
         p_antiafk:setTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
@@ -5161,7 +5051,7 @@ do
         p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 2160 CPS (144 fps * 15 clicks p/ frame)')
         p_flag:setTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
         p_flashback:setTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
-        p_brespawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
+        --p_brespawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
         p_safemin:setTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
         p_waypoints:setTooltip('Lets you save positions and teleport back to them later')
     end
@@ -5220,36 +5110,71 @@ do
         end
         -- Blink
         do 
-            -- Not my method, don't know the original creator
+            local mode = m_blink:addDropdown('Mode', true):setTooltip('The method Blink uses')
+            mode:addOption('Fakechar'):setTooltip('Clones a semi-working copy of your character and gives you control over it'):Select()
+            mode:addOption('Weld'):setTooltip('Abuses a client-side welded seat part to confuse roblox into freezing you. Probably doesn\'t work - this method is very old')
             
-            local weld
+            local fakechar
             local seat
+            local oldchar
             
             m_blink:Connect('Enabled',function() 
-                local thej = clientRoot.CFrame
                 
-                seat = instNew('Seat')
-                seat.Transparency = 1
-                seat.CanTouch = false
-                seat.CanCollide = false
-                seat.CFrame = thej
-                
-                weld = instNew('Weld')
-                weld.Part0 = seat
-                weld.Part1 = clientRoot
-                weld.Parent = seat
-                
-                seat.Parent = workspace
-                
-                fakechar.HumanoidRootPart.CFrame = thej
-                fakechar.Parent = workspace
+                if ( mode:GetSelection() == 'Fakechar' ) then
+                    if ( not clientChar ) then
+                        ui:Notify('Oops', 'Wait until you\'re spawned in', 2, 'warning')
+                        task.wait()
+                        m_blink:Disable()
+                    end
+                    
+                    oldchar = clientChar 
+                    clientPlayer.Character = nil 
+                    
+                    oldchar.Archivable = true 
+                    fakechar = oldchar:Clone()
+                    fakechar.Parent = workspace 
+                    
+                    clientPlayer.Character = fakechar 
+                    clientCamera.CameraSubject = fakechar.Humanoid 
+                else
+                    fakechar = getFakeChar()
+                     -- Not my method, don't know the original creator
+                    local position = clientRoot.CFrame
+                    
+                    seat = instNew('Seat')
+                    seat.Transparency = 1
+                    seat.CanTouch = false
+                    seat.CanCollide = false
+                    seat.CFrame = position
+                    
+                    local weld = instNew('Weld')
+                    weld.Part0 = seat
+                    weld.Part1 = clientRoot
+                    weld.Parent = seat
+                    
+                    seat.Parent = workspace
+                    
+                    fakechar.HumanoidRootPart.CFrame = position
+                    fakechar.Parent = workspace
+                end
             end)
             
             m_blink:Connect('Disabled',function() 
-                if (weld) then weld:Destroy() weld = nil end
-                if (seat) then seat:Destroy() seat = nil end
-                
-                fakechar.Parent = nil
+                if ( seat ) then
+                    seat:Destroy()
+                    seat = nil 
+                end
+                if ( oldchar ) then
+                    clientPlayer.Character = oldchar 
+                    clientChar = oldchar
+                    clientCamera.CameraSubject = clientHumanoid
+                    
+                    oldchar = nil 
+                end 
+                if ( fakechar ) then 
+                    fakechar:Destroy()
+                    fakechar = nil 
+                end
             end)
         end
         -- Click tp
@@ -5278,7 +5203,7 @@ do
                     local lv = clientRoot.CFrame.LookVector
                     local p = clientMouse.Hit.Position + offset
                     
-                    local c = cfrNew(p, p+lv)
+                    local c = CFrame.new(p, p+lv)
                     if (Tween) then
                         local dist = (clientRoot.Position - c.Position).Magnitude
                         ctwn(clientRoot, {CFrame = c}, dist / TweenSpeed, 0, 1)
@@ -5443,9 +5368,9 @@ do
                 clv = clientCamera.CFrame.LookVector 
                 normclv = clv
                 
-                dnec(clientRoot.Changed, 'rp_changed')
-                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
-                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                disablecons(clientRoot.Changed, 'rp_changed')
+                disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                disablecons(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
                 local curmod = mode:GetSelection()
                 local curturn = turndir:GetSelection()
@@ -5513,7 +5438,7 @@ do
                             base += Vector
                             
                             local Position = base.Position
-                            clientRoot.CFrame = cfrNew(Position, Position + clv)
+                            clientRoot.CFrame = CFrame.new(Position, Position + clv)
                         end)
                     else
                         fcon = servRun.Heartbeat:Connect(function(dt) 
@@ -5538,7 +5463,7 @@ do
                             base += Vector
                             
                             local Position = base.Position
-                            clientRoot.CFrame = cfrNew(Position, Position + clv)
+                            clientRoot.CFrame = CFrame.new(Position, Position + clv)
                         end)
                     end
                 elseif (curmod == 'Smooth') then
@@ -5594,7 +5519,7 @@ do
                             
                             local Position = base.Position
                             pos.Position = Position
-                            gyro.CFrame = cfrNew(Position, Position + clv)
+                            gyro.CFrame = CFrame.new(Position, Position + clv)
                             clientRoot.CFrame = fi1.CFrame   
                         end)
                     else
@@ -5621,16 +5546,16 @@ do
                             
                             local Position = base.Position
                             pos.Position = Position
-                            gyro.CFrame = cfrNew(Position, Position + clv)
+                            gyro.CFrame = CFrame.new(Position, Position + clv)
                             clientRoot.CFrame = fi1.CFrame                   
                         end)
                     end
                 elseif (curmod == 'Vehicle') then
                     local base = clientRoot.CFrame
                     
-                    dnec(clientRoot.ChildAdded, 'rp_child')
-                    dnec(clientRoot.DescendantAdded, 'rp_desc')
-                    dnec(clientChar.DescendantAdded, 'chr_desc')
+                    disablecons(clientRoot.ChildAdded, 'rp_child')
+                    disablecons(clientRoot.DescendantAdded, 'rp_desc')
+                    disablecons(clientChar.DescendantAdded, 'chr_desc')
                     
                     fi1 = instNew('BodyPosition')
                     fi1.Position = base.Position
@@ -5672,7 +5597,7 @@ do
                             
                             local Position = base.Position
                             fi1.Position = Position
-                            fi2.CFrame = cfrNew(Position, Position + clv)
+                            fi2.CFrame = CFrame.new(Position, Position + clv)
                             
                             clientCamera.CameraSubject = clientHumanoid
                         end)
@@ -5697,7 +5622,7 @@ do
                             
                             local Position = base.Position
                             fi1.Position = Position
-                            fi2.CFrame = cfrNew(Position, Position + clv)      
+                            fi2.CFrame = CFrame.new(Position, Position + clv)      
                             
                             clientCamera.CameraSubject = clientHumanoid
                         end)
@@ -5721,12 +5646,12 @@ do
                 end
                 
                 
-                enec('rp_changed')
-                enec('rp_cframe')
-                enec('rp_velocity')
-                enec('rp_child')
-                enec('rp_desc')
-                enec('chr_desc')
+                enablecons('rp_changed')
+                enablecons('rp_cframe')
+                enablecons('rp_velocity')
+                enablecons('rp_child')
+                enablecons('rp_desc')
+                enablecons('chr_desc')
                     
             end)
             
@@ -5770,9 +5695,9 @@ do
                         clientRoot.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
                     end)
                 elseif (mode == 'Velocity') then
-                    dnec(clientRoot.ChildAdded, 'rp_child')
-                    dnec(clientRoot.DescendantAdded, 'rp_desc')
-                    dnec(clientChar.DescendantAdded, 'chr_desc')
+                    disablecons(clientRoot.ChildAdded, 'rp_child')
+                    disablecons(clientRoot.DescendantAdded, 'rp_desc')
+                    disablecons(clientChar.DescendantAdded, 'chr_desc')
                     
                     finst = instNew('BodyVelocity')
                     finst.MaxForce = vec3(0, 9e9, 0)
@@ -5788,9 +5713,9 @@ do
                 
                 vel:Connect('Changed',a)
                 
-                enec('rp_child')
-                enec('rp_desc')
-                enec('chr_desc')
+                enablecons('rp_child')
+                enablecons('rp_desc')
+                enablecons('chr_desc')
             end)
             
         end
@@ -5822,8 +5747,8 @@ do
                     OldJumpPow = clientHumanoid.JumpPower
                     OldUseJP = clientHumanoid.UseJumpPower
                     
-                    dnec(clientHumanoid:GetPropertyChangedSignal('JumpPower'), 'hum_jp')
-                    dnec(clientHumanoid:GetPropertyChangedSignal('UseJumpPower'), 'hum_ujp')
+                    disablecons(clientHumanoid:GetPropertyChangedSignal('JumpPower'), 'hum_jp')
+                    disablecons(clientHumanoid:GetPropertyChangedSignal('UseJumpPower'), 'hum_ujp')
                     
                     JumpCon = servRun.Heartbeat:Connect(function() 
                         clientHumanoid.UseJumpPower = true
@@ -5841,8 +5766,8 @@ do
                     OldUseJP = nil
                 end
                 
-                enec('hum_jp')
-                enec('hum_ujp')
+                enablecons('hum_jp')
+                enablecons('hum_ujp')
             end)
         end
         -- Noclip
@@ -5851,7 +5776,7 @@ do
             s_Mode:addOption('Standard'):setTooltip('The average CanCollide noclip'):Select()
             s_Mode:addOption('Legacy'):setTooltip('Emulates the older HumanoidState noclip (Just standard, but with a float effect)')
             s_Mode:addOption('Teleport'):setTooltip('Teleports you through walls')
-            s_Mode:addOption('Bypass'):setTooltip('May bypass certain serverside anticheats that rely on the direction you\'re facing')
+            --s_Mode:addOption('Bypass'):setTooltip('May bypass certain serverside anticheats that rely on the direction you\'re facing')
             
             local s_LookAhead = m_noclip:addSlider('Lookahead',{min=2,cur=4,max=15,step=0.1}):setTooltip('The amount of distance between a wall Teleport will consider noclipping')
             
@@ -5871,7 +5796,7 @@ do
             local loopid
             
             m_noclip:Connect('Enabled', function() 
-                loopid = mathRand(1,999999)
+                loopid = math.random(1,999999)
                 local mode = s_Mode:GetSelection()
                 
                 if (mode == 'Standard') then
@@ -5881,19 +5806,19 @@ do
                     for i = 1, #c do
                         local obj = c[i]
                         if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                        tabInsert(NoclipObjects, obj)
+                        table.insert(NoclipObjects, obj)
                     end
                     
                     
                     Con_Respawn = clientPlayer.CharacterAdded:Connect(function(chr) 
-                        wait(0.15)
+                        task.wait(0.15)
                         
-                        tabClear(NoclipObjects)
+                        table.clear(NoclipObjects)
                         local c = clientChar:GetChildren()
                         for i = 1, #c do
                             local obj = c[i]
                             if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                            tabInsert(NoclipObjects, obj)
+                            table.insert(NoclipObjects, obj)
                         end
                     end)
                     
@@ -5910,19 +5835,19 @@ do
                     for i = 1, #c do
                         local obj = c[i]
                         if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                        tabInsert(NoclipObjects, obj)
+                        table.insert(NoclipObjects, obj)
                     end
                     
                     
                     Con_Respawn = clientPlayer.CharacterAdded:Connect(function(chr) 
-                        wait(0.15)
+                        task.wait(0.15)
                         
-                        tabClear(NoclipObjects)
+                        table.clear(NoclipObjects)
                         local c = clientChar:GetChildren()
                         for i = 1, #c do
                             local obj = c[i]
                             if ((obj == nil) or (obj:IsA('BasePart') == false)) then continue end 
-                            tabInsert(NoclipObjects, obj)
+                            table.insert(NoclipObjects, obj)
                         end
                     end)
                     
@@ -5943,8 +5868,8 @@ do
                         p.FilterDescendantsInstances = {c}
                     end)
                     
-                    dnec(clientRoot.Changed, 'rp_changed')
-                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    disablecons(clientRoot.Changed, 'rp_changed')
+                    disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     
                     Con_Respawn = clientPlayer.CharacterAdded:Connect(function() 
                         m_noclip:Reset()
@@ -5960,10 +5885,10 @@ do
                         if (j) then
                             local t = j.Position + (m * (j.Distance/2))
                             
-                            clientRoot.CFrame = cfrNew(t, t + lv)
+                            clientRoot.CFrame = CFrame.new(t, t + lv)
                         end
                     end)
-                elseif (mode == 'Bypass') then
+                --[[elseif (mode == 'Bypass') then
                     local p = RaycastParams.new()
                     p.FilterDescendantsInstances = {clientChar}
                     p.FilterType = Enum.RaycastFilterType.Blacklist
@@ -5972,8 +5897,8 @@ do
                         p.FilterDescendantsInstances = {c}
                     end)
                     
-                    dnec(clientRoot.Changed, 'rp_changed')
-                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    disablecons(clientRoot.Changed, 'rp_changed')
+                    disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     
                     
                     
@@ -5982,7 +5907,7 @@ do
                     end)
                     
                     local lid = loopid
-                    spawn(function()
+                    task.spawn(function()
                         while m_noclip:isEnabled() and lid == loopid do
                             local c = clientRoot.CFrame
                             local lv = c.LookVector
@@ -5991,16 +5916,16 @@ do
                             
                             local j = workspace:Raycast(c, m*LookAhead, p)
                             if (j) then
-                                clientRoot.CFrame = cfrNew(c, c - lv)
+                                clientRoot.CFrame = CFrame.new(c, c - lv)
                                 clientRoot.Anchored = true
-                                wait(0.1) 
+                                task.wait(0.1) 
                                 clientRoot.Anchored = false
                                 local t = j.Position + (m * (j.Distance/2))
-                                clientRoot.CFrame = cfrNew(t, t + lv)
+                                clientRoot.CFrame = CFrame.new(t, t + lv)
                             end
-                            wait()
+                            task.wait()
                         end
-                    end)
+                    end)]]
                 end
             end)
             m_noclip:Connect('Disabled', function() 
@@ -6016,8 +5941,8 @@ do
                 
                 loopid = 0
                 
-                enec('rp_changed')
-                enec('rp_cframe')
+                enablecons('rp_changed')
+                enablecons('rp_cframe')
             end)
             
         end
@@ -6053,8 +5978,8 @@ do
                 
                 local CurrentMode = s_Mode:GetSelection()
                 if (CurrentMode == 'Drop') then
-                    dnec(clientRoot.Changed, 'rp_changed')
-                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    disablecons(clientRoot.Changed, 'rp_changed')
+                    disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     local down = vec3(0, -1000000, 0)
                     local p = RaycastParams.new()
                     p.FilterDescendantsInstances = {clientChar}
@@ -6072,14 +5997,14 @@ do
                             
                             if (hv.Y < 0) then
                                 local p = j.Position
-                                clientRoot.CFrame = cfrNew(p, p + clientRoot.CFrame.LookVector)
+                                clientRoot.CFrame = CFrame.new(p, p + clientRoot.CFrame.LookVector)
                                 clientRoot.Velocity = vec3(hv.X, 20, hv.Z)
                             end
                         end
                     end)
                 elseif (CurrentMode == 'Decelerate') then
-                    dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
-                    dnec(clientRoot.Changed, 'rp_changed')
+                    disablecons(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                    disablecons(clientRoot.Changed, 'rp_changed')
                     
                     local down = vec3(0, -1000000, 0)
                     local p = RaycastParams.new()
@@ -6123,7 +6048,7 @@ do
                                 clientRoot.Velocity = vec3(hv.X, 30, hv.Z)
                                 
                                 holding = true
-                                delay(0.5, function()
+                                task.delay(0.5, function()
                                     holding = false
                                 end)
                             end
@@ -6136,9 +6061,9 @@ do
                 if (rcon) then rcon:Disconnect() rcon = nil end
                 if (plrcon) then plrcon:Disconnect() plrcon = nil end
                 
-                enec('rp_velocity')
-                enec('rp_changed')
-                enec('rp_cframe')
+                enablecons('rp_velocity')
+                enablecons('rp_changed')
+                enablecons('rp_cframe')
             end)
         end
         -- Notrip
@@ -6189,7 +6114,7 @@ do
                                 if (clientHumanoid.Jump) then return end
                                 clientHumanoid:ChangeState(3)
                             else
-                                wait(delay)
+                                task.wait(delay)
                                 if (clientHumanoid.Jump) then return end
                                 clientHumanoid:ChangeState(3)
                             end
@@ -6219,11 +6144,11 @@ do
             m_speed:Connect('Enabled',function() 
                 local mode = mode:GetSelection()
                 
-                dnec(clientHumanoid.Changed, 'hum_changed')
-                dnec(clientHumanoid:GetPropertyChangedSignal('Jump'), 'hum_jump')
-                dnec(clientRoot.Changed, 'rp_changed')
-                dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
-                dnec(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
+                disablecons(clientHumanoid.Changed, 'hum_changed')
+                disablecons(clientHumanoid:GetPropertyChangedSignal('Jump'), 'hum_jump')
+                disablecons(clientRoot.Changed, 'rp_changed')
+                disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                disablecons(clientRoot:GetPropertyChangedSignal('Velocity'), 'rp_velocity')
                 
                 if (scon) then scon:Disconnect() scon = nil end
                 
@@ -6249,19 +6174,19 @@ do
                     part.CanTouch = false
                     part.CanCollide = true
                     part.Anchored = false
-                    part.Name = getnext()
+                    part.Name = randstr()
                     part.Parent = workspace
                     scon = ev:Connect(function(dt) 
                         local md = clientHumanoid.MoveDirection
                         local p = clientRoot.Position
                         
-                        part.CFrame = cfrNew(p-(md), p)
+                        part.CFrame = CFrame.new(p-(md), p)
                         part.Velocity = md * (dt * speed * 1200)
                         
                         clientHumanoid:ChangeState(8)
                     end)
                 elseif (mode == 'WalkSpeed') then
-                    dnec(clientHumanoid:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
+                    disablecons(clientHumanoid:GetPropertyChangedSignal('WalkSpeed'), 'hum_walk')
                     
                     scon = servRun.Heartbeat:Connect(function() 
                         clientHumanoid.WalkSpeed = speed
@@ -6273,14 +6198,14 @@ do
                 if (scon) then scon:Disconnect() scon = nil end
                 if (part) then part:Destroy() end
                 
-                enec('hum_changed')
-                enec('hum_jump')
+                enablecons('hum_changed')
+                enablecons('hum_jump')
                 
-                enec('hum_walk')
+                enablecons('hum_walk')
                 
-                enec('rp_changed')
-                enec('rp_cframe')
-                enec('rp_velocity')
+                enablecons('rp_changed')
+                enablecons('rp_cframe')
+                enablecons('rp_velocity')
                 
                 
             end)
@@ -6309,9 +6234,9 @@ do
                 velc = servRun.Stepped:Connect(function() 
                     local v = clientRoot.Velocity
                     clientRoot.Velocity = vec3(
-                        mathClamp(v.X,-x,x),
-                        mathClamp(v.Y,-y,y),
-                        mathClamp(v.Z,-z,z)
+                        math.clamp(v.X,-x,x),
+                        math.clamp(v.Y,-y,y),
+                        math.clamp(v.Z,-z,z)
                     )
                 end)
             end)
@@ -6343,7 +6268,7 @@ do
         local r_esp         = m_render:addMod('ESP')
         local r_freecam     = m_render:addMod('Freecam')
         local r_fullbright  = m_render:addMod('Fullbright')
-        local r_keystrokes  = m_render:addMod('Keystrokes'..betatxt)
+        local r_keystrokes  = m_render:addMod('Keystrokes')
         --local r_radar       = m_render:addMod('Radar'..betatxt)
         local r_ugpu        = m_render:addMod('Unfocused GPU')
         local r_zoom        = m_render:addMod('Zoom')
@@ -6426,13 +6351,13 @@ do
                     OuterRing.Color = colNew(0,0,0)
                     OuterRing.NumSides = 20
                     OuterRing.Position = vpcen-vec2(Size/2,Size/2)
-                    OuterRing.Radius = 6
+                    OuterRing.Radius = 1
                     OuterRing.Thickness = 4
                     OuterRing.ZIndex = 50
                     
                     InnerRing.NumSides = 20
                     InnerRing.Position = OuterRing.Position
-                    InnerRing.Radius = 6
+                    InnerRing.Radius = 1
                     InnerRing.Thickness = 2
                     InnerRing.ZIndex = 50
                     
@@ -6513,8 +6438,8 @@ do
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
-                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        local c = RGBCOLOR
+                        v = v + ((3 + (Accuracy and clientRoot and math.clamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local _ = sin(t)
                         local t2 = _*Speed
@@ -6530,8 +6455,8 @@ do
                         InnerRing.Position = p
                         OuterRing.Position = p
                         
-                        InnerRing.Radius = size
-                        OuterRing.Radius = size
+                        InnerRing.Radius = size / 5
+                        OuterRing.Radius = size / 5
                     
                         local size0 = size*v
                         local size1 = size*(v-1) 
@@ -6580,9 +6505,9 @@ do
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
+                        local c = RGBCOLOR
                         
-                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        v = v + ((3 + (Accuracy and clientRoot and math.clamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local t2 = (t*Speed)%360
                         local _1 = vec2(sin(t2), cos(t2))
@@ -6597,8 +6522,8 @@ do
                         InnerRing.Position = p
                         OuterRing.Position = p
                         
-                        InnerRing.Radius = size
-                        OuterRing.Radius = size
+                        InnerRing.Radius = size / 5 
+                        OuterRing.Radius = size / 5 
                     
                         local size0 = size*v
                         local size1 = size*(v-1) 
@@ -6651,7 +6576,7 @@ do
                         
                         
                         local c = RGBCOLOR
-                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        v = v + ((3 + (Accuracy and clientRoot and math.clamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                         local _ = sin(t)
                         local __ = ((cos(t+1)-1))*Speed
@@ -6668,8 +6593,8 @@ do
                         InnerRing.Position = p
                         OuterRing.Position = p
                         
-                        InnerRing.Radius = size
-                        OuterRing.Radius = size
+                        InnerRing.Radius = size / 5 
+                        OuterRing.Radius = size / 5 
                     
                         local size0 = size*v
                         local size1 = size*(v-1) 
@@ -6721,8 +6646,8 @@ do
                         if stop then return end
                         t += dt
                         
-                        local c = RGBCOLOR--colHsv((t*0.02)%1,1,1)
-                        v = v + ((3 + (Accuracy and clientRoot and mathClamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
+                        local c = RGBCOLOR
+                        v = v + ((3 + (Accuracy and clientRoot and math.clamp(clientRoot.Velocity.Magnitude*AccuracyMult, 0, 25) or 0)) - v) * (dt*10)
                         
                     
                         size = Size+(sin(t))
@@ -6732,8 +6657,8 @@ do
                         InnerRing.Position = p
                         OuterRing.Position = p
                         
-                        InnerRing.Radius = size
-                        OuterRing.Radius = size
+                        InnerRing.Radius = size / 5 
+                        OuterRing.Radius = size / 5 
                     
                         local size0 = size*v
                         local size1 = size*(v-1) 
@@ -6795,28 +6720,12 @@ do
                 AimbotStatus = ''
             end)
             
-            --[[
-            local msgs = {
-                'wassup',
-                'hows it goin',
-                'happy '..(os.date('%A'):lower()),
-                'yooo wassup',
-                'status enabled'
-            }]]
             s_Status:Connect('Toggled',function(v)
                 Status=v;
                 local obj = objs[#objs]
                 
                 if (obj) then
                     obj.Visible = Status
-                    --[[
-                    local msg = msgs[mathRand(1, #msgs)]
-                    AimbotStatus = msg
-                    delay(1, function() 
-                        if (AimbotStatus == msg) then
-                            AimbotStatus = ''
-                        end
-                    end)]]
                 end
                 
             end)
@@ -6853,17 +6762,21 @@ do
             local ask = Enum.KeyCode.E-- keycode for ascension
             local dsk = Enum.KeyCode.Q-- keycode for descension
             
-            local fcampos = clientRoot and clientRoot.Position or vec3(0,0,0)        
+            local fcampos = clientRoot and clientRoot.Position or Vector3.zero    
             local speed = 30 -- speed 
             
             local cambased = true 
             camera:Enable()
             resetonenable:Enable()
             
-            ascend_h:Connect('HotkeySet',function(j)ask=j or 0;end)
-            descend_h:Connect('HotkeySet',function(k)dsk=k or 0;end)
+            ascend_h:Connect('HotkeySet',function(j)
+                ask=j or 0
+            end)
+            descend_h:Connect('HotkeySet',function(k)
+                dsk=k or 0
+            end)
             camera:Connect('Toggled',function(t)
-                cambased=t;
+                cambased = t
                 r_freecam:Reset()
             end)
             mode:Connect('Changed',function() 
@@ -6872,7 +6785,9 @@ do
             freezemode:Connect('Changed',function() 
                 r_freecam:Reset()
             end)
-            speedslider:Connect('Changed',function(v)speed=v;end)
+            speedslider:Connect('Changed',function(v)
+                speed = v
+            end)
             
             local stuckcon, stuckcf, oldwalk
             
@@ -6909,7 +6824,7 @@ do
                             local IsDownPressed = servInput:IsKeyDown(dsk)
                             local IsForwardPressed = servInput:IsKeyDown(119)
                             local IsBackwardPressed = servInput:IsKeyDown(115)
-                                                        
+                            
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
@@ -6919,10 +6834,9 @@ do
                                 (IsUpPressed and upp or nonep) + -- If up is pressed
                                 (IsDownPressed and downp or nonep) + -- If down is pressed
                                 
-                                (IsForwardPressed and vec3(0, normclv.Y, 0) or nonep) + -- If forward is pressed
+                                (IsForwardPressed and vec3(0, normclv.Y , 0) or nonep) + -- If forward is pressed
                                 (IsBackwardPressed and vec3(0, -normclv.Y, 0) or nonep) -- If backward is pressed
                             ) * Delta)
-                            
                             fcampos += Vector
                             
                             campart.Position = fcampos
@@ -6933,7 +6847,7 @@ do
                             -- Get what keys are pressed
                             local IsUpPressed = servInput:IsKeyDown(ask)
                             local IsDownPressed = servInput:IsKeyDown(dsk)
-                                                        
+                                   
                             -- Calc delta stuff
                             local Delta = dt * speed * 3
                             -- Get the final vector
@@ -7029,7 +6943,7 @@ do
                     clientCamera.CameraSubject = clientHumanoid
                     
                     if (cambased) then
-                        local thej = cfrNew(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
+                        local thej = CFrame.new(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
                         fcon = servRun.Heartbeat:Connect(function(dt) 
                             clientRoot.CFrame = thej
                             
@@ -7045,12 +6959,12 @@ do
                             fcampos -= upvec
                             fcampos -= cupvec
                             
-                            local normalized = cfrNew(fcampos):ToObjectSpace(thej)
+                            local normalized = CFrame.new(fcampos):ToObjectSpace(thej)
                             
                             clientHumanoid.CameraOffset = (normalized).Position
                         end)
                     else
-                        local thej = cfrNew(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
+                        local thej = CFrame.new(clientRoot.Position, clientRoot.Position + vec3(0, 0, 1))
                         fcon = servRun.Heartbeat:Connect(function(dt) 
                             clientRoot.CFrame = thej
                             
@@ -7063,7 +6977,7 @@ do
                             fcampos += movevec
                             fcampos -= upvec
                             
-                            local normalized = cfrNew(fcampos):ToObjectSpace(thej)
+                            local normalized = CFrame.new(fcampos):ToObjectSpace(thej)
                             
                             clientHumanoid.CameraOffset = (normalized).Position
                         end)
@@ -7083,8 +6997,8 @@ do
                 elseif (fmode == 'Stuck') then
                     
                     stuckcf = clientRoot.CFrame
-                    dnec(clientRoot.Changed, 'rp_changed')
-                    dnec(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
+                    disablecons(clientRoot.Changed, 'rp_changed')
+                    disablecons(clientRoot:GetPropertyChangedSignal('CFrame'), 'rp_cframe')
                     stuckcon = servRun.Heartbeat:Connect(function() 
                         clientRoot.CFrame = stuckcf
                     end)
@@ -7118,14 +7032,14 @@ do
                 if (stuckcon) then
                     stuckcon:Disconnect()
                     stuckcon = nil
-                    enec('rp_changed')
-                    enec('rp_cframe')
+                    enablecons('rp_changed')
+                    enablecons('rp_cframe')
                 end
             end)
             
             gotocam:Connect('Clicked',function() 
                 local pos = campart.Position
-                local new = cfrNew(pos, pos+clientRoot.CFrame.LookVector)
+                local new = CFrame.new(pos, pos+clientRoot.CFrame.LookVector)
                 stuckcf = new
                 clientRoot.CFrame = new
             end)
@@ -8244,6 +8158,7 @@ do
             s_mode:addOption('Bright'):setTooltip('Insanely bright')
             s_mode:addOption('Nofog'):setTooltip('Only affects fog')
             s_mode:addOption('Soft'):setTooltip('Instead of turning everything white, it turns everything gray. Meant for games with bloom effects')
+            s_mode:addOption('Bypass'):setTooltip('Soft, but it uses a special bypass setting that will work on more games')
             
             s_looped:Connect('Toggled',function()r_fullbright:Reset()end)
             s_mode:Connect('Changed',function()r_fullbright:Reset()end)
@@ -8262,7 +8177,7 @@ do
                 local mode = s_mode:GetSelection()
                 
                 local lighting = game:GetService('Lighting')
-                dnec(lighting.Changed, 'li_changed')
+                disablecons(lighting.Changed, 'li_changed')
                 
                 oldambient     = lighting.Ambient        
                 oldoutambient  = lighting.OutdoorAmbient 
@@ -8326,9 +8241,26 @@ do
                         lighting.FogStart = 9e9
                     end
                     
-                    if (loop) then
+                    if ( loop ) then
                         servRun:BindToRenderStep('RL-Fullbright',9999,fb) 
                         steppedcon = servRun.Stepped:Connect(fb)
+                    else
+                        fb()   
+                    end
+                elseif ( mode == 'Bypass' ) then
+                    local c1 = colNew(0.6, 0.6, 0.6)
+                    local function fb() 
+                        twn(lighting, {
+                            Ambient = c1,
+                            OutdoorAmbient = c1,
+                            Brightness = 4,
+                            FogEnd = 9e9,
+                            FogStart = 9e9
+                        }, true)
+                    end
+                    
+                    if ( loop ) then
+                        steppedcon = servRun.Heartbeat:Connect(fb)
                     else
                         fb()   
                     end
@@ -8337,17 +8269,22 @@ do
             
             r_fullbright:Connect('Disabled',function() 
                 servRun:UnbindFromRenderStep('RL-Fullbright')
-                if (steppedcon) then steppedcon:Disconnect() steppedcon=nil;end
+                if ( steppedcon ) then 
+                    steppedcon:Disconnect() 
+                    steppedcon = nil
+                end
                 
                 local lighting = game:GetService('Lighting')
-                lighting.Ambient         = oldambient
-                lighting.OutdoorAmbient  = oldoutambient
-                lighting.Brightness      = oldbrightness
+                twn(lighting, {
+                    Ambient = oldambient,
+                    OutdoorAmbient = oldoutambient,
+                    Brightness = oldbrightness,
+                    FogEnd = oldfogend,
+                    FogStart = oldfogstart
+                })
                 lighting.GlobalShadows   = oldshadows
-                lighting.FogEnd          = oldfogend
-                lighting.FogStart        = oldfogstart
                 
-                enec('li_changed')
+                enablecons('li_changed')
             end)
             
         end
@@ -8516,7 +8453,7 @@ do
             
             local oldfov = clientCamera and clientCamera.FieldOfView or 70
             r_zoom:Connect('Enabled',function() 
-                dnec(clientCamera:GetPropertyChangedSignal('FieldOfView'),'cam_fov')
+                disablecons(clientCamera:GetPropertyChangedSignal('FieldOfView'),'cam_fov')
                 
                 local v = 70 - (s_Amount:getValue()*.5)
                 
@@ -8572,7 +8509,7 @@ do
                 servRun:UnbindFromRenderStep('RL-FOV')
                 
                 clientCamera.FieldOfView = oldfov
-                enec('cam_fov')
+                enablecons('cam_fov')
                 
                 if (KeyCon) then KeyCon:Disconnect() KeyCon = nil end
             end)
@@ -8675,11 +8612,11 @@ do
         end
         -- modlist
         do 
-            local corner = u_modlist:addDropdown('Corner'):setTooltip('The corner the modlist is in')
+            --[[local corner = u_modlist:addDropdown('Corner'):setTooltip('The corner the modlist is in')
             corner:addOption('Top left'):setTooltip('Sets the modlist to be at the top left')
             corner:addOption('Top right'):setTooltip('Sets the modlist to be at the top right')
             corner:addOption('Bottom left'):setTooltip('Sets the modlist to be at the bottom left; default option'):Select()
-            corner:addOption('Bottom right'):setTooltip('Sets the modlist to be at the bottom right')
+            corner:addOption('Bottom right'):setTooltip('Sets the modlist to be at the bottom right')]]
             
             
             local objs = ui:manageml()
@@ -8687,15 +8624,22 @@ do
             local uilist = objs[2]
             local uititle = objs[3]
             
-            corner:Connect('Changed',function() 
+            --[[corner:Connect('Changed',function() 
                 u_modlist:Reset()
-            end)
+            end)]]
             
             u_modlist:Connect('Enabled',function() 
-                local s = corner:GetSelection()
+                --local s = corner:GetSelection()
                 
+                uiframe.Position = dimScale(0, 1)
+                uiframe.AnchorPoint = vec2(0, 1)
                 
-                if (s == 'Top left') then
+                uilist.HorizontalAlignment = 'Left'
+                uilist.VerticalAlignment = 'Bottom'
+                
+                ui:manageml(-100, 10, 'Left', 'PaddingLeft')
+                
+                --[[if (s == 'Top left') then
                     uiframe.Position = dimScale(0, 0)
                     uiframe.AnchorPoint = vec2(0, 0)
                     
@@ -8728,7 +8672,7 @@ do
                     uilist.VerticalAlignment = 'Bottom'
                     
                     ui:manageml(-100, 10, 'Right', 'PaddingRight')
-                end
+                end]]
                 
                 
                 uiframe.Visible = true
@@ -8752,7 +8696,7 @@ do
             local themedata 
             
             s_theme:Connect('Changed', function(o) 
-                spawn(function()
+                task.spawn(function()
                     themedata = nil
                                 
                     local worked = pcall(function()
@@ -8774,7 +8718,7 @@ do
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()
             end)
             
-            spawn(function()
+            task.spawn(function()
                 local themes = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/themelist.txt')
                 themes = themes:split(']')
                 for i = 1, #themes do
@@ -8818,10 +8762,10 @@ do
                     kicktime = tick()
                     
                     -- Notify
-                    wait(1)
+                    task.wait(1)
                     servGui:ClearError()
                     ui:Notify('Auto Hop','Auto hopping in a few seconds, hang tight', 5, 'high')
-                    wait(1)
+                    task.wait(1)
                     do 
                         s_hop:Click()
                         
@@ -8851,10 +8795,10 @@ do
                     kicktime = tick()
                     
                     -- Notify
-                    wait(1)
+                    task.wait(1)
                     servGui:ClearError()
                     ui:Notify('Auto Reconnect','Auto reconnecting in a few seconds, hang tight', 5, 'high')
-                    wait(1)
+                    task.wait(1)
                     
                     -- Player kicked, rejoin
                     if (#servPlayers:GetPlayers() <= 1) then
@@ -8875,7 +8819,7 @@ do
         -- Server hop
         do 
             s_hop:Connect('Clicked',function() 
-                spawn(function()
+                task.spawn(function()
                     
                     local CurPlaceId = game.PlaceId
                     local CurJobId = game.JobId
@@ -8898,9 +8842,9 @@ do
                             for i = 1, 200 do 
                                 if (j > 25) then break end
                                 
-                                local Server = Servers[mathRand(1,#Servers)]
+                                local Server = Servers[math.random(1,#Servers)]
                                 if (Server.playing == Server.maxPlayers or Server.id == CurJobId) then continue end
-                                tabInsert(TargetServers, Server.id)
+                                table.insert(TargetServers, Server.id)
                                 j += 1
                             end
                             
@@ -8909,7 +8853,7 @@ do
                                 ui:Notify('Server hop','Couldn\'t find a valid server; you may already be in the smallest one. Try again later',5, 'low')
                                 
                             else
-                                local serv = TargetServers[mathRand(1,#TargetServers)]
+                                local serv = TargetServers[math.random(1,#TargetServers)]
                                 servTeleport:TeleportToPlaceInstance(CurPlaceId, serv, clientPlayer)
                                 ui:Notify('Server hop','Teleporting to a new server, wait a sec',5, 'high')
                             end
@@ -8922,9 +8866,7 @@ do
         -- Private server
         do 
             s_priv:Connect('Clicked',function() 
-                spawn(function()
-                    print(pcall(function()
-                    
+                task.spawn(function()                    
                     local sc = ui:GetScreen()
                     local p_Backframe
                     local p_Header
@@ -9066,7 +9008,7 @@ do
                                     local CurrentPlaying = GameStats['data'][1]['playing']
                                     local MaxServers = GameStats['data'][1]['maxPlayers']
                                     
-                                    EstimatedServerCount = mathFloor(((CurrentPlaying / MaxServers)*1.01)+1)
+                                    EstimatedServerCount = math.floor(((CurrentPlaying / MaxServers)*1.01)+1)
                                     --print(EstimatedServerCount)
                                 else
                                     Loop = false
@@ -9095,7 +9037,7 @@ do
                         do
                             local a = 0
                             while Loop do
-                                wait(0.1 + (mathRand(10, 30)*0.01))
+                                task.wait(0.1 + (math.random(10, 30)*0.01))
                                 -- Get list of servers via api
                                 local CurrentData
                                 local OldData
@@ -9117,7 +9059,7 @@ do
                                     end
                                 end
                                 -- Wait to update the status
-                                --wait()
+                                --task.wait()
                                 
                                 -- Do page cursor checks
                                 do
@@ -9133,15 +9075,15 @@ do
                                         p_Progress2.Size = dimScale(1, 1)
                                         -- There are no more servers (on the last page), so handle stuff                                 
                                         -- Get the servers for this page and make a table that will hold a few matching servers
-                                        wait(0.3)
+                                        task.wait(0.3)
                                         writefile('thegggj.json',OldData)
                                         local Servers = CurrentData.data
-                                        for i,v in ipairs(Servers) do print(v.playing,v.maxPlayers) end
+                                        -- for i,v in ipairs(Servers) do print(v.playing,v.maxPlayers) end
                                         local TargetServers = {}
                                         
                                         -- Save the 40 smallest servers
                                         for i = 0, 39 do 
-                                            tabInsert(TargetServers, Servers[#Servers-i])
+                                            table.insert(TargetServers, Servers[#Servers-i])
                                         end
                                         
                                         -- Store a success variable (used to identify if it couldn't teleport to / find a server)
@@ -9152,10 +9094,10 @@ do
                                             -- Update text
                                             p_Status.Text = ('Checking for a valid server (%s out of 100 tries)'):format(i)
                                             -- Yield to display text and progress
-                                            wait()
+                                            task.wait()
                                             
                                             -- Get a random server (this is why there are 25 attempts)
-                                            local Server = TargetServers[mathRand(1, #TargetServers)]
+                                            local Server = TargetServers[math.random(1, #TargetServers)]
                                             if (Server.id == CurJobId or Server.playing == Server.maxPlayers) then
                                                 -- If the chosen server is the current one or if its full then continue
                                                 continue
@@ -9163,7 +9105,7 @@ do
                                                 -- Otherwise teleport to this server
                                                 p_Status.Text = 'Got a matching server! Teleporting...'
                                                 Worked = true
-                                                wait(0.5)
+                                                task.wait(0.5)
                                                 servTeleport:TeleportToPlaceInstance(CurPlaceId, Server.id, clientPlayer)
                                                 Loop = false
                                                 break
@@ -9181,17 +9123,16 @@ do
                         end
                     end
                     -- Out of loop, wait to hide the window
-                    wait(3)
+                    task.wait(3)
                     
                     p_Header.Text = ''
                     p_Status.Text = ''
                     twn(p_Progress2, {Size = dimScale(0, 1)}, true)
-                    wait(0.1)
+                    task.wait(0.1)
                     twn(p_Backframe, {Size = dimScale(0, 0)}, true).Completed:Wait()
                     p_Backframe:Destroy()
                     
                     -- Done
-                end))
                 end)
             end)
         end
@@ -9199,12 +9140,12 @@ do
         -- Rejoin
         do
             s_rejoin:Connect('Clicked',function() 
-                if #servPlayers:GetPlayers() <= 1 then
+                if ( #servPlayers:GetPlayers() <= 1 ) then
                     clientPlayer:Kick('\nRejoining, one second...')
-                    wait(0.3)
-                    servTeleport:Teleport(game.PlaceId, clientPlayer)
+                    task.wait(0.3)
+                    servTeleport:Teleport(game.PlaceId)
                 else
-                    servTeleport:TeleportToPlaceInstance(game.PlaceId, game.JobId, clientPlayer)
+                    servTeleport:TeleportToPlaceInstance(game.PlaceId, game.JobId)
                 end
             end)
         end
@@ -9226,13 +9167,13 @@ _G.RLLOADED = true
 
 if (game.PlaceId == 292439477 or game.PlaceId == 3233893879) then
     ui:Notify('Warning','Redline is not designed for games with custom character systems.',5,'warn',true)
-    wait(3)
+    task.wait(3)
     ui:Notify('Warning','It may not function properly, or even function at all.',5,'warn',true)
-    wait(3) 
+    task.wait(3) 
 end
 
 do
-    wait(1)
+    task.wait(1)
     local sound = instNew('Sound')
     sound.SoundId = 'rbxassetid://9009663963'--'rbxassetid://8781250986'
     sound.Volume = 1
@@ -9271,66 +9212,66 @@ do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tabInsert(lines, {_, center + vec2(-200, 0), 0})
+                table.insert(lines, {_, center + vec2(-200, 0), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tabInsert(lines, {_, center + vec2(-66, 45), 0})
+                table.insert(lines, {_, center + vec2(-66, 45), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tabInsert(lines, {_, center + vec2(66, 45), 0})
+                table.insert(lines, {_, center + vec2(66, 45), 0})
             end
             do
                 local _ = dn()
                 _.From = up
                 _.To = up
-                tabInsert(lines, {_, center + vec2(200, 0), 0})
+                table.insert(lines, {_, center + vec2(200, 0), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-200, 0)
                 _.To = _.From
-                tabInsert(lines, {_, center + vec2(0, 66), 0})
+                table.insert(lines, {_, center + vec2(0, 66), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(200, 0)
                 _.To = _.From
-                tabInsert(lines, {_, center + vec2(0, 66), 0})
+                table.insert(lines, {_, center + vec2(0, 66), 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-200, 0)
                 _.To = _.From
-                tabInsert(lines, {_, down, 0})
+                table.insert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(-66, 44)
                 _.To = _.From
-                tabInsert(lines, {_, down, 0})
+                table.insert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(66, 44)
                 _.To = _.From
-                tabInsert(lines, {_, down, 0})
+                table.insert(lines, {_, down, 0})
             end
             do
                 local _ = dn()
                 _.From = center + vec2(200, 0)
                 _.To = _.From
-                tabInsert(lines, {_, down, 0})
+                table.insert(lines, {_, down, 0})
             end
         end
-        wait(1)
+        task.wait(1)
         SizeAnimation:Disconnect()
-        wait(1)
+        task.wait(1)
         
         local y = 0
         PositionAnim = servRun.RenderStepped:Connect(function(dt) 
@@ -9346,7 +9287,7 @@ do
                 obj.Transparency -= dt*2
             end
         end)
-        wait(0.5)
+        task.wait(0.5)
         PositionAnim:Disconnect()
         for i,v in ipairs(lines) do 
             v[1]:Remove()
@@ -9420,9 +9361,9 @@ else
     ui:Notify(('Redline %s loaded'):format(REDLINEVER), ('Press RightShift to open up the menu'), 7, 'high')
 end
 
-
-local pg do 
-    pg = (typeof(syn) == 'table' and syn.queue_on_teleport) or 
+-- Teleport queueing (im like 99% confident this doesnt work anymore)
+local tpQueue do 
+    tpQueue = (typeof(syn) == 'table' and syn.queue_on_teleport) or 
         (typeof(fluxus) == 'table' and fluxus.queue_on_teleport) or 
         (queue_on_teleport)
 end 
@@ -9434,11 +9375,23 @@ else
     writefile('REDLINE/Queued.txt', 'true')
 end
 
-if (pg and _G.RLQUEUED == false) then
-    pg[[if(readfile('REDLINE/Queued.txt') == 'true')then loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()end]]
+if (tpQueue and _G.RLQUEUED == false) then
+    tpQueue[[if(readfile('REDLINE/Queued.txt') == 'true')then loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()end]]
     writefile('REDLINE/Queued.txt', 'true')
     _G.RLQUEUED = true
 end
 _G.RLNOTIF = function(...) 
     return ui:Notify(...)
 end
+
+--[[ Config checks
+do 
+    
+    if ( isfile('REDLINE/DefaultConfig.json') ) then
+        readfile('REDLINE/Config.json') 
+        
+    else
+        --saveConfig('default.json')
+    end
+end
+]]
