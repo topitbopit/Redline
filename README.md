@@ -3,8 +3,8 @@
 <!-- beta notice -->
 ## Notice  
 **This is in insanely early beta! Only like 14 things actually work.**  
-**Want to join the discord?**
-Probably not but [here it is anyway](https://discord.gg/TyKZFQtDvw)
+**Want to join the discord?**  
+[Here\'s the link](https://discord.gg/TyKZFQtDvw)  
 
 ## Loadstring  
 ```lua
@@ -17,7 +17,7 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 - **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
 - **It's extremely optimized.** Each module has been designed to be super quick.  
 - **It's built from scratch.** Everything you see in Redline was made from the ground up.  
-- **It's secure.** Redline bypasses many (un?)common detections other scripts might not.  
+- **It's secure.** Redline bypasses certain detections other scripts might not.  
 - **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
 
 ## Screenshots  
@@ -34,6 +34,7 @@ This is a planned feature for the rewrite.
 
 - **Why won't Redline execute?**  
 Make sure you pressed RightShift and there aren't any errors in console.  
+If you need help, join the discord for support.  
 
 - **Can I make my own fork / contribute?**  
 Yes, but I'd wait for the rewrite as it is way more cleaner and in a more modular-like format.  
@@ -42,12 +43,25 @@ Yes, but I'd wait for the rewrite as it is way more cleaner and in a more modula
 Hi  
   
 ## Supported executors  
-- All of them  
+- *Probably* all of them  
 
 ## Changelog  
-Current version: 0.6.6  
+Current version: 0.7.0   
 Dates will follow MM/DD/YYYY  
 
+Version 0.7.0 (12/14/2022)  
++ Added a new mode to Blink, hopefully it actually works now  
++ Added bypass setting to Fullbright  
+* Changed a few runservice connections from RenderStepped to Heartbeat (improves perf)  
+* Changed the Crosshair module's ring size since it looked retarded  
+* Cleaned up some awful formatting  
+* Fixed module buttons + textboxes being misaligned  
+* Refactored the Hitboxes module + added new Hitbox Part setting  
+- Removed Better reset since it's completely useless except for a bit of debugging  
+- Removed a bunch of micro-opps (and extra services) as they were completely useless  
+- Removed the 'Corner' setting on the Modlist module since it's broken (not sure what happened but this might be added back later)  
+* Switched from pcall to task.spawn in the ui library (took long enough)  
+ 
 Version 0.6.6 (9/19/2022)  
 - Rewrote the entirety of the ESP  
 - Added visibility check, health bars, and a distance display to the ESP  
