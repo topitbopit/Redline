@@ -3,6 +3,7 @@
 <!-- beta notice -->
 ## Notice  
 **This is in insanely early beta! Only like 14 things actually work.**  
+
 **Want to join the discord?**  
 [Here\'s the link](https://discord.gg/TyKZFQtDvw)  
 
@@ -15,7 +16,7 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 
 ## Why use Redline?  
 - **There's tons of options.** Every module has tons of configuration, giving you a completely unique and customizable experience.  
-- **It's extremely optimized.** Each module has been designed to be super quick.  
+- **It's decently optimized.** Each module has mostly been designed to be super quick.  
 - **It's built from scratch.** Everything you see in Redline was made from the ground up.  
 - **It's secure.** Redline bypasses certain detections other scripts might not.  
 - **It has too many features.** Most scripts just have aimbot, esp, and flight if you're lucky. Redline has everything.  
@@ -46,8 +47,26 @@ Hi
 - *Probably* all of them  
 
 ## Changelog  
-Current version: 0.7.0   
+Current version: 0.7.1  
 Dates will follow MM/DD/YYYY  
+
+Version 0.7.1 (12/27/2022)  
+* Aimbot prediction slider setting now has more precision  
+* Changed a few tooltips to make more sense  
+* Cleaned up the intro animation code a bit  
+* Cleaned up the modlist code a tiny bit more (the whole thing will be re-written soon  
+* Fixed Speed [Part] not working  
+* Fixed possible issue with Flashback not disabling properly  
+* Fixed some modules not working (i broke the connection disabler 🤑)  
+* Fixed the "Safe minimize" module not disabling properly  
+* Fixed the Float module completely not working  
+* Moved notrip module from movement to player  
+* Renamed Float's modes to make more sense  
+* Rewrote the Notrip and Flashback modules  
++ Added warning message for StreamingEnabled games - not sure how i haven't added one yet  
+- Fully removed the "Better reset" module  
+- Reverted the previous update's (unlisted?) smoothness change  
+
 
 Version 0.7.0 (12/14/2022)  
 + Added a new mode to Blink, hopefully it actually works now  
