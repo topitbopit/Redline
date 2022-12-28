@@ -23,7 +23,7 @@
 -- join discord for updates https://discord.gg/TyKZFQtDvw
 
 if ( _G.RLLOADED and _G.RLNOTIF ) then
-    _G.RLNOTIF('Oops','Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
+    _G.RLNOTIF('Oops', 'Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
     return
 end
 
@@ -36,7 +36,7 @@ end
 end]]
 
 
-local REDLINEVER = 'v0.7.0'
+local REDLINEVER = 'v0.7.1'
 
 if not game:IsLoaded() then game.Loaded:Wait() end
 
@@ -187,7 +187,7 @@ local RLTHEMEDATA, RLTHEMEFONT do
     end
 end
 
--- { UI functions / variables } --
+--- random utility shit 
 local gradient,twn,ctwn,randstr,stroke,round,uierror
 do
     do
@@ -267,7 +267,9 @@ end
 
 local W_WindowOpen = false
 local RGBCOLOR
--- { UI } --
+
+
+--- ui 
 local ui = {} do 
     
     local ui_Hotkeys = {}
@@ -506,18 +508,22 @@ local ui = {} do
         
         stroke(w_Tooltip, 'Border')
         
-        local __ = instNew('UIPadding')
-        __.PaddingLeft = dimOffset(5, 0).X
-        --__.PaddingTop = dimOffset(0, 5).Y
-        __.Parent = w_Tooltip
+        local tooltipPadding = instNew('UIPadding')
+        tooltipPadding.PaddingLeft = dimOffset(5, 0).X
+        tooltipPadding.Parent = w_Tooltip
         
         w_Tooltip:GetPropertyChangedSignal('Text'):Connect(function() 
-            w_Tooltip.Size = dimOffset(175,25)
-            local n = dimOffset(0,5)
+            w_Tooltip.Size = dimOffset(175, 25)
+            local n = dimOffset(0, 5)
+            
             for i = 1, 25 do 
                 w_Tooltip.Size += n
-                if (w_Tooltip.TextFits) then break end
+                
+                if ( w_Tooltip.TextFits ) then 
+                    break 
+                end
             end
+            
             w_Tooltip.Size += n
         end)
         
@@ -576,11 +582,11 @@ local ui = {} do
     end)
     
     
-    local ModListEnable,ModListDisable,ModListInit,ModListModify do 
+    local ModListEnable, ModListDisable, ModListInit, ModListModify do 
         local mods_instance = {}
         
         
-        ModListEnable = function(name) 
+        function ModListEnable(name) 
             local b = mods_instance[name]
             
             b.TextXAlignment = ModlistPadding[3]
@@ -589,18 +595,18 @@ local ui = {} do
             twn(b, {Size = dimNew(1, 0, 0, 24), TextTransparency = 0, TextStrokeTransparency = 0},true)
         end
         
-        ModListDisable = function(name)
+        function ModListDisable(name)
             local b = mods_instance[name]
             
             twn(b.P, {[ModlistPadding[4]] = ModlistPadding[1]},true)
             twn(b, {Size = dimNew(0, 0, 0, 0), TextTransparency = 1, TextStrokeTransparency = 1},true)
         end
         
-        ModListModify = function(name, new) 
+        function ModListModify(name, new) 
             mods_instance[name].Text = new
         end
         
-        ModListInit = function(name) 
+        function ModListInit(name) 
             local label = instNew('TextLabel')
             label.Size = dimNew(0, 0, 0, 0)
             label.BackgroundTransparency = 1
@@ -2074,7 +2080,7 @@ local ui = {} do
                 StepFormat = (
                     '%.'..
                     (
-                        (('%.0e'):format(args['step'])):match('e%-0(%d)')
+                        (('%.0e'):format(args['step'])):match('e%-0(%d)') -- this is insanely awful but idc 🤑🤑🤑🤑
                     )..
                     'f'
                 )
@@ -3082,13 +3088,13 @@ local ui = {} do
                 end 
             end
         end
-    end,false,999999,Enum.KeyCode.RightShift)
+    end, false, 999999, Enum.KeyCode.RightShift)
     
     servContext:BindActionAtPriority('RL-Destroy',function(_,uis) 
         if (uis.Value == 0) then
             ui:Destroy()
         end
-    end,false,999999,Enum.KeyCode.End)
+    end, false, 999999, Enum.KeyCode.End)
     -- Auto collection
     task.delay(5, function() 
         if (ui_Menus ~= nil and #ui_Menus == 0) then
@@ -3113,8 +3119,8 @@ local function disablecons(signal, id)
         local confunc = cn.Function
                 
         if ( typeof(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc) ) then
-            table.insert(disabledSignals[id], connection)
-            connection:Disable()
+            table.insert(disabledSignals[id], cn)
+            cn:Disable()
         end
     end
 end
@@ -3130,7 +3136,7 @@ local function enablecons(id)
         local confunc = cn.Function
         
         if (typeof(confunc) == 'function' and islclosure(confunc) and not isexecclosure(confunc) ) then
-            connection:Enable()
+            cn:Enable()
         end
     end
     
@@ -3476,8 +3482,8 @@ do
             
             local s_DistanceSlider = c_aimbot:addSlider('Distance',{min=100,max=10000,cur=2000}):setTooltip('Targets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
             local s_FovSlider = c_aimbot:addSlider('FOV',{min=50,max=500,cur=150,step=1}):setTooltip('The size of the FOV. Requires <b>FOV check</b> to be enabled')
-            local s_PredictionSlider = c_aimbot:addSlider('Prediction',{min=0.1,max=1,cur=0,step=0.1}):setTooltip('How far prediction looks ahead. Requires <b>Prediction</b> to be enabled')
-            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0.1,max=0.9,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
+            local s_PredictionSlider = c_aimbot:addSlider('Prediction',{min=0,max=1,cur=0,step=0.05}):setTooltip('How far prediction looks ahead. Requires <b>Prediction</b> to be enabled')
+            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0,max=1,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
             local s_VerticalOffset = c_aimbot:addSlider('Y Offset (Studs)',{min=-2,max=2,step=-0.1,cur=0}):setTooltip('Optional Y offset. <b>Works in studs</b>')
             --local s_VerticalPxOffset = c_aimbot:addSlider('Y Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional Y offset. <b>Works in pixels</b>')
             --local s_HorizontalOffset = c_aimbot:addSlider('X Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional X offset. <b>Works in pixels</b>')
@@ -4067,12 +4073,12 @@ do
         local p_antiafk     = m_player:addMod('Anti-AFK')
         local p_anticrash   = m_player:addMod('Anti-crash')
         local p_antifling   = m_player:addMod('Anti-fling')
-        local p_antiwarp    = m_player:addMod('Anti-warp')
         local p_antiplayer  = m_player:addMod('Anti-player')
+        local p_antiwarp    = m_player:addMod('Anti-warp')
         local p_autoclick   = m_player:addMod('Auto clicker')
-        --local p_brespawn    = m_player:addMod('Better reset', 'Toggle')
         local p_flag        = m_player:addMod('Fakelag')
         local p_flashback   = m_player:addMod('Flashback')
+        local p_notrip      = m_player:addMod('Notrip')
         local p_safemin     = m_player:addMod('Safe minimize')
         local p_waypoints   = m_player:addMod('Waypoints')
         
@@ -4676,34 +4682,6 @@ do
                 end
             end)
         end 
-        --[[ Better reset
-        do 
-            local resp_con
-            local qdie_con
-            p_brespawn:Connect('Enabled', function() 
-                local function bind(h) 
-                    qdie_con = h.Died:Connect(function() 
-                        h:Destroy()
-                    end)
-                end
-                
-                bind(clientHumanoid)
-                resp_con = clientPlayer.CharacterAdded:Connect(function(c) 
-                    local h = c:WaitForChild('Humanoid', 0.5)
-                    if (h) then
-                        bind(h) 
-                    end
-                end)
-                
-                if (clientHumanoid.Health == 0) then
-                    clientHumanoid:Destroy()
-                end
-            end)
-            p_brespawn:Connect('Disabled',function() 
-                resp_con:Disconnect()
-                qdie_con:Disconnect()
-            end)
-        end]]
         -- Fake lag
         do 
             local s_Method = p_flag:addDropdown('Method', true)
@@ -4803,34 +4781,75 @@ do
         end
         -- Flashback
         do 
-            local flash_delay = p_flashback:addSlider('Delay', {min=0,max=5,cur=0,step=0.1},true)
-            flash_delay:setTooltip('How long to wait before teleporting you back')
+            local s_flashDelay = p_flashback:addSlider('Delay', { min = 0,max = 5,cur = 0,step = 0.1}, true)
+            s_flashDelay:setTooltip('How long to wait before teleporting you back')
             
-            local fb_con
-            local resp_con
+            local v_flashDelay = s_flashDelay:getValue()
+            
+            s_flashDelay:Connect('Changed', function(value) 
+                v_flashDelay = value
+            end)
+            
+            local respawnCn
             
             p_flashback:Connect('Enabled', function() 
+                local respawnPos = clientRoot and clientRoot.CFrame
                 
-                local pos = clientRoot and clientRoot.CFrame
+                local function teleportFunc() -- microoptimizations 🤑
+                    clientRoot.CFrame = respawnPos 
+                end
                 
-                local function bind(h) 
-                    h.Died:Connect(function() 
-                        pos = clientRoot.CFrame
+                local function bind(humanoid) 
+                    humanoid.Died:Connect(function() 
+                        if ( not clientRoot ) then -- ????
+                            return
+                        end
+                        respawnPos = clientRoot.CFrame
                         clientPlayer.CharacterAdded:Wait()
-                        task.delay(flash_delay:getValue(), function() clientRoot.CFrame = pos end)
+                        
+                        task.delay(v_flashDelay, teleportFunc)
                     end)
                 end
                 
-                resp_con = clientPlayer.CharacterAdded:Connect(function() 
+                respawnCn = clientPlayer.CharacterAdded:Connect(function() 
                     task.wait(0.03)
                     bind(clientHumanoid)
                 end)
                 
                 bind(clientHumanoid)
             end)
+            
             p_flashback:Connect('Disabled', function() 
-                fb_con:Disconnect()
-                resp_con:Disconnect()
+                respawnCn:Disconnect()
+            end)
+        end
+        -- Notrip
+        do 
+            local respawnCn
+            
+            p_notrip:Connect('Enabled', function()
+                local function hook(h) 
+                    h:SetStateEnabled(0, false)
+                    h:SetStateEnabled(1, false)
+                    h:SetStateEnabled(16, false)
+                end
+                if ( clientHumanoid ) then
+                    hook(clientHumanoid)
+                end
+                
+                respawnCn = clientPlayer.CharacterAdded:Connect(function(c) 
+                    local hum = c:WaitForChild('Humanoid', 5)
+                    hook(hum)
+                end)
+            end)
+            p_notrip:Connect('Disabled',function() 
+                respawnCn:Disconnect()
+                
+                if ( clientHumanoid ) then
+                    clientHumanoid:SetStateEnabled(0, true)
+                    clientHumanoid:SetStateEnabled(1, true)
+                    clientHumanoid:SetStateEnabled(16, true) 
+                end
             end)
         end
         -- Safe min
@@ -4839,7 +4858,7 @@ do
             s_DetectMode:addOption('Default'):setTooltip('Uses UserInputService to detect window minimizing. Some scripts may mess with this event!'):Select()
             s_DetectMode:addOption('Backup'):setTooltip('Uses isrbxactive to detect window minimizing. May not be compatible with every exploit')
             
-            s_DetectMode:Connect('Changed',function()
+            s_DetectMode:Connect('Changed', function()
                 p_safemin:Reset()
             end)
             
@@ -4859,14 +4878,14 @@ do
                         focused = false
                     end)
                     
-                    con = servRun.Heartbeat:Connect(function() 
+                    freezecon = servRun.Heartbeat:Connect(function() 
                         clientRoot.Anchored = false
                         if (not focused) then 
                             clientRoot.Anchored = true
                         end
                     end)
                 elseif (mode == 'Backup') then 
-                    con = servRun.Heartbeat:Connect(function() 
+                    freezecon = servRun.Heartbeat:Connect(function() 
                         clientRoot.Anchored = false
                         if (not isrbxactive()) then 
                             clientRoot.Anchored = true
@@ -5041,19 +5060,19 @@ do
             gotowp:setTooltip('Teleports you to the waypoint matching the name you type in')
         end
         
-        --p_radar:setTooltip('Radar that displays where other players are')
         p_animspeed:setTooltip('Increases the speed of your character animations. May mess with game logic')
         p_antiafk:setTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
         p_anticrash:setTooltip('Prevents game scripts from while true do end\'ing you. Lets you bypass some clientside anticheats. <i>Doesn\'t work for certain uncommon methods</i>')
         p_antifling:setTooltip('Sorta scuffed anti-fling. Only works on players, not other things like NPCs or in game objects / parts.')
-        p_antiwarp:setTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
         p_antiplayer:setTooltip('Shows text above players that are within a certain distance. Also has the option to kick you if someone is close enough.')
-        p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 2160 CPS (144 fps * 15 clicks p/ frame)')
+        p_antiwarp:setTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
+        p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 900 CPS (and higher!) with the right settings (60 fps * 15 clicks per frame)')
         p_flag:setTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
         p_flashback:setTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
-        --p_brespawn:setTooltip('Deletes your humanoid whenever you die. Forces a respawn, acting as a better version of resetting. Can also fix certain permadeaths caused by reanimations')
         p_safemin:setTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
         p_waypoints:setTooltip('Lets you save positions and teleport back to them later')
+        p_notrip:setTooltip('Mostly prevents you from being knocked over / ragdolling. Useful for antiflings')
+
     end
     local m_movement = ui:newMenu('Movement') do 
         local m_airjump   = m_movement:addMod('Air jump')
@@ -5065,8 +5084,8 @@ do
         local m_highjump  = m_movement:addMod('High jump')
         local m_noclip    = m_movement:addMod('Noclip')
         local m_nofall    = m_movement:addMod('Nofall')
-        local m_notrip    = m_movement:addMod('Notrip')
         local m_parkour   = m_movement:addMod('Parkour')
+        --local m_phasewalk = m_movement:addMod('Phasewalk')
         local m_speed     = m_movement:addMod('Speed')
         local m_velocity  = m_movement:addMod('Velocity')
         -- Airjump
@@ -5118,7 +5137,7 @@ do
             local seat
             local oldchar
             
-            m_blink:Connect('Enabled',function() 
+            m_blink:Connect('Enabled', function() 
                 
                 if ( mode:GetSelection() == 'Fakechar' ) then
                     if ( not clientChar ) then
@@ -5666,35 +5685,38 @@ do
         -- Float
         do 
             local mode = m_float:addDropdown('Mode'):setTooltip('What method Float will use')
-            mode:addOption('Undetectable'):setTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s undetectable'):Select()
-            mode:addOption('Velocity'):setTooltip('Uses a bodymover. Has better results, but is easier to detect')
+            mode:addOption('Direct'):setTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s basically undetectable. Unlike Mover, Direct requires some fine tuning'):Select()
+            mode:addOption('Mover'):setTooltip('Uses a bodymover. Has better results, but is easier to detect')
             
-            local vel = m_float:addSlider('Velocity',{min=-10,cur=0,max=10,step=0.1}):setTooltip('The amount of velocity you\'ll have when floating')
-            local amnt = 0
+            local vel = m_float:addSlider('Velocity', { min = -10, cur = 0, max = 10, step = 0.1 }):setTooltip('The amount of velocity you\'ll have when floating')
+            local amnt = vel:getValue()
             
-            vel:Connect('Changed',a)
-            
-            mode:Connect('Changed',function() 
+            mode:Connect('Changed', function() 
                 m_float:Reset()
             end)
             
             local fcon
             local finst
             
-            local a = function(v) amnt = v; end
-            local b = function(v) finst.Velocity = vec3(0, v, 0) end
+            local function directFunc(v) 
+                amnt = v 
+            end
+            local function vec3Func(v) 
+                finst.Velocity = vec3(0, v, 0) 
+            end
             
+            vel:Connect('Changed', directFunc)
             
             
             m_float:Connect('Enabled',function() 
                 local mode = mode:GetSelection()
-                if (mode == 'Undetectable') then
+                if (mode == 'Direct') then
                     fcon = servRun.Heartbeat:Connect(function() 
                         local vel = clientRoot.Velocity
                         
-                        clientRoot.Velocity = vec3(vel.X, amnt+1.15, vel.Z)
+                        clientRoot.Velocity = vec3(vel.X, amnt + 2.1, vel.Z)
                     end)
-                elseif (mode == 'Velocity') then
+                elseif (mode == 'Mover') then
                     disablecons(clientRoot.ChildAdded, 'rp_child')
                     disablecons(clientRoot.DescendantAdded, 'rp_desc')
                     disablecons(clientChar.DescendantAdded, 'chr_desc')
@@ -5704,14 +5726,14 @@ do
                     finst.Velocity = vec3(0, vel:getValue(), 0)
                     finst.Parent = clientRoot
                     
-                    vel:Connect('Changed',b)
+                    vel:Connect('Changed', vec3Func)
                 end
             end)
             m_float:Connect('Disabled',function() 
                 if (finst) then finst:Destroy(); finst = nil end
                 if (fcon) then fcon:Disconnect() fcon = nil end
                 
-                vel:Connect('Changed',a)
+                vel:Connect('Changed', directFunc)
                 
                 enablecons('rp_child')
                 enablecons('rp_desc')
@@ -6058,43 +6080,18 @@ do
             end)
             
             m_nofall:Connect('Disabled',function() 
-                if (rcon) then rcon:Disconnect() rcon = nil end
-                if (plrcon) then plrcon:Disconnect() plrcon = nil end
+                if ( rcon ) then 
+                    rcon:Disconnect() 
+                    rcon = nil 
+                end
+                if ( plrcon ) then 
+                    plrcon:Disconnect() 
+                    plrcon = nil 
+                end
                 
                 enablecons('rp_velocity')
                 enablecons('rp_changed')
                 enablecons('rp_cframe')
-            end)
-        end
-        -- Notrip
-        do 
-            local Con_Respawn
-            
-            m_notrip:Connect('Enabled',function()
-                
-                
-                local function hook(h) 
-                    h:SetStateEnabled(0, false)
-                    h:SetStateEnabled(1, false)
-                    h:SetStateEnabled(16, false)
-                end
-                if (clientHumanoid) then
-                    hook(clientHumanoid)
-                end
-                
-                Con_Respawn = clientPlayer.CharacterAdded:Connect(function(c) 
-                    local hum = c:WaitForChild('Humanoid',5)
-                    hook(hum)
-                end)
-            end)
-            m_notrip:Connect('Disabled',function() 
-                Con_Respawn:Disconnect()
-                
-                if (clientHumanoid) then
-                    clientHumanoid:SetStateEnabled(0, true)
-                    clientHumanoid:SetStateEnabled(1, true)
-                    clientHumanoid:SetStateEnabled(16, true) 
-                end
             end)
         end
         -- Parkour
@@ -6126,14 +6123,74 @@ do
             end)
             
         end
+        --[[ Phasewalk
+        do 
+            -- s_ prefix for settings
+            -- v_ prefix for setting values
+            -- definitely not confusing 🤑
+            
+            local s_idlePhase = m_phasewalk:addToggle('Phase while idle'):setTooltip('Phases your character regardless if you\'re moving or not')
+            local s_faceCenter = m_phasewalk:addToggle('Face center'):setTooltip('Faces your character towards the center of the phase location')
+            local s_phaseMax = m_phasewalk:addSlider('Max distance', { min = 0, max = 50, step = 0.1, cur = 10 }):setTooltip('Maximum distance your character will phase')
+            local s_phaseMin = m_phasewalk:addSlider('Min distance', { min = 0, max = 50, step = 0.1, cur = 10 }):setTooltip('Minimum distance your character will phase')
+            
+            local v_idlePhase = t_idlePhase:getValue()
+            local v_faceCenter = t_faceCenter:getValue()
+            local v_phaseMax = s_phaseMax:getValue()
+            local v_phaseMin = s_phaseMin:getValue()
+            
+            s_idlePhase:Connect('Toggled', function(toggle) 
+                v_idlePhase = toggle
+            end)
+            
+            s_faceCenter:Connect('Toggled', function(toggle) 
+                v_faceCenter = toggle
+            end)
+            
+            s_phaseMax:Connect('Changed', function(value) 
+                v_phaseMax = value 
+            end)
+            
+            s_phaseMin:Connect('Changed', function(value) 
+                v_phaseMin = value
+            end)
+            
+            do
+                local phaseCenter
+                local phaseCn
+                
+                
+                m_phasewalk:Connect('Enabled', function() 
+                    if ( not clientRoot ) then
+                        ui:Notify('Oops', 'You gotta be spawned in first', 3, 'warning')
+                        task.wait()
+                        m_phasewalk:Disable() 
+                    end
+                    
+                    phaseCn = runService.Heartbeat:Connect(function(deltaTime) 
+                        local moveDirection = clientHumanoid.MoveDirection
+                        
+                    end)
+                end)
+                
+                
+                m_phasewalk:Connect('Disabled', function() 
+                    if ( phaseCn and phaseCn.Connected ) then
+                        phaseCn:Disconnect()
+                    end
+                end)
+                
+            end
+        end
+        ]]
         -- Speed
         do 
             local mode = m_speed:addDropdown('Mode',true)
-            mode:addOption('Standard'):setTooltip('Standard CFrame speed. <b>Mostly</b> undetectable, unlike other scripts such as Inf Yield. Also known as TPWalk'):Select()
-            mode:addOption('Velocity'):setTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity typically won\'t increase your speed unless it\'s set high or you jump.')
+            mode:addOption('Standard'):setTooltip('Standard CFrame speed. Also called TPWalk or TPSpeed'):Select()
+            mode:addOption('Velocity'):setTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity essentially requires the speed setting to be extremely high (unless you jump / are in the air)')
             mode:addOption('Bhop'):setTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
-            mode:addOption('Part'):setTooltip('Pushes you physically with a clientside part. Can also affect vehicles in certain games, such as Jailbreak')
-            mode:addOption('WalkSpeed'):setTooltip('<font color="rgb(255,64,64)"><b>Insanely easy to detect. Use Standard instead.</b></font>')
+            mode:addOption('Part'):setTooltip('Pushes you physically with a clientside part. Works well with the Notrip module enabled')
+            mode:addOption('WalkSpeed'):setTooltip('It\'s highly recommended to not use this mode unless you know what you\'re doing')
             
             local speedslider = m_speed:addSlider('Speed',{min=0,max=250,cur=30,step=0.01})
             local speed = 30
@@ -6170,18 +6227,19 @@ do
                 elseif (mode == 'Part') then
                     part = instNew('Part')
                     part.Transparency = 0.8
-                    part.Size = vec3(4,4,1)
+                    part.Size = vec3(4, 4, 1)
                     part.CanTouch = false
                     part.CanCollide = true
                     part.Anchored = false
                     part.Name = randstr()
                     part.Parent = workspace
-                    scon = ev:Connect(function(dt) 
+                    
+                    scon = servRun.Heartbeat:Connect(function(dt) 
                         local md = clientHumanoid.MoveDirection
                         local p = clientRoot.Position
                         
                         part.CFrame = CFrame.new(p-(md), p)
-                        part.Velocity = md * (dt * speed * 1200)
+                        part.Velocity = md * (dt * speed * 500)
                         
                         clientHumanoid:ChangeState(8)
                     end)
@@ -6255,8 +6313,8 @@ do
         m_highjump:setTooltip('Increases how high you can jump')
         m_noclip:setTooltip('Disables your character\'s collision, or bypasses the collision entirely')
         m_nofall:setTooltip('May bypass some games fall damage mechanics by changing how you fall.')
-        m_notrip:setTooltip('Prevents you from tripping / ragdolling, like when you get by a fast part')
         m_parkour:setTooltip('Jumps when you reach the end of a part')
+        --m_phasewalk:setTooltip('Constantly teleports you around while you walk. This is a legacy module ported from Spectrum 😎')
         m_speed:setTooltip('Speedhacks with various bypasses and settings')
         m_velocity:setTooltip('Limits your velocity')
     end
@@ -8681,9 +8739,6 @@ do
             u_modlist:Connect('Disabled',function() 
                 uiframe.Visible = false
             end)
-            
-            
-            -- https://cdn.discordapp.com/attachments/910740525785706521/940869118071046194/you_should-5-1-4_001.mp4
         end
         u_modlist:Enable()
         -- theme
@@ -8703,7 +8758,7 @@ do
                         themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.json')
                     end)
                     
-                    if (not worked) then
+                    if ( not worked ) then
                         ui:Notify('Oops','Got an error while loading this theme. It may have been removed or modified.', 5, 'warn', true)
                     end
                 end)
@@ -8722,7 +8777,7 @@ do
                 local themes = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/themelist.txt')
                 themes = themes:split(']')
                 for i = 1, #themes do
-                    local a = themes[i]
+                    local a = themes[i] -- insane variable names 
                     local b = a:match('([^|]+)|')
                     local c = a:match('|(.+)')
                     
@@ -8764,7 +8819,7 @@ do
                     -- Notify
                     task.wait(1)
                     servGui:ClearError()
-                    ui:Notify('Auto Hop','Auto hopping in a few seconds, hang tight', 5, 'high')
+                    ui:Notify('Auto Hop', 'Auto hopping in a few seconds, hang tight', 5, 'high')
                     task.wait(1)
                     do 
                         s_hop:Click()
@@ -8789,7 +8844,7 @@ do
                 MsgChangedCon = servGui.ErrorMessageChanged:Connect(function() 
                     -- Debounce cause messagechanged gets fired multiple times for some reason
                     local curtime = tick()
-                    if (curtime - kicktime < 10) then
+                    if ( curtime - kicktime < 10 ) then
                         return
                     end
                     kicktime = tick()
@@ -8797,7 +8852,7 @@ do
                     -- Notify
                     task.wait(1)
                     servGui:ClearError()
-                    ui:Notify('Auto Reconnect','Auto reconnecting in a few seconds, hang tight', 5, 'high')
+                    ui:Notify('Auto Reconnect', 'Auto reconnecting in a few seconds, hang tight', 5, 'high')
                     task.wait(1)
                     
                     -- Player kicked, rejoin
@@ -8833,22 +8888,27 @@ do
                             local Servers = Data.data
                             local TargetServers = {}
                             
-                            if (#Servers == 0) then
-                                ui:Notify('Server hop','Roblox returned that there are no existing servers. This game is likely not compatible with Server hop',5, 'low')
+                            if ( #Servers == 0 ) then
+                                ui:Notify('Server hop', 'Roblox returned that there are no existing servers. This game is likely not compatible with Server hop', 5, 'low')
                                 return 
                             end
                             
                             local j = 0
                             for i = 1, 200 do 
-                                if (j > 25) then break end
+                                if ( j > 25 ) then 
+                                    break 
+                                end
                                 
                                 local Server = Servers[math.random(1,#Servers)]
-                                if (Server.playing == Server.maxPlayers or Server.id == CurJobId) then continue end
+                                if ( Server.playing == Server.maxPlayers or Server.id == CurJobId ) then 
+                                    continue 
+                                end
+                                
                                 table.insert(TargetServers, Server.id)
                                 j += 1
                             end
                             
-                            if (#TargetServers == 0) then
+                            if ( #TargetServers == 0 ) then
                                 -- search more here (adding that later)
                                 ui:Notify('Server hop','Couldn\'t find a valid server; you may already be in the smallest one. Try again later',5, 'low')
                                 
@@ -8865,7 +8925,9 @@ do
         
         -- Private server
         do 
-            s_priv:Connect('Clicked',function() 
+            -- im pretty sure this doesn't work anymore 🤑🤑🤑🤑🤑🤑🤑
+            
+            s_priv:Connect('Clicked', function() 
                 task.spawn(function()                    
                     local sc = ui:GetScreen()
                     local p_Backframe
@@ -9139,7 +9201,7 @@ do
         
         -- Rejoin
         do
-            s_rejoin:Connect('Clicked',function() 
+            s_rejoin:Connect('Clicked', function() 
                 if ( #servPlayers:GetPlayers() <= 1 ) then
                     clientPlayer:Kick('\nRejoining, one second...')
                     task.wait(0.3)
@@ -9156,40 +9218,42 @@ do
         s_priv:setTooltip('Teleports you to one of the smallest servers possible. May take a bit of time to search, but atleast it has a snazzy progress bar')
         s_rejoin:setTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
     end
-    do
-        --[[
-        local w_Search = ui:CreateWidget('Search', dimNew(1,-325,1,-225), vec2(300, 50), true) do 
-            
-        end]]
-    end
 end
 _G.RLLOADED = true
 
-if (game.PlaceId == 292439477 or game.PlaceId == 3233893879) then
-    ui:Notify('Warning','Redline is not designed for games with custom character systems.',5,'warn',true)
+if ( game.PlaceId == 292439477 or game.PlaceId == 3233893879 ) then
+    ui:Notify('Warning', 'Redline is not designed for games with custom character systems.', 5, 'warn', true)
     task.wait(3)
-    ui:Notify('Warning','It may not function properly, or even function at all.',5,'warn',true)
+    ui:Notify('Warning', 'It may not function properly, or even function at all.', 5, 'warn', true)
+    task.wait(3) 
+end
+
+if ( workspace.StreamingEnabled ) then
+    ui:Notify('Warning', 'Redline is not designed for games with StreamingEnabled.', 5, 'warn', true)
+    task.wait(3)
+    ui:Notify('Warning', 'It may not function properly, or even function at all.', 5, 'warn', true)
     task.wait(3) 
 end
 
 do
     task.wait(1)
-    local sound = instNew('Sound')
+    local sound = Instance.new('Sound')
     sound.SoundId = 'rbxassetid://9009663963'--'rbxassetid://8781250986'
     sound.Volume = 1
     sound.TimePosition = 0.15
     sound.Parent = ui:GetScreen()
     sound.Playing = true
     do 
-        local center = workspace.CurrentCamera.ViewportSize/2
+        local center = servGui:GetScreenResolution() / 2
         
         local col = RLTHEMEDATA['ge'][1]
-        local dn = function() 
-            local _ = drawNew('Line')
-            _.Visible = true
-            _.Color = col
-            _.Thickness = 4
-            return _
+        local function makeLine() 
+            local newLine = drawNew('Line')
+            newLine.Visible = true
+            newLine.Color = col
+            newLine.Thickness = 4
+            
+            return newLine
         end
         local lines = {}
         
@@ -9197,11 +9261,11 @@ do
         local SizeAnimation 
         local PositionAnim
         
-        SizeAnimation = servRun.RenderStepped:Connect(function(dt) 
-            dt *= 9
+        SizeAnimation = servRun.Heartbeat:Connect(function(deltaTime) 
+            deltaTime *= 9
             for i,v in ipairs(lines) do 
                 local obj = v[1]
-                obj.To = obj.To:lerp(v[2], dt)
+                obj.To = obj.To:lerp(v[2], deltaTime)
             end
         end)
         do
@@ -9209,64 +9273,64 @@ do
             local down = center + vec2(0, 200)
         
             do
-                local _ = dn()
-                _.From = up
-                _.To = up
-                table.insert(lines, {_, center + vec2(-200, 0), 0})
+                local thisLine = makeLine()
+                thisLine.From = up
+                thisLine.To = up
+                table.insert(lines, {thisLine, center + vec2(-200, 0), 0})
             end
             do
-                local _ = dn()
-                _.From = up
-                _.To = up
-                table.insert(lines, {_, center + vec2(-66, 45), 0})
+                local thisLine = makeLine()
+                thisLine.From = up
+                thisLine.To = up
+                table.insert(lines, {thisLine, center + vec2(-66, 45), 0})
             end
             do
-                local _ = dn()
-                _.From = up
-                _.To = up
-                table.insert(lines, {_, center + vec2(66, 45), 0})
+                local thisLine = makeLine()
+                thisLine.From = up
+                thisLine.To = up
+                table.insert(lines, {thisLine, center + vec2(66, 45), 0})
             end
             do
-                local _ = dn()
-                _.From = up
-                _.To = up
-                table.insert(lines, {_, center + vec2(200, 0), 0})
+                local thisLine = makeLine()
+                thisLine.From = up
+                thisLine.To = up
+                table.insert(lines, {thisLine, center + vec2(200, 0), 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(-200, 0)
-                _.To = _.From
-                table.insert(lines, {_, center + vec2(0, 66), 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(-200, 0)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, center + vec2(0, 66), 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(200, 0)
-                _.To = _.From
-                table.insert(lines, {_, center + vec2(0, 66), 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(200, 0)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, center + vec2(0, 66), 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(-200, 0)
-                _.To = _.From
-                table.insert(lines, {_, down, 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(-200, 0)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, down, 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(-66, 44)
-                _.To = _.From
-                table.insert(lines, {_, down, 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(-66, 44)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, down, 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(66, 44)
-                _.To = _.From
-                table.insert(lines, {_, down, 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(66, 44)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, down, 0})
             end
             do
-                local _ = dn()
-                _.From = center + vec2(200, 0)
-                _.To = _.From
-                table.insert(lines, {_, down, 0})
+                local thisLine = makeLine()
+                thisLine.From = center + vec2(200, 0)
+                thisLine.To = thisLine.From
+                table.insert(lines, {thisLine, down, 0})
             end
         end
         task.wait(1)
@@ -9274,22 +9338,24 @@ do
         task.wait(1)
         
         local y = 0
-        PositionAnim = servRun.RenderStepped:Connect(function(dt) 
-            local _1 = dt * 15
-            local _2 = _1 * 15
+        PositionAnim = servRun.Heartbeat:Connect(function(deltaTime) 
+            local delta1 = deltaTime * 15
+            local delta2 = delta1 * 15
         
-            y += _2
+            y += delta2
             for i,v in ipairs(lines) do
                 local obj = v[1]
-                obj.From += vec2(0, y)*_1
-                obj.To += vec2(0, y)*_1
+                obj.From += vec2(0, y) * delta1
+                obj.To += vec2(0, y) * delta1
         
-                obj.Transparency -= dt*2
+                obj.Transparency -= deltaTime * 2
             end
         end)
+        
         task.wait(0.5)
+        
         PositionAnim:Disconnect()
-        for i,v in ipairs(lines) do 
+        for i, v in ipairs(lines) do 
             v[1]:Remove()
         end
         
@@ -9368,19 +9434,20 @@ local tpQueue do
         (queue_on_teleport)
 end 
 
-if (isfile('REDLINE/Queued.txt')) then
+if ( isfile('REDLINE/Queued.txt') ) then
     _G.RLQUEUED = readfile('REDLINE/Queued.txt'):match('true') ~= nil
 else
     _G.RLQUEUED = true
     writefile('REDLINE/Queued.txt', 'true')
 end
 
-if (tpQueue and _G.RLQUEUED == false) then
+if ( tpQueue and _G.RLQUEUED == false ) then
     tpQueue[[if(readfile('REDLINE/Queued.txt') == 'true')then loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()end]]
     writefile('REDLINE/Queued.txt', 'true')
     _G.RLQUEUED = true
 end
-_G.RLNOTIF = function(...) 
+
+function _G.RLNOTIF(...) 
     return ui:Notify(...)
 end
 
