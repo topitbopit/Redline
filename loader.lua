@@ -1,2 +1,2 @@
--- Redline loader
-loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/beta.lua'))()
+-- Redline April Fools loader 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/april-fools/beta.lua'))()
