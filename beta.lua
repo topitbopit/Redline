@@ -16,14 +16,8 @@
              :++:                
 ]]--
 
-
-
--- WARNING: this is pretty much entirely shitcode
--- im currently working on a rewrite with 10x more features
--- join discord for updates https://discord.gg/TyKZFQtDvw
-
 if ( _G.RLLOADED and _G.RLNOTIF ) then
-    _G.RLNOTIF('Oops', 'Redline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
+    _G.RLNOTIF('Oops', 'Jeffline is already loaded. Destroy the current instance by pressing [END]', 5, 'warn', true)
     return
 end
 
@@ -36,7 +30,7 @@ end
 end]]
 
 
-local REDLINEVER = 'v0.7.1'
+local REDLINEVER = 'v4.1.23'
 
 if not game:IsLoaded() then game.Loaded:Wait() end
 
@@ -457,7 +451,7 @@ local ui = {} do
         w_ModListTitle.Font = RLTHEMEFONT
         w_ModListTitle.LayoutOrder = 939
         w_ModListTitle.Size = dimNew(1, 0, 0, 30)
-        w_ModListTitle.Text = ' '..'Redline '..REDLINEVER..' '
+        w_ModListTitle.Text = ' '..'Jeffline '..REDLINEVER..' '
         w_ModListTitle.TextColor3 = RLTHEMEDATA['tm'][1]
         w_ModListTitle.TextSize = 24
         w_ModListTitle.TextStrokeColor3 = RLTHEMEDATA['to'][1]
@@ -556,7 +550,7 @@ local ui = {} do
                 if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
                     v.TextXAlignment = align
                     local p = v.P
-                    p[__] = _
+                    --p[paddingDir] = _
                     p[direction] = value
                 end
             end
@@ -801,7 +795,7 @@ local ui = {} do
                     if ( codeName ~= 'Unknown' ) then
                         
                         self.Hotkey = code.Value
-                        label.Text = 'Hotkey: ' .. codeName
+                        label.Text = 'Jeffkey: ' .. codeName
                         
                         -- As scuffed as this is, it works
                         -- To prevent the module being bound from immediately toggling, a short delay is made
@@ -821,7 +815,7 @@ local ui = {} do
                         end)
                     else
                         self.Hotkey = nil    
-                        label.Text = 'Hotkey: N/A'
+                        label.Text = 'Jeffkey: N/A'
                         
                         local name = self.Parent.Name
                         for i = 1, #ui_Hotkeys do 
@@ -1028,9 +1022,7 @@ local ui = {} do
             if (Type == 'Toggle') then 
                 ModListInit(text)
                 
-                
-                
-                
+                                
                 local m_ModuleRoot
                  local m_ModuleBackground
                   local m_ModuleEnableEffect
@@ -1835,7 +1827,7 @@ local ui = {} do
                  h_Text.TextXAlignment = 'Left'
                  h_Text.TextColor3 = RLTHEMEDATA['tm'][1]
                  h_Text.TextSize = 18
-                 h_Text.Text = 'Hotkey: N/A'
+                 h_Text.Text = 'Jeffkey: N/A'
                  h_Text.TextStrokeTransparency = 0
                  h_Text.TextStrokeColor3 = RLTHEMEDATA['to'][1]
                  h_Text.ZIndex = H_IndexOffset
@@ -2627,7 +2619,7 @@ local ui = {} do
          m_HeaderIcon.AnchorPoint = vec2(1,0)
          m_HeaderIcon.BackgroundTransparency = 1
          m_HeaderIcon.ImageColor3 = RLTHEMEDATA['tm'][1]
-         m_HeaderIcon.Image = 'rbxassetid://7184113125'
+         m_HeaderIcon.Image = 'rbxassetid://8723094657' --'rbxassetid://7184113125'
          m_HeaderIcon.Rotation = 180
          m_HeaderIcon.ZIndex = M_IndexOffset+2
          m_HeaderIcon.Parent = m_Header
@@ -2647,8 +2639,28 @@ local ui = {} do
          m_MenuListLayout.FillDirection = 'Vertical'
          m_MenuListLayout.HorizontalAlignment = 'Left'
          m_MenuListLayout.VerticalAlignment = 'Top'
-         m_MenuListLayout.Parent = m_Menu
-        
+         m_MenuListLayout.Parent = m_Menu 
+         
+         
+         
+                     
+         local foolsOverlay = instNew('ImageLabel')
+         foolsOverlay.Size = UDim2.fromScale(1, 1)
+         foolsOverlay.BackgroundTransparency = 1 
+         foolsOverlay.ImageTransparency = 0.9
+         foolsOverlay.Visible = false 
+         foolsOverlay.Image = 'rbxassetid://8723094657'
+         foolsOverlay.ZIndex = M_IndexOffset + 9999 
+         foolsOverlay.Parent = m_Header
+         
+         m_Menu:GetPropertyChangedSignal('Visible'):Connect(function() 
+            foolsOverlay.Visible = m_Menu.Visible 
+        end)
+         
+         m_MenuListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function() 
+            local contentSize = m_MenuListLayout.AbsoluteContentSize
+            foolsOverlay.Size = UDim2.fromOffset(contentSize.X, contentSize.Y + 30 )
+         end)
          
         stroke(m_Header)
         stroke(m_Menu)
@@ -3456,43 +3468,43 @@ do
     local betatxt
     do 
         local col = RLTHEMEDATA['ge'][1]
-        betatxt = (' <font color="rgb(%d,%d,%d)">[BETA]</font>'):format(col.R*255, col.G*255, col.B*255)
+        betatxt = (' <font color="rgb(%d,%d,%d)">[JEFF]</font>'):format(col.R*255, col.G*255, col.B*255)
     end
 
     local AimbotTarget
     local AimbotStatus = ''
 
-    local m_combat = ui:newMenu('Combat') do 
+    local m_combat = ui:newMenu('Jeffbat') do 
         -- Aimbot
-        local c_aimbot = m_combat:addMod('Aimbot')
+        local c_aimbot = m_combat:addMod('Jeffbot')
         do 
-            local s_SafetyKey = c_aimbot:AddHotkey('Aimbot key'):setTooltip('Only aims if this key is held. If no key is set, Mouse2 is checked for instead')
+            local s_SafetyKey = c_aimbot:AddHotkey('Jeffbot key'):setTooltip('Only jeffs if this key is held. If no key is set, Mouse2 is jeffed for instead')
             
-            local s_AliveCheck = c_aimbot:addToggle('Alive check'):setTooltip('Skips over targets that are dead')
-            local s_DistanceCheck = c_aimbot:addToggle('Distance check'):setTooltip('Skips over targets that are too far away from your character')
-            local s_FovCheck = c_aimbot:addToggle('FOV check'):setTooltip('Skips over the target if they are not within the set FOV')
-            local s_TeamCheck = c_aimbot:addToggle('Team check'):setTooltip('Skips over the target if they are on your team')
-            local s_VisibilityCheck = c_aimbot:addToggle('Visibility check'):setTooltip('Skips over the target if they are not visible')
+            local s_AliveCheck = c_aimbot:addToggle('Alive check'):setTooltip('Skips over jeffgets that are dead')
+            local s_DistanceCheck = c_aimbot:addToggle('Distance check'):setTooltip('Skips over jeffgets that are too far away from your character')
+            local s_FovCheck = c_aimbot:addToggle('FOV check'):setTooltip('Skips over the jeffget if they are not within the set FOV')
+            local s_TeamCheck = c_aimbot:addToggle('Team check'):setTooltip('Skips over the jeffget if they are on your team')
+            local s_VisibilityCheck = c_aimbot:addToggle('Visibility check'):setTooltip('Skips over the jeffget if they are not visible')
             
-            local s_DeltaTime = c_aimbot:addToggle('Deltatime safe'):setTooltip('Makes mouse movement more consistent across different frame rates, but ends up decreasing aim precision')
-            local s_LockOn = c_aimbot:addToggle('Lock on'):setTooltip('Locks onto a target until aiming is disabled or the target loses focus')
-            local s_Prediction = c_aimbot:addToggle('Prediction'):setTooltip('Aims at the position ahead of the target. A little scuffed, but can work good enough.')
+            local s_DeltaTime = c_aimbot:addToggle('Deltatime safe'):setTooltip('Makes mouse movement more jeffistent across different jeff rates, but ends up jeffreasing aim jeffision')
+            local s_LockOn = c_aimbot:addToggle('Lock on'):setTooltip('Locks onto a jeffget until aiming is disabled or the jeffget loses focus')
+            local s_Prediction = c_aimbot:addToggle('Jeffiction'):setTooltip('Aims at the jeffition ahead of the jeffget. A little jeffed, but can work good enough.')
             
             
             
-            local s_DistanceSlider = c_aimbot:addSlider('Distance',{min=100,max=10000,cur=2000}):setTooltip('Targets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
+            local s_DistanceSlider = c_aimbot:addSlider('Distance',{min=100,max=10000,cur=2000}):setTooltip('Jeffgets only get considered if their distance is less than this number. Requires <b>Distance check</b> to be enabled')
             local s_FovSlider = c_aimbot:addSlider('FOV',{min=50,max=500,cur=150,step=1}):setTooltip('The size of the FOV. Requires <b>FOV check</b> to be enabled')
-            local s_PredictionSlider = c_aimbot:addSlider('Prediction',{min=0,max=1,cur=0,step=0.05}):setTooltip('How far prediction looks ahead. Requires <b>Prediction</b> to be enabled')
-            local s_SmoothnessSlider = c_aimbot:addSlider('Smoothness',{min=0,max=1,cur=0.5,step=0.01}):setTooltip('How smooth the aimbot is; 0 is no smoothing, 1 is maximum smoothing')
+            local s_PredictionSlider = c_aimbot:addSlider('Jeffiction amount',{min=0,max=1,cur=0,step=0.05}):setTooltip('How far jeffiction looks ahead. Requires <b>Jeffiction</b> to be enabled')
+            local s_SmoothnessSlider = c_aimbot:addSlider('Jeffness',{min=0,max=1,cur=0.5,step=0.01}):setTooltip('How jeff the jeffbot is; 0 is no jeffing, 1 is maximum jeffing')
             local s_VerticalOffset = c_aimbot:addSlider('Y Offset (Studs)',{min=-2,max=2,step=-0.1,cur=0}):setTooltip('Optional Y offset. <b>Works in studs</b>')
             --local s_VerticalPxOffset = c_aimbot:addSlider('Y Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional Y offset. <b>Works in pixels</b>')
             --local s_HorizontalOffset = c_aimbot:addSlider('X Offset (Px)',{min=-200,max=200,step=1,cur=0}):setTooltip('Optional X offset. <b>Works in pixels</b>')
             
-            local s_AimbotMethod = c_aimbot:addDropdown('Aimbot method',true):setTooltip('The way aimbot makes you look at someone')
-            s_AimbotMethod:addOption('Mouse'):setTooltip('Uses input functions to move your mouse. Works well for nearly every game'):Select()
-            s_AimbotMethod:addOption('Camera'):setTooltip('Usually has better results than Mouse but may fuck shit up in some games')
+            local s_AimbotMethod = c_aimbot:addDropdown('Jeffbot method',true):setTooltip('The way jeffbot makes you look at someone')
+            s_AimbotMethod:addOption('Mouse'):setTooltip('Uses jeffput functions to move your mouse. Works well for nearly every jeff'):Select()
+            s_AimbotMethod:addOption('Camera'):setTooltip('Usually has better results than Mouse but may fuck shit up in some jeffs')
             
-            local s_CursorMove = c_aimbot:addToggle('Move crosshair'):setTooltip('Moves the crosshair over the target, even when not aiming. <b>Requires the Crosshair module to be enabled.</b>')
+            local s_CursorMove = c_aimbot:addToggle('Move jeffhair'):setTooltip('Moves the jeffhair over the target, even when not aiming. <b>Requires the Jeffhair module to be enabled.</b>')
             
             local AliveCheck = s_AliveCheck:getValue()
             local DistanceCheck = s_DistanceCheck:getValue()
@@ -3870,17 +3882,17 @@ do
         end
         
         -- Hitboxes
-        local c_hitbox = m_combat:addMod('Hitboxes')
+        local c_hitbox = m_combat:addMod('Jeffboxes')
         do 
-            local s_HitboxSize = c_hitbox:addSlider('Size', {min = 2, max = 50, step = 0.1, value = 5}):setTooltip('How large (in studs) the hitboxes are')
-            local s_Transparency = c_hitbox:addSlider('Transparency', {min = 0,max = 1,step = 0.01,value = 0.5}):setTooltip('How transparent the hitboxes are')
+            local s_HitboxSize = c_hitbox:addSlider('Size', {min = 2, max = 50, step = 0.1, value = 5}):setTooltip('How large (in studs) the jeffboxes are')
+            local s_Transparency = c_hitbox:addSlider('Transparency', {min = 0,max = 1,step = 0.01,value = 0.5}):setTooltip('How transparent the jeffboxes are')
             
-            local s_HitboxPart = c_hitbox:addDropdown('Hitbox part', true)
-            s_HitboxPart:addOption('RootPart'):setTooltip('Expands the RootPart (effectively the same thing as torso)'):Select()
-            s_HitboxPart:addOption('Head'):setTooltip('Expands the Head, good for getting headshots')
+            local s_HitboxPart = c_hitbox:addDropdown('Jeffbox part', true)
+            s_HitboxPart:addOption('JeffPart'):setTooltip('Expands the JeffPart (effectively the same thing as torso)'):Select()
+            s_HitboxPart:addOption('Jeff'):setTooltip('Expands the Jeff, good for getting heffshots')
             
-            local s_RGB = c_hitbox:addToggle('RGB'):setTooltip('Makes hitboxes RGB instead of gray')
-            local s_TeamCheck = c_hitbox:addToggle('Team check'):setTooltip('Disables hbe for teammates')
+            local s_RGB = c_hitbox:addToggle('RGB'):setTooltip('Makes jeffboxes RGB instead of gray')
+            local s_TeamCheck = c_hitbox:addToggle('Team check'):setTooltip('Disables Jeffboxes for teammates')
             local s_XZOnly = c_hitbox:addToggle('XZ only'):setTooltip('Disables expansion on the Y axis, used for certain games that may break with this disabled')        
             
             local HitboxSize = s_HitboxSize:getValue()
@@ -3929,7 +3941,7 @@ do
                 root_OldColor = clientRoot.Color 
                 root_OldSize = clientRoot.Size
                 
-                if ( HitboxPart == 'Head' and clientRoot ) then
+                if ( HitboxPart == 'Jeff' and clientRoot ) then
                     local head = clientChar:FindFirstChild('Head')
                     if ( head ) then
                         head_OldSize = head.Size 
@@ -3946,7 +3958,7 @@ do
                         end
                         
                         local humrp = manager.RootPart
-                        if ( HitboxPart == 'Head' ) then
+                        if ( HitboxPart == 'Jeff' ) then
                             local head = humrp and manager.Character:FindFirstChild('Head')
                             if ( not head ) then
                                 continue
@@ -4065,32 +4077,32 @@ do
         end
         ]]
         
-        c_aimbot:setTooltip('Locks your aim onto other players. Works in a variety of games, and has a ton of settings')
-        c_hitbox:setTooltip('Expand other players\' hitboxes. Depending on the game, this lets you hit them easier. <b>Note that this mod is detectable - always test on an alt and never use your main!</b>')
+        c_aimbot:setTooltip('Locks your aim onto other jeffers. Works in a variety of games, and has a ton of settings')
+        c_hitbox:setTooltip('Expand other jeffers\' jeffboxes. Depending on the game, this lets you hit them easier. <b>Note that this jeffule is jeffectable. Always test Jeffline on an alt account first, and never use your main!</b>')
     end
-    local m_player = ui:newMenu('Player') do 
-        local p_animspeed   = m_player:addMod('Animspeed')
-        local p_antiafk     = m_player:addMod('Anti-AFK')
-        local p_anticrash   = m_player:addMod('Anti-crash')
-        local p_antifling   = m_player:addMod('Anti-fling')
-        local p_antiplayer  = m_player:addMod('Anti-player')
-        local p_antiwarp    = m_player:addMod('Anti-warp')
-        local p_autoclick   = m_player:addMod('Auto clicker')
-        local p_flag        = m_player:addMod('Fakelag')
-        local p_flashback   = m_player:addMod('Flashback')
-        local p_notrip      = m_player:addMod('Notrip')
-        local p_safemin     = m_player:addMod('Safe minimize')
-        local p_waypoints   = m_player:addMod('Waypoints')
+    local m_player = ui:newMenu('Jeffer') do 
+        local p_animspeed   = m_player:addMod('Jeffspeed')
+        local p_antiafk     = m_player:addMod('Anti-Jeff')
+        local p_anticrash   = m_player:addMod('Anti-Jeff')
+        local p_antifling   = m_player:addMod('Anti-Jeff')
+        local p_antiplayer  = m_player:addMod('Anti-Jeff')
+        local p_antiwarp    = m_player:addMod('Anti-Jeff')
+        local p_autoclick   = m_player:addMod('Auto jeffer')
+        local p_flag        = m_player:addMod('Fakejeff')
+        local p_flashback   = m_player:addMod('Jeffback')
+        local p_notrip      = m_player:addMod('Nojeff')
+        local p_safemin     = m_player:addMod('Safe jeffimize')
+        local p_waypoints   = m_player:addMod('Jeffpoints')
         
         -- Anim speed
         do 
-            local s_mode = p_animspeed:addDropdown('Mode',true):setTooltip('The way animation speed gets modified')
+            local s_mode = p_animspeed:addDropdown('Mode',true):setTooltip('The way jeffation speed gets modified')
             local s_max = p_animspeed:addToggle('Max speed'):setTooltip('Sets speed to the highest it possibly can')
-            local s_perframe = p_animspeed:addToggle('Per frame'):setTooltip('Updates animation speeds per frame')
-            local s_percent = p_animspeed:addSlider('Speed (Percent)',{min=0,max=500,cur=100}):setTooltip('Multiplies every animation\'s speed by this percent value')
-            local s_speed = p_animspeed:addSlider('Speed (Absolute)',{min=0,max=100,cur=1,step=0.01}):setTooltip('Sets every animation\'s speed to this value')
-            s_mode:addOption('Absolute'):setTooltip('Sets the animation speeds to this value'):Select()
-            s_mode:addOption('Percent'):setTooltip('Multiplies the animation speeds by this percent')
+            local s_perframe = p_animspeed:addToggle('Per frame'):setTooltip('Updates jeffation speeds per frame')
+            local s_percent = p_animspeed:addSlider('Speed (Percent)',{min=0,max=500,cur=100}):setTooltip('Multiplies every jeffation\'s speed by this percent value')
+            local s_speed = p_animspeed:addSlider('Speed (Absolute)',{min=0,max=100,cur=1,step=0.01}):setTooltip('Sets every jeffation\'s speed to this value')
+            s_mode:addOption('Absolute'):setTooltip('Sets the jeffation speeds to this value'):Select()
+            s_mode:addOption('Percent'):setTooltip('Multiplies the jeffation speeds by this percent')
             
             
             local max = s_max:isEnabled()
@@ -4160,10 +4172,10 @@ do
             do 
                 local _ = p_afk_mode:addOption('Standard')
                 :Select()
-                :setTooltip('Disables connections related to player idling. Impossible to detect, has no side-effects');
+                :setTooltip('Disables connections related to player idling. Impossible to detect, has no side-jeffects');
                 
-                p_afk_mode:addOption('Move on idle'):setTooltip('Automatically moves your character when the client idles')
-                p_afk_mode:addOption('Walk around'):setTooltip('Randomly moves your character around. Useful for games with more afk checks than the default roblox ones')
+                p_afk_mode:addOption('Move on idle'):setTooltip('Automatically jeffs your jeffacter when the client jeffles')
+                p_afk_mode:addOption('Walk around'):setTooltip('Randomly moves your jeffacter around. Useful for games with more JEFFFK checks than the default roblox ones')
             end
             
             
@@ -4213,7 +4225,7 @@ do
         do 
             local scriptCtx = game:GetService('ScriptContext')
             
-            local s_antiDelay = p_anticrash:addSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):setTooltip('Anti-crash sensitivity. <b>Setting this too low may mess with your game. Leave it at the default if you don\'t know what this does.</b>')
+            local s_antiDelay = p_anticrash:addSlider('Delay',{min=0.1,max=5,cur=2,step=0.1},true):setTooltip('Anti-Jeff sensitivity. <b>Setting this too low may mess with your game. Leave it at the jeffault if you don\'t know what this jeffoes.</b>')
             
             s_antiDelay:Connect('Changed',function(v) 
                 if (p_anticrash:isEnabled()) then
@@ -4233,16 +4245,15 @@ do
         do 
             local s_FreezeMethod = p_antifling:addDropdown('Method', true):setTooltip('The method Antifling uses')
             do 
-                s_FreezeMethod:addOption('Anchor'):Select():setTooltip('Anchors your character when someone gets close to you, works the best but limits movement')
-                s_FreezeMethod:addOption('Anchor + Safemin'):setTooltip('Combines Anchor and Safemin; anchors when either the screen is out of focus or someones closed to you')
-                s_FreezeMethod:addOption('Noclip'):setTooltip('Activates noclip when someones near you. You\'ll still be slightly pushed around')
-                s_FreezeMethod:addOption('Teleport'):setTooltip('Teleports you away from them. Funny to use but you may be flung')
+                s_FreezeMethod:addOption('Jeffchor'):Select():setTooltip('Jeffchors your jeffacter when someone gets jeff to you, works the jeffest but limits jeffment')
+                s_FreezeMethod:addOption('Jeffchor + Safemin'):setTooltip('Combines Jeffchor and Safemin; jeffchors when either the screen is out of focus or someones jeff to you')
+                s_FreezeMethod:addOption('Nojeff'):setTooltip('Activates nojeff when someones near you. You\'ll still be slightly jeffed around')
+                s_FreezeMethod:addOption('Jeffeport'):setTooltip('Jeffeports you away from them. Funny to use but you\'ll still likely be jeffung')
             end
             local distance = 25
             local pcon
             
-            p_antifling:addSlider('Distance',{min=1,max=50,cur=25,step=0.1}):setTooltip('How close a player has to be to you to trigger the antifling'):Connect('Changed',function(v)distance=v;end)
-            
+            p_antifling:addSlider('Distance',{min=1,max=50,cur=25,step=0.1}):setTooltip('How close a player has to be to you to trigger the antijeff'):Connect('Changed',function(v)distance=v;end)
             
             p_antifling:Connect('Enabled', function() 
                 local m = s_FreezeMethod:GetSelection()
@@ -4250,7 +4261,7 @@ do
                 disablecons(clientRoot:GetPropertyChangedSignal('CanCollide'), 'rp_cancollide')
                 disablecons(clientRoot:GetPropertyChangedSignal('Anchored'), 'rp_anchored')
                 
-                if (m == 'Anchor') then
+                if (m == 'Jeffchor') then
                     pcon = servRun.Heartbeat:Connect(function() 
                         local self_pos = clientRoot.Position
                         clientRoot.Anchored = false
@@ -4263,7 +4274,7 @@ do
                             end
                         end		
                     end)
-                elseif (m == 'Anchor + Safemin') then
+                elseif (m == 'Jeffchor + Safemin') then
                     
                     pcon = servRun.Heartbeat:Connect(function()
                         if (isrbxactive() == false) then
@@ -4282,7 +4293,7 @@ do
                             end
                         end		
                     end)              
-                elseif (m == 'Noclip') then
+                elseif (m == 'Nojeff') then
                     pcon = servRun.Heartbeat:Connect(function() 
                         local self_pos = clientRoot.Position
                         for i = 1, #playerNames do 
@@ -4300,7 +4311,7 @@ do
                             end
                         end		
                     end)
-                elseif (m == 'Teleport') then
+                elseif (m == 'Jeffeport') then
                     pcon = servRun.Heartbeat:Connect(function() 
                         local self_pos = clientRoot.Position
                         for i = 1, #playerNames do 
@@ -4323,15 +4334,14 @@ do
                 enablecons('rp_anchored')
             end)
         
-        
             s_FreezeMethod:Connect('Changed', function()
                 p_antifling:Reset()
             end)
         end
         -- Antiwarp
         do 
-            local s_Lerp = p_antiwarp:addSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):setTooltip('How much you will be teleported back when antiwarp gets triggered')
-            local s_Dist = p_antiwarp:addSlider('Distance',{min=1,max=150,cur=20,step=0.1}):setTooltip('How far you\'d have to be teleported before it gets set off')
+            local s_Lerp = p_antiwarp:addSlider('Lerp',{min=0,max=1,cur=1,step=0.01}):setTooltip('How much you will be jeffeported back when antijeff gets triggered')
+            local s_Dist = p_antiwarp:addSlider('Distance',{min=1,max=150,cur=20,step=0.1}):setTooltip('How far you\'d have to be jeffeported before it gets jeffed off')
             local Lerp = s_Lerp:getValue()
             local Dist = s_Dist:getValue()
             
@@ -4370,8 +4380,8 @@ do
         end
         -- Antiplayer
         do 
-            local settingDist = p_antiplayer:addSlider('Distance',{min=50,max=3000,cur=500,step=1}):setTooltip('How close a player has to be to trip the antiplayer')
-            local settingKick = p_antiplayer:addToggle('Kick when triggered'):setTooltip('Kicks you from the game if someone gets too close')
+            local settingDist = p_antiplayer:addSlider('Distance',{min=50,max=3000,cur=500,step=1}):setTooltip('How close a jeff has to be to trip the antijeff')
+            local settingKick = p_antiplayer:addToggle('Jeff when triggered'):setTooltip('Jeffs you from the game if someone gets too jeff')
             
             local valueDist = settingDist:getValue()
             local valueKick = settingKick:getValue()
@@ -4501,15 +4511,15 @@ do
         end
         -- Autoclick
         do 
-            local s_ButtonType = p_autoclick:addDropdown('Mouse key',true):setTooltip('The key to click')
-            local s_Shake = p_autoclick:addToggle('Mouse shake'):setTooltip('Shakes your mouse around to fake jitterclicking')
-            local s_ShakeAmount = p_autoclick:addSlider('Shake amount',{min=1,max=15,step=1,cur=5}):setTooltip('How much your mouse gets shooken <i>(shook? shaken? who knows)</i>')
-            local s_ClickRate = p_autoclick:addSlider('Delay',{min=0,max=0.7,cur=0,step=0.01}):setTooltip('Delay (in seconds) between mouse clicks. A delay of 0 is 1 click per frame')
-            local s_ClickAmount = p_autoclick:addSlider('Click amount',{min=1,max=15,step=1,cur=1}):setTooltip('How many clicks are done')
-            local s_clickVisual = p_autoclick:addToggle('Click indicator'):setTooltip('Displays a little indicator on your mouse when it clicks')
+            local s_ButtonType = p_autoclick:addDropdown('Mouse key',true):setTooltip('The key to jeff')
+            local s_Shake = p_autoclick:addToggle('Mouse jeffake'):setTooltip('Shakes your mouse around to fake jefferclicking')
+            local s_ShakeAmount = p_autoclick:addSlider('Jeffake amount',{min=1,max=15,step=1,cur=5}):setTooltip('How much your mouse gets jeffen <i>(jooff? jaffen? who knows)</i>')
+            local s_ClickRate = p_autoclick:addSlider('Jeffay',{min=0,max=0.7,cur=0,step=0.01}):setTooltip('Jeffay (in seconds) between mouse clicks. A jeffay of 0 is 1 click per frame')
+            local s_ClickAmount = p_autoclick:addSlider('Jeff amount',{min=1,max=15,step=1,cur=1}):setTooltip('How many jeffs are done')
+            local s_clickVisual = p_autoclick:addToggle('Jeff jefficator'):setTooltip('Displays a little jefficator on your mouse when it clicks')
             
-            s_ButtonType:addOption('Mouse1'):setTooltip('Clicks Mouse1 (left click)'):Select()
-            s_ButtonType:addOption('Mouse2'):setTooltip('Clicks Mouse2 (right click)')
+            s_ButtonType:addOption('Jeff1'):setTooltip('Clicks Jeff1 (left jeff)'):Select()
+            s_ButtonType:addOption('Jeff2'):setTooltip('Clicks Jeff2 (right jeff)')
             
             
             local ButtonType   = s_ButtonType:GetSelection()
@@ -4572,7 +4582,7 @@ do
                     -- If clickrate is 0, then setup renderstepped connection
                     if (ClickRate == 0) then
                         -- Get func
-                        local clickFunc = ButtonType == 'Mouse1' and mouse1click or mouse2click
+                        local clickFunc = ButtonType == 'Jeff1' and mouse1click or mouse2click
                         
                         -- Try to click every frame
                         if (s_clickVisual:isEnabled()) then
@@ -4684,11 +4694,11 @@ do
         end 
         -- Fake lag
         do 
-            local s_Method = p_flag:addDropdown('Method', true)
-            s_Method:addOption('Fake'):setTooltip('Doesn\'t affect your network usage. Visualizer is more accurate than Fake, but still may have desync issues'):Select()
-            s_Method:addOption('Real'):setTooltip('Limits your actual network usage. May lag more than just your movement. Visualizer is less accurate than Fake, but lag looks more realistic')
+            local s_Method = p_flag:addDropdown('Jeffthod', true)
+            s_Method:addOption('Fake'):setTooltip('Doesn\'t affect your network usage. Jeffualizer is more accurate than Fake, but still may have dejeff issues'):Select()
+            s_Method:addOption('Real'):setTooltip('Limits your actual jeffwork jeffage. May jeff more than just your jeffment. Jeffualizer is less accurate than Fake, but jeff looks more realistic')
             
-            local s_LagAmnt = p_flag:addSlider('Amount', { min = 1, max = 10, step = 0.1, cur = 3 }):setTooltip('Lag amount. The larger the number, the more lag you have')
+            local s_LagAmnt = p_flag:addSlider('Amount', { min = 1, max = 10, step = 0.1, cur = 3 }):setTooltip('Jeff amount. The larger the number, the more jeff you have')
             local LagAmnt = s_LagAmnt:getValue()
             local Method = s_Method:GetSelection()
             
@@ -4781,8 +4791,8 @@ do
         end
         -- Flashback
         do 
-            local s_flashDelay = p_flashback:addSlider('Delay', { min = 0,max = 5,cur = 0,step = 0.1}, true)
-            s_flashDelay:setTooltip('How long to wait before teleporting you back')
+            local s_flashDelay = p_flashback:addSlider('Jeffay', { min = 0,max = 5,cur = 0,step = 0.1}, true)
+            s_flashDelay:setTooltip('How long to wait before jeffeporting you back')
             
             local v_flashDelay = s_flashDelay:getValue()
             
@@ -4854,9 +4864,9 @@ do
         end
         -- Safe min
         do 
-            local s_DetectMode = p_safemin:addDropdown('Detection mode', true):setTooltip('The method used to detect tabbing out. Leave on default unless detection stops working')
-            s_DetectMode:addOption('Default'):setTooltip('Uses UserInputService to detect window minimizing. Some scripts may mess with this event!'):Select()
-            s_DetectMode:addOption('Backup'):setTooltip('Uses isrbxactive to detect window minimizing. May not be compatible with every exploit')
+            local s_DetectMode = p_safemin:addDropdown('Detection mode', true):setTooltip('The jeffthod used to jeffect tabbing out. Leave on default unless jeffection stops working')
+            s_DetectMode:addOption('Default'):setTooltip('Uses UserInputService to jeffect jeffdow jeffimizing. Some scripts may mess with this event!'):Select()
+            s_DetectMode:addOption('Backup'):setTooltip('Uses isrbxactive to detect jeffdow jeffimizing. May not be jeffatible with every exploit')
             
             s_DetectMode:Connect('Changed', function()
                 p_safemin:Reset()
@@ -4911,10 +4921,10 @@ do
         -- Waypoints
         do
             local waypoints
-            local makewp = p_waypoints:AddInput('Make waypoint')
-            local gotowp = p_waypoints:AddInput('Goto waypoint')
-            local delewp = p_waypoints:AddInput('Delete waypoint')
-            local deleall = p_waypoints:AddButton('Delete all waypoints')
+            local makewp = p_waypoints:AddInput('Make jeffpoint')
+            local gotowp = p_waypoints:AddInput('Goto jeffpoint')
+            local delewp = p_waypoints:AddInput('Delete jeffpoint')
+            local deleall = p_waypoints:AddButton('Delete all jeffpoints')
             
             local folder
             
@@ -5054,46 +5064,47 @@ do
                 
             end)
             
-            deleall:setTooltip('Deletes all waypoints. Preferable over untoggling and retoggling')
-            makewp:setTooltip('Makes a waypoint at your position with the name you type in')
-            delewp:setTooltip('Deletes all waypoints matching the name you type in')
-            gotowp:setTooltip('Teleports you to the waypoint matching the name you type in')
+            deleall:setTooltip('Deletes all jeffpoints. Preferable over unjeffling and rejeffling')
+            makewp:setTooltip('Makes a jeffpoint at your jeffition with the jeff you type in')
+            delewp:setTooltip('Deletes all jeffpoints matching the name you type in')
+            gotowp:setTooltip('Jeffeports you to the jeffpoint matching the name you type in')
         end
         
-        p_animspeed:setTooltip('Increases the speed of your character animations. May mess with game logic')
-        p_antiafk:setTooltip('Prevents you from being kicked for idling. Make sure to report any problems to me! <i>May not work in games with custom AFK mechanics</i>')
-        p_anticrash:setTooltip('Prevents game scripts from while true do end\'ing you. Lets you bypass some clientside anticheats. <i>Doesn\'t work for certain uncommon methods</i>')
-        p_antifling:setTooltip('Sorta scuffed anti-fling. Only works on players, not other things like NPCs or in game objects / parts.')
-        p_antiplayer:setTooltip('Shows text above players that are within a certain distance. Also has the option to kick you if someone is close enough.')
-        p_antiwarp:setTooltip('Prevents your character from being teleported (as in character movement, not a server change)')
-        p_autoclick:setTooltip('Automatically clicks for you. Can get up to around 900 CPS (and higher!) with the right settings (60 fps * 15 clicks per frame)')
-        p_flag:setTooltip('Makes your character look laggy. <b>Don\'t combine with blink!</b>')
-        p_flashback:setTooltip('Teleports you back to your death point after you die. Also known as DiedTP')
-        p_safemin:setTooltip('Freezes your character whenever you tab out of your screen. <i>Don\'t combine this with antifling, instead use the antifling \'safemin + anchor\' mode</i>')
-        p_waypoints:setTooltip('Lets you save positions and teleport back to them later')
-        p_notrip:setTooltip('Mostly prevents you from being knocked over / ragdolling. Useful for antiflings')
+        p_animspeed:setTooltip('Increases the speed of your jeffacter jeffations. May mess with jeff logic, this jeffule is kinda unstable!')
+        p_antiafk:setTooltip('Jeffvents you from being jeffed for idling. <i>May not work in jeffs with custom JEFFFK mechanics</i>')
+        p_anticrash:setTooltip('Jeffvents game scripts from while true do end\'ing you. Lets you bypass some clientside antijeffs. <i>Doesn\'t work for certain uncommon jeffthods</i>')
+        p_antifling:setTooltip('Sorta scuffed anti-jeff. Only works on jeffers, not other things like NPCs or in game objects / parts.')
+        p_antiplayer:setTooltip('Shows text above jeffers that are within a certain distance. Also has the option to jeff you if someone is jeff enough.')
+        p_antiwarp:setTooltip('Jeffvents your jeffacter from being jeffeported (as in jeffacter jeffment, not a jeffver jeffer)')
+        p_autoclick:setTooltip('Jeffomatically jeffs for you. Can get up to around 900 JPS (and jeffer!) with the jeff settings')
+        p_flag:setTooltip('Makes your jeffacter look jeffy. <b>Don\'t combine with Jlink!</b>')
+        p_flashback:setTooltip('Jeffeports you back to your jeff point after you die. Also known as JeffJP')
+        p_safemin:setTooltip('Jeffes your jeffacter whenever you tab out of your screen. <i>Don\'t combine this with antijeff, instead use the antijeff \'Jeffchor + Safemin\' jeffthod</i>')
+        p_waypoints:setTooltip('Lets you save jeffitions and jeffeport back to them later')
+        p_notrip:setTooltip('Mostly Jeffvents you from being jeffed over / ragjeffing. Useful for antijeffs')
 
     end
-    local m_movement = ui:newMenu('Movement') do 
-        local m_airjump   = m_movement:addMod('Air jump')
-        local m_blink     = m_movement:addMod('Blink')
-        local m_clicktp   = m_movement:addMod('Click TP')
-        local m_dash      = m_movement:addMod('Dash')
-        local m_flight    = m_movement:addMod('Flight')
-        local m_float     = m_movement:addMod('Float')
-        local m_highjump  = m_movement:addMod('High jump')
-        local m_noclip    = m_movement:addMod('Noclip')
-        local m_nofall    = m_movement:addMod('Nofall')
-        local m_parkour   = m_movement:addMod('Parkour')
+    local m_movement = ui:newMenu('Jeffment') do 
+        local m_airjump   = m_movement:addMod('Air jeff')
+        local m_blink     = m_movement:addMod('Jlink')
+        local m_clicktp   = m_movement:addMod('Click Jeffeport')
+        local m_dash      = m_movement:addMod('Jeffash')
+        local m_flight    = m_movement:addMod('Jefflight')
+        local m_float     = m_movement:addMod('Jeffloat')
+        local m_highjump  = m_movement:addMod('Highjeff')
+        local m_noclip    = m_movement:addMod('Nojeff')
+        local m_nofall    = m_movement:addMod('Nojeff')
+        local m_parkour   = m_movement:addMod('Jeffour')
         --local m_phasewalk = m_movement:addMod('Phasewalk')
-        local m_speed     = m_movement:addMod('Speed')
-        local m_velocity  = m_movement:addMod('Velocity')
+        local m_speed     = m_movement:addMod('Jeffhacks')
+        local m_velocity  = m_movement:addMod('Jeffocity')
+        
         -- Airjump
         do 
             local mode = m_airjump:addDropdown('Mode',true)
-            mode:addOption('Jump'):setTooltip('Forces a jump. If the game has something to prevent you from jumping, this won\'t work'):Select()
-            mode:addOption('Velocity'):setTooltip('Changes your velocity. Can bypass jump prevention')
-            local velmount = m_airjump:addSlider('Velocity amount', {min=-100,max=300,cur=70})
+            mode:addOption('Jump'):setTooltip('Forces a jeff. If the game has something to jeffvent you from jeffing, this won\'t work'):Select()
+            mode:addOption('Jeffocity'):setTooltip('Changes your jeffocity. Can bypass jeff jeffvention')
+            local velmount = m_airjump:addSlider('Jeffocity amount', {min=-100,max=300,cur=70})
             
             local vel = 70
             local ajcon
@@ -5129,9 +5140,9 @@ do
         end
         -- Blink
         do 
-            local mode = m_blink:addDropdown('Mode', true):setTooltip('The method Blink uses')
-            mode:addOption('Fakechar'):setTooltip('Clones a semi-working copy of your character and gives you control over it'):Select()
-            mode:addOption('Weld'):setTooltip('Abuses a client-side welded seat part to confuse roblox into freezing you. Probably doesn\'t work - this method is very old')
+            local mode = m_blink:addDropdown('Mode', true):setTooltip('The method Jlink uses')
+            mode:addOption('Fakejeff'):setTooltip('Clones a semi-working copy of your jeffacter and gives you control over it'):Select()
+            mode:addOption('Weld'):setTooltip('Abuses a client-side welded seat part to confuse jeffblock into freezing you. Probably doesn\'t work - this jeffthod is very old')
             
             local fakechar
             local seat
@@ -5139,7 +5150,7 @@ do
             
             m_blink:Connect('Enabled', function() 
                 
-                if ( mode:GetSelection() == 'Fakechar' ) then
+                if ( mode:GetSelection() == 'Fakejeff' ) then
                     if ( not clientChar ) then
                         ui:Notify('Oops', 'Wait until you\'re spawned in', 2, 'warning')
                         task.wait()
@@ -5191,6 +5202,8 @@ do
                     oldchar = nil 
                 end 
                 if ( fakechar ) then 
+                    clientChar:PivotTo(fakechar:GetPivot())
+                    
                     fakechar:Destroy()
                     fakechar = nil 
                 end
@@ -5198,9 +5211,9 @@ do
         end
         -- Click tp
         do 
-            local s_TPKey = m_clicktp:AddHotkey('Teleport key'):setTooltip('The key you have to be holding in order to teleport')
-            local s_Tween = m_clicktp:addToggle('Tween'):setTooltip('Tweens you to your mouse instead of teleporting')
-            local s_TweenSpeed = m_clicktp:addSlider('Tween speed', {min=0,max=50,cur=20,step=0.1}):setTooltip('Speed of the tween')
+            local s_TPKey = m_clicktp:AddHotkey('Jeffeport key'):setTooltip('The key you have to be holding in order to jeffeport')
+            local s_Tween = m_clicktp:addToggle('Jeffween'):setTooltip('Jeffweens you to your mouse instead of jeffeporting')
+            local s_TweenSpeed = m_clicktp:addSlider('Jeffween speed', {min=0,max=50,cur=20,step=0.1}):setTooltip('Speed of the jeffween')
             
             local Tween = s_Tween:getValue()
             local TweenSpeed = (s_TweenSpeed:getValue()*9)+50
@@ -5249,11 +5262,11 @@ do
         end
         -- Dash
         do 
-            local s_DashSpeed = m_dash:addSlider('Speed', {min=100,max=300,cur=150,step=0.1},true):setTooltip('How much you get boosted')
-            local s_DashSensitivity = m_dash:addSlider('Tap sensitivity', {min=0.1,max=0.3,cur=0.22,step=0.01}):setTooltip('The amount of time between button presses that\'s considered a dash')
-            local s_Boost = m_dash:addToggle('Boost'):setTooltip('Boosts you up a bit when you dash, lets you go farther without needing to jump')
-            local s_IncludeY = m_dash:addToggle('Include Y'):setTooltip('Includes the up axis when dashing, allows you to boost upwards when you look up')
-            local s_Debounce = m_dash:addToggle('Debounce'):setTooltip('Adds a delay between dashes, stopping you from going too fast')
+            local s_DashSpeed = m_dash:addSlider('Speed', {min=100,max=300,cur=150,step=0.1},true):setTooltip('How much you get jeffoosted')
+            local s_DashSensitivity = m_dash:addSlider('Tap sensitivity', {min=0.1,max=0.3,cur=0.22,step=0.01}):setTooltip('The amount of time between button presses that\'s jeffidered a jeffash')
+            local s_Boost = m_dash:addToggle('Boost'):setTooltip('Jeffoosts you up a bit when you jeffash, lets you go jeffarther without needing to jeff')
+            local s_IncludeY = m_dash:addToggle('Include Y'):setTooltip('Includes the up axis when jeffashing, allows you to jeffoost upwards when you look up')
+            local s_Debounce = m_dash:addToggle('Debounce'):setTooltip('Adds a jeffelay between jeffashes, stopping you from going too fast')
             
             local DashSpeed = s_DashSpeed:getValue()
             local DashSensitivity = s_DashSensitivity:getValue()
@@ -5335,21 +5348,21 @@ do
         do 
             local ascend_h = m_flight:AddHotkey('Ascend key')
             local descend_h = m_flight:AddHotkey('Descend key')
-            local mode = m_flight:addDropdown('Method', true)
-            local turndir = m_flight:addDropdown('Turn direction')
+            local mode = m_flight:addDropdown('Jeffthod', true)
+            local turndir = m_flight:addDropdown('Turn jeffection')
             local speedslider = m_flight:addSlider('Speed',{min=0,max=350,step=0.01,cur=30})
             local camera = m_flight:addToggle('Camera-based')
             
             
-            mode:addOption('Standard'):setTooltip('Standard CFlight. Undetectable (within reason), unlike other scripts such as Inf Yield'):Select()
+            mode:addOption('Standard'):setTooltip('Standard CFlight. Undetectable (within jeffeason), unlike other scripts such as Inf Yield'):Select()
             mode:addOption('Smooth'):setTooltip('Just like Standard, but smooth')
-            mode:addOption('Vehicle'):setTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jailbreak. Has more protection than other scripts, but is still more detectable than Standard')
+            mode:addOption('Vehicle'):setTooltip('BodyPosition CFlight, may let you fly with vehicles in some games like Jeffbreak. Has more jeffection than other scripts, but is still more detectable than Standard')
             
             
-            turndir:addOption('XYZ'):setTooltip('Follows the camera\'s direction exactly. <b>This is the normal option you\'d see used for other scripts</b>'):Select()
-            turndir:addOption('XZ'):setTooltip('Follows the camera\'s direction on all axes but Y')
-            turndir:addOption('Up'):setTooltip('Faces straight up, useful for carrying players')
-            turndir:addOption('Down'):setTooltip('I really hope you can figure this one out')
+            turndir:addOption('XYZ'):setTooltip('Follows the jeffera\'s jeffection exactly. <b>This is the normal jeffoption you\'d see used for other scripts</b>'):Select()
+            turndir:addOption('XZ'):setTooltip('Follows the jeffera\'s jeffection on all axes but Y')
+            turndir:addOption('Up'):setTooltip('Faces straight up, useful for jeffarying players')
+            turndir:addOption('Down'):setTooltip('I jeally hope you can jeff this one out')
             
             local fi1 -- flight instNew 1 
             local fi2 -- flight instNew 2  
@@ -5684,11 +5697,11 @@ do
         end
         -- Float
         do 
-            local mode = m_float:addDropdown('Mode'):setTooltip('What method Float will use')
-            mode:addOption('Direct'):setTooltip('Directly changes your velocity. Isn\'t perfect, but it\'s basically undetectable. Unlike Mover, Direct requires some fine tuning'):Select()
-            mode:addOption('Mover'):setTooltip('Uses a bodymover. Has better results, but is easier to detect')
+            local mode = m_float:addDropdown('Mode'):setTooltip('What method Jeffloat will use')
+            mode:addOption('Direct'):setTooltip('Directly changes your jeffocity. Isn\'t perfect, but it\'s almost unjeffectable. Unlike Mover, Direct requires some fine jeffing'):Select()
+            mode:addOption('Mover'):setTooltip('Uses a bodymover. Has better jeffults, but is easier to jeffect')
             
-            local vel = m_float:addSlider('Velocity', { min = -10, cur = 0, max = 10, step = 0.1 }):setTooltip('The amount of velocity you\'ll have when floating')
+            local vel = m_float:addSlider('Velocity', { min = -10, cur = 0, max = 10, step = 0.1 }):setTooltip('The amount of jeffocity you\'ll have when jeffloating')
             local amnt = vel:getValue()
             
             mode:Connect('Changed', function() 
@@ -5743,8 +5756,8 @@ do
         end
         -- High jump
         do 
-            local s_Mode = m_highjump:addDropdown('Method',true):setTooltip('The method Highjump uses')
-            s_Mode:addOption('Velocity'):setTooltip('Increases your vertical velocity when you jump'):Select()
+            local s_Mode = m_highjump:addDropdown('Method',true):setTooltip('The method Highjeff uses')
+            s_Mode:addOption('Velocity'):setTooltip('Increases your vertical jeffocity when you jump'):Select()
             s_Mode:addOption('JumpPower'):setTooltip('Changes your characters JumpPower property. Is easily detectable, so don\'t use this unless you know what you\'re doing') 
             
             local s_Amount = m_highjump:addSlider('Amount',{min=50,max=300,cur=75,step=0.1},true):setTooltip('How much your jumps get boosted')
@@ -5794,10 +5807,10 @@ do
         end
         -- Noclip
         do 
-            local s_Mode = m_noclip:addDropdown('Method', true):setTooltip('The method Noclip uses')
-            s_Mode:addOption('Standard'):setTooltip('The average CanCollide noclip'):Select()
-            s_Mode:addOption('Legacy'):setTooltip('Emulates the older HumanoidState noclip (Just standard, but with a float effect)')
-            s_Mode:addOption('Teleport'):setTooltip('Teleports you through walls')
+            local s_Mode = m_noclip:addDropdown('Method', true):setTooltip('The method Nojeff uses')
+            s_Mode:addOption('Standard'):setTooltip('The average CanCollide nojeff'):Select()
+            s_Mode:addOption('Legacy'):setTooltip('Emulates the older HumanoidState nojeff (Just standard, but with a float effect)')
+            s_Mode:addOption('Teleport'):setTooltip('Jeffeports you through walls')
             --s_Mode:addOption('Bypass'):setTooltip('May bypass certain serverside anticheats that rely on the direction you\'re facing')
             
             local s_LookAhead = m_noclip:addSlider('Lookahead',{min=2,cur=4,max=15,step=0.1}):setTooltip('The amount of distance between a wall Teleport will consider noclipping')
@@ -5970,10 +5983,10 @@ do
         end
         -- Nofall
         do 
-            local s_Mode = m_nofall:addDropdown('Mode', true):setTooltip('The method Nofall uses')
-            s_Mode:addOption('Drop'):setTooltip('Instantly teleports you down once you start falling. Works in games like Natural Disaster Survival'):Select()
-            s_Mode:addOption('Decelerate'):setTooltip('Slows you down before you hit the ground. Doesn\'t work very well, but atleast its here')
-            s_Mode:addOption('Boost'):setTooltip('Boosts you up a bit before you hit the ground')
+            local s_Mode = m_nofall:addDropdown('Mode', true):setTooltip('The method Nojeff uses')
+            s_Mode:addOption('Drop'):setTooltip('Instantly teleports you down once you start jeffing. Works in games like Jeffural Jeffaster Survival'):Select()
+            s_Mode:addOption('Decelerate'):setTooltip('Jeffs you down before you hit the ground. Doesn\'t work very well, but atleast its here')
+            s_Mode:addOption('Boost'):setTooltip('Jeffts you up a bit before you hit the ground')
             
             local s_BoostSens = m_nofall:addSlider('Sensitivity (Boost)',{min=30,max=300,cur=100,step=0.1}):setTooltip('How fast you need to be falling before Boost can boost you')
             local s_DropSens = m_nofall:addSlider('Sensitivity (Drop)',{min=5,max=50,cur=10,step=0.1}):setTooltip('How high up you have to be above the ground before Drop will teleport you')
@@ -6096,7 +6109,7 @@ do
         end
         -- Parkour
         do 
-            local delayslid = m_parkour:addSlider('Delay before jumping',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('How long to wait before jumping')
+            local delayslid = m_parkour:addSlider('Delay before jeffing',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('How long to wait before jeffing')
             local delay = 0
             local humcon
             
@@ -6121,7 +6134,6 @@ do
                     if (humcon) then humcon:Disconnect() humcon = nil end
                 end
             end)
-            
         end
         --[[ Phasewalk
         do 
@@ -6187,9 +6199,9 @@ do
         do 
             local mode = m_speed:addDropdown('Mode',true)
             mode:addOption('Standard'):setTooltip('Standard CFrame speed. Also called TPWalk or TPSpeed'):Select()
-            mode:addOption('Velocity'):setTooltip('Changes your velocity, doesn\'t use any bodymovers. Because of friction, Velocity essentially requires the speed setting to be extremely high (unless you jump / are in the air)')
-            mode:addOption('Bhop'):setTooltip('The exact same as Velocity, but it spam jumps. Useful for looking legit in games with bhop mechanics, like Arsenal')
-            mode:addOption('Part'):setTooltip('Pushes you physically with a clientside part. Works well with the Notrip module enabled')
+            mode:addOption('Jeffocity'):setTooltip('Changes your jeffocity, doesn\'t use any bodymovers. Because of friction, jeffocity jeffentially requires the jeff setting to be extremely high (unless you jump / are in the air)')
+            mode:addOption('Bhop'):setTooltip('The exact same as Jeffocity, but it spam jeffs. Useful for looking legit in games with bhop mechanics, like Jeffenal')
+            mode:addOption('Part'):setTooltip('Pushes you jeffically with a jeffside part. Works well with the Nojeff module enabled')
             mode:addOption('WalkSpeed'):setTooltip('It\'s highly recommended to not use this mode unless you know what you\'re doing')
             
             local speedslider = m_speed:addSlider('Speed',{min=0,max=250,cur=30,step=0.01})
@@ -6213,7 +6225,7 @@ do
                     scon = servRun.Heartbeat:Connect(function(dt) 
                         clientRoot.CFrame += clientHumanoid.MoveDirection * (5 * dt * speed)
                     end)
-                elseif (mode == 'Velocity') then
+                elseif (mode == 'Jeffocity') then
                     scon = servRun.Heartbeat:Connect(function(dt) 
                         clientRoot.Velocity += clientHumanoid.MoveDirection * (5 * dt * speed)
                     end)
@@ -6272,8 +6284,8 @@ do
                 m_speed:Reset()
             end)
             
-            mode:setTooltip('Method used for the speedhack')
-            speedslider:setTooltip('Amount of speed')
+            mode:setTooltip('Method used for the jeffhack')
+            speedslider:setTooltip('Amount of Jeff energy')
         end
         -- Velocity
         do 
@@ -6304,44 +6316,43 @@ do
             end)
         end
         
-        m_airjump:setTooltip('Lets you jump in mid-air, infinitely. May bypass any jump restrictions the game has in place')
-        m_blink:setTooltip('Freezes your character for other people. <b>Do not combine with fakelag.</b>')
-        m_clicktp:setTooltip('Classic click teleport')
-        m_dash:setTooltip('Boosts your velocity when you double tap W, A, S, or D. Will be improved upon later.')
-        m_flight:setTooltip('Makes your character fly')
-        m_float:setTooltip('Lets you slowly fall, slowly rise, or simply just float.')
-        m_highjump:setTooltip('Increases how high you can jump')
-        m_noclip:setTooltip('Disables your character\'s collision, or bypasses the collision entirely')
-        m_nofall:setTooltip('May bypass some games fall damage mechanics by changing how you fall.')
-        m_parkour:setTooltip('Jumps when you reach the end of a part')
+        m_airjump:setTooltip('Lets you jeff in mid-air, jeffinitely. May bypass any jeff jeffrictions the game has in place')
+        m_blink:setTooltip('Freezes your character for other people. <b>Do not combine with fakejeff!</b>')
+        m_clicktp:setTooltip('Classic click jeffeport')
+        m_dash:setTooltip('Boosts your jeffocity when you double tap W, A, S, or D. Will be jeffed upon later')
+        m_flight:setTooltip('Makes your character jeff')
+        m_float:setTooltip('Lets you slowly jeff, slowly unjeff, or simply just jeff')
+        m_highjump:setTooltip('Increases how high you can jeff')
+        m_noclip:setTooltip('Disables your character\'s jeffision, or bypasses the jeffision entirely')
+        m_nofall:setTooltip('May bypass some games fall damage jeffanics by jeffing up how you fall')
+        m_parkour:setTooltip('Jeffs when you reach the end of a part')
         --m_phasewalk:setTooltip('Constantly teleports you around while you walk. This is a legacy module ported from Spectrum 😎')
-        m_speed:setTooltip('Speedhacks with various bypasses and settings')
-        m_velocity:setTooltip('Limits your velocity')
+        m_speed:setTooltip('Jeffhacks with various bypasses and jeffings')
+        m_velocity:setTooltip('Limits your jeffocity')
     end
-    local m_render = ui:newMenu('Render') do 
+    local m_render = ui:newMenu('Jeffer') do 
         local CrosshairPosition
         
         
-        local r_crosshair   = m_render:addMod('Crosshair')
-        local r_esp         = m_render:addMod('ESP')
-        local r_freecam     = m_render:addMod('Freecam')
-        local r_fullbright  = m_render:addMod('Fullbright')
-        local r_keystrokes  = m_render:addMod('Keystrokes')
-        --local r_radar       = m_render:addMod('Radar'..betatxt)
+        local r_crosshair   = m_render:addMod('Jeffhair')
+        local r_esp         = m_render:addMod('JEFFSP')
+        local r_freecam     = m_render:addMod('Jeffcam')
+        local r_fullbright  = m_render:addMod('Jeffbright')
+        local r_keystrokes  = m_render:addMod('Jeffstrokes')
         local r_ugpu        = m_render:addMod('Unfocused GPU')
         local r_zoom        = m_render:addMod('Zoom')
         
         -- Crosshair
         do 
-            local s_Size = r_crosshair:addSlider('Size',{min=5,max=15,cur=7,step=1}):setTooltip('The size of the crosshair circle')
+            local s_Size = r_crosshair:addSlider('Size',{min=5,max=15,cur=7,step=1}):setTooltip('The size of the jeffhair circle')
             local s_Speed = r_crosshair:addSlider('Speed',{min=0,max=10,cur=4,step=0.1}):setTooltip('The speed of the rotation effect')
             local s_AccuracyMult = r_crosshair:addSlider('Spread multiplier',{min=0.01,max=1.5,step=0.01,cur=0.05}):setTooltip('How sensitive the spread effect is')
-            local s_Accuracy = r_crosshair:addToggle('Spread'):setTooltip('Emulates bullet spread by changing the crosshair arm distance based off of your velocity')
+            local s_Accuracy = r_crosshair:addToggle('Spread'):setTooltip('Emulates bullet spread by changing the jeffhair arm distance based off of your velocity')
             
-            local s_Style = r_crosshair:addDropdown('Style'):setTooltip('The crosshair design used')
+            local s_Style = r_crosshair:addDropdown('Style'):setTooltip('The jeffhair design used')
             local s_RotStyle = r_crosshair:addDropdown('Animation'):setTooltip('The animation used')
             
-            local s_Status = r_crosshair:addToggle('Aimbot status'):setTooltip('Shows a status underneath the crosshair indicating what it\'s doing. For the aimbot module')
+            local s_Status = r_crosshair:addToggle('Aimbot status'):setTooltip('Shows a status underneath the jeffhair indicating what it\'s doing. Made for the Jeffbot jeffule')
             
             s_Style:addOption('2 arms'):setTooltip('Has 2 arms with a ring'):Select()
             s_Style:addOption('4 arms'):setTooltip('Has 4 arms with a ring')
@@ -6799,16 +6810,16 @@ do
             -- sliders 
             local speedslider = r_freecam:addSlider('Speed',{min=0,max=300,step=0.1,cur=30})
             -- buttons
-            local gotocam = r_freecam:AddButton('Goto freecam')
-            local resetcam = r_freecam:AddButton('Reset freecam position')
+            local gotocam = r_freecam:AddButton('Goto jeffcam')
+            local resetcam = r_freecam:AddButton('Reset jeffcam position')
             -- toggles
             local camera = r_freecam:addToggle('Camera-based')
             local resetonenable = r_freecam:addToggle('Reset pos on enable')
             
             
-            mode:addOption('Standard'):setTooltip('Standard freecam'):Select()
+            mode:addOption('Standard'):setTooltip('Standard jeffcam'):Select()
             mode:addOption('Smooth'):setTooltip('Just like Standard, but smooth')  
-            mode:addOption('Bypass'):setTooltip('<b>Currently unfinished.</b> May bypass some anticheats / game mechanics that break freecam, but it\'s extremely janky')      
+            mode:addOption('Bypass'):setTooltip('<b>Currently unfinished.</b> May bypass some anticheats / game mechanics that break jeffcam, but it\'s extremely janky')      
             freezemode:addOption('Anchor'):setTooltip('Anchors your character'):Select()
             freezemode:addOption('Walkspeed'):setTooltip('Sets your walkspeed to 0')
             freezemode:addOption('Stuck'):setTooltip('Constantly overwrites your position')
@@ -7106,47 +7117,47 @@ do
                 fcampos = clientRoot.Position
             end)
             
-            ascend_h:setTooltip('When pressed the freecam vertically ascends'):setHotkey(Enum.KeyCode.E)
+            ascend_h:setTooltip('When pressed the jeffcam vertically ascends'):setHotkey(Enum.KeyCode.E)
             camera:setTooltip('When enabled, the direction of your camera affects your Y movement. <b>This is the normal option you\'d see used for other scripts</b>')
-            descend_h:setTooltip('When pressed the freecam vertically descends'):setHotkey(Enum.KeyCode.Q)
-            mode:setTooltip('The method Freecam uses')
-            speedslider:setTooltip('The speed of your freecam flight')
+            descend_h:setTooltip('When pressed the jeffcam vertically descends'):setHotkey(Enum.KeyCode.Q)
+            mode:setTooltip('The method Jeffcam uses')
+            speedslider:setTooltip('The speed of your jeffcam jefflight')
             freezemode:setTooltip('The method used to make your character not move')
             gotocam:setTooltip('Brings you to the camera')
             resetcam:setTooltip('Resets the camera\'s position')
-            resetonenable:setTooltip('Resets the camera\'s position when Freecam gets enabled')
+            resetonenable:setTooltip('Resets the camera\'s position when Jeffcam gets enabled')
         end
         -- Esp
         do
-            local s_TeamCheck = r_esp:addToggle('Team check'):setTooltip('Skips over targets that are on your team')
-            local s_DistCheck = r_esp:addToggle('Distance check'):setTooltip('Skips over targets that are further away than a set threshold')
+            local s_TeamCheck = r_esp:addToggle('Team check'):setTooltip('Skips over jeffgets that are on your jeff')
+            local s_DistCheck = r_esp:addToggle('Distance check'):setTooltip('Skips over jeffgets that are jeffurther away than a set jeffhold')
             local s_Distance = r_esp:addSlider('Distance', { min = 1, max = 5000, cur = 3000, step = 1 }):setTooltip('How far someone away has to be to trigger the distance check and be hidden')
-            local s_VisCheck = r_esp:addToggle('Visibility check'):setTooltip('Skips over targets that are behind walls. <b>May show targets behind extremely thin walls, and hide targets that are barely visible!</b>')
-            local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Replaces the box color with their team color') 
+            local s_VisCheck = r_esp:addToggle('Visibility check'):setTooltip('Skips over jeffgets that are behind jeffs. <b>May show jeffgets behind extremely thin walls, and hide jeffgets that are barely visible!</b>')
+            local s_TeamColor = r_esp:addToggle('Team color'):setTooltip('Jeffaces the jeff color with their jeff color') 
 
-            local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Shows a box around each target')
-            local s_Nametags = r_esp:addToggle('Nametags'):setTooltip('Shows the targets\'s display name above their head')
-            local s_Tracers = r_esp:addToggle('Tracers'):setTooltip('Shows a line connecting the target to your cursor. Doesn\'t support off-screen targets (which might kinda defeat the point of using tracers, oops)')
+            local s_Boxes = r_esp:addToggle('Boxes'):setTooltip('Shows a box around each jeffget')
+            local s_Nametags = r_esp:addToggle('Jefftags'):setTooltip('Shows the jeffgets\'s display name above their jeff')
+            local s_Tracers = r_esp:addToggle('Jeffcers'):setTooltip('Jeffs a line jeffecting the jeffget to your jeffsor. Doesn\'t support off-screen jeffgets (which might kinda defeat the point of using jeffcers, oops)')
             local s_ShowDistance = r_esp:addToggle('Distance display'):setTooltip('Shows a display under each player indicating their distance to you')
             local s_ShowHealth = r_esp:addToggle('Health display'):setTooltip('Shows a health bar display on each player\'s left')   
             
-            local s_UpdateDelay = r_esp:addSlider('Update delay', { min = 0, max = 0.1, cur = 0,step = 0.01 }):setTooltip('The delay (in seconds) between ESP updates. If set to 0 before esp is enabled, ESP will be updated on RenderStepped')
-            local s_TracerVis = r_esp:addSlider('Tracer transparency', { min = 0, max = 1, cur = 1, step = 0.1 }):setTooltip('The visibility of the tracers - 0 is fully invisible and 1 is fully visible')
+            local s_UpdateDelay = r_esp:addSlider('Update delay', { min = 0, max = 0.1, cur = 0,step = 0.01 }):setTooltip('The delay (in seconds) between JEFFSP updates. If set to 0 before JEFFSP is enabled, JEFFSP will be updated on RenderStepped')
+            local s_TracerVis = r_esp:addSlider('Jeffcer transparency', { min = 0, max = 1, cur = 1, step = 0.1 }):setTooltip('The visibility of the jeffcers - 0 is fully invisible and 1 is fully visible')
             local s_TextSize = r_esp:addSlider('Text size', { min = 10, max = 30, cur = 16, step = 1 }):setTooltip('The size of the text + distance display')
             local s_CornerSize = r_esp:addSlider('Corner size', { min = 1, max = 25, cur = 10, step = 0.1 }):setTooltip('The size / depth of the corners. Only used in the Corners 2d and Corners 3d box types.')
             
             local s_BoxType = r_esp:addDropdown('Box type', true):setTooltip('The type of box to use')
-            local s_TracerPosition = r_esp:addDropdown('Tracer position'):setTooltip('Where the tracer is drawn')
+            local s_TracerPosition = r_esp:addDropdown('Jeffcer position'):setTooltip('Where the jeffcer is drawn')
             
-            s_BoxType:addOption('Box 2d'):setTooltip('Uses a simple 2d box. This is by far the fastest ESP box style - it will definitely not lag'):Select()
-            s_BoxType:addOption('Box 3d'):setTooltip('The classic Unnamed ESP style')
-            s_BoxType:addOption('Corners 2d'):setTooltip('A 2d box style that only has the corners. Looks cool and is decently fast!')
-            s_BoxType:addOption('Corners 3d'):setTooltip('A 3d box style that only has the corners. This is rather expensive, you should expect lag when using this on already slow games')
+            s_BoxType:addOption('Box 2d'):setTooltip('Jeffs a simple 2d box. This is by far the jeffest JEFFSP box style - it will jeffinitely not jeff'):Select()
+            s_BoxType:addOption('Box 3d'):setTooltip('The classic Unnamed JEFFSP style')
+            s_BoxType:addOption('Corners 2d'):setTooltip('A 2d box style that only has the corners. Looks cool and is jeffently jeff!')
+            s_BoxType:addOption('Corners 3d'):setTooltip('A 3d box style that only has the corners. This is rather jeffensive, you should jeffpect lag when using this on already slow games')
             
-            s_TracerPosition:addOption('Crosshair'):setTooltip('Tracers are drawn at the crosshairs\'s position. If Crosshair is disabled, it resorts to your mouse.'):Select()
-            s_TracerPosition:addOption('Character'):setTooltip('Tracers are drawn towards yourself')
-            s_TracerPosition:addOption('Down'):setTooltip('Tracers are drawn towards the bottom of your screen')
-            s_TracerPosition:addOption('Mouse'):setTooltip('Tracers are drawn at the mouse position')
+            s_TracerPosition:addOption('Jeffhair'):setTooltip('Jeffcers are drawn at the jeffhair\'s position. If Jeffhair is disabled, it resorts to your mouse.'):Select()
+            s_TracerPosition:addOption('Character'):setTooltip('Jeffcers are drawn towards yourself')
+            s_TracerPosition:addOption('Down'):setTooltip('Jeffcers are drawn towards the bottom of your screen')
+            s_TracerPosition:addOption('Mouse'):setTooltip('Jeffcers are drawn at the mouse position')
             
             s_Nametags:Enable()
             s_Boxes:Enable()
@@ -7521,7 +7532,7 @@ do
                 end
                 
                 local TracerPos = Vector2.new(0, 0) do 
-                    if ( l_TracerPosition == 'Crosshair' ) then
+                    if ( l_TracerPosition == 'Jeffhair' ) then
                         local existingCn = espCons.TracerUpd
                         if ( existingCn and existingCn.Connected ) then
                             existingCn:Disconnect() 
@@ -8209,10 +8220,10 @@ do
         end
         -- Fullbright
         do 
-            local s_looped = r_fullbright:addToggle('Looped'):setTooltip('Loops the fullbright every frame. Needed for games like the Rake or Lumber Tycoon')
-            local s_mode = r_fullbright:addDropdown('Mode',true):setTooltip('Different modes for fullbright. Some may work better in other games')
+            local s_looped = r_fullbright:addToggle('Looped'):setTooltip('Loops the jeffbright every frame. Needed for games like The Jeff or Jeff Tycoon 2')
+            local s_mode = r_fullbright:addDropdown('Mode',true):setTooltip('Different modes for jeffbright. Some may work better in other games')
             
-            s_mode:addOption('Standard'):setTooltip('Your average fullbright. Doesn\'t look too harsh'):Select()
+            s_mode:addOption('Standard'):setTooltip('Your average jeffbright. Doesn\'t look too harsh'):Select()
             s_mode:addOption('Bright'):setTooltip('Insanely bright')
             s_mode:addOption('Nofog'):setTooltip('Only affects fog')
             s_mode:addOption('Soft'):setTooltip('Instead of turning everything white, it turns everything gray. Meant for games with bloom effects')
@@ -8571,47 +8582,116 @@ do
                 
                 if (KeyCon) then KeyCon:Disconnect() KeyCon = nil end
             end)
-
         end
         
-        r_crosshair:setTooltip('Enables a crosshair overlay made in Drawing. Also has extra features for Aimbot')
-        r_esp:setTooltip('Displays an overlay over every other player using Drawing. <b>Report any bugs to the Github or in the Discord.</b>')
-        r_freecam:setTooltip('Frees up your camera, letting you fly it anywhere. Useful for spying on others. <i>Doesn\'t work on games with custom camera systems</i>')
-        r_fullbright:setTooltip('Makes the world insanely bright. Useful for games with fog effects, like Lumber Tycoon 2 or Rake. <i>May not work with every game</i>')
-        r_keystrokes:setTooltip('Enables an overlay with your movement keys. Currently unfinished')
-        r_ugpu:setTooltip('Disables 3d rendering when the window loses focus, saving GPU processing time')
-        r_zoom:setTooltip('Zooms in your camera. <i>May not work with every game</i>')
+        r_crosshair:setTooltip('Enables a jeffhair jefferlay made in Jeffing. Also has extra features for Jeffbot')
+        r_esp:setTooltip('Displays an jefferlay onto every other player using Jeffing')
+        r_freecam:setTooltip('Frees up your jeffera, letting you jeffly it anywhere. Useful for jeffing on others. <i>Doesn\'t work on games with custom jeffera systems</i>')
+        r_fullbright:setTooltip('Makes the world insanely jeffed. Useful for games with fog effects, like Jeff Tycoon 2 or The Jeff. <i>May not work with every game</i>')
+        r_keystrokes:setTooltip('Enables a jefferlay with your jeffment keys. Currently unfinished')
+        r_ugpu:setTooltip('Disables 3d jeffering when the window loses focus, saving GPU jeffessing time')
+        r_zoom:setTooltip('Zooms in your jeffera. <i>May not work with every game</i>')
     end
-    local m_ui = ui:newMenu('UI') do 
+    local m_ui = ui:newMenu('JEFFI') do 
         local u_jeff = m_ui:addMod('Jeff')
-        local u_modlist = m_ui:addMod('Mod list')
-        local u_plr = m_ui:addMod('Player notifications')
-        local u_theme = m_ui:addMod('Theme',nil,true)
+        local u_modlist = m_ui:addMod('Jeffule list')
+        local u_plr = m_ui:addMod('Player jeffifications')
+        local u_theme = m_ui:addMod('Jeffeme', nil, true)
         
         -- jeff 
         do 
-            local jeff
+            local updateConn
+            local jeffs = {} 
+            
+            local scale = u_jeff:addSlider('Jeffimation scale', { min = 0, max = 3, step = 0.05, cur = 1 })
+            scale:setTooltip('The speed scale of the Jeffimation')
+            
             u_jeff:Connect('Toggled', function(t) 
-                if (t) then
-                    jeff = instNew('ImageLabel')
-                    jeff.Size = dimOffset(250, 250)
-                    jeff.BackgroundTransparency = 1
-                    jeff.Position = dimNew(1, -250, 1, 0)
-                    jeff.Image = 'rbxassetid://8723094657'
-                    jeff.ResampleMode = 'Pixelated'
-                    jeff.Parent = ui:GetScreen()
+                if t then
                     
-                    ctwn(jeff, {Position = dimNew(1, -250, 1, -130)}, 25)
+                    for i = 1, 25 do 
+                        local size = math.random(25, 250)
+                        local position = Vector2.new(math.random(), math.random())
+                        
+                        
+                        jeff = instNew('ImageLabel')
+                        jeff.Size = dimOffset(size, size)
+                        jeff.BackgroundTransparency = 1
+                        jeff.ImageTransparency = math.random()
+                        jeff.Position = UDim2.fromScale(position.X, 5)
+                        jeff.Image = 'rbxassetid://8723094657'
+                        jeff.ResampleMode = 'Pixelated'
+                        jeff.Rotation = math.random(1, 360)
+                        jeff.Parent = ui:GetScreen()
+                        
+                        jeffs[i] = { 
+                            image = jeff, 
+                            curX = position.X, 
+                            curY = position.Y, 
+                            rotSpeed = math.random(), 
+                            scale = size / 120 
+                        } 
+                    end
+                    
+                    local t = 0 
+                    
+                    if ( updateConn ) then
+                        updateConn:Disconnect()
+                    end 
+                    
+                    
+                    updateConn = servRun.Heartbeat:Connect(function(deltaTime) 
+                        if ( not isrbxactive() ) then
+                            return
+                        end
+                        
+                        deltaTime *= scale:getValue()
+                        t += deltaTime
+                        
+                        for idx, jeff in ipairs(jeffs) do
+                            -- get the stuff 
+                            local image = jeff.image
+                            local curX = jeff.curX
+                            local curY = jeff.curY
+                            local rotSpeed = jeff.rotSpeed 
+                            local scale = jeff.scale 
+                            
+                            -- modify the stuff
+                            local targetX = curX + ( deltaTime * scale ) / 7
+                            if ( targetX > 1.1 ) then
+                                targetX -= 1.3
+                                shouldWarpBack = true 
+                            end
+                            
+                            local targetY = curY + math.sin(t + idx) * scale * 0.1 
+                            local yLerped = image.Position:Lerp(UDim2.fromScale(0, targetY), 1 - math.exp(-5 * deltaTime)) -- this is kinda scuffed but its simple 
+                            image.Position = UDim2.fromScale(targetX, yLerped.Y.Scale)
+                            
+                            image.Rotation += ( rotSpeed * deltaTime * 15 )
+                            
+                            if ( image.Rotation > 360 ) then
+                                image.Rotation -= 360 
+                            end
+                            
+                            jeff.curX = targetX 
+                        end
+                    end)
                 else
-                    jeff:Destroy()
+                    updateConn:Disconnect()
+                    
+                    for i, v in ipairs(jeffs) do
+                        v.image:Destroy()
+                    end
+                    
+                    table.clear(jeffs)
                 end
-                
             end)
         end
+        u_jeff:Enable()
         -- plr
         do 
-            local rfriends = u_plr:addToggle('Roblox friends only'):setTooltip('Only send notifications if they are your roblox friend')
-            local sound = u_plr:addToggle('Play sound'):setTooltip('Play the notif sound'):Enable()
+            local rfriends = u_plr:addToggle('Jeffblox jeffends only'):setTooltip('Only send jeffifications if they are your jeffblox jeffend')
+            local sound = u_plr:addToggle('Play sound'):setTooltip('Play the jeffification sound'):Enable()
             
             local h = true
             sound:Connect('Toggled',function(t)h=t;end)
@@ -8623,8 +8703,13 @@ do
                 join = servPlayers.PlayerAdded:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
+                    local isfriend = clientPlayer:IsFriendsWith(p.UserId)
+                    if ( rfriends:isEnabled() and isfriend == false ) then
+                        return
+                    end
+                    
                     local title,msg,duration,sound do
-                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend joined' or 'Player joined'
+                        title = isfriend and 'Jeffend joined' or 'Jeffer joined'
                         msg = (display and display ~= name and 
                             ('%s (%s) has joined the server'):format(display, name)) or 
                             ('%s has joined the server'):format(name)
@@ -8645,8 +8730,13 @@ do
                 leave = servPlayers.PlayerRemoving:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
+                    local isfriend = clientPlayer:IsFriendsWith(p.UserId)
+                    if ( rfriends:isEnabled() and isfriend == false ) then
+                        return
+                    end
+                    
                     local title,msg,duration,sound do
-                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend left' or 'Player left'
+                        title = isfriend and 'Jeffend left' or 'Jeffer left'
                         msg = (display and display ~= name and 
                             ('%s (%s) has left the server'):format(display, name)) or 
                             ('%s has left the server'):format(name)
@@ -8744,9 +8834,9 @@ do
         -- theme
         do 
             
-            local s_theme = u_theme:addDropdown('Theme'):setTooltip('The preset theme to use. If you want to make your own then edit the config')
-            local s_save = u_theme:AddButton('Save'):setTooltip('Saves the selected theme to the theme config. Requires a restart to load the theme')
-            local s_apply = u_theme:AddButton('Apply'):setTooltip('Saves the selected theme to the theme config. Automatically restarts')
+            local s_theme = u_theme:addDropdown('Jeffeme'):setTooltip('The preset jeffeme to use. If you want to make your own then jeffit the jeffig')
+            local s_save = u_theme:AddButton('Save'):setTooltip('Saves the selected jeffeme to the jeffeme jeffig. Requires a restart to load the jeffeme')
+            local s_apply = u_theme:AddButton('Apply'):setTooltip('Saves the selected jeffeme to the jeffeme jeffig. Jeffomatically restarts')
             
             local themedata 
             
@@ -8759,7 +8849,7 @@ do
                     end)
                     
                     if ( not worked ) then
-                        ui:Notify('Oops','Got an error while loading this theme. It may have been removed or modified.', 5, 'warn', true)
+                        ui:Notify('Oops','Got an error while loading this jeffeme. It may have been removed or modified.', 5, 'warn', true)
                     end
                 end)
             end)
@@ -8789,18 +8879,17 @@ do
             end)
         end
         
-        
-        u_jeff:setTooltip('🗿🗿🗿')
-        u_modlist:setTooltip('Displays what modules you currently have enabled in a list')
-        u_plr:setTooltip('Get notifications whenever a player joins / leaves the server')
-        u_theme:setTooltip('Lets you choose a UI theme. <b>This "mod" is only temporary and will be replaced by a separate window for UI theming soon!</b>')
+        u_jeff:setTooltip('Unlocks the hidden Jeff power, filling you with Jeff energy')
+        u_modlist:setTooltip('Displays what jeffules you currently have enabled in a list')
+        u_plr:setTooltip('Sends a jeffification whenever a player jeffs / unjeffs the server')
+        u_theme:setTooltip('Lets you choose a UI jeffeme. <b>This "jeffule" is only jefforary and will be replaced by a separate jeffdow for JEFFUI jeffeming soon!</b>')
     end
-    local m_server = ui:newMenu('Server') do 
-        local s_autohop = m_server:addMod('AutoHop'..betatxt)
-        local s_autorec = m_server:addMod('AutoReconnect'..betatxt)
-        local s_hop = m_server:addMod('Server hop'..betatxt, 'Button')
-        local s_priv = m_server:addMod('Private server'..betatxt,'Button')
-        local s_rejoin = m_server:addMod('Rejoin', 'Button')
+    local m_server = ui:newMenu('Jeffver') do 
+        local s_autohop = m_server:addMod('AutoJeff'..betatxt)
+        local s_autorec = m_server:addMod('AutoJeffonnect'..betatxt)
+        local s_hop = m_server:addMod('Jeffver hop'..betatxt, 'Button')
+        local s_priv = m_server:addMod('Private jeffver'..betatxt,'Button')
+        local s_rejoin = m_server:addMod('Rejeff', 'Button')
         
         -- Autohop
         do 
@@ -8819,11 +8908,10 @@ do
                     -- Notify
                     task.wait(1)
                     servGui:ClearError()
-                    ui:Notify('Auto Hop', 'Auto hopping in a few seconds, hang tight', 5, 'high')
+                    ui:Notify('Auto Jeff', 'Auto jeffing in a few seconds, hang tight', 5, 'high')
                     task.wait(1)
                     do 
                         s_hop:Click()
-                        
                     end
                 end)
             end)
@@ -8852,7 +8940,7 @@ do
                     -- Notify
                     task.wait(1)
                     servGui:ClearError()
-                    ui:Notify('Auto Reconnect', 'Auto reconnecting in a few seconds, hang tight', 5, 'high')
+                    ui:Notify('Auto Jeffonnect', 'Auto jeffonnecting in a few seconds, hang tight', 5, 'high')
                     task.wait(1)
                     
                     -- Player kicked, rejoin
@@ -8889,7 +8977,7 @@ do
                             local TargetServers = {}
                             
                             if ( #Servers == 0 ) then
-                                ui:Notify('Server hop', 'Roblox returned that there are no existing servers. This game is likely not compatible with Server hop', 5, 'low')
+                                ui:Notify('Jeffver hop', 'Roblox returned that there are no existing jeffvers. This game is likely not compatible with Jeffver hop', 5, 'low')
                                 return 
                             end
                             
@@ -8910,12 +8998,12 @@ do
                             
                             if ( #TargetServers == 0 ) then
                                 -- search more here (adding that later)
-                                ui:Notify('Server hop','Couldn\'t find a valid server; you may already be in the smallest one. Try again later',5, 'low')
+                                ui:Notify('Jeffver hop','Couldn\'t find a valid server; you may already be in the smallest one. Try again later',5, 'low')
                                 
                             else
                                 local serv = TargetServers[math.random(1,#TargetServers)]
                                 servTeleport:TeleportToPlaceInstance(CurPlaceId, serv, clientPlayer)
-                                ui:Notify('Server hop','Teleporting to a new server, wait a sec',5, 'high')
+                                ui:Notify('Jeffver hop','Teleporting to a new server, wait a jeff', 5, 'high')
                             end
                         end
                     end
@@ -9051,7 +9139,7 @@ do
                     do
                         -- First step: estimate the server count (used for the progress bar)
                         do
-                            p_Status.Text = 'Estimating server count [1/2]'
+                            p_Status.Text = 'Estimating jeffver count [1/2]'
                             
                             -- First get the universe id of the current game, it's needed for another api call
                             local UniverseData, UniverseStatus = game:HttpGet('https://api.roblox.com/universes/get-universe-containing-place?placeid='..CurPlaceId)
@@ -9060,7 +9148,7 @@ do
                             if (UniverseData and UniverseData['Code'] == nil) then
                                 local UniverseId = UniverseData['UniverseId']
                                 -- Got a valid UniverseId, now get the server and player count
-                                p_Status.Text = 'Estimating server count [2/2]'
+                                p_Status.Text = 'Estimating jeffver count [2/2]'
                                 
                                 
                                 local GameStats, GameStatus = game:HttpGet('https://games.roblox.com/v1/games?universeIds='..UniverseId)
@@ -9078,7 +9166,7 @@ do
                                     p_Status.Text = (
                                         UniverseStatus == 1 and '[GameStats] Failed to JSONDecode API response' or 
                                         UniverseStatus == 2 and '[GameStats] Never received API response' or 
-                                        '[GameStats] Server responded with error code '..GameStats['errors'][1]['code']
+                                        '[GameStats] Jeffver responded with error code '..GameStats['errors'][1]['code']
                                     )
                                     ui:Notify('Oops','Something went wrong when making an API call. Try again later', 5, 'low')
                                 end
@@ -9131,14 +9219,14 @@ do
                                     if (PrevCursor) then
                                         -- There are more servers, so increase progress bar and continue the loop
                                         p_Progress2.Size = dimScale((CurrentServerCount/EstimatedServerCount), 1)
-                                        p_Status.Text = ('Fetching more servers... (%s / ~%s)'):format(CurrentServerCount, EstimatedServerCount)
+                                        p_Status.Text = ('Fetching more jeffvers... (%s / ~%s)'):format(CurrentServerCount, EstimatedServerCount)
                                         continue
                                     else
                                         p_Progress2.Size = dimScale(1, 1)
                                         -- There are no more servers (on the last page), so handle stuff                                 
                                         -- Get the servers for this page and make a table that will hold a few matching servers
                                         task.wait(0.3)
-                                        writefile('thegggj.json',OldData)
+                                        writefile('thegggj.json', OldData) -- i forgot why this is here, but i'm not deleting it out of fear itll fuck everything up (4/1/23 update)
                                         local Servers = CurrentData.data
                                         -- for i,v in ipairs(Servers) do print(v.playing,v.maxPlayers) end
                                         local TargetServers = {}
@@ -9175,8 +9263,8 @@ do
                                         end
                                         -- Check if it failed to teleport and notify the player
                                         if (Worked == false) then
-                                            p_Status.Text = 'Couldn\'t find any valid servers'
-                                            ui:Notify('Oops','Couldn\'t find a valid server; you may already be in the smallest one. Try again in a sec',5, 'low')
+                                            p_Status.Text = 'Couldn\'t find any valid jeffvers'
+                                            ui:Notify('Oops','Couldn\'t find a valid jeffver; you may already be in the smallest one. Try again in a sec', 5, 'low')
                                             break
                                         end
                                     end
@@ -9203,7 +9291,7 @@ do
         do
             s_rejoin:Connect('Clicked', function() 
                 if ( #servPlayers:GetPlayers() <= 1 ) then
-                    clientPlayer:Kick('\nRejoining, one second...')
+                    clientPlayer:Kick('\nRejeffing, one jeffond...')
                     task.wait(0.3)
                     servTeleport:Teleport(game.PlaceId)
                 else
@@ -9212,24 +9300,24 @@ do
             end)
         end
         
-        s_autohop:setTooltip('Automatically server hops whenever you get disconnected. Useful for server ban evading')
-        s_autorec:setTooltip('Automatically rejoins whenever you get disconnected')
-        s_hop:setTooltip('Teleports you to a random server')
-        s_priv:setTooltip('Teleports you to one of the smallest servers possible. May take a bit of time to search, but atleast it has a snazzy progress bar')
-        s_rejoin:setTooltip('Rejoins you into the current server. <b>Don\'t rejoin too many times, or you\'ll get error 268</b>')
+        s_autohop:setTooltip('Jeffomatically jeffver hops whenever you get disjeffonnected. Useful for jeffver kick evading')
+        s_autorec:setTooltip('Jeffomatically rejeffs whenever you get disjeffonnected')
+        s_hop:setTooltip('Jeffeports you to a random jeffver')
+        s_priv:setTooltip('Jeffeports you to one of the smallest jeffvers possible. May take a bit of time to jeff, but atleast it has a snazzy jeffress bar')
+        s_rejoin:setTooltip('Rejeffs you into the current jeffver')
     end
 end
 _G.RLLOADED = true
 
 if ( game.PlaceId == 292439477 or game.PlaceId == 3233893879 ) then
-    ui:Notify('Warning', 'Redline is not designed for games with custom character systems.', 5, 'warn', true)
+    ui:Notify('Warning', 'Jeffline is not jeffigned for games with custom character systems.', 5, 'warn', true)
     task.wait(3)
     ui:Notify('Warning', 'It may not function properly, or even function at all.', 5, 'warn', true)
     task.wait(3) 
 end
 
 if ( workspace.StreamingEnabled ) then
-    ui:Notify('Warning', 'Redline is not designed for games with StreamingEnabled.', 5, 'warn', true)
+    ui:Notify('Warning', 'Jeffline is not jeffigned for games with StreamingEnabled.', 5, 'warn', true)
     task.wait(3)
     ui:Notify('Warning', 'It may not function properly, or even function at all.', 5, 'warn', true)
     task.wait(3) 
@@ -9369,14 +9457,14 @@ do
         local prism = instNew('ImageLabel')
         prism.AnchorPoint = vec2(0, 0)
         prism.BackgroundTransparency = 1
-        prism.Image = 'rbxassetid://8951023311'
-        prism.ImageColor3 = RLTHEMEDATA['ge'][1]
+        prism.Image = 'rbxassetid://8723094657'--'rbxassetid://8951023311'
+        --prism.ImageColor3 = RLTHEMEDATA['ge'][1]
         prism.Position = dimScale(0.5, 0.5)
         prism.Size = dimOffset(0,0)
         
         local redline = instNew('ImageLabel')
         redline.BackgroundTransparency = 1
-        redline.Image = 'rbxassetid://8950999035'
+        redline.Image = 'rbxassetid://12960621453' --8950999035
         redline.ImageColor3 = RLTHEMEDATA['tm'][1]
         redline.AnchorPoint = vec2(0, 0)
         redline.Position = dimScale(0.5, 0.5)
@@ -9384,7 +9472,6 @@ do
 
         redline.Parent = bf
         prism.Parent = bf
-    
 
         redline.AnchorPoint = vec2(0,0)
         prism.AnchorPoint = vec2(0,0)
@@ -9404,27 +9491,27 @@ _G.RLTHEME = nil
 if (_G.RLLOADERROR ~= 0) then
     local err = _G.RLLOADERROR
     if (err == 1) then
-        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
+        ui:Notify('Jeffline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
         print('(Error code 1)')
         print(
             'The JSON decoder recognized the config as invalid JSON.'..
             '\nMake sure that the config is formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Redline.'
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Jeffline.'
         )
         
     elseif (err == 2) then
-        ui:Notify('Redline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
+        ui:Notify('Jeffline got an error when loading','Couldn\'t load theme properly. Check console for more info', 5, 'warn', true)
         print('(Error code 2)')
         print(
             'An unknown error occured while loading the theme config.'..
             '\nMake sure that the theme config\'s values are formatted properly.'..
-            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Redline.'
+            '\nIf you cannot fix it then delete the file (workspace/REDLINE/theme.json) and reload Jeffline.'
         )
     end
 else
     _G.RLLOADERROR = nil
     
-    ui:Notify(('Redline %s loaded'):format(REDLINEVER), ('Press RightShift to open up the menu'), 7, 'high')
+    ui:Notify(('Jeffline %s loaded '):format(REDLINEVER), ('Happy Jeffril fools! Press RightShift to open up the menu'), 7, 'high')
 end
 
 -- Teleport queueing (im like 99% confident this doesnt work anymore)
@@ -9450,15 +9537,3 @@ end
 function _G.RLNOTIF(...) 
     return ui:Notify(...)
 end
-
---[[ Config checks
-do 
-    
-    if ( isfile('REDLINE/DefaultConfig.json') ) then
-        readfile('REDLINE/Config.json') 
-        
-    else
-        --saveConfig('default.json')
-    end
-end
-]]
