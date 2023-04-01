@@ -8843,9 +8843,9 @@ do
             s_theme:Connect('Changed', function(o) 
                 task.spawn(function()
                     themedata = nil
-                                
+
                     local worked = pcall(function()
-                        themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/'..o..'.json')
+                        themedata = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/april-fools/themes/'..o..'.json')
                     end)
                     
                     if ( not worked ) then
@@ -8860,11 +8860,11 @@ do
             s_apply:Connect('Clicked',function()
                 writefile('REDLINE/theme.json', themedata)
                 ui:Destroy()
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/loader.lua'))()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/april-fools/loader.lua'))()
             end)
             
             task.spawn(function()
-                local themes = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/main/themes/themelist.txt')
+                local themes = game:HttpGet('https://raw.githubusercontent.com/topitbopit/Redline/april-fools/themes/themelist.txt')
                 themes = themes:split(']')
                 for i = 1, #themes do
                     local a = themes[i] -- insane variable names 
