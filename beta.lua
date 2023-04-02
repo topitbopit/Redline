@@ -31,12 +31,9 @@ end
 if ( not isfolder('REDLINE') ) then
     makefolder('REDLINE')
 end
---[[if ( not isfolder('REDLINE/Configs')) then
-    makefolder('REDLINE/Configs') 
-end]]
 
 
-local REDLINEVER = 'v0.7.1'
+local REDLINEVER = 'v0.7.2'
 
 if not game:IsLoaded() then game.Loaded:Wait() end
 
@@ -556,7 +553,7 @@ local ui = {} do
                 if (v.ClassName == 'TextLabel' and v ~= w_ModListTitle) then
                     v.TextXAlignment = align
                     local p = v.P
-                    p[__] = _
+                    --p[__] = _
                     p[direction] = value
                 end
             end
@@ -2519,47 +2516,7 @@ local ui = {} do
         end
         
         base_class.widget_create_label = function(self, text) 
-            local WidgetLabel = instNew('TextLabel')
-            WidgetLabel.BackgroundTransparency = 1
-            WidgetLabel.Font = RLTHEMEFONT
-            WidgetLabel.RichText = true
-            WidgetLabel.TextColor3 = RLTHEMEDATA['tm'][1]
-            WidgetLabel.TextSize = 20
-            WidgetLabel.TextStrokeColor3 = RLTHEMEDATA['to'][1]
-            WidgetLabel.TextStrokeTransparency = 0
-            WidgetLabel.ZIndex = self.Index
-            WidgetLabel.Parent = self.Frame
-            
-            local bl = {}
-            bl['BackgroundTransparency'] = true
-            bl['Font'] = true
-            bl['TextColor3'] = true
-            bl['TextStrokeColor3'] = true
-            bl['TextStrokeTransparency'] = true
-            bl['ZIndex'] = true
-            bl['Parent'] = true
-            
-            
-            local mt = setmetatable({}, {
-                __index = function(a,b) 
-                    return WidgetLabel[b] 
-                end;
-                
-                __newindex = function(part, prop, val) 
-                    if (bl[prop] == nil) then
-                        WidgetLabel[prop] = val
-                    elseif (prop == 'SELF') then
-                        return WidgetLabel
-                    end
-                end;
-                
-                __metatable = 'the j :skull:'
-            })
-            
-            return mt
         end
-        
-        
     end
     
     -- UI functions
@@ -5191,6 +5148,8 @@ do
                     oldchar = nil 
                 end 
                 if ( fakechar ) then 
+                    clientChar:PivotTo(fakechar:GetPivot())
+                    
                     fakechar:Destroy()
                     fakechar = nil 
                 end
@@ -6096,32 +6055,52 @@ do
         end
         -- Parkour
         do 
-            local delayslid = m_parkour:addSlider('Delay before jumping',{min=0,max=0.2,cur=0,step=0.01}):setTooltip('How long to wait before jumping')
-            local delay = 0
-            local humcon
+            local s_Delay = m_parkour:addSlider('Delay before jumping', {min = 0, max = 0.2, cur = 0, step = 0.01})
+            s_Delay:setTooltip('How long to wait before jumping')
             
-            delayslid:Connect('Changed',function(v)delay=v;end)
+            local delay = 0 -- delay before jumping 
+            local parkourConn -- main parkour connection
+            local refreshConn -- refreshes parkour connection on death 
             
-            m_parkour:Connect('Toggled',function(t) 
-                if (t) then
-                    local a = Enum.Material.Air
-                    humcon = clientHumanoid:GetPropertyChangedSignal('FloorMaterial'):Connect(function() 
-                        if (clientHumanoid.FloorMaterial == a) then
-                            if (delay == 0) then
-                                if (clientHumanoid.Jump) then return end
-                                clientHumanoid:ChangeState(3)
-                            else
-                                task.wait(delay)
-                                if (clientHumanoid.Jump) then return end
-                                clientHumanoid:ChangeState(3)
-                            end
-                        end
-                    end)
-                else
-                    if (humcon) then humcon:Disconnect() humcon = nil end
-                end
+            s_Delay:Connect('Changed', function(value) 
+                delay = value 
             end)
             
+            m_parkour:Connect('Toggled',function(state) 
+                if ( state ) then
+                    local function refresh(character) 
+                        local humanoid = character:WaitForChild('Humanoid')
+                        
+                        if ( not humanoid ) then
+                            return
+                        end 
+                        
+                        parkourConn = humanoid:GetPropertyChangedSignal('FloorMaterial'):Connect(function() 
+                            if ( humanoid.FloorMaterial.Name == 'Air' ) then
+                                if ( delay ~= 0 ) then
+                                    task.wait(delay)
+                                end
+                                
+                                if ( humanoid.Jump ) then
+                                    return
+                                end
+                                
+                                humanoid:ChangeState(3)
+                            end
+                        end)
+                    end
+                    
+                    refreshConn = clientPlayer.CharacterAdded:Connect(refresh)
+                    refresh(clientChar)
+                else
+                    if ( parkourConn ) then
+                        parkourConn:Disconnect() 
+                    end
+                    if ( refreshConn ) then
+                        refreshConn:Disconnect()
+                    end
+                end
+            end)
         end
         --[[ Phasewalk
         do 
@@ -8590,22 +8569,91 @@ do
         
         -- jeff 
         do 
-            local jeff
+            local updateConn
+            local jeffs = {} 
+            
+            local scale = u_jeff:addSlider('Animation scale', { min = 0, max = 3, step = 0.05, cur = 1 })
+            scale:setTooltip('The speed scale of the animation')
+            
             u_jeff:Connect('Toggled', function(t) 
-                if (t) then
-                    jeff = instNew('ImageLabel')
-                    jeff.Size = dimOffset(250, 250)
-                    jeff.BackgroundTransparency = 1
-                    jeff.Position = dimNew(1, -250, 1, 0)
-                    jeff.Image = 'rbxassetid://8723094657'
-                    jeff.ResampleMode = 'Pixelated'
-                    jeff.Parent = ui:GetScreen()
+                if t then
                     
-                    ctwn(jeff, {Position = dimNew(1, -250, 1, -130)}, 25)
+                    for i = 1, 25 do 
+                        local size = math.random(25, 250)
+                        local position = Vector2.new(math.random(), math.random())
+                        
+                        
+                        jeff = instNew('ImageLabel')
+                        jeff.Size = dimOffset(size, size)
+                        jeff.BackgroundTransparency = 1
+                        jeff.ImageTransparency = math.random()
+                        jeff.Position = UDim2.fromScale(position.X, 5)
+                        jeff.Image = 'rbxassetid://8723094657'
+                        jeff.ResampleMode = 'Pixelated'
+                        jeff.Rotation = math.random(1, 360)
+                        jeff.Parent = ui:GetScreen()
+                        
+                        jeffs[i] = { 
+                            image = jeff, 
+                            curX = position.X, 
+                            curY = position.Y, 
+                            rotSpeed = math.random(), 
+                            scale = size / 120 
+                        } 
+                    end
+                    
+                    local t = 0 
+                    
+                    if ( updateConn ) then
+                        updateConn:Disconnect()
+                    end 
+                    
+                    
+                    updateConn = servRun.Heartbeat:Connect(function(deltaTime) 
+                        if ( not isrbxactive() ) then
+                            return
+                        end
+                        
+                        deltaTime *= scale:getValue()
+                        t += deltaTime
+                        
+                        for idx, jeff in ipairs(jeffs) do
+                            -- get the stuff 
+                            local image = jeff.image
+                            local curX = jeff.curX
+                            local curY = jeff.curY
+                            local rotSpeed = jeff.rotSpeed 
+                            local scale = jeff.scale 
+                            
+                            -- modify the stuff
+                            local targetX = curX + ( deltaTime * scale ) / 7
+                            if ( targetX > 1.1 ) then
+                                targetX -= 1.3
+                                shouldWarpBack = true 
+                            end
+                            
+                            local targetY = curY + math.sin(t + idx) * scale * 0.1 
+                            local yLerped = image.Position:Lerp(UDim2.fromScale(0, targetY), 1 - math.exp(-5 * deltaTime)) -- this is kinda scuffed but its simple 
+                            image.Position = UDim2.fromScale(targetX, yLerped.Y.Scale)
+                            
+                            image.Rotation += ( rotSpeed * deltaTime * 15 )
+                            
+                            if ( image.Rotation > 360 ) then
+                                image.Rotation -= 360 
+                            end
+                            
+                            jeff.curX = targetX 
+                        end
+                    end)
                 else
-                    jeff:Destroy()
+                    updateConn:Disconnect()
+                    
+                    for i, v in ipairs(jeffs) do
+                        v.image:Destroy()
+                    end
+                    
+                    table.clear(jeffs)
                 end
-                
             end)
         end
         -- plr
@@ -8613,8 +8661,10 @@ do
             local rfriends = u_plr:addToggle('Roblox friends only'):setTooltip('Only send notifications if they are your roblox friend')
             local sound = u_plr:addToggle('Play sound'):setTooltip('Play the notif sound'):Enable()
             
-            local h = true
-            sound:Connect('Toggled',function(t)h=t;end)
+            local soundToggled = true
+            sound:Connect('Toggled', function(state)
+                soundToggled = state
+            end)
             
             local join
             local leave 
@@ -8623,46 +8673,49 @@ do
                 join = servPlayers.PlayerAdded:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
-                    local title,msg,duration,sound do
-                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend joined' or 'Player joined'
-                        msg = (display and display ~= name and 
-                            ('%s (%s) has joined the server'):format(display, name)) or 
-                            ('%s has joined the server'):format(name)
-                    
-                        duration = 2.5
-                        sound = h and 'high' or 'none'
+                    local isFriend = clientPlayer:IsFriendsWith(p.UserId)
+                    if ( rfriends:isEnabled() and isFriend == false ) then
+                        return
                     end
                     
-                    ui:Notify(
-                        title,
-                        msg,
-                        duration,
-                        sound
-                    )
+                    local title = ( isFriend and 'Friend joined' or 'Player joined' )
+                    local message 
+                    if ( display == name ) then
+                        message = string.format('%s has joined the server', name)
+                    else
+                        message = string.format('%s (%s) has joined the server', display, name) 
+                    end
                     
+                    local duration = 2.5 
+                    local sound = ( soundToggled and 'high' or 'none' )
                     
+                    ui:Notify(title, message, duration, sound)
                 end)
+                
+                
                 leave = servPlayers.PlayerRemoving:Connect(function(p) 
                     local display, name = p.DisplayName, p.Name
                     
-                    local title,msg,duration,sound do
-                        title = clientPlayer:IsFriendsWith(p.UserId) and 'Friend left' or 'Player left'
-                        msg = (display and display ~= name and 
-                            ('%s (%s) has left the server'):format(display, name)) or 
-                            ('%s has left the server'):format(name)
-                    
-                        duration = 2.5
-                        sound = h and 'low' or 'none'
+                    local isFriend = clientPlayer:IsFriendsWith(p.UserId)
+                    if ( rfriends:isEnabled() and isFriend == false ) then
+                        return
                     end
                     
-                    ui:Notify(
-                        title,
-                        msg,
-                        duration,
-                        sound
-                    )
+                    local title = ( isFriend and 'Friend left' or 'Player left' )
+                    local message 
+                    if ( display == name ) then
+                        message = string.format('%s has left the server', name)
+                    else
+                        message = string.format('%s (%s) has left the server', display, name) 
+                    end
+                    
+                    local duration = 2.5 
+                    local sound = ( soundToggled and 'low' or 'none' )
+                    
+                    ui:Notify(title, message, duration, sound)
                 end)
             end)
+            
             u_plr:Connect('Disabled',function() 
                 join:Disconnect()
                 leave:Disconnect()
@@ -9450,15 +9503,3 @@ end
 function _G.RLNOTIF(...) 
     return ui:Notify(...)
 end
-
---[[ Config checks
-do 
-    
-    if ( isfile('REDLINE/DefaultConfig.json') ) then
-        readfile('REDLINE/Config.json') 
-        
-    else
-        --saveConfig('default.json')
-    end
-end
-]]
