@@ -1,11 +1,10 @@
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/thread_text_beta.jpg)  
 
-<!-- beta notice -->
-## Notice  
-**This is in insanely early beta! Only like 14 things actually work.**  
+### Notice  
+**Redline is currently still in beta. Some modules / features may not work!**  
 
-**Want to join the discord?**  
-[Here\'s the link](https://discord.gg/TyKZFQtDvw)  
+### Want to stay updated?  
+[Click here to join the Redline Discord!](https://discord.gg/TyKZFQtDvw)  
 
 ## Loadstring  
 ```lua
@@ -27,28 +26,35 @@ Redline is a massive universal script based on many popular Minecraft hacked cli
 ![](https://raw.githubusercontent.com/topitbopit/Redline/main/assets/gamedemo2.jpg)  
 
 ## Q/A  
-- **How do I use Redline?**
+- **How do I use Redline?**  
 When you execute it, press RightShift to open up the UI. Right click the menus to open up a list of modules under that category.  
-
-- **Can I whitelist my friends from a certain mod (ex. not lock onto them with aimbot)?**  
-This is a planned feature for the rewrite.  
 
 - **Why won't Redline execute?**  
 Make sure you pressed RightShift and there aren't any errors in console.  
 If you need help, join the discord for support.  
 
-- **Can I make my own fork / contribute?**  
-Yes, but I'd wait for the rewrite as it is way more cleaner and in a more modular-like format.  
-
-- **Hi**  
-Hi  
-  
 ## Supported executors  
 - *Probably* all of them  
 
 ## Changelog  
-Current version: 0.7.1  
+Current version: 0.7.2  
 Dates will follow MM/DD/YYYY  
+
+Version 0.7.2 (4/2/2023) 
+- Reverted April Fools changes  
+! Changes made to the Jeff and Blink modules will be kept  
+* Cleaned up the Player Notifications mod some more  
+* Fixed Parkour not working after death   
+* Removed some commented / unused code  
+
+Jeffline update 4.1.23 (4/1/2023)  
+* Improved the "jeff" mod by a ton, now it's insanely overpowered! Because it's so good, it's now enabled by default.  
+* Switched to a new UI design, hopefully you guys like it!  
+* Renamed most modules - the old names were kinda boring anyway  
+* Also rewrote most descriptions, same reasoning as above  
+* Changed name from "Redline" (cringe) to "Jeffline" (way more sexy)  
+* Hopefully fixed the Jlink mode "Fakejeff" not teleporting you when disabled properly  
+* Fixed the Player Jeffifications mode "Jeffblox jeffends only" not working  
 
 Version 0.7.1 (12/27/2022)  
 * Aimbot prediction slider setting now has more precision  
