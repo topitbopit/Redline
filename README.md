@@ -4,7 +4,8 @@
 **Redline is currently still in beta. Some modules / features may not work!**  
 
 ### Want to stay updated?  
-[Click here to join the Redline Discord!](https://discord.gg/TyKZFQtDvw)  
+~~[Click here to join the Redline Discord!](https://discord.gg/)~~  
+Someone reported the Discord server and got it taken down. I'm working on setting up a new one, and will update this section when I'm finished.  
 
 ## Loadstring  
 ```lua
